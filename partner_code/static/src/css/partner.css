@@ -1,0 +1,11 @@
+.openerp .oe_hidden_input_file input.oe_form_binary_file {
+  width: 64px;
+}
+.openerp .oe_form .pc_oe_left_first_child {
+  float: left;
+  width: 15%;
+}
+.openerp .oe_form .pc_oe_left_second_child {
+  float: left;
+  width: 85%;
+}
