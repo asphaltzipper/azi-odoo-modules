@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+
+        <record id="point_five_ten_net_thirty" model="account.payment.term">
+            <field name="name">.5%,10,Net 30</field>
+            <field name="note">.5%,10,Net 30</field>
+        </record>
+
+        <record id="one_ten_net_thirty" model="account.payment.term">
+            <field name="name">1%,10,Net 30</field>
+            <field name="note">1%,10,Net 30</field>
+        </record>
+
+        <record id="one_seven_net_fifteen" model="account.payment.term">
+            <field name="name">1%,7,Net 15</field>
+            <field name="note">1%,7,Net 15</field>
+        </record>
+
+        <record id="one_point_five_ten_net_thirty" model="account.payment.term">
+            <field name="name">1.5%,10,Net 30</field>
+            <field name="note">1.5%,10,Net 30</field>
+        </record>
+
+        <record id="two_ten_tenth" model="account.payment.term">
+            <field name="name">2%,10,10M</field>
+            <field name="note">2%,10,10M</field>
+        </record>
+
+        <record id="two_ten_net_thirty" model="account.payment.term">
+            <field name="name">2%,10,Net 30</field>
+            <field name="note">2%,10,Net 30</field>
+        </record>
+
+        <record id="two_fifteen_net_thirty" model="account.payment.term">
+            <field name="name">2%,15,Net 30</field>
+            <field name="note">2%,15,Net 30</field>
+        </record>
+
+        <record id="five_twenty_one_net_thirty" model="account.payment.term">
+            <field name="name">5%,21,Net 30</field>
+            <field name="note">5%,21,Net 30</field>
+        </record>
+
+        <record id="tenth" model="account.payment.term">
+            <field name="name">10M</field>
+            <field name="note">10M</field>
+        </record>
+
+        <record id="fifteenth" model="account.payment.term">
+            <field name="name">15M</field>
+            <field name="note">15M</field>
+        </record>
+
+        <record id="first" model="account.payment.term">
+            <field name="name">1M</field>
+            <field name="note">1M</field>
+        </record>
+
+        <record id="twentieth" model="account.payment.term">
+            <field name="name">20M</field>
+            <field name="note">20M</field>
+        </record>
+
+        <record id="cash" model="account.payment.term">
+            <field name="name">Cash</field>
+            <field name="note">Cash</field>
+        </record>
+
+        <record id="d_r" model="account.payment.term">
+            <field name="name">DR</field>
+            <field name="note">DR</field>
+        </record>
+
+        <record id="net_ten" model="account.payment.term">
+            <field name="name">Net 10</field>
+            <field name="note">Net 10</field>
+        </record>
+
+        <record id="net_fifteen" model="account.payment.term">
+            <field name="name">Net 15</field>
+            <field name="note">Net 15</field>
+        </record>
+
+        <record id="net_twenty" model="account.payment.term">
+            <field name="name">Net 20</field>
+            <field name="note">Net 20</field>
+        </record>
+
+        <record id="net_twenty_five" model="account.payment.term">
+            <field name="name">Net 25</field>
+            <field name="note">Net 25</field>
+        </record>
+
+        <record id="net_thirty" model="account.payment.term">
+            <field name="name">Net 30</field>
+            <field name="note">Net 30</field>
+        </record>
+
+        <record id="net_sixty" model="account.payment.term">
+            <field name="name">Net 60</field>
+            <field name="note">Net 60</field>
+        </record>
+
+        <record id="net_seven" model="account.payment.term">
+            <field name="name">Net 7</field>
+            <field name="note">Net 7</field>
+        </record>
+
+        <record id="none" model="account.payment.term">
+            <field name="name">None</field>
+            <field name="note">None</field>
+        </record>
+
+    </data>
+</openerp>
