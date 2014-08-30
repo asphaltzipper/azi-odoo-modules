@@ -7,7 +7,7 @@ class res_partner(osv.osv):
 
     _columns = {
         # select=True creates database index (searchable)
-        'code': fields.char('Code', required=True, select=True),
+        'code': fields.char('Code', select=True),
     }
 
     # set unique case sensitive constraint on the database field

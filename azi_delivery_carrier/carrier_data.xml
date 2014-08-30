@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <!-- Resource: res.partner -->
+        
+        <!-- Add partners for delivery carriers -->
+                
+        <record id="shipfedex" model="res.partner">
+            <field name="name">Fedex</field>
+            <field name="code">SHIPFEDEX</field>
+            <field name="is_company" eval="True" />
+        </record>
+
+        <record id="shipfltl" model="res.partner">
+            <field name="name">Freight LTL</field>
+            <field name="code">SHIPFLTL</field>
+            <field name="is_company" eval="True" />
+        </record>
+
+        <!-- Resource: product.product -->
+        
+        <!-- Add products for delivery carriers -->
+                
+        <record id="shipfedexproducta" model="product.product">
+            <field name="name">Fedex A Ground</field>
+            <field name="type">service</field>
+        </record>
+
+        <record id="shipfedexproductb" model="product.product">
+            <field name="name">Fedex B First overnight (AM)</field>
+            <field name="type">service</field>
+        </record>
+
+        <record id="shipfedexproductc" model="product.product">
+            <field name="name">Fedex C Pri overnight (AM)</field>
+            <field name="type">service</field>
+        </record>
+
+        <record id="shipfedexproductd" model="product.product">
+            <field name="name">Fedex D Std overnight (PM)</field>
+            <field name="type">service</field>
+        </record>
+
+        <record id="shipfedexproducte" model="product.product">
+            <field name="name">Fedex E overnight Saturday</field>
+            <field name="type">service</field>
+        </record>
+
+        <record id="shipfedexproductf" model="product.product">
+            <field name="name">Fedex F 2day AM</field>
+            <field name="type">service</field>
+        </record>
+
+        <record id="shipfedexproductg" model="product.product">
+            <field name="name">Fedex G 2day Standard (PM)</field>
+            <field name="type">service</field>
+        </record>
+
+        <record id="shipfedexproducth" model="product.product">
+            <field name="name">Fedex H Exp Saver (3day PM)</field>
+            <field name="type">service</field>
+        </record>
+
+        <record id="shipfltlproduct" model="product.product">
+            <field name="name">Freight LTL</field>
+            <field name="type">service</field>
+        </record>
+
+        <!-- Resource: delivery.carrier -->
+        
+        <!-- Add delivery carriers -->
+                
+        <record id="shipfedexcarriera" model="delivery.carrier">
+            <field name="name">Fedex A Ground</field>
+            <field name="partner_id" eval="shipfedex" />
+            <field name="product_id" eval="shipfedexproducta" />
+        </record>
+
+        <record id="shipfedexcarrierb" model="delivery.carrier">
+            <field name="name">Fedex B First overnight (AM)</field>
+            <field name="partner_id" eval="shipfedex" />
+            <field name="product_id" eval="shipfedexproductb" />
+        </record>
+
+        <record id="shipfedexcarrierc" model="delivery.carrier">
+            <field name="name">Fedex C Pri overnight (AM)</field>
+            <field name="partner_id" eval="shipfedex" />
+            <field name="product_id" eval="shipfedexproductc" />
+        </record>
+
+        <record id="shipfedexcarrierd" model="delivery.carrier">
+            <field name="name">Fedex D Std overnight (PM)</field>
+            <field name="partner_id" eval="shipfedex" />
+            <field name="product_id" eval="shipfedexproductd" />
+        </record>
+
+        <record id="shipfedexcarriere" model="delivery.carrier">
+            <field name="name">Fedex E overnight Saturday</field>
+            <field name="partner_id" eval="shipfedex" />
+            <field name="product_id" eval="shipfedexproducte" />
+        </record>
+
+        <record id="shipfedexcarrierf" model="delivery.carrier">
+            <field name="name">Fedex F 2day AM</field>
+            <field name="partner_id" eval="shipfedex" />
+            <field name="product_id" eval="shipfedexproductf" />
+        </record>
+
+        <record id="shipfedexcarrierg" model="delivery.carrier">
+            <field name="name">Fedex G 2day Standard (PM)</field>
+            <field name="partner_id" eval="shipfedex" />
+            <field name="product_id" eval="shipfedexproductg" />
+        </record>
+
+        <record id="shipfedexcarrierh" model="delivery.carrier">
+            <field name="name">Fedex H Exp Saver (3day PM)</field>
+            <field name="partner_id" eval="shipfedex" />
+            <field name="product_id" eval="shipfedexproducth" />
+        </record>
+
+        <record id="shipfltlcarrier" model="delivery.carrier">
+            <field name="name">Freight LTL</field>
+            <field name="partner_id" eval="shipfltl" />
+            <field name="product_id" eval="shipfltlproduct" />
+        </record>
+
+    </data>
+</openerp>
