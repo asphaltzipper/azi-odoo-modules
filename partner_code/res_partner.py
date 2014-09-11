@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp.osv import fields,osv
+from openerp.tools.translate import _
 
 class res_partner(osv.osv):
     _inherit = 'res.partner'
@@ -57,5 +58,16 @@ class res_partner(osv.osv):
         if 'code' in vals:
                 vals['code'] = vals['code'].replace(' ','').upper()
         return super(res_partner, self).write(cr, uid, ids, vals, context)
+
+    # on copy, append the partner code to maintain uniqueness
+    def copy(self, cr, uid, id, default=None, context=None):
+        if context is None:
+            context={}
+        product = self.read(cr, uid, id, ['code'], context=context)
+        if not default:
+            default = {}
+        default = default.copy()
+        default['code'] = product['code'] + _('(COPY)')
+        return super(res_partner, self).copy(cr, uid, id, default=default, context=context)
 
 res_partner()
