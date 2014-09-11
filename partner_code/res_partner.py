@@ -49,13 +49,13 @@ class res_partner(osv.osv):
 
     # force uppercase for code field on res_partner record create
     def create(self, cr, uid, vals, context=None):
-        if 'code' in vals:
+        if 'code' in vals and vals['code']:
                 vals['code'] = vals['code'].replace(' ','').upper()
         return super(res_partner, self).create(cr, uid, vals, context)
 
     # force uppercase for code field on res_partner record write
     def write(self, cr, uid, ids, vals, context=None):
-        if 'code' in vals:
+        if 'code' in vals and vals['code']:
                 vals['code'] = vals['code'].replace(' ','').upper()
         return super(res_partner, self).write(cr, uid, ids, vals, context)
 
