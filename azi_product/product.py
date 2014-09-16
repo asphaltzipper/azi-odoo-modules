@@ -10,13 +10,13 @@ import re
 
 
 class product_template(osv.Model):
-    
+
     """Pass product code (default_code) through the template to the product"""
-    
+
     _inherit = "product.template"
-      
+
     def create_variant_ids(self, cr, uid, ids, context=None):
-        
+
         """This is almost an exact copy of the method defined in the product module.  When upgrading, just copy the method from the product module, and add a line to pass default_code when creating the product variants"""
 
         product_obj = self.pool.get("product.product")
@@ -79,7 +79,7 @@ class product_template(osv.Model):
 
 
 class product_product(osv.Model):
-    
+
     """
     Enforce unique product code (default_code)
     Enforce product code formatting
@@ -87,16 +87,15 @@ class product_product(osv.Model):
     TODO: Add produce_ok to product.product
     TODO: Only require product code on Stockable products when setting purchase_ok, sale_ok, or produce_ok
     """
-    
+
     _inherit = "product.product"
-    
-    # TODO: force upper case
-    
+
     _sql_constraints = [ ('default_code_uniq', 'unique (default_code)', """Product Code must be unique."""), ]
+
+    default_code_pattern = r'^((COPY\.)?[_A-Z0-9-]+\.[A-Z-][0-9])$'
 
     def _require_default_code(self, cr, uid, ids, context=None):
         # verify that we have a product code before allowing procurements
-        pattern = r'^(COPY.)?[A-Z0-9]+\.[A-Z-][0-9]$'
         for product in self.browse(cr, uid, ids, context=context):
             # require default_code when flagging for sale, purchase, produce
             if product.type=='product' and not product.default_code and (product.purchase_ok or product.sale_ok):
@@ -106,8 +105,7 @@ class product_product(osv.Model):
     def _validate_default_code(self, cr, uid, ids, context=None):
         # require valid default_code, making allowance for copies
         for product in self.browse(cr, uid, ids, context=context):
-            pattern = r'^(COPY.)?[A-Z0-9]+\.[A-Z-][0-9]$'
-            if product.default_code and not re.match(pattern, product.default_code):
+            if product.default_code and not re.match(self.default_code_pattern, product.default_code):
                 return False
         return True
 
@@ -121,7 +119,7 @@ class product_product(osv.Model):
 
     _constraints = [
         (_require_default_code, 'Stockable product type requires a valid Reference code (default_code field).', ['type','default_code','purchase_ok','sale_ok']),
-        (_validate_default_code, 'Reference code (default_code) must match this format: ^(COPY.)?[A-Z0-9]+\.[A-Z-][0-9]$', ['default_code']),
+        (_validate_default_code, "Reference code (default_code) must match this format: r'" + default_code_pattern + "'", ['default_code']),
         (_validate_default_code_copy, 'For procurements, copied Reference codes are not allowed', ['type','default_code','purchase_ok','sale_ok']),
     ]
 
@@ -145,11 +143,11 @@ class product_product(osv.Model):
 
 
 class uom_categ_unique(osv.Model):
-    
+
     """Enforce unique UOM category name"""
-    
+
     _inherit = 'product.uom.categ'
-      
+
     _sql_constraints = [ ('name_uniq', 'unique (name)', """Category name must be unique."""), ]
 
     def copy(self, cr, uid, id, default=None, context=None):
