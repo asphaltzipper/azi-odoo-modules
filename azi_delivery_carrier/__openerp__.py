@@ -29,7 +29,7 @@
     'author' : 'scosist',
     'website': 'http://asphaltzipper.com',
     'description' : 'Import Delivery Methods for AZI into delivery.carrier',
-    'depends' : ['base', 'product'],
+    'depends' : ['base', 'product', 'delivery'],
     'data' : [
         'carrier_data.xml',
     ],
