@@ -18,6 +18,12 @@
             <field name="is_company" eval="True" />
         </record>
 
+        <record id="shipusps" model="res.partner">
+            <field name="name">USPS</field>
+            <field name="code">SHIPUSPS</field>
+            <field name="is_company" eval="True" />
+        </record>
+
         <!-- Resource: product.product -->
         
         <!-- Add products for delivery carriers -->
@@ -64,6 +70,21 @@
 
         <record id="shipfltlproduct" model="product.product">
             <field name="name">Freight LTL</field>
+            <field name="type">service</field>
+        </record>
+
+        <record id="shipuspsproductp" model="product.product">
+            <field name="name">USPS - Priority</field>
+            <field name="type">service</field>
+        </record>
+
+        <record id="shipuspsproductr" model="product.product">
+            <field name="name">USPS - Regular</field>
+            <field name="type">service</field>
+        </record>
+
+        <record id="shipwillcallproduct" model="product.product">
+            <field name="name">Will Call</field>
             <field name="type">service</field>
         </record>
 
@@ -123,6 +144,24 @@
             <field name="name">Freight LTL</field>
             <field name="partner_id" eval="shipfltl" />
             <field name="product_id" eval="shipfltlproduct" />
+        </record>
+
+        <record id="shipuspscarrierp" model="delivery.carrier">
+            <field name="name">USPS - Priority</field>
+            <field name="partner_id" eval="shipusps" />
+            <field name="product_id" eval="shipuspsproductp" />
+        </record>
+
+        <record id="shipuspscarrierr" model="delivery.carrier">
+            <field name="name">USPS - Regular</field>
+            <field name="partner_id" eval="shipusps" />
+            <field name="product_id" eval="shipuspsproductr" />
+        </record>
+
+        <record id="shipwillcallcarrier" model="delivery.carrier">
+            <field name="name">Will Call</field>
+            <field name="partner_id" eval="1" />
+            <field name="product_id" eval="shipwillcallproduct" />
         </record>
 
     </data>
