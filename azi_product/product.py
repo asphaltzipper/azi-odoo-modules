@@ -14,6 +14,11 @@ class product_template(osv.Model):
     """Pass product code (default_code) through the template to the product"""
 
     _inherit = "product.template"
+    _order = "default_code"
+
+    _columns = {
+        'default_code': fields.related('product_variant_ids', 'default_code', type='char', string='Internal Reference', select=True, store=True),
+    }
 
     def create_variant_ids(self, cr, uid, ids, context=None):
 
