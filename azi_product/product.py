@@ -22,7 +22,11 @@ class product_template(osv.Model):
 
     def create_variant_ids(self, cr, uid, ids, context=None):
 
-        """This is almost an exact copy of the method defined in the product module.  When upgrading, just copy the method from the product module, and add a line to pass default_code when creating the product variants"""
+        """
+        This is almost an exact copy of the method defined in the product
+        module.  When upgrading, just copy the method from the product module,
+        and add a line to pass default_code when creating the product variants
+        """
 
         product_obj = self.pool.get("product.product")
         ctx = context and context.copy() or {}
