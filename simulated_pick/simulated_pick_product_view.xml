@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="simulated_pick_product_search_form_view" model="ir.ui.view">
+            <field name="name">simulated.pick.product.search</field>
+            <field name="model">simulated.pick.product</field>
+            <field name="arch" type="xml">
+                <search string="Product">
+                    <field name="name" string="Product" filter_domain="['|',('default_code','ilike',self),('name','ilike',self)]"/>
+                    <filter string='Short' name="short" icon="terp-accessories-achiver" domain="[('short','>',0)]" />
+                    <group expand='0' string='Group by...'>
+                        <filter string='Category' domain="[]" context="{'group_by' : 'categ_id'}"/>
+                        <filter string='Default Unit of Measure' icon="terp-mrp" domain="[]" context="{'group_by' : 'product_uom'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="simulated_pick_product_tree_view" model="ir.ui.view">
+            <field name="name">simulated.pick.product.tree</field>
+            <field name="model">simulated.pick.product</field>
+            <field name="arch" type="xml">
+                <tree string="Component Requirements" create="false" edit="false">
+                    <field name="default_code" />
+                    <field name="name" />
+                    <field name="product_qty" />
+                    <field name="on_hand_before" />
+                    <field name="on_hand_after" />
+                    <field name="short" />
+                    <field name="product_uom" />
+                    <field name="route_name" />
+                </tree>
+            </field>
+        </record>
+
+        <menuitem id="menu_requirements_planning" name="Planning" parent="stock.menu_stock_root" sequence="3" />
+        <menuitem action="simulated_pick_act_window" id="menu_requirements_compute" parent="menu_requirements_planning" sequence="1" />
+
+    </data>
+</openerp>

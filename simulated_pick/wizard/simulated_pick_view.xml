@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!--  Material Requirements Calculator -->
+
+        <record id="simulated_pick_form_view_wizard" model="ir.ui.view">
+            <field name="name">simulated.pick.form.wizard</field>
+            <field name="model">simulated.pick</field>
+            <field name="arch" type="xml">
+                <form string="Requirements Calculator">
+                    <group string="Requirement Parameters">
+                        <label string="Use this assistant to view material requirements for a given product and related bill of materials."/>
+                    </group>
+                    <group col="4">
+                        <field name="product_id" class="oe_inline" context='{"default_type": "product"}' />
+                        <field name="date_planned" class="oe_inline" />
+                        <field name="product_qty" class="oe_inline" />
+                    </group>
+                    <footer>
+                        <button name="action_compute" type="object" string="Calculate Requirements" class="oe_highlight" />
+                        or
+                        <button special="cancel" string="Cancel" class="oe_link" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <act_window name="Requirements Calculator"
+            res_model="simulated.pick"
+            src_model="simulated.pick.product"
+            view_mode="form"
+            target="new"
+            id="simulated_pick_act_window"/>
+
+    </data>
+</openerp>
