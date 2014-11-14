@@ -35,7 +35,7 @@ class simulated_pick(models.TransientModel):
     product_qty = fields.Float('Product Quantity', digits_compute=dp.get_precision('Product Unit of Measure'), required=True, default=1)
     date_planned = fields.Date('Scheduled Date', required=True, select=1, copy=False, default=time.strftime('%Y-%m-%d'))
     
-    def _action_compute_lines(self, cr, uid, product_id, product_qty, properties=None, initial_run=0, context=None):
+    def _action_compute_lines(self, cr, uid, product_id, product_qty, pick_results=None, properties=None, initial_run=0, context=None):
         if properties is None:
             properties = []
         results = []
@@ -51,51 +51,60 @@ class simulated_pick(models.TransientModel):
         else:
             raise exceptions.except_orm(_('Error!'), _("Cannot find a bill of materials for this product."))
 
+        #pick_results = list(results) + (pick_results or [])
+        pick_results = pick_results or []
+        #pick_results = pick_results or {}
         for p in prod_obj.browse(cr, uid, product_id, context=context):
             factor = uom_obj._compute_qty(cr, uid, p.uom_id.id, product_qty, bom_point.product_uom.id)
             results, results2 = bom_obj._bom_explode(cr, uid, bom_point, product_id, factor / bom_point.product_qty, properties, context=context)
 
             if initial_run:
-#                diff = p.virtual_available-context.get('product_qty')
+                diff = p.virtual_available-context.get('product_qty')
                 new_pick = {
                     'product_id': p.id,
                     'name': p.product_tmpl_id.name,
-#                    'default_code': p.default_code,
+                    'default_code': p.default_code,
                     'product_uom': p.product_tmpl_id.uom_id.id,
-#                    'categ_id': p.product_tmpl_id.categ_id.id,
-#                    'route_name': stock_loc_obj.browse(cr, uid, p.product_tmpl_id.route_ids.id, context=context).name,
+                    'categ_id': p.product_tmpl_id.categ_id.id,
+                    'route_name': stock_loc_obj.browse(cr, uid, p.product_tmpl_id.route_ids.id, context=context).name,
                     'product_qty': context.get('product_qty'),
                     'on_hand_before': p.virtual_available,
-#                    'on_hand_after': diff,
-#                    'short': -(diff) if diff < 0 else 0,
+                    'on_hand_after': diff,
+                    'short': -(diff) if diff < 0 else 0,
                 }
                 # slow, try updating a dict
-                pick_obj.create(cr, uid, new_pick)
+                #pick_obj.create(cr, uid, new_pick)
+                pick_results.append(new_pick)
+                #pick_results[new_pick['product_id']] = new_pick
+
             for line in results:
+            #for key, value in results.iteritems():
                 p = prod_obj.browse(cr, uid, line['product_id'], context=context)
-                nid = pick_obj.search(cr, uid, [('default_code','=',p.default_code)])
-                if nid: # match found, update qty's
-                    n = pick_obj.browse(cr, uid, nid, context=context)
-                    uline = line.copy()
-                    uline['product_qty'] += n.product_qty
-#                    diff = p.virtual_available-uline['product_qty']
-#                    uline['on_hand_after'] = diff
-#                    uline['short'] = -(diff) if diff < 0 else 0
-                    # slow, try updating a dict
-                    pick_obj.write(cr, uid, nid, uline)
+                #p = self.env['product.product'].browse(value).with_context(self._context)
+                #p = self.env['product.product'].browse(value)
+                if any(line['product_id'] == pick.get('product_id', None) for pick in pick_results):
+#                if line['product_id'] in (pick.get('product_id', None) for pick in pick_results):
+                    for pick in pick_results:
+                        if pick['product_id'] == line['product_id']:
+                            pick['product_qty'] += line['product_qty']
+                            diff = p.virtual_available-pick['product_qty']
+                            pick['on_hand_after'] = diff
+                            pick['short'] = -(diff) if diff < 0 else 0
                 else:
-#                    diff = p.virtual_available-line['product_qty']
-#                    line['default_code'] = p.default_code
-#                    line['categ_id'] = p.product_tmpl_id.categ_id.id
-#                    line['route_name'] = stock_loc_obj.browse(cr, uid, p.product_tmpl_id.route_ids.id, context=context).name
+                    diff = p.virtual_available-line['product_qty']
+                    line['default_code'] = p.default_code
+                    line['categ_id'] = p.product_tmpl_id.categ_id.id
+                    line['route_name'] = stock_loc_obj.browse(cr, uid, p.product_tmpl_id.route_ids.id, context=context).name
                     line['on_hand_before'] = p.virtual_available
-#                    line['on_hand_after'] = diff
-#                    line['short'] = -(diff) if diff < 0 else 0
-                    # slow, try updating a dict and return to create all at once
-                    pick_obj.create(cr, uid, line)
+                    line['on_hand_after'] = diff
+                    line['short'] = -(diff) if diff < 0 else 0
+                    pick_results.append(line)
+
                 bom_id = bom_obj._bom_find(cr, uid, product_id=line['product_id'])
                 if bom_id:
-                    self._action_compute_lines(cr, uid, line['product_id'], line['product_qty'], context=context)
+                    self._action_compute_lines(cr, uid, line['product_id'], line['product_qty'], pick_results, context=context)
+
+        return pick_results
 
 
     def action_compute(self, cr, uid, ids, context=None):
@@ -132,7 +141,9 @@ class simulated_pick(models.TransientModel):
         if all_pick_ids:
             pick_obj.unlink(cr, uid, all_pick_ids)
 
-        self._action_compute_lines(cr, uid, record.product_id.id, record.product_qty, initial_run=1, context=context)
+        all_picks = self._action_compute_lines(cr, uid, record.product_id.id, record.product_qty, initial_run=1, context=context)
+        for pick in all_picks:
+            pick_obj.create(cr, uid, pick)
 
         views = [
             (tree_view_id, 'tree'),
