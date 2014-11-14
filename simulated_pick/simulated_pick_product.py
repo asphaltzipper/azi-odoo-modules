@@ -32,26 +32,11 @@ class simulated_pick_product(models.TransientModel):
     on_hand_before = fields.Float('On Hand Before', digits_compute=dp.get_precision('Product Unit of Measure'), required=True)
     on_hand_after = fields.Float('On Hand After', digits_compute=dp.get_precision('Product Unit of Measure'), required=True)
     short = fields.Float('Short', digits_compute=dp.get_precision('Product Unit of Measure'), required=True)
-#    on_hand_after = fields.Float('On Hand After', digits_compute=dp.get_precision('Product Unit of Measure'), store=True, readonly=True, compute='_compute_fields')
-#    short = fields.Float('Short', digits_compute=dp.get_precision('Product Unit of Measure'), store=True, readonly=True, compute='_compute_fields')
     product_uom = fields.Many2one('product.uom', 'UoM', required=True)
     categ_id = fields.Many2one('product.category', 'Internal Category', required=True)
     route_name = fields.Char('Action', required=True)
-#    categ_id = fields.Many2one('product.category', 'Internal Category', store=True, readonly=True, compute='_compute_fields')
-#    route_name = fields.Char('Action', store=True, readonly=True, compute='_compute_fields')
     name = fields.Char('Product Name', required=True)
     default_code = fields.Char('Internal Reference', required=True)
-#    default_code = fields.Char('Internal Reference', store=True, readonly=True, compute='_compute_fields')
-
-#    @api.one
-#    @api.depends('on_hand_before', 'product_qty', 'product_id')
-#    def _compute_fields(self):
-#        self.on_hand_after = self.on_hand_before - self.product_qty
-#        self.short = -(self.on_hand_after) if self.on_hand_after < 0 else 0
-#        slr_obj = self.env['stock.location.route']
-#        self.route_name = slr_obj.browse(self.product_id.product_tmpl_id.route_ids.id).name
-#        self.categ_id = self.product_id.product_tmpl_id.categ_id.id
-#        self.default_code = self.product_id.default_code
 
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
