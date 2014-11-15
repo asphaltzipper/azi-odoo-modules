@@ -27,7 +27,7 @@
     "summary": "Material Requirements Calculator",
     "category": "Warehouse Management",
     "author": "scosist",
-    "website": "http://www.asphaltzipper.com",
+    "website": "http://www.github.com/asphaltzipper/azi-odoo-modules",
     'description': """
 View material requirements for a given product and related bill of materials.
     """,
