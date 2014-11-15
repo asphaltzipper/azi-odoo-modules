@@ -34,7 +34,7 @@ class simulated_pick_product(models.TransientModel):
     short = fields.Float('Short', digits_compute=dp.get_precision('Product Unit of Measure'), required=True)
     product_uom = fields.Many2one('product.uom', 'UoM', required=True)
     categ_id = fields.Many2one('product.category', 'Internal Category', required=True)
-    route_name = fields.Char('Action', required=True)
+    route_name = fields.Char('Action')
     name = fields.Char('Product Name', required=True)
     default_code = fields.Char('Internal Reference', required=True)
 

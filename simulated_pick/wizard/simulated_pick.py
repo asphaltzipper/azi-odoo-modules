@@ -45,10 +45,9 @@ class simulated_pick(models.TransientModel):
         bom = self.env['mrp.bom']
         uom = self.env['product.uom']
         prod = self.env['product.product']
-        pick_prod = self.env['simulated.pick.product']
         route = self.env['stock.location.route']
 
-        bom_id = bom._bom_find(product_id=product_id)
+        bom_id = bom._bom_find(product_id=product_id, properties=properties)
         if bom_id:
             bom_point = bom.browse(bom_id)
         else:
@@ -77,11 +76,13 @@ class simulated_pick(models.TransientModel):
 
             for line in results:
                 p = prod.browse(line['product_id'])
+                # product previously collected in pick_results, update qty
                 if line['product_id'] in pick_results and line['product_id'] == pick_results[line['product_id']]['product_id']:
                     pick_results[line['product_id']]['product_qty'] += line['product_qty']
                     diff = p.virtual_available-pick_results[line['product_id']]['product_qty']
                     pick_results[line['product_id']]['on_hand_after'] = diff
                     pick_results[line['product_id']]['short'] = -(diff) if diff < 0 else 0
+                # not yet collected, prep and collect in pick_results
                 else:
                     diff = p.virtual_available-line['product_qty']
                     line['default_code'] = p.default_code
@@ -94,13 +95,13 @@ class simulated_pick(models.TransientModel):
 
                 bom_id = bom._bom_find(product_id=line['product_id'])
                 if bom_id:
-                    self._action_compute_lines(line['product_id'], line['product_qty'], pick_results)
+                    self._action_compute_lines(line['product_id'], line['product_qty'], pick_results, properties)
 
         return pick_results
 
 
     @api.multi
-    def action_compute(self):
+    def action_compute(self, properties=None):
         context = self._context
 
         def ref(module, xml_id):
@@ -110,15 +111,16 @@ class simulated_pick(models.TransientModel):
         model, search_view_id = ref('simulated_pick', 'simulated_pick_product_search_form_view')
         model, tree_view_id = ref('simulated_pick', 'simulated_pick_product_tree_view')
 
-        pick_obj = self.env['simulated.pick.product']
-        all_pick_ids = pick_obj.search([('create_uid', '=', self._uid)])
-        # delete any existing records in simulated.pick.product for current uid
+        pick_prod = self.env['simulated.pick.product']
+        # delete existing records in simulated.pick.product for current uid
+        all_pick_ids = pick_prod.search([('create_uid', '=', self._uid)])
         if all_pick_ids:
             all_pick_ids.unlink()
 
-        all_picks = self._action_compute_lines(self.product_id.id, self.product_qty, initial_run=1)
+        # collect simulated.pick results
+        all_picks = self._action_compute_lines(self.product_id.id, self.product_qty, properties=properties, initial_run=1)
         for key, pick in all_picks.iteritems():
-            pick_obj.create(pick)
+            pick_prod.create(pick)
 
         views = [
             (tree_view_id, 'tree'),
