@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- update sales team kanban view here -->
+
+        <!-- update sales team search view here -->
+
+        <record id="crm_case_section_view_tree_inherited" model="ir.ui.view">
+            <field name="name">crm.case.section.tree.inherited</field>
+            <field name="model">crm.case.section</field>
+            <field name="inherit_id" ref="sales_team.crm_case_section_view_tree" />
+            <field name="arch" type="xml">
+                <xpath expr="//tree/field[@name='user_id']" position="after">
+                    <field name="region_id" />
+                </xpath>
+            </field>
+        </record>
+
+        <record id="crm_case_section_view_form_inherited" model="ir.ui.view">
+            <field name="name">crm.case.section.form.inherited</field>
+            <field name="model">crm.case.section</field>
+            <field name="inherit_id" ref="sales_team.crm_case_section_view_form" />
+            <field name="arch" type="xml">
+                <field name="user_id" position="after">
+                    <field name="region_id" />
+                </field>
+            </field>
+        </record>
+
+        <record id="view_partner_form_sales_team_region" model="ir.ui.view">
+            <field name="name">view.partner.form.sales.team.region</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form" />
+            <field name="arch" type="xml">
+                <field name="image" position="after">
+                    <field name="state_trigger" />
+                </field>
+                <xpath expr="//form[@string='Partners']/sheet/group/group/div[2]/div[contains(concat('.', @class, '.'), '.address_format.')]/field[@name='state_id']" position="attributes">
+                    <attribute name="on_change">onchange_state(state_id,customer)</attribute>
+                </xpath>
+                <xpath expr="//form[@string='Partners']/sheet/group/group/div[2]/field[@name='country_id']" position="attributes">
+                    <attribute name="on_change">onchange_country(country_id,customer,state_trigger)</attribute>
+                </xpath>
+                <xpath expr="//form[@string='Partners']/sheet/notebook/page[@name='sales_purchases']/group/group[2]/field[@name='customer']" position="attributes">
+                    <attribute name="on_change">onchange_state(state_id,customer)</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="sales_team_region_form_view" model="ir.ui.view">
+            <field name="name">sales.team.region.form</field>
+            <field name="model">sales.team.region</field>
+            <field name="arch" type="xml">
+                <form string="Sales Region">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only" />
+                            <h1>
+                                <field name="name" />
+                            </h1>
+                        </div>
+                        <notebook>
+                            <page string="Country Groups">
+                                <field name="country_groups" on_change="onchange_region(states,countries,country_groups)" />
+                            </page>
+                            <page string="Countries">
+                                <field name="countries" on_change="onchange_region(states,countries,country_groups)" />
+                            </page>
+                            <page string="States">
+                                <!--<field name="state_ids" invisible="0" />-->
+                                <field name="states" domain="[('country_id','not in',countries[0][2])]" on_change="onchange_region(states,countries,country_groups)">
+                                    <tree>
+                                        <field name="name" />
+                                        <field name="code" />
+                                        <field name="country_id" />
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!--<record id="sales_team_region_search_form_view" model="ir.ui.view">
+            <field name="name">sales.team.region.search</field>
+            <field name="model">sales.team.region</field>
+            <field name="arch" type="xml">
+                <search string="Region">
+                    <field name="name" string="Region" filter_domain="[('name','ilike',self)]"/>-->
+                    <!--<field name="name" string="Region" filter_domain="['|',('state.name','ilike',self),('name','ilike',self)]"/>
+                    <filter string='US' name="us" icon="terp-accessories-achiver" domain="[('states.country_id','in',235)]" />
+                    <group expand='0' string='Group by...'>
+                        <filter string='State' domain="[]" context="{'group_by' : 'states'}"/>
+                        <filter string='Country' icon="terp-mrp" domain="[]" context="{'group_by' : 'countries'}"/>-->
+                    <!--</group>
+                </search>
+            </field>
+        </record>-->
+
+        <record id="sales_team_region_tree_view" model="ir.ui.view">
+            <field name="name">sales.team.region.tree</field>
+            <field name="model">sales.team.region</field>
+            <field name="arch" type="xml">
+                <tree string="Sales Team Regions">
+                    <field name="name" />
+                    <field name="states" />
+                    <field name="countries" />
+                    <field name="country_groups" />
+                </tree>
+            </field>
+        </record>
+
+        <act_window name="Sales Regions"
+            res_model="sales.team.region"
+            view_mode="tree,form"
+            target="current"
+            id="sales_team_region_act_window"/>
+
+        <menuitem action="sales_team_region_act_window" id="menu_sales_team_region_act" parent="base.menu_sales" sequence="0" />
+
+    </data>
+</openerp>
