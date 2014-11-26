@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+
+		<!-- add active field and accounts one2many -->
+		<record id="account_user_type_account_list" model="ir.ui.view">
+			<field name="name">account.account.type.form</field>
+			<field name="model">account.account.type</field>
+			<field name="inherit_id" ref="account.view_account_type_form"/>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='code']" position="after">
+					<field name="active"/>
+				</xpath>
+				<xpath expr="//field[@name='note']" position="after">
+					<group name="accounts" position="after">
+						<separator string="Accounts" colspan="2"/>
+						<field name="account_ids" readonly="1" nolabel="1" widget="one2many_list"/>
+					</group>
+				</xpath>
+			</field>
+		</record>
+
+	</data>
+</openerp>
+
