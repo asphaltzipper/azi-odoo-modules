@@ -22,18 +22,17 @@
 ##############################################################################
 
 {
-    'name': 'AZI Accountng Enhancements',
+    'name': 'Account Type Active',
     'version': '0.1',
-    'summary': 'AZI Accounting Enhancements',
+    'summary': 'Account Type Active',
     'category': 'Accounting & Finance',
     'author': 'matt454357',
     'website': 'http://asphaltzipper.com',
     'description': """
-Accounting enhancements for AZI
+Account Type Improvements
 ================================
 - Add active field to account type
-- Show accounts list of account type view
-- Import account payment terms
+- Show accounts list on account type view
     """,
     'depends': ['account'],
     'data': [
