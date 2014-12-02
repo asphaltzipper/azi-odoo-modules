@@ -126,7 +126,7 @@ class res_partner(models.Model):
     def onchange_country(self, country_id=False, customer=False, state_trigger=False):
         if not state_trigger:
             return {'value': {'section_id': self._lookup_section(customer=customer, country_id=country_id)}}
-        return {}
+        return {'value': {'state_trigger': False}}
 
 
 class sales_team_region_state_rel(models.Model):
