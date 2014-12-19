@@ -29,7 +29,6 @@ class stock_warehouse_orderpoint(models.Model):
     _order = 'product_llc'
 
     product_llc = fields.Integer(string='Product LLC', store=True, related='product_id.low_level_code', readonly=True)
-    #product_llc = fields.Related('product_id', 'low_level_code', type='integer', string='Product LLC', store={'product.product': (lambda self, ids: self.env['stock.warehouse.orderpoint'].search([('product_id', 'in', ids)]), ['low_level_code'], 10),})
 
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

@@ -32,7 +32,6 @@ class mrp_bom(models.Model):
 
     @api.model
     def _bom_explode_llc(self, bom, product, result=None, properties=None, llc=1, previous_products=None, master_bom=None):
-        #product_obj = self.env['product.product']
         master_bom = master_bom or bom
         result = result or {}
 
@@ -54,8 +53,6 @@ class mrp_bom(models.Model):
                 all_prod = [bom.product_tmpl_id.id] + (previous_products or [])
                 bom2 = self.browse(bom_id)
                 if bom_line_id.type != "phantom" and bom2.type != "phantom":
-                    #product_obj._set_llc(bom_line_id.product_id.id, llc)
-                    #bom_line_id.product_id._set_llc(llc)
                     if result[bom_line_id.product_id.id] < llc:
                         result[bom_line_id.product_id.id] = llc
                     res = self._bom_explode_llc(bom2, bom_line_id.product_id, result, properties, llc + 1, all_prod, master_bom)
@@ -64,8 +61,6 @@ class mrp_bom(models.Model):
                     res = self._bom_explode_llc(bom2, bom_line_id.product_id, result, properties, llc, all_prod, master_bom)
                     result.update(res)
             elif bom_line_id.type != "phantom":
-                #product_obj._set_llc(bom_line_id.product_id.id, llc)
-                #bom_line_id.product_id._set_llc(llc)
                 if result[bom_line_id.product_id.id] < llc:
                     result[bom_line_id.product_id.id] = llc
             else:
@@ -108,7 +103,6 @@ class mrp_bom(models.Model):
                 if v > llc_updates[k]:
                     llc_updates[k] = v
         for (k,v) in llc_updates.items():
-            #k.write({'low_level_code': v})
             product_obj.browse([k]).write({'low_level_code': v})
 
 
