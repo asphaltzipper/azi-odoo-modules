@@ -34,7 +34,7 @@
             <field name="inherit_id" ref="base.view_partner_form" />
             <field name="arch" type="xml">
                 <field name="image" position="after">
-                    <field name="state_trigger" />
+                    <field name="state_trigger" invisible="1" />
                 </field>
                 <xpath expr="//form[@string='Partners']/sheet/group/group/div[2]/div[contains(concat('.', @class, '.'), '.address_format.')]/field[@name='state_id']" position="attributes">
                     <attribute name="on_change">onchange_state(state_id,customer)</attribute>
@@ -118,7 +118,7 @@
             target="current"
             id="sales_team_region_act_window"/>
 
-        <menuitem action="sales_team_region_act_window" id="menu_sales_team_region_act" parent="base.menu_sales" sequence="0" />
+        <menuitem action="sales_team_region_act_window" id="menu_sales_team_region_act" parent="base.menu_sales" sequence="0" groups="base.group_multi_salesteams" />
 
     </data>
 </openerp>

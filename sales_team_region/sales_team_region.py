@@ -54,17 +54,23 @@ class res_partner(models.Model):
                     break
             region_id = s_region_id or c_region_id or cg_region_id
             if region_id:
-                section_id = self.env['crm.case.section'].search([('region_id','=',region_id)])
-                if section_id:
-                    return section_id
-        return 0
+                section = self.env['crm.case.section'].search([('region_id','=',region_id)])
+                if section:
+                    return section
+        #return 0
+        return self.env['crm.case.section']
+
+
+    @api.model
+    def lookup_section(self, state_id=False, customer=False, country_id=False):
+        return self._lookup_section(state_id,customer,country_id).id or self._default_section()
 
 
     #@api.one
     #@api.depends('state_id', 'customer')
     @api.model
-    #def _default_section(self):
-    def _default_section(self, state_id, customer):
+    def _default_section(self):
+    #def _default_section(self, state_id, customer):
         # this should set section_id for creation via xmlrpc
         #state_id = self.env.context.get('state_id', False)
         #customer = self.env.context.get('customer', False)
@@ -77,15 +83,18 @@ class res_partner(models.Model):
         #import pdb
         #pdb.set_trace()
         #if state_id and customer:
-        section_id = self._lookup_section(state_id, customer)
-        if section_id:
-            return section_id
-        if customer:
+
+        #section_id = self._lookup_section(state_id, customer)
+        #if section_id:
+        #    return section_id
+        #if customer:
             #return 0 #need external id of default crm.case.section.id
             #return self.env['ir.property'].get('','sales.team.region')
             # default to odoo builtin sales team as customer requires one
-            return self.env['ir.property'].get('section_sales_department','crm.case.section')
-        return False
+            #return self.env['ir.property'].get('section_sales_department','crm.case.section')
+        # https://github.com/odoo/odoo/blob/8.0/openerp/addons/base/ir/ir_model.py#L940
+        return self.env['ir.model.data'].xmlid_to_res_id('sales_team.section_sales_department')
+        #return False
         #return self.env['crm.case.section'].search([('region_id','=',0)])
 
     @api.model
@@ -95,7 +104,7 @@ class res_partner(models.Model):
         for record in self:
             #if partner.customer and not partner.section_id.id:
                 #return False
-            if record.customer and not record.section_id.id:
+            if self.env['res.users'].has_group('base.group_multi_salesteams') and record.customer and not record.section_id.id:
                 raise ValidationError("Customers require a valid Sales Team. (%s)" % record.section_id)
         #return True
 
@@ -117,14 +126,14 @@ class res_partner(models.Model):
             #section_id = self._lookup_section(state_id, customer)
             #if section_id:
                 #res['value']['section_id'] = section_id
-        if res:
+        if self.env['res.users'].has_group('base.group_multi_salesteams') and res:
             res['value']['section_id'] = self._lookup_section(state_id, customer)
             res['value']['state_trigger'] = True
         return res
 
     @api.multi
     def onchange_country(self, country_id=False, customer=False, state_trigger=False):
-        if not state_trigger:
+        if self.env['res.users'].has_group('base.group_multi_salesteams') and not state_trigger:
             return {'value': {'section_id': self._lookup_section(customer=customer, country_id=country_id)}}
         return {'value': {'state_trigger': False}}
 
