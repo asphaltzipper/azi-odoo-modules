@@ -8,7 +8,7 @@
             <field name="inherit_id" ref="base.view_partner_form" />
             <field name="arch" type="xml">
                 <field name="country_id" position="before">
-                    <field name="county_id" placeholder="County" options='{"no_open": True}' domain="[('state_id','=',state_id)]"/>
+                    <field name="county_id" placeholder="County" options='{"no_open": True}' domain="[('state_id','=',state_id)]" attrs="{'readonly': [('use_parent_address','=',True)]}"/>
                 </field>  
             </field>
         </record>

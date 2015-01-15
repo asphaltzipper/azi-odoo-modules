@@ -15,6 +15,9 @@
         """
 Based on US Census information (updated 2014) - adds a dropdown list on the partner form view, filtered by state.  In some states, sales tax rates are based on Counties.  For those where this is the case, this module could be used in conjunction with rules to determine sales tax.
 
+Contributors
+------------
+* Scott Saunders <scosist@asphaltzipper.com>
         """,
     'maintainer': 'Ursa Information Systems',
     'website': 'http://www.ursainfosystems.com',
