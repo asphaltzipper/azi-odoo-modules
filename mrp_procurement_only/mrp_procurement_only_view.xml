@@ -2,8 +2,27 @@
 <openerp>
     <data>
 
-        <!-- update ? view here -->
+        <record id="procurement_tree_view_inherited" model="ir.ui.view">
+            <field name="name">procurement.tree.view.inherited</field>
+            <field name="model">procurement.order</field>
+            <field name="inherit_id" ref="procurement.procurement_tree_view" />
+            <field name="arch" type="xml">
+                <xpath expr="//tree/field[@name='date_planned']" position="before">
+                    <field name="date_start" widget="date" />
+                </xpath>
+            </field>
+        </record>
 
+        <record id="procurement_form_view_inherited" model="ir.ui.view">
+            <field name="name">procurement.form.view.inherited</field>
+            <field name="model">procurement.order</field>
+            <field name="inherit_id" ref="procurement.procurement_form_view" />
+            <field name="arch" type="xml">
+                <field name="date_planned" position="before">
+                    <field name="date_start" />
+                </field>
+            </field>
+        </record>
 
     </data>
 </openerp>

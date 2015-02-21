@@ -33,20 +33,29 @@ import openerp
 class procurement_order(models.Model):
     _inherit = "procurement.order"
 
-    def _prepare_orderpoint_procurement(self, cr, uid, orderpoint, product_qty, context=None):
-        res = super(procurement_order, self)._prepare_orderpoint_procurement(cr, uid, orderpoint, product_qty, context=context)
-        #res['date_planned'] = self._get_orderpoint_date_planned(cr, uid, orderpoint, datetime.strptime(context['from_date'],DEFAULT_SERVER_DATETIME_FORMAT), context=context)
+    def _get_bucket_delay(self, cr, uid, context=None):
         # subtract relativedelta of days=time_bucket
         # this would need to be handled by a user configurable setting in mfg
         #   if time_bucket=weekly, then we could provide a day of the week for
         #   the user to choose when product should be available and in addition
         #   to the time_bucket, subtract the relative # of days (SUN thru SAT)
         #     e.g. MON = -5, - relativedelta(days=5)
+        return 1
+
+    def _get_procurement_date_planned(self, cr, uid, to_date, context=None):
+        bucket_delay = self._get_bucket_delay(cr, uid, context=context)
+        date_planned = datetime.combine(datetime.strptime(to_date,DEFAULT_SERVER_DATE_FORMAT) - relativedelta(days=bucket_delay),datetime.min.time())
+        return date_planned.strftime(DEFAULT_SERVER_DATE_FORMAT)
+
+    def _prepare_orderpoint_procurement(self, cr, uid, orderpoint, product_qty, context=None):
+        res = super(procurement_order, self)._prepare_orderpoint_procurement(cr, uid, orderpoint, product_qty, context=context)
+        #res['date_planned'] = self._get_orderpoint_date_planned(cr, uid, orderpoint, datetime.strptime(context['from_date'],DEFAULT_SERVER_DATETIME_FORMAT), context=context)
         #res['date_planned'] = self._get_orderpoint_date_planned(cr, uid, orderpoint, datetime.combine(datetime.strptime(context['to_date'],DEFAULT_SERVER_DATE_FORMAT) - relativedelta(days=1),datetime.min.time()), context=context)
-        res['date_planned'] = datetime.combine(datetime.strptime(context['to_date'],DEFAULT_SERVER_DATE_FORMAT) - relativedelta(days=1),datetime.min.time()).strftime(DEFAULT_SERVER_DATE_FORMAT)
+        #res['date_planned'] = datetime.combine(datetime.strptime(context['to_date'],DEFAULT_SERVER_DATE_FORMAT) - relativedelta(days=1),datetime.min.time()).strftime(DEFAULT_SERVER_DATE_FORMAT)
+        res['date_planned'] = self._get_procurement_date_planned(cr, uid, context['to_date'], context=context)
         return res
 
-    def _process_orderpoint_procurement(self, cr, uid, proc_id, context=None):
+    def _process_procurement(self, cr, uid, proc_id, context=None):
         self.check(cr, uid, [proc_id])
         self.run(cr, uid, [proc_id])
 
@@ -57,7 +66,7 @@ class procurement_order(models.Model):
         proc_id = procurement_obj.create(cr, uid,
                                         self._prepare_orderpoint_procurement(cr, uid, order_point, qty_rounded, context=context),
                                         context=context)
-        self._process_orderpoint_procurement(cr, uid, proc_id, context=context)
+        self._process_procurement(cr, uid, proc_id, context=context)
         return proc_id
     
     def _product_virtual_get(self, cr, uid, order_point, context=None):
