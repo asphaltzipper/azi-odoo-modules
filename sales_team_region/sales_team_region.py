@@ -108,9 +108,16 @@ class res_partner(models.Model):
                 raise ValidationError("Customers require a valid Sales Team. (%s)" % record.section_id)
         #return True
 
+    # added due to Error triggered during 8.0 database update 20150320:
+    #   Error: 'boolean' object has no attribute '_fnct_search'" while parsing
+    #   /home/openerp/azi-odoo-modules/sales_team_region/sales_team_view.xml:31
+    @api.model
+    def _st_search(self):
+        return [('id', 'in', [])]
+
     #section_id = fields.Many2one('crm.case.section', 'Sales Team', default=lambda self: self.with_context(self._context)._default_section(self.state_id, self.customer))
     section_id = fields.Many2one('crm.case.section', 'Sales Team') 
-    state_trigger = fields.Boolean(store=False, default=False)
+    state_trigger = fields.Boolean(store=False, default=False, search='_st_search')
 
 
     @api.multi
