@@ -49,9 +49,6 @@ class procurement_order(models.Model):
 
     def _prepare_orderpoint_procurement(self, cr, uid, orderpoint, product_qty, context=None):
         res = super(procurement_order, self)._prepare_orderpoint_procurement(cr, uid, orderpoint, product_qty, context=context)
-        #res['date_planned'] = self._get_orderpoint_date_planned(cr, uid, orderpoint, datetime.strptime(context['from_date'],DEFAULT_SERVER_DATETIME_FORMAT), context=context)
-        #res['date_planned'] = self._get_orderpoint_date_planned(cr, uid, orderpoint, datetime.combine(datetime.strptime(context['to_date'],DEFAULT_SERVER_DATE_FORMAT) - relativedelta(days=1),datetime.min.time()), context=context)
-        #res['date_planned'] = datetime.combine(datetime.strptime(context['to_date'],DEFAULT_SERVER_DATE_FORMAT) - relativedelta(days=1),datetime.min.time()).strftime(DEFAULT_SERVER_DATE_FORMAT)
         res['date_planned'] = self._get_procurement_date_planned(cr, uid, context['to_date'], context=context)
         return res
 
@@ -60,8 +57,6 @@ class procurement_order(models.Model):
         self.run(cr, uid, [proc_id])
 
     def _create_orderpoint_procurement(self, cr, uid, order_point, qty_rounded, context=None):
-        import pdb
-        pdb.set_trace()
         procurement_obj = self.pool.get('procurement.order')
         proc_id = procurement_obj.create(cr, uid,
                                         self._prepare_orderpoint_procurement(cr, uid, order_point, qty_rounded, context=context),
@@ -76,38 +71,6 @@ class procurement_order(models.Model):
         return product_obj._product_available(cr, uid,
                 [order_point.product_id.id],
                 context=context)[order_point.product_id.id]['virtual_available']
-
-    def _try_orderpoint_procurement(self, cr, uid, op, prod=False, context=None):
-        orderpoint_obj = self.pool.get('stock.warehouse.orderpoint')
-        prods = self._product_virtual_get(cr, uid, op, context=context)
-        if prod:
-            uom_obj = self.pool.get('product.uom')
-            prod_qty = uom_obj._compute_qty(cr, uid, prod['product_uom'], prod['product_qty'], op.product_uom.id)
-            prods -= prod_qty
-        if prods is None:
-            #continue
-            return 1
-        if float_compare(prods, op.product_min_qty, precision_rounding=op.product_uom.rounding) < 0:
-            qty = max(op.product_min_qty, op.product_max_qty) - prods
-            reste = op.qty_multiple > 0 and qty % op.qty_multiple or 0.0
-            if float_compare(reste, 0.0, precision_rounding=op.product_uom.rounding) > 0:
-                qty += op.qty_multiple - reste
-
-            if float_compare(qty, 0.0, precision_rounding=op.product_uom.rounding) <= 0:
-                #continue
-                return 1
-
-            qty -= orderpoint_obj.subtract_procurements(cr, uid, op, context=context)
-
-            qty_rounded = float_round(qty, precision_rounding=op.product_uom.rounding)
-            if qty_rounded > 0:
-                self._create_orderpoint_procurement(cr, uid, op, qty_rounded, context=context)
-                                #proc_id = procurement_obj.create(cr, uid,
-                                #                                self._prepare_orderpoint_procurement(cr, uid, op, qty_rounded, context=context),
-                                #                                context=context)
-                                #self.check(cr, uid, [proc_id])
-                                #self.run(cr, uid, [proc_id])
-        return 0
 
     def _procure_orderpoint_confirm(self, cr, uid, use_new_cursor=False, company_id = False, context=None):
         '''
@@ -135,7 +98,6 @@ class procurement_order(models.Model):
         last_procurement_id = procurement_obj.search(cr, uid, [('state','=','running')], order="date_planned DESC", limit=1)[0]
         last_procurement_dt = datetime.strptime(procurement_obj.browse(cr, uid, last_procurement_id)['date_planned'], DEFAULT_SERVER_DATETIME_FORMAT)
         # get delta from first to last procurement 'date_planned'
-        #planning_horizon = (datetime.strptime(last_procurement_dt, DEFAULT_SERVER_DATETIME_FORMAT) - datetime.now()).days
         planning_horizon = (last_procurement_dt - first_procurement_dt).days + 1
 
         dom = company_id and [('company_id', '=', company_id)] or []
@@ -149,14 +111,26 @@ class procurement_order(models.Model):
                     plan_step = 0
                     while plan_step <= planning_horizon:
                         # set context
-                        #from_date = datetime.now() + relativedelta(days=plan_step)
                         from_date = first_procurement_dt.date() + relativedelta(days=plan_step)
-                        #context['from_date'] = from_date.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
                         context['to_date'] = (from_date + relativedelta(days=time_bucket)).strftime(DEFAULT_SERVER_DATE_FORMAT)
 
-                        res = self._try_orderpoint_procurement(cr, uid, op, context=context)
-                        if res:
+                        prods = self._product_virtual_get(cr, uid, op, context=context)
+                        if prods is None:
                             continue
+                        if float_compare(prods, op.product_min_qty, precision_rounding=op.product_uom.rounding) < 0:
+                            qty = max(op.product_min_qty, op.product_max_qty) - prods
+                            reste = op.qty_multiple > 0 and qty % op.qty_multiple or 0.0
+                            if float_compare(reste, 0.0, precision_rounding=op.product_uom.rounding) > 0:
+                                qty += op.qty_multiple - reste
+
+                            if float_compare(qty, 0.0, precision_rounding=op.product_uom.rounding) <= 0:
+                                continue
+
+                            qty -= orderpoint_obj.subtract_procurements(cr, uid, op, context=context)
+
+                            qty_rounded = float_round(qty, precision_rounding=op.product_uom.rounding)
+                            if qty_rounded > 0:
+                                self._create_orderpoint_procurement(cr, uid, op, qty_rounded, context=context)
                         plan_step = plan_step + time_bucket
                     if use_new_cursor:
                         cr.commit()
