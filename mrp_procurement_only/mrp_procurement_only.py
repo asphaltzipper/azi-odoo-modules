@@ -25,8 +25,7 @@ from datetime import datetime
 from openerp import models, fields, api, SUPERUSER_ID
 from dateutil.relativedelta import relativedelta
 from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT, \
-    DEFAULT_SERVER_DATE_FORMAT, float_compare, float_round
-from psycopg2 import OperationalError
+    DEFAULT_SERVER_DATE_FORMAT
 import openerp
 
 
@@ -37,9 +36,9 @@ class stock_warehouse_orderpoint(models.Model):
         qty = super(stock_warehouse_orderpoint, self).subtract_procurements(cr, uid, orderpoint, context=context)
         uom_obj = self.pool.get('product.uom')
         dom = [('product_id','=',orderpoint.product_id.id),('origin','like','OUT/')]
-        proc_obj = self.pool.get('procurement.order')
-        proc_ids = proc_obj.search(cr, uid, dom)
-        for procurement in proc_obj.browse(cr, uid, proc_ids, context=context):
+        procurement_obj = self.pool.get('procurement.order')
+        proc_ids = procurement_obj.search(cr, uid, dom)
+        for procurement in procurement_obj.browse(cr, uid, proc_ids, context=context):
             if procurement.state in ('cancel', 'done'):
                 continue
             procurement_qty = uom_obj._compute_qty_obj(cr, uid, procurement.product_uom, procurement.product_qty, procurement.product_id.uom_id, context=context)
@@ -49,16 +48,16 @@ class stock_warehouse_orderpoint(models.Model):
 
 class procurement_order(models.Model):
     _inherit = 'procurement.order'
-    _order = 'date_start,date_planned'
+    _order = 'priority desc, date_start, date_planned, id asc'
 
     date_start = fields.Datetime('Start Date', required=False, select=True)
 
     def run_scheduler(self, cr, uid, use_new_cursor=False, company_id=False, context=None):
         '''
-        Call the scheduler in order to check the running procurements (replace built-in run_scheduler to eliminate the
-        running of confirmed procurements), to check the minimum stock rules and the availability of moves. This 
-        function is intended to be run for all the companies at the same time, so we run functions as SUPERUSER to 
-        avoid intercompanies and access rights issues.
+        Call the scheduler in order to check the running procurements (this REPLACES run_scheduler to eliminate 
+        automatic execution of run for confirmed procurements), to check the minimum stock rules and the availability
+        of moves. This function is intended to be run for all the companies at the same time, so we run functions as
+        SUPERUSER to avoid intercompanies and access rights issues.
         @param self: The object pointer
         @param cr: The current row, from the database cursor,
         @param uid: The current user ID for security checks
@@ -112,8 +111,56 @@ class procurement_order(models.Model):
                     pass
         return {}
 
+    def run_procurement(self, cr, uid, ids, use_new_cursor=False, context=None):
+        context = context or {}
+        import pdb
+        pdb.set_trace()
+        try:
+            if use_new_cursor:
+                cr = openerp.registry(cr.dbname).cursor()
+
+            # Run selected procurements
+            dom = [('id', 'in', ids), ('state', '=', 'confirmed')]
+            prev_ids = []
+            while True:
+                ids = self.search(cr, SUPERUSER_ID, dom, context=context)
+                if not ids or prev_ids ==ids:
+                    break
+                else:
+                    prev_ids = ids
+                self.run(cr, SUPERUSER_ID, ids, autocommit=use_new_cursor, context=context)
+                if use_new_cursor:
+                    cr.commit()
+
+            # Check if selected running procurements are done
+            offset = 0
+            dom = [('id', 'in', ids), ('state', '=', 'running')]
+            prev_ids = []
+            while True:
+                ids = self.search(cr, SUPERUSER_ID, dom, offset=offset, context=context)
+                if not ids or prev_ids == ids:
+                    break
+                else:
+                    prev_ids = ids
+                self.check(cr, SUPERUSER_ID, ids, autocommit=use_new_cursor, context=context)
+                if use_new_cursor:
+                    cr.commit()
+        finally:
+            if use_new_cursor:
+                try:
+                    cr.close()
+                except Exception:
+                    pass
+        return {}
+
+    def run(self, cr, uid, ids, autocommit=False, context=None):
+        super(procurement_order, self).run(cr, uid, ids, autocommit, context=context)
+
     def _get_procurement_date_start(self, cr, uid, modelpoint, to_date, context=None):
-        bucket_delay = self._get_bucket_delay(cr, uid, context=context)
+        if 'child_to_date' in context:
+            bucket_delay = 0
+        else:
+            bucket_delay = self._get_bucket_delay(cr, uid, context=context)
         seller_delay = 0.0
         produce_delay = 0.0
         if modelpoint._name == 'stock.warehouse.orderpoint':
@@ -127,60 +174,37 @@ class procurement_order(models.Model):
 
     def _prepare_orderpoint_procurement(self, cr, uid, orderpoint, product_qty, context=None):
         res = super(procurement_order, self)._prepare_orderpoint_procurement(cr, uid, orderpoint, product_qty, context=context)
-        #mfg_delay = 0.0
-        #if 'parent_produce_delay' in context:
-        #    mfg_delay = context['parent_produce_delay']
-        #    context.pop('parent_produce_delay')
-        #res['date_start'] = datetime.combine(datetime.strptime(context['to_date'],DEFAULT_SERVER_DATE_FORMAT) - relativedelta(days=1 + orderpoint.product_id.seller_delay or 0.0 + orderpoint.product_id.produce_delay or 0.0),datetime.min.time()).strftime(DEFAULT_SERVER_DATE_FORMAT)
         res['date_start'] = self._get_procurement_date_start(cr, uid, orderpoint, context['to_date'], context=context)
-        if 'push_forward' in context and context['push_forward']==0:
-            # set outbound location for mfg children
-            #res['location_id'] = self.pool.get('ir.model.data').xmlid_to_res_id(cr, uid, 'stock_location.location_production')
-            #res['origin'] = 
-            import pdb
-            pdb.set_trace()
         return res
 
     def _prepare_outbound_procurement(self, cr, uid, product, product_qty, product_uom, context=None):
         return {
             'name': product.product_tmpl_id.name,
-            #'date_planned': datetime.combine(datetime.strptime(context['to_date'],DEFAULT_SERVER_DATE_FORMAT) - relativedelta(days=1),datetime.min.time()).strftime(DEFAULT_SERVER_DATE_FORMAT),
-            #'date_planned': datetime.combine(datetime.strptime(context['child_to_date'],DEFAULT_SERVER_DATE_FORMAT) - relativedelta(days=1),datetime.min.time()).strftime(DEFAULT_SERVER_DATE_FORMAT),
             'date_planned': self._get_procurement_date_planned(cr, uid, context['child_to_date'], context=context),
             'product_id': product.id,
             'product_qty': product_qty,
             'company_id': product.product_tmpl_id.company_id.id,
             'product_uom': product_uom,
             'location_id': self.pool.get('ir.model.data').xmlid_to_res_id(cr, uid, 'stock.location_production'),
-            #'origin': 'OUT/PROD/' + '%%0%sd' % 5 % context['parent_product_id'],
             'origin': 'OUT/BOM/' + '%%0%sd' % 5 % context['parent_bom_id'],
             #'warehouse_id': ,
-            #'date_start': datetime.combine(datetime.strptime(context['to_date'],DEFAULT_SERVER_DATE_FORMAT) - relativedelta(days=product.seller_delay or 0.0 + product.produce_delay or 0.0),datetime.min.time()).strftime(DEFAULT_SERVER_DATE_FORMAT),
-            #'date_start': datetime.combine(datetime.strptime(context['child_to_date'],DEFAULT_SERVER_DATE_FORMAT) - relativedelta(days=1 + product.seller_delay or 0.0 + product.produce_delay or 0.0),datetime.min.time()).strftime(DEFAULT_SERVER_DATE_FORMAT),
             'date_start': self._get_procurement_date_start(cr, uid, product, context['child_to_date'], context=context),
         }
 
     def _process_procurement(self, cr, uid, proc_id, context=None):
+        # REPLACE _process_procurement to eliminate automatic execution of run for confirmed procurements
         self.check(cr, uid, [proc_id])
-        #self.run(cr, uid, [proc_id])
 
     def _create_orderpoint_procurement(self, cr, uid, order_point, qty_rounded, context=None):
         context = context or {}
         proc_id = super(procurement_order, self)._create_orderpoint_procurement(cr, uid, order_point, qty_rounded, context=context)
-        # push forward
-        # _bom_explode on orderpoint.product_id children if bom_id
-        # aa.scheduledate = a.sd-a.produce_delay
-        #import pdb
-        #pdb.set_trace()
-        #if proc_id and not context['push_forward']==0:
-        if proc_id and 'push_forward' not in context:
+        if proc_id:
             bom_obj = self.pool.get('mrp.bom')
             bom_id = bom_obj._bom_find(cr, uid, product_id=order_point.product_id.id, context=context)
             if bom_id:
-                #res = prod_obj._prepare_lines(cr, uid, bom_obj.browse(cr, uid, bom_id, context=context), context=context)
                 uom_obj = self.pool.get('product.uom')
-                proc_obj = self.pool.get('procurement.order')
-                proc_point = proc_obj.browse(cr, uid, proc_id)
+                procurement_obj = self.pool.get('procurement.order')
+                proc_point = procurement_obj.browse(cr, uid, proc_id)
                 bom_point = bom_obj.browse(cr, uid, bom_id)
                 # get components and workcenter_lines from BoM structure
                 factor = uom_obj._compute_qty(cr, uid, proc_point.product_uom.id, proc_point.product_qty, bom_point.product_uom.id)
@@ -188,47 +212,34 @@ class procurement_order(models.Model):
                 res = bom_obj._bom_explode(cr, uid, bom_point, proc_point.product_id, factor / bom_point.product_qty, context=context)
                 # product_lines
                 results = res[0]
-                context['push_forward'] = 0
-                import pdb
-                pdb.set_trace()
-                #context['to_date'] = (datetime.strptime(context['to_date'],DEFAULT_SERVER_DATE_FORMAT) - relativedelta(days=proc_point.product_id.produce_delay)).strftime(DEFAULT_SERVER_DATE_FORMAT)
+                # aa.scheduledate = a.sd - a.produce_delay
+                bucket_delay = self._get_bucket_delay(cr, uid, context=context)
+                # this 'new' to_date is used for bucket purposes so if weekly buckets in use, will need to line up with preceding bucket tail end
+                #context['child_to_date'] = (datetime.strptime(context['to_date'],DEFAULT_SERVER_DATE_FORMAT) + relativedelta(days=bucket_delay) - relativedelta(days=proc_point.product_id.produce_delay)).strftime(DEFAULT_SERVER_DATE_FORMAT)
                 context['child_to_date'] = (datetime.strptime(context['to_date'],DEFAULT_SERVER_DATE_FORMAT) - relativedelta(days=proc_point.product_id.produce_delay)).strftime(DEFAULT_SERVER_DATE_FORMAT)
-                #context['parent_product_id'] = proc_point.product_id.id
                 context['parent_bom_id'] = bom_id
-                orderpoint_obj = self.pool.get('stock.warehouse.orderpoint')
                 # process procurements for results
-                for prod in results:
-                    prod.pop('product_uos_qty')
-                    prod.pop('name')
-                    #dom = prod['product_id'] and [('product_id', '=', prod['product_id'])] or []
-                    dom = [('product_id', '=', prod['product_id'])]
-                    #orderpoint_ids = orderpoint_obj.search(cr, uid, dom)
-                    # potential issue if more than one orderpoint per product
-                    #   procurement order could be created for each orderpoint
-                    #for op in orderpoint_obj.browse(cr, uid, orderpoint_ids, context=context):
-                        #self._try_orderpoint_procurement(cr, uid, op, prod, context=context)
- 
-                    prod_obj = self.pool.get('product.product')
-                    prod_point = prod_obj.browse(cr, uid, prod['product_id'])
-                    #prod_qty = uom_obj._compute_qty(cr, uid, prod['product_uom'], prod['product_qty'], op.product_uom.id)
-                    proc_id = proc_obj.create(cr, uid,
-                                                    self._prepare_outbound_procurement(cr, uid, prod_point, prod['product_qty'], prod['product_uom'], context=context),
+                for product in results:
+                    product_obj = self.pool.get('product.product')
+                    product_point = product_obj.browse(cr, uid, product['product_id'])
+                    proc_id = procurement_obj.create(cr, uid,
+                                                    self._prepare_outbound_procurement(cr, uid, product_point, product['product_qty'], product['product_uom'], context=context),
                                                     context=context)
                     self._process_procurement(cr, uid, proc_id, context=context)
+                context.pop('child_to_date')
+                context.pop('parent_bom_id')
 
     def _procure_orderpoint_confirm(self, cr, uid, use_new_cursor=False, company_id = False, context=None):
         # delete all procurements matching
         #   created by engine
         #   in confirmed state
-        #   not linking to any RFQ or MO
-        proc_obj = self.pool.get('procurement.order')
+        #   not linked to any RFQ or MO
+        procurement_obj = self.pool.get('procurement.order')
         dom = [('state','=','confirmed'),('purchase_line_id','=',False),('production_id','=',False),'|',('origin','like','OP/'),('origin','like','OUT/')]
-        proc_ids = proc_obj.search(cr, uid, dom) or []
-        import pdb
-        pdb.set_trace()
+        proc_ids = procurement_obj.search(cr, uid, dom) or []
         if proc_ids:
-            proc_obj.cancel(cr, SUPERUSER_ID, proc_ids, context=context)
-            proc_obj.unlink(cr, SUPERUSER_ID, proc_ids, context=context)
+            procurement_obj.cancel(cr, SUPERUSER_ID, proc_ids, context=context)
+            procurement_obj.unlink(cr, SUPERUSER_ID, proc_ids, context=context)
             if use_new_cursor:
                 cr.commit()
 

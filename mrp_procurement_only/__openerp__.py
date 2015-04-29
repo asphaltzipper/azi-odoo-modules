@@ -33,7 +33,10 @@ Separate MO/RFQ generation from Procurement Order generation.
     """,
     "depends": ["mrp", "mrp_time_bucket"],
     "data" : [
+        'security/security.xml',
+        'security/ir.model.access.csv',
         'mrp_procurement_only_view.xml',
+        'wizard/procurement_run_view.xml',
     ],
     "demo": [],
     "test":[],
