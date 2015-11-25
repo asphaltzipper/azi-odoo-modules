@@ -6,10 +6,10 @@
 
         <!-- update sales team search view here -->
 
-        <record id="crm_case_section_view_tree_inherited" model="ir.ui.view">
-            <field name="name">crm.case.section.tree.inherited</field>
-            <field name="model">crm.case.section</field>
-            <field name="inherit_id" ref="sales_team.crm_case_section_view_tree" />
+        <record id="crm_team_view_tree_inherited" model="ir.ui.view">
+            <field name="name">crm.team.tree.inherited</field>
+            <field name="model">crm.team</field>
+            <field name="inherit_id" ref="sales_team.crm_team_view_tree" />
             <field name="arch" type="xml">
                 <xpath expr="//tree/field[@name='user_id']" position="after">
                     <field name="region_id" />
@@ -17,10 +17,10 @@
             </field>
         </record>
 
-        <record id="crm_case_section_view_form_inherited" model="ir.ui.view">
-            <field name="name">crm.case.section.form.inherited</field>
-            <field name="model">crm.case.section</field>
-            <field name="inherit_id" ref="sales_team.crm_case_section_view_form" />
+        <record id="crm_team_view_form_inherited" model="ir.ui.view">
+            <field name="name">crm.team.form.inherited</field>
+            <field name="model">crm.team</field>
+            <field name="inherit_id" ref="sales_team.crm_team_view_form" />
             <field name="arch" type="xml">
                 <field name="user_id" position="after">
                     <field name="region_id" />
@@ -36,13 +36,13 @@
                 <field name="image" position="after">
                     <field name="state_trigger" invisible="1" />
                 </field>
-                <xpath expr="//form[@string='Partners']/sheet/group/group/div[2]/div[contains(concat('.', @class, '.'), '.address_format.')]/field[@name='state_id']" position="attributes">
+                <xpath expr="//form/sheet/group/group/div/field[@name='state_id']" position="attributes">
                     <attribute name="on_change">onchange_state(state_id,customer)</attribute>
                 </xpath>
-                <xpath expr="//form[@string='Partners']/sheet/group/group/div[2]/field[@name='country_id']" position="attributes">
+                <xpath expr="//form/sheet/group/group/div/field[@name='country_id']" position="attributes">
                     <attribute name="on_change">onchange_country(country_id,customer,state_trigger)</attribute>
                 </xpath>
-                <xpath expr="//form[@string='Partners']/sheet/notebook/page[@name='sales_purchases']/group/group[2]/field[@name='customer']" position="attributes">
+                <xpath expr="//form/sheet/notebook/page[@name='sales_purchases']/group/group[@name='sale']/field[@name='customer']" position="attributes">
                     <attribute name="on_change">onchange_state(state_id,customer)</attribute>
                 </xpath>
             </field>
@@ -52,7 +52,7 @@
             <field name="name">sales.team.region.form</field>
             <field name="model">sales.team.region</field>
             <field name="arch" type="xml">
-                <form string="Sales Region">
+                <form string="Sales Region" name="sales_region">
                     <sheet>
                         <div class="oe_title">
                             <label for="name" class="oe_edit_only" />
@@ -61,13 +61,13 @@
                             </h1>
                         </div>
                         <notebook>
-                            <page string="Country Groups">
+                            <page string="Country Groups" name="country_groups">
                                 <field name="country_groups" on_change="onchange_region(states,countries,country_groups)" />
                             </page>
-                            <page string="Countries">
+                            <page string="Countries" name="countries">
                                 <field name="countries" on_change="onchange_region(states,countries,country_groups)" />
                             </page>
-                            <page string="States">
+                            <page string="States" name="states">
                                 <!--<field name="state_ids" invisible="0" />-->
                                 <field name="states" domain="[('country_id','not in',countries[0][2])]" on_change="onchange_region(states,countries,country_groups)">
                                     <tree>
@@ -103,7 +103,7 @@
             <field name="name">sales.team.region.tree</field>
             <field name="model">sales.team.region</field>
             <field name="arch" type="xml">
-                <tree string="Sales Team Regions">
+                <tree string="Sales Team Regions" name="sales_team_regions">
                     <field name="name" />
                     <field name="states" />
                     <field name="countries" />
@@ -118,7 +118,7 @@
             target="current"
             id="sales_team_region_act_window"/>
 
-        <menuitem action="sales_team_region_act_window" id="menu_sales_team_region_act" parent="base.menu_sales" sequence="0" groups="base.group_multi_salesteams" />
+        <menuitem action="sales_team_region_act_window" id="menu_sales_team_region_act" parent="base.menu_sale_config" sequence="0" groups="base.group_sale_manager" />
 
     </data>
 </openerp>

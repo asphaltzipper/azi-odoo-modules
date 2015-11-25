@@ -122,7 +122,7 @@
 
         <record id="point_five_ten_net_thirty_line_one" model="account.payment.term.line">
             <field name="payment_id" eval="point_five_ten_net_thirty" />
-            <field name="value">procent</field>
+            <field name="value">percent</field>
             <field name="days" eval="10" />
             <field name="value_amount">0.005</field>
             <field name="days2" eval="0" />
@@ -137,7 +137,7 @@
 
         <record id="one_ten_net_thirty_line_one" model="account.payment.term.line">
             <field name="payment_id" eval="one_ten_net_thirty" />
-            <field name="value">procent</field>
+            <field name="value">percent</field>
             <field name="days" eval="10" />
             <field name="value_amount">0.01</field>
             <field name="days2" eval="0" />
@@ -152,7 +152,7 @@
 
         <record id="one_seven_net_fifteen_line_one" model="account.payment.term.line">
             <field name="payment_id" eval="one_seven_net_fifteen" />
-            <field name="value">procent</field>
+            <field name="value">percent</field>
             <field name="days" eval="7" />
             <field name="value_amount">0.01</field>
             <field name="days2" eval="0" />
@@ -167,7 +167,7 @@
 
         <record id="one_point_five_ten_net_thirty_line_one" model="account.payment.term.line">
             <field name="payment_id" eval="one_point_five_ten_net_thirty" />
-            <field name="value">procent</field>
+            <field name="value">percent</field>
             <field name="days" eval="10" />
             <field name="value_amount">0.015</field>
             <field name="days2" eval="0" />
@@ -182,7 +182,7 @@
 
         <record id="two_ten_tenth_line_one" model="account.payment.term.line">
             <field name="payment_id" eval="two_ten_tenth" />
-            <field name="value">procent</field>
+            <field name="value">percent</field>
             <field name="days" eval="10" />
             <field name="value_amount">0.02</field>
             <field name="days2" eval="0" />
@@ -197,7 +197,7 @@
 
         <record id="two_ten_net_thirty_line_one" model="account.payment.term.line">
             <field name="payment_id" eval="two_ten_net_thirty" />
-            <field name="value">procent</field>
+            <field name="value">percent</field>
             <field name="days" eval="10" />
             <field name="value_amount">0.02</field>
             <field name="days2" eval="0" />
@@ -212,7 +212,7 @@
 
         <record id="two_fifteen_net_thirty_line_one" model="account.payment.term.line">
             <field name="payment_id" eval="two_fifteen_net_thirty" />
-            <field name="value">procent</field>
+            <field name="value">percent</field>
             <field name="days" eval="15" />
             <field name="value_amount">0.02</field>
             <field name="days2" eval="0" />
@@ -227,7 +227,7 @@
 
         <record id="five_twenty_one_net_thirty_line_one" model="account.payment.term.line">
             <field name="payment_id" eval="five_twenty_one_net_thirty" />
-            <field name="value">procent</field>
+            <field name="value">percent</field>
             <field name="days" eval="21" />
             <field name="value_amount">0.05</field>
             <field name="days2" eval="0" />

@@ -25,8 +25,8 @@ from openerp import models, fields, api
 from openerp.exceptions import ValidationError
 from openerp.tools.translate import _
 
-class crm_case_section(models.Model): # sales_team
-    _inherit = 'crm.case.section'
+class crm_team(models.Model): # sales_team
+    _inherit = 'crm.team'
 
     region_id = fields.Many2one('sales.team.region', 'Sales Region', translate=True)
 
@@ -35,7 +35,7 @@ class res_partner(models.Model):
     _inherit = 'res.partner'
 
     @api.model
-    def _lookup_section(self, state_id=False, customer=False, country_id=False):
+    def _lookup_team(self, state_id=False, customer=False, country_id=False):
         if (state_id or country_id) and customer:
             s_region_id = False
             c_region_id = False
@@ -47,6 +47,7 @@ class res_partner(models.Model):
                 s_region_id = self.env['sales.team.region'].search([('states','in',state_id)])['id']
             country_group_ids = self.env['res.country.group'].search([('country_ids','in',country_id)])
             for country_group_id in country_group_ids:
+                # TODO: index out of range error when there are no regions defined
                 potential_region = self.env['sales.team.region'].search([('country_groups','in',country_group_id.id)])[0]
                 # cycle till we hit one
                 if potential_region:
@@ -54,24 +55,24 @@ class res_partner(models.Model):
                     break
             region_id = s_region_id or c_region_id or cg_region_id
             if region_id:
-                section = self.env['crm.case.section'].search([('region_id','=',region_id)])
-                if section:
-                    return section
+                team = self.env['crm.team'].search([('region_id','=',region_id)])
+                if team:
+                    return team
         #return 0
-        return self.env['crm.case.section']
+        return self.env['crm.team']
 
 
     @api.model
-    def lookup_section(self, state_id=False, customer=False, country_id=False):
-        return self._lookup_section(state_id,customer,country_id).id or self._default_section()
+    def lookup_team(self, state_id=False, customer=False, country_id=False):
+        return self._lookup_team(state_id,customer,country_id).id or self._default_team()
 
 
     #@api.one
     #@api.depends('state_id', 'customer')
     @api.model
-    def _default_section(self):
-    #def _default_section(self, state_id, customer):
-        # this should set section_id for creation via xmlrpc
+    def _default_team(self):
+    #def _default_team(self, state_id, customer):
+        # this should set team_id for creation via xmlrpc
         #state_id = self.env.context.get('state_id', False)
         #customer = self.env.context.get('customer', False)
         #state_id = self.state_id
@@ -84,28 +85,28 @@ class res_partner(models.Model):
         #pdb.set_trace()
         #if state_id and customer:
 
-        #section_id = self._lookup_section(state_id, customer)
-        #if section_id:
-        #    return section_id
+        #team_id = self._lookup_team(state_id, customer)
+        #if team_id:
+        #    return team_id
         #if customer:
-            #return 0 #need external id of default crm.case.section.id
+            #return 0 #need external id of default crm.team.id
             #return self.env['ir.property'].get('','sales.team.region')
             # default to odoo builtin sales team as customer requires one
-            #return self.env['ir.property'].get('section_sales_department','crm.case.section')
+            #return self.env['ir.property'].get('team_sales_department','crm.team')
         # https://github.com/odoo/odoo/blob/8.0/openerp/addons/base/ir/ir_model.py#L940
-        return self.env['ir.model.data'].xmlid_to_res_id('sales_team.section_sales_department')
+        return self.env['ir.model.data'].xmlid_to_res_id('sales_team.team_sales_department')
         #return False
-        #return self.env['crm.case.section'].search([('region_id','=',0)])
+        #return self.env['crm.team'].search([('region_id','=',0)])
 
     @api.model
-    @api.constrains('section_id','customer')
-    def _require_section(self):
+    @api.constrains('team_id','customer')
+    def _require_team(self):
         #for partner in self.browse():
         for record in self:
-            #if partner.customer and not partner.section_id.id:
+            #if partner.customer and not partner.team_id.id:
                 #return False
-            if self.env['res.users'].has_group('base.group_multi_salesteams') and record.customer and not record.section_id.id:
-                raise ValidationError("Customers require a valid Sales Team. (%s)" % record.section_id)
+            if self.env['res.users'].has_group('base.group_multi_salesteams') and record.customer and not record.team_id.id:
+                raise ValidationError("Customers require a valid Sales Team. (%s)" % record.team_id)
         #return True
 
     # added due to Error triggered during 8.0 database update 20150320:
@@ -115,8 +116,8 @@ class res_partner(models.Model):
     def _st_search(self):
         return [('id', 'in', [])]
 
-    #section_id = fields.Many2one('crm.case.section', 'Sales Team', default=lambda self: self.with_context(self._context)._default_section(self.state_id, self.customer))
-    section_id = fields.Many2one('crm.case.section', 'Sales Team') 
+    #team_id = fields.Many2one('crm.team', 'Sales Team', default=lambda self: self.with_context(self._context)._default_team(self.state_id, self.customer))
+    team_id = fields.Many2one('crm.team', 'Sales Team') 
     state_trigger = fields.Boolean(store=False, default=False, search='_st_search')
 
 
@@ -124,24 +125,24 @@ class res_partner(models.Model):
     def onchange_state(self, state_id=False, customer=False):
         res = super(res_partner, self).onchange_state(state_id)
         #if state_id and customer:
-            #section_id = self._default_section(state_id)
+            #team_id = self._default_team(state_id)
             #self = self.with_context(state_id=state_id, customer=customer)
             #self.state_id = state_id
             #self.customer = customer
             #test = self.browse()[0]
-            #section_id = test._default_section()
-            #section_id = self._lookup_section(state_id, customer)
-            #if section_id:
-                #res['value']['section_id'] = section_id
+            #team_id = test._default_team()
+            #team_id = self._lookup_team(state_id, customer)
+            #if team_id:
+                #res['value']['team_id'] = team_id
         if self.env['res.users'].has_group('base.group_multi_salesteams') and res:
-            res['value']['section_id'] = self._lookup_section(state_id, customer)
+            res['value']['team_id'] = self._lookup_team(state_id, customer)
             res['value']['state_trigger'] = True
         return res
 
     @api.multi
     def onchange_country(self, country_id=False, customer=False, state_trigger=False):
         if self.env['res.users'].has_group('base.group_multi_salesteams') and not state_trigger:
-            return {'value': {'section_id': self._lookup_section(customer=customer, country_id=country_id)}}
+            return {'value': {'team_id': self._lookup_team(customer=customer, country_id=country_id)}}
         return {'value': {'state_trigger': False}}
 
 
@@ -174,7 +175,7 @@ class sales_team_region_country_group_rel(models.Model):
     country_group_id = fields.Many2one('res.country.group', 'Country Group', required=True, translate=True)
 
     _sql_constraints = [
-        ('rel_country_group_uniq', 'unique(country_id)', _('A region with the same country group already exists [rel_country_group_uniq]')),
+        ('rel_country_group_uniq', 'unique(country_group_id)', _('A region with the same country group already exists [rel_country_group_uniq]')),
     ]
 
 
@@ -213,6 +214,7 @@ class sales_team_region(models.Model):
                     country_ids.add(country.id) # countries of country_groups
                     for state in self.env['res.country.state'].search([('country_id','=',country.id)]):
                         state_ids.add(state.id) # states of countries of etc.
+        # TODO: index out of range error
         # add currently selected regions for domain exclusion
         for state_id in states[0][2]:
             for state in self.env['res.country.state'].browse(state_id):

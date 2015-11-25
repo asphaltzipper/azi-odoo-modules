@@ -46,7 +46,7 @@
                 <xpath expr="//kanban/field[@name='display_name']" position="after">
                     <field name="code" />
                 </xpath>
-                <xpath expr="//kanban/templates/t/div/div/h4" position="after">
+                <xpath expr="//kanban/templates/t/div/div/strong" position="after">
                     <ul>
                         <li t-if="record.code.raw_value"><field name="code" /></li>
                     </ul>
