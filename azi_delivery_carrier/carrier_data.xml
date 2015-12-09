@@ -3,31 +3,34 @@
     <data noupdate="1">
 
         <!-- Resource: res.partner -->
-        
+
         <!-- Add partners for delivery carriers -->
-                
+
         <record id="shipfedex" model="res.partner">
             <field name="name">Fedex</field>
             <field name="code">SHIPFEDEX</field>
             <field name="is_company" eval="True" />
+            <field name="customer" eval="False" />
         </record>
 
         <record id="shipfltl" model="res.partner">
             <field name="name">Freight LTL</field>
             <field name="code">SHIPFLTL</field>
             <field name="is_company" eval="True" />
+            <field name="customer" eval="False" />
         </record>
 
         <record id="shipusps" model="res.partner">
             <field name="name">USPS</field>
             <field name="code">SHIPUSPS</field>
             <field name="is_company" eval="True" />
+            <field name="customer" eval="False" />
         </record>
 
         <!-- Resource: product.product -->
-        
+
         <!-- Add products for delivery carriers -->
-                
+
         <record id="shipfedexproducta" model="product.product">
             <field name="name">Fedex A Ground</field>
             <field name="type">service</field>
@@ -89,9 +92,9 @@
         </record>
 
         <!-- Resource: delivery.carrier -->
-        
+
         <!-- Add delivery carriers -->
-                
+
         <record id="shipfedexcarriera" model="delivery.carrier">
             <field name="name">Fedex A Ground</field>
             <field name="partner_id" eval="shipfedex" />
