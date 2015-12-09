@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 
-import sales_team_region 
+import sales_team_region

@@ -25,10 +25,12 @@ from openerp import models, fields, api
 from openerp.exceptions import ValidationError
 from openerp.tools.translate import _
 
-class crm_team(models.Model): # sales_team
+
+class crm_team(models.Model):
     _inherit = 'crm.team'
 
-    region_id = fields.Many2one('sales.team.region', 'Sales Region', translate=True)
+    region_id = fields.Many2one('sales.team.region', 'Sales Region',
+                                translate=True)
 
 
 class res_partner(models.Model):
@@ -41,33 +43,38 @@ class res_partner(models.Model):
             c_region_id = False
             cg_region_id = False
             if not country_id:
-                country_id = self.env['res.country.state'].browse(state_id)['country_id']['id']
-            c_region_id = self.env['sales.team.region'].search([('countries','in',country_id)])['id']
+                country_id = self.env['res.country.state'].browse(
+                    state_id)['country_id']['id']
+            c_region_id = self.env['sales.team.region'].search(
+                [('countries', 'in', country_id)])['id']
             if state_id:
-                s_region_id = self.env['sales.team.region'].search([('states','in',state_id)])['id']
-            country_group_ids = self.env['res.country.group'].search([('country_ids','in',country_id)])
+                s_region_id = self.env['sales.team.region'].search(
+                    [('states', 'in', state_id)])['id']
+            country_group_ids = self.env['res.country.group'].search(
+                [('country_ids', 'in', country_id)])
             for country_group_id in country_group_ids:
-                potential_region = self.env['sales.team.region'].search([('country_groups','in',country_group_id.id)])[0]
+                potential_region = self.env['sales.team.region'].search(
+                    [('country_groups', 'in', country_group_id.id)])[0]
                 # cycle till we hit one
                 if potential_region:
                     cg_region_id = potential_region.id
                     break
             region_id = s_region_id or c_region_id or cg_region_id
             if region_id:
-                team = self.env['crm.team'].search([('region_id','=',region_id)])
+                team = self.env['crm.team'].search([('region_id', '=',
+                                                     region_id)])
                 if team:
                     return team
-        #return 0
+        # return 0
         return self.env['crm.team']
-
 
     @api.model
     def lookup_team(self, state_id=False, customer=False, country_id=False):
-        return self._lookup_team(state_id,customer,country_id).id or self._default_team()
+        return self._lookup_team(state_id, customer,
+                                 country_id).id or self._default_team()
 
-
-    #@api.one
-    #@api.depends('state_id', 'customer')
+#    @api.one
+#    @api.depends('state_id', 'customer')
     @api.model
     def _default_team(self):
     #def _default_team(self, state_id, customer):
@@ -93,12 +100,13 @@ class res_partner(models.Model):
             # default to odoo builtin sales team as customer requires one
             #return self.env['ir.property'].get('team_sales_department','crm.team')
         # https://github.com/odoo/odoo/blob/8.0/openerp/addons/base/ir/ir_model.py#L940
-        return self.env['ir.model.data'].xmlid_to_res_id('sales_team.team_sales_department')
+        return self.env['ir.model.data'].xmlid_to_res_id(
+            'sales_team.team_sales_department')
         #return False
         #return self.env['crm.team'].search([('region_id','=',0)])
 
     @api.model
-    @api.constrains('team_id','customer')
+    @api.constrains('team_id', 'customer')
     def _require_team(self):
         #for partner in self.browse():
         for record in self:
@@ -106,7 +114,8 @@ class res_partner(models.Model):
                 #return False
             #if self.env['res.users'].has_group('base.group_multi_salesteams') and record.customer and not record.team_id.id:
             if record.customer and not record.team_id.id:
-                raise ValidationError("Customers require a valid Sales Team. (%s)" % record.team_id)
+                raise ValidationError("Customers require a valid Sales Team."
+                                      " (%s)" % record.team_id)
         #return True
 
     # added due to Error triggered during 8.0 database update 20150320:
@@ -116,13 +125,14 @@ class res_partner(models.Model):
     def _st_search(self):
         return [('id', 'in', [])]
 
-    #team_id = fields.Many2one('crm.team', 'Sales Team', default=lambda self: self.with_context(self._context)._default_team(self.state_id, self.customer))
+#    team_id = fields.Many2one('crm.team', 'Sales Team', default=lambda self: self.with_context(self._context)._default_team(self.state_id, self.customer))
     team_id = fields.Many2one('crm.team', 'Sales Team')
-    state_trigger = fields.Boolean(store=False, default=False, search='_st_search')
-
+    state_trigger = fields.Boolean(store=False, default=False,
+                                   search='_st_search')
 
     @api.multi
-    def onchange_state(self, state_id=False, customer=False, state_trigger=False):
+    def onchange_state(self, state_id=False, customer=False,
+                       state_trigger=False):
         if state_id:
             res = super(res_partner, self).onchange_state(state_id)
             res['value']['state_trigger'] = state_trigger
@@ -132,15 +142,19 @@ class res_partner(models.Model):
         return res
 
     @api.multi
-    def onchange_country(self, country_id=False, customer=False, state_trigger=False):
+    def onchange_country(self, country_id=False, customer=False,
+                         state_trigger=False):
         res = {'value': {'state_trigger': False}}
         if not state_trigger:
-            res['value']['state_id'] = self.env['res.country.state'].browse().id
-            res['value']['team_id'] = self._lookup_team(customer=customer, country_id=country_id)
+            res['value']['state_id'] = self.env[
+                'res.country.state'].browse().id
+            res['value']['team_id'] = self._lookup_team(customer=customer,
+                                                        country_id=country_id)
         return res
 
     @api.multi
-    def onchange_customer(self, state_id=False, country_id=False, customer=False):
+    def onchange_customer(self, state_id=False, country_id=False,
+                          customer=False):
         if state_id:
             return self.onchange_state(state_id, customer)
         if country_id:
@@ -150,33 +164,47 @@ class res_partner(models.Model):
 class sales_team_region_state_rel(models.Model):
     _name = 'sales.team.region.state.rel'
 
-    region_id = fields.Many2one('sales.team.region', 'Sales Region', required=True, translate=True, ondelete='cascade')
-    state_id = fields.Many2one('res.country.state', 'State', required=True, translate=True)
+    region_id = fields.Many2one('sales.team.region', 'Sales Region',
+                                required=True, translate=True,
+                                ondelete='cascade')
+    state_id = fields.Many2one('res.country.state', 'State', required=True,
+                               translate=True)
 
     _sql_constraints = [
-        ('rel_state_uniq', 'unique(state_id)', _('A region with the same state already exists [rel_state_uniq]')),
+        ('rel_state_uniq', 'unique(state_id)',
+         _('A region with the same state already exists [rel_state_uniq]')),
     ]
 
 
 class sales_team_region_country_rel(models.Model):
     _name = 'sales.team.region.country.rel'
 
-    region_id = fields.Many2one('sales.team.region', 'Sales Region', required=True, translate=True, ondelete='cascade')
-    country_id = fields.Many2one('res.country', 'Country', required=True, translate=True)
+    region_id = fields.Many2one('sales.team.region', 'Sales Region',
+                                required=True, translate=True,
+                                ondelete='cascade')
+    country_id = fields.Many2one('res.country', 'Country', required=True,
+                                 translate=True)
 
     _sql_constraints = [
-        ('rel_country_uniq', 'unique(country_id)', _('A region with the same country already exists [rel_country_uniq]')),
+        ('rel_country_uniq', 'unique(country_id)',
+         _('A region with the same country already exists [rel_country_uniq]')
+         ),
     ]
 
 
 class sales_team_region_country_group_rel(models.Model):
     _name = 'sales.team.region.country.group.rel'
 
-    region_id = fields.Many2one('sales.team.region', 'Sales Region', required=True, translate=True, ondelete='cascade')
-    country_group_id = fields.Many2one('res.country.group', 'Country Group', required=True, translate=True)
+    region_id = fields.Many2one('sales.team.region', 'Sales Region',
+                                required=True, translate=True,
+                                ondelete='cascade')
+    country_group_id = fields.Many2one('res.country.group', 'Country Group',
+                                       required=True, translate=True)
 
     _sql_constraints = [
-        ('rel_country_group_uniq', 'unique(country_group_id)', _('A region with the same country group already exists [rel_country_group_uniq]')),
+        ('rel_country_group_uniq', 'unique(country_group_id)',
+         _('A region with the same country group already exists'
+           ' [rel_country_group_uniq]')),
     ]
 
 
@@ -184,20 +212,36 @@ class sales_team_region(models.Model):
     _name = 'sales.team.region'
 
     name = fields.Char('Sales Region', required=True, translate=True)
-    states = fields.Many2many('res.country.state', 'sales_team_region_state_rel', 'region_id', 'state_id', domain=lambda self: [('id', 'not in', self._region_domain(1))])
-    countries = fields.Many2many('res.country', 'sales_team_region_country_rel', 'region_id', 'country_id', domain=lambda self: [('id', 'not in', self._region_domain(2))])
-    country_groups = fields.Many2many('res.country.group', 'sales_team_region_country_group_rel', 'region_id', 'country_group_id', domain=lambda self: [('id', 'not in', self._region_domain(3))])
+    states = fields.Many2many('res.country.state',
+                              'sales_team_region_state_rel', 'region_id',
+                              'state_id', domain=lambda self: [
+                                  ('id', 'not in', self._region_domain(1))])
+    countries = fields.Many2many('res.country',
+                                 'sales_team_region_country_rel', 'region_id',
+                                 'country_id', domain=lambda self: [
+                                     ('id', 'not in', self._region_domain(2))])
+    country_groups = fields.Many2many('res.country.group',
+                                      'sales_team_region_country_group_rel',
+                                      'region_id', 'country_group_id',
+                                      domain=lambda self: [
+                                          ('id', 'not in',
+                                           self._region_domain(3))])
 
     @api.model
     @api.constrains('states', 'countries', 'country_groups')
     def _require_region_definition(self):
         for record in self:
-            if not (record.states or record.countries or record.country_groups):
-                raise ValidationError("Sales regions require a valid region definition. Please select at least one state, country, or country group.")
+            if not (record.states or record.countries or
+                    record.country_groups):
+                raise ValidationError("Sales regions require a valid region"
+                                      " definition. Please select at least one"
+                                      " state, country, or country group.")
 
+                # exclude state country_ids
     @api.multi
     def _region_domain(self, region=False):
         state_ids = set()
+        state_country_ids = set()
         country_ids = set()
         country_group_ids = set()
         # add existing regions for domain exclusion
@@ -205,44 +249,67 @@ class sales_team_region(models.Model):
         for record in self.env['sales.team.region'].search([]):
             for state in record.states:
                 state_ids.add(state.id)
-                country_ids.add(state.country_id.id) # exclude state country_ids
-                for country_group in self.env['res.country'].search([('id','=',state.country_id.id)]).country_group_ids:
-                    country_group_ids.add(country_group.id)
+                # exclude state country_ids
+                state_country_ids.add(state.country_id.id)
+                #for country_group in self.env['res.country'].search([('id','=',state.country_id.id)]).country_group_ids:
+                #    country_group_ids.add(country_group.id)
             for country in record.countries:
                 country_ids.add(country.id)
-                for state in self.env['res.country.state'].search([('country_id','=',country.id)]):
-                    state_ids.add(state.id) # exclude states of countries
-                for country_group in self.env['res.country'].search([('id','=',country.id)]).country_group_ids:
+                for state in self.env['res.country.state'].search(
+                        [('country_id', '=', country.id)]):
+                    state_ids.add(state.id)  # exclude states of countries
+                for country_group in self.env['res.country'].search(
+                        [('id', '=', country.id)]).country_group_ids:
                     country_group_ids.add(country_group.id)
             for country_group in record.country_groups:
                 country_group_ids.add(country_group.id)
                 for country in country_group.country_ids:
-                    country_ids.add(country.id) # countries of country_groups
-                    for state in self.env['res.country.state'].search([('country_id','=',country.id)]):
-                        state_ids.add(state.id) # states of countries of etc.
-        region_domain = {1:list(state_ids), 2:list(country_ids), 3:list(country_group_ids)}
+                    country_ids.add(country.id)  # countries of country_groups
+                    for state in self.env['res.country.state'].search(
+                            [('country_id', '=', country.id)]):
+                        state_ids.add(state.id)  # states of countries of etc.
+        for country_id in state_country_ids:
+            country_ids.add(country_id)
+            for country_group in self.env['res.country'].search(
+                    [('id', '=', country_id)]).country_group_ids:
+                country_group_ids.add(country_group.id)
+        region_domain = {1: list(state_ids), 2: list(country_ids),
+                         3: list(country_group_ids)}
         if region:
             return region_domain.get(region, list())
         else:
             return set(state_ids), set(country_ids), set(country_group_ids)
 
-    @api.onchange('country_groups','countries','states')
+    @api.onchange('country_groups', 'countries', 'states')
     def onchange_region(self):
         state_ids, country_ids, country_group_ids = self._region_domain()
+        state_country_ids = set()
         # add currently selected regions for domain exclusion
         for state in self.states:
             for state_id in self.env['res.country.state'].browse(state.id):
-                country_ids.add(state_id.country_id.id)
-                for country_group in self.env['res.country.group'].search([('country_ids','in',state_id.country_id.id)]):
-                    country_group_ids.add(country_group.id)
+                state_country_ids.add(state_id.country_id.id)
+                #for country_group in self.env['res.country.group'].search([('country_ids','in',state_id.country_id.id)]):
+                #    country_group_ids.add(country_group.id)
+        for country_id in state_country_ids:
+            country_ids.add(country_id)
+            for country_group in self.env['res.country'].search(
+                    [('id', '=', country_id)]).country_group_ids:
+                country_group_ids.add(country_group.id)
         for country in self.countries:
-            for state in self.env['res.country.state'].search([('country_id','=',country.id)]):
+            for state in self.env['res.country.state'].search(
+                    [('country_id', '=', country.id)]):
                 state_ids.add(state.id)
-            for country_group in self.env['res.country.group'].search([('country_ids','in',country.id)]):
+            for country_group in self.env['res.country.group'].search(
+                    [('country_ids', 'in', country.id)]):
                 country_group_ids.add(country_group.id)
         for country_group in self.country_groups:
-            for country in self.env['res.country.group'].browse(country_group.id)['country_ids']:
+            for country in self.env['res.country.group'].browse(
+                    country_group.id)['country_ids']:
                 country_ids.add(country.id)
-                for state in self.env['res.country.state'].search([('country_id','=',country.id)]):
+                for state in self.env['res.country.state'].search(
+                        [('country_id', '=', country.id)]):
                     state_ids.add(state.id)
-        return {'domain': {'states': [('id', 'not in', list(state_ids))], 'countries': [('id', 'not in', list(country_ids))], 'country_groups': [('id', 'not in', list(country_group_ids))]}}
+        return {'domain': {'states': [('id', 'not in', list(state_ids))],
+                           'countries': [('id', 'not in', list(country_ids))],
+                           'country_groups': [('id', 'not in',
+                                               list(country_group_ids))]}}
