@@ -37,14 +37,17 @@
                     <field name="state_trigger" invisible="1" />
                 </field>
                 <xpath expr="//form/sheet/group/group/div/field[@name='state_id']" position="attributes">
-                    <attribute name="on_change">onchange_state(state_id,customer)</attribute>
+                    <attribute name="on_change">onchange_state(state_id,customer,True)</attribute>
                 </xpath>
                 <xpath expr="//form/sheet/group/group/div/field[@name='country_id']" position="attributes">
                     <attribute name="on_change">onchange_country(country_id,customer,state_trigger)</attribute>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page[@name='sales_purchases']/group/group[@name='sale']/field[@name='customer']" position="attributes">
-                    <attribute name="on_change">onchange_state(state_id,customer)</attribute>
+                    <attribute name="on_change">onchange_customer(state_id,country_id,customer)</attribute>
                 </xpath>
+                <field name="user_id" position="after">
+                    <field name="team_id" completion="1" />
+                </field>
             </field>
         </record>
 
@@ -62,14 +65,14 @@
                         </div>
                         <notebook>
                             <page string="Country Groups" name="country_groups">
-                                <field name="country_groups" on_change="onchange_region(states,countries,country_groups)" />
+                                <field name="country_groups" />
                             </page>
                             <page string="Countries" name="countries">
-                                <field name="countries" on_change="onchange_region(states,countries,country_groups)" />
+                                <field name="countries" />
                             </page>
                             <page string="States" name="states">
                                 <!--<field name="state_ids" invisible="0" />-->
-                                <field name="states" domain="[('country_id','not in',countries[0][2])]" on_change="onchange_region(states,countries,country_groups)">
+                                <field name="states">
                                     <tree>
                                         <field name="name" />
                                         <field name="code" />
@@ -118,7 +121,7 @@
             target="current"
             id="sales_team_region_act_window"/>
 
-        <menuitem action="sales_team_region_act_window" id="menu_sales_team_region_act" parent="base.menu_sale_config" sequence="0" groups="base.group_sale_manager" />
+        <menuitem action="sales_team_region_act_window" id="menu_sales_team_region_act" parent="base.menu_sale_config" sequence="7" groups="base.group_configuration" />
 
     </data>
 </openerp>
