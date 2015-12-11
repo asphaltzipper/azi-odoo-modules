@@ -54,7 +54,7 @@ class res_partner(models.Model):
                 [('country_ids', 'in', country_id)])
             for country_group_id in country_group_ids:
                 potential_region = self.env['sales.team.region'].search(
-                    [('country_groups', 'in', country_group_id.id)])[0]
+                    [('country_groups', 'in', country_group_id.id)])
                 # cycle till we hit one
                 if potential_region:
                     cg_region_id = potential_region.id
