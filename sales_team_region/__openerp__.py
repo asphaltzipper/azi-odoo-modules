@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    OpenERP Module
-#    
+#
 #    Copyright (C) 2014 Asphalt Zipper, Inc.
 #    Author scosist
 #
