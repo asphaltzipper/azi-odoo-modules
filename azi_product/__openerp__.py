@@ -30,11 +30,12 @@
     "website": "http://www.asphaltzipper.com",
     'description': """
 AZI Specialized Customizations to Product
-==
- - Require Unique Product Code (product.default_code)
- - Require Unique UOM Category Name
- - Require Unique UOM Name
- - Rename, create, inactivate some UOMs and UOM Categories
+=========================================
+
+* Require Unique Product Code (product.default_code)
+* Require Unique UOM Category Name
+* Require Unique UOM Name
+* Rename, create, inactivate some UOMs and UOM Categories
     """,
     "depends": ["product"],
     "data" : [
