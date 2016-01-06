@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    OpenERP Module
-#    
+#
 #    Copyright (C) 2014 Asphalt Zipper, Inc.
 #    Author scosist
 #
@@ -21,89 +21,75 @@
 #
 #############################################################################
 
-import time
-from openerp import models, fields, api
-from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT
-from openerp.exceptions import ValidationError
-from openerp.tools.translate import _
+from openerp import api, fields, models
 
-class mrp_bom(models.Model):
-    _inherit = ['mrp.bom']
 
-    @api.model
-    def _bom_explode_llc(self, bom, product, result=None, properties=None, llc=1, previous_products=None, master_bom=None):
-        master_bom = master_bom or bom
-        result = result or {}
+class mrp_bom_llc(models.Model):
+    _name = "mrp.bom.llc"
+    _description = "MRP Low Level Code"
+    _auto = False
+    _order = 'llc'
 
-        for bom_line_id in bom.bom_line_ids:
-            if bom_line_id.date_start and bom_line_id.date_start > time.strftime(DEFAULT_SERVER_DATETIME_FORMAT) or \
-                    bom_line_id.date_stop and bom_line_id.date_stop < time.strftime(DEFAULT_SERVER_DATETIME_FORMAT):
-                        continue
-            # all bom_line_id variant values must be in the product
-            if bom_line_id.attribute_value_ids:
-                if not product or (set(map(int,bom_line_id.attribute_value_ids or [])) - set(map(int,product.attribute_value_ids))):
-                    continue
+    llc = fields.Integer('Product LLC', readonly=True)
 
-            if previous_products and bom_line_id.product_id.product_tmpl_id.id in previous_products:
-                raise ValidationError(_('Invalid Action!'), _('Bom "%s" contains a BoM line with a product recursion: "%s".') % (master_bom.name,bom_line_id.product_id.name_get()[0][1]))
+    _depends = {
+        'mrp.bom': ['product_id', 'type'],
+        'mrp.bom.line': ['product_id', 'bom_id'],
+    }
 
-            bom_id = self._bom_find(product_id=bom_line_id.product_id.id, properties=properties)
-
-            if bom_id:
-                all_prod = [bom.product_tmpl_id.id] + (previous_products or [])
-                bom2 = self.browse(bom_id)
-                if bom_line_id.type != "phantom" and bom2.type != "phantom":
-                    if result[bom_line_id.product_id.id] < llc:
-                        result[bom_line_id.product_id.id] = llc
-                    res = self._bom_explode_llc(bom2, bom_line_id.product_id, result, properties, llc + 1, all_prod, master_bom)
-                    result.update(res)
-                else:
-                    res = self._bom_explode_llc(bom2, bom_line_id.product_id, result, properties, llc, all_prod, master_bom)
-                    result.update(res)
-            elif bom_line_id.type != "phantom":
-                if result[bom_line_id.product_id.id] < llc:
-                    result[bom_line_id.product_id.id] = llc
-            else:
-                raise ValidationError(_('Invalid Action!'), _('BoM "%s" contains a phantom BoM line but the product "%s" does not have any BoM defined.') % (master_bom.name,bom_line_id.product_id.name_get()[0][1]))
-        return result
-
-    @api.model
-    def _top_level_boms(self):
-        bom_line_product_ids = []
-        top_level_boms = set()
-        bom_ids = self.search([])
-        bom_line_obj = self.env['mrp.bom.line']
-        bom_line_ids = bom_line_obj.search([])
-        for bom_line in bom_line_ids:
-            bom_line_product_ids.append(bom_line.product_id.id)
-        for bom in bom_ids:
-            bom_product_ids = []
-            if bom.product_id:
-                bom_product_ids.append(bom.product_id.id)
-            else:
-                for variant in bom.product_tmpl_id.product_variant_ids:
-                    bom_product_ids.append(variant.id)
-            #if any variants are in bom_line, do not add bom
-            if not set(bom_product_ids).intersection(bom_line_product_ids):
-                top_level_boms.add(bom.id)
-        return top_level_boms
+    def init(self, cr):
+        cr.execute("""create or replace view mrp_bom_llc as (
+            -------------------------------------------------------------------
+            -- in order to handle phantom assemblies, need to change 2 things
+            --  1. only push to the path array when type is not phantom
+            --  2. finally exclude phantom-only components from the list
+            with recursive stack(parent_id, comp_id, path, comp_phantom) as (
+                SELECT
+                    bp.product_id,
+                    l.product_id,
+                CASE WHEN bp.type<>'phantom' AND COALESCE('', bc.type)<>'phantom' THEN
+                    ARRAY[bp.product_id, l.product_id]
+                    when bp.type<>'phantom' AND COALESCE('', bc.type)='phantom' THEN
+                    ARRAY[bp.product_id]
+                    when bp.type='phantom' AND COALESCE('', bc.type)<>'phantom' THEN
+                    ARRAY[l.product_id]
+                    ELSE
+                    ARRAY[]::int[]
+                    END,
+                CASE WHEN bc.type='phantom' THEN true ELSE false END
+                FROM mrp_bom AS bp, mrp_bom_line AS l
+                LEFT JOIN mrp_bom AS bc ON bc.product_id=l.product_id
+                WHERE bp.id=l.bom_id
+                AND bp.product_id NOT IN (SELECT product_id FROM mrp_bom_line)
+            UNION ALL
+                SELECT
+                    bp.product_id,
+                    l.product_id,
+                CASE WHEN bc.type<>'phantom' THEN
+                    path || l.product_id
+                    ELSE
+                    path
+                    END,
+                    CASE WHEN bc.type='phantom' THEN true ELSE false END
+                FROM stack AS s, mrp_bom AS bp, mrp_bom_line AS l
+                LEFT JOIN mrp_bom AS bc ON bc.product_id=l.product_id
+                WHERE bp.product_id=s.comp_id
+                AND bp.id=l.bom_id
+            )
+            SELECT
+                op.id,
+                CASE WHEN BOOL_AND(comp_phantom) THEN 0 ELSE COALESCE(MAX(ARRAY_LENGTH(path, 1))-1, 0) END AS llc
+            FROM stock_warehouse_orderpoint AS op
+            LEFT JOIN stack AS s ON op.product_id=s.comp_id
+            GROUP BY op.id
+            -------------------------------------------------------------------
+        )""")
 
     @api.model
-    def compute_llc(self, properties=None):
-        llc_updates = {}
-        # reset low level code first, then compute
-        product_obj = self.env['product.product']
-        product_ids = product_obj.search([])
-        for product in product_ids:
-            llc_updates[product.id] = 0
-        top_level_boms = self._top_level_boms()
-        for bom_point in self.browse(top_level_boms):
-            res = self._bom_explode_llc(bom_point, bom_point.product_id, llc_updates, properties)
-            for (k,v) in res.items():
-                if v > llc_updates[k]:
-                    llc_updates[k] = v
-        for (k,v) in llc_updates.items():
-            product_obj.browse([k]).write({'low_level_code': v})
-
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
+    def update_orderpoint_llc(self):
+        llc_obj = self.env['mrp.bom.llc']
+        llc_ids = llc_obj.search([])
+        for llc_id in llc_ids:
+            for orderpoint in self.env['stock.warehouse.orderpoint'].search(
+                    [('id', '=', llc_id.id)]):
+                orderpoint.llc = llc_id.llc

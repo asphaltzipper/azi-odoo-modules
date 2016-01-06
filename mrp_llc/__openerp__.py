@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    OpenERP Module
-#    
+#
 #    Copyright (C) 2014 Asphalt Zipper, Inc.
 #    Author scosist
 #
@@ -23,7 +23,7 @@
 
 {
     "name": "MRP LLC",
-    "version": "0.1",
+    "version": "2.1",
     "summary": "MRP Low Level Code",
     "category": "Manufacturing",
     "author": "scosist",

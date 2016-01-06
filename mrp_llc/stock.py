@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    OpenERP Module
-#    
+#
 #    Copyright (C) 2014 Asphalt Zipper, Inc.
 #    Author scosist
 #
@@ -21,14 +21,12 @@
 #
 #############################################################################
 
-from openerp import models, fields, api
-from openerp.tools.translate import _
+from openerp import api, fields, models
+
 
 class stock_warehouse_orderpoint(models.Model):
     _inherit = 'stock.warehouse.orderpoint'
-    _order = 'product_llc'
+    _order = 'llc'
 
-    product_llc = fields.Integer(string='Product LLC', store=True, related='product_id.low_level_code', readonly=True)
-
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
+    llc = fields.Integer(string='Low Level Code', store=True, default=0,
+                         readonly=True)

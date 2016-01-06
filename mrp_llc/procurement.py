@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    OpenERP Module
-#    
+#
 #    Copyright (C) 2014 Asphalt Zipper, Inc.
 #    Author scosist
 #
@@ -21,19 +21,18 @@
 #
 #############################################################################
 
-from openerp import models, fields, api
-from openerp.tools.translate import _
+from openerp import api, models
+
 
 class procurement_order(models.Model):
     _inherit = 'procurement.order'
 
     @api.model
-    def _procure_orderpoint_confirm(self, use_new_cursor=False, company_id = False):
-        bom_obj = self.env['mrp.bom']
-        bom_obj.compute_llc()
+    def _procure_orderpoint_confirm(self, use_new_cursor=False,
+                                    company_id=False):
+        llc_obj = self.env['mrp.bom.llc']
+        llc_obj.update_orderpoint_llc()
         if use_new_cursor:
             self._cr.commit()
-        return super(procurement_order, self)._procure_orderpoint_confirm(use_new_cursor, company_id)
-
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
+        return super(procurement_order, self)._procure_orderpoint_confirm(
+            use_new_cursor, company_id)
