@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+       <record id="hr_timesheet_sheet_form_tasks" model="ir.ui.view">
+            <field name="name">hr.timesheet.sheet.form.tasks</field>
+            <field name="model">hr_timesheet_sheet.sheet</field>
+            <field name="inherit_id" ref="hr_timesheet_sheet.hr_timesheet_sheet_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook/page/field/tree/field[@name='account_id']" position="after">
+                    <field name="task_id" domain="[('project_id.analytic_account_id', '=' , account_id)]"/>
+                </xpath>
+                <xpath expr="//notebook/page/field/form/field[@name='account_id']" position="after">
+                    <field name="task_id"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>
