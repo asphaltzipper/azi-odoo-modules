@@ -3,8 +3,8 @@
 #
 #    OpenERP Module
 #
-#    Copyright (C) 2014 Asphalt Zipper, Inc.
-#    Author scosist
+# Author: Scott Saunders. Copyright Asphalt Zipper, Inc.
+# Contributors: Matt Taylor
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -23,16 +23,20 @@
 
 {
     "name": "MRP LLC",
-    "version": "2.1",
+    "version": "2.3",
     "summary": "MRP Low Level Code",
     "category": "Manufacturing",
     "author": "scosist",
     "website": "http://www.github.com/asphaltzipper/azi-odoo-modules",
     'description': """
-MRP Calculation by low level code.
+        MRP Calculation by low level code.
+
+        Note: this module is not compatible with the Calendars on Orderpoints (stock_calendar) module.
     """,
-    "depends": ["mrp"],
-    "data" : [],
+    "depends": ["mrp", "mrp_time_bucket"],
+    "data" : [
+        'security/ir.model.access.csv',
+    ],
     "demo": [],
     "test":[],
     "js":[],
