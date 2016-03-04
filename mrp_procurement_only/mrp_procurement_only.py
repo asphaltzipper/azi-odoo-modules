@@ -191,37 +191,17 @@ class procurement_order(models.Model):
         return res
 
     def _prepare_outbound_procurement(self, cr, uid, orderpoint, product, product_qty, product_uom, context=None):
-        # get orderpoint_id of current product where location/warehouse same as parent?
-        #   mrp/procurement.py:_prepare_mo_vals
-        #       'location_src_id': procurement.rule_id.location_src_id.id or procurement.location_id.id,
-        #   stock/procurement.py:_find_suitable_rule
-        #   location is based on procurement rule_id or procurement location_id, these are not set yet
-        #   if rule_id is not set before run, it will try to _find_suitable_rule
-        # it seems the location_id for an OB proc should be some form of production (dest), but no ops would exist for such
-        #   perhaps should reconsider:
-        #    'location_id': self.pool.get('ir.model.data').xmlid_to_res_id(cr, uid, 'stock.location_production'),
         all_parent_location_ids = self._find_parent_locations(cr, uid, orderpoint, context=context)
         location_domain = [('location_id', 'in', all_parent_location_ids)]
         child_orderpoint_id = self.pool.get('stock.warehouse.orderpoint').search(cr, uid, [
             ('product_id', '=', product.id),
             ('warehouse_id', '=', orderpoint.warehouse_id.id),
             ] + location_domain, limit=1)
-        #loc_obj = self.pool.get('stock.location')
-        #production_location_id = False
-        #production_locations = loc_obj.search(cr, uid, [('usage', '=', 'production')])
-        #for location in production_locations:
-        #    warehouse_id = loc_obj.get_warehouse(cr, uid, loc_obj.browse(cr, uid, location), context=context)
-        #    if warehouse_id == orderpoint.warehouse_id.id:
-        #        production_location_id = location
-        #        continue
-
-        #product_route_ids = [x.id for x in product.route_ids + product.categ_id.total_route_ids]
-        #child_rule_id = self.pool.get('procurement.rule').search(cr, uid, location_domain + [('route_id', 'in', product_route_ids)], order='route_sequence, sequence', context=context)
         # dirty hack to pretend orderpoint is procurement in order to use _search_suitable_rule
         orderpoint.route_ids = []
-        child_rule_id = self._search_suitable_rule(cr, uid, orderpoint, location_domain, context=context)
+        parent_rule_id = self._search_suitable_rule(cr, uid, orderpoint, location_domain, context=context)
         del orderpoint.route_ids
-        child_location_id = child_rule_id and self.pool.get('procurement.rule').browse(cr, uid, child_rule_id)[0].location_src_id or False
+        parent_location_id = parent_rule_id and self.pool.get('procurement.rule').browse(cr, uid, parent_rule_id)[0].location_src_id or False
         res = {
             'name': product.product_tmpl_id.name,
             'date_planned': context['child_to_date'],
@@ -229,11 +209,8 @@ class procurement_order(models.Model):
             'product_qty': product_qty,
             'company_id': product.product_tmpl_id.company_id.id,
             'product_uom': product_uom,
-            #'location_id': orderpoint.location_id.id,
-            #'location_id': child_rule_id and self.pool.get('procurement.rule').browse(cr, uid, child_rule_id)[0].location_src_id.id or False,
-            'location_id': child_location_id and child_location_id.id or product.property_stock_production.id,
+            'location_id': parent_location_id and parent_location_id.id or product.property_stock_production.id,
             'origin': 'OUT/PROC/' + '%%0%sd' % 5 % context['parent_proc_id'],
-            #'warehouse_id': loc_obj.get_warehouse(cr, uid, loc_obj.browse(cr, uid, location_id), context=context),
             'warehouse_id': orderpoint.warehouse_id.id,
             'date_start': context['child_to_date'],
             'orderpoint_id': child_orderpoint_id and child_orderpoint_id[0] or False,
@@ -244,7 +221,6 @@ class procurement_order(models.Model):
     # override mrp_time_bucket/mrp_time_bucket
     def _process_procurement(self, cr, uid, ids, context=None):
         # REPLACE _process_procurement to eliminate automatic execution of run for confirmed procurements
-        #self.check(cr, uid, ids)
         pass
 
     # mrp_time_bucket/mrp_time_bucket

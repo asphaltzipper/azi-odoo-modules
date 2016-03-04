@@ -40,7 +40,6 @@ class procurement_order(models.Model):
 
     # Method to override in mrp_procurement_only module
     def _process_procurement(self, cr, uid, ids, context=None):
-        #self.check(cr, uid, ids)
         self.run(cr, uid, ids)
 
     # Method to override in mrp_procurement_only module
@@ -67,11 +66,11 @@ class procurement_order(models.Model):
         procurement_obj = self.pool.get('procurement.order')
         product_obj = self.pool.get('product.product')
 
-        #TODO: set up time_bucket as mfg cfg setting
-        #      also need option to choose day of week for procurement
-        #        scheduled date when using weekly bucket
-        #      planning_horizon (first_bucket_dt) should start on a monday
-        #        for weekly bucket
+        #TODO:
+        # set up time_bucket as mfg cfg setting
+        # also need option to choose day of week for procurement
+        #   scheduled date when using weekly bucket
+        # consider adjusting bucket datetime objects relative to user timezone
         time_bucket = self._get_bucket_size(cr, uid, context=context)
         # get bucket datetime objects
         utc_dt = datetime.combine(datetime.utcnow().date(), datetime.min.time())
@@ -159,7 +158,6 @@ class procurement_order(models.Model):
                     plan_days = plan_days + time_bucket
             try:
                 tot_procs.reverse()
-                # self.run(cr, uid, tot_procs, context=context)
                 self._process_procurement(cr, uid, tot_procs, context=context)
                 tot_procs = []
                 if use_new_cursor:
