@@ -12,6 +12,20 @@ import re
 class product_product(osv.Model):
 
     """
+    store default_code so we can sort tree views
+    """
+
+    _inherit = "product.template"
+    _order = "default_code"
+
+    _columns = {
+        'default_code': fields.related('product_variant_ids', 'default_code', type='char', string='Internal Reference', store=True),
+    }
+
+
+class product_product(osv.Model):
+
+    """
     Enforce unique product code (default_code)
     Enforce product code formatting
     Require product code for Stockable products (type='product')
