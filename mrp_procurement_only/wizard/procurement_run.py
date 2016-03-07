@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
+# See __openerp__.py file for full copyright and licensing details.
 
 import threading
-from openerp import models, fields, api, SUPERUSER_ID
+from openerp import models, fields, SUPERUSER_ID
 from openerp.api import Environment
 
 
@@ -27,6 +28,3 @@ class procurement_order_run(models.Model):
         threaded_calculation = threading.Thread(target=self._procurement_run_thread, args=(cr, uid, ids, context))
         threaded_calculation.start()
         return {'type': 'ir.actions.act_window_close'}
-
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

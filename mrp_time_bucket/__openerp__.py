@@ -2,9 +2,9 @@
 ##############################################################################
 #
 #    OpenERP Module
-#    
-#    Copyright (C) 2014 Asphalt Zipper, Inc.
-#    Author scosist
+#
+# Author: Scott Saunders. Copyright Asphalt Zipper, Inc.
+# Contributors: Matt Taylor
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -29,8 +29,11 @@
     "author": "scosist",
     "website": "http://www.github.com/asphaltzipper/azi-odoo-modules",
     'description': """
-Schedule delivery of supplies to correspond with demand dates.
-Use daily or weekly time buckets to generate an order at the latest possible date.
+        Schedule delivery of supplies to correspond with demand dates.
+
+        Use daily or weekly time buckets to generate an order at the latest possible date.
+
+        Note: this module is not compatible with the Calendars on Orderpoints (stock_calendar) module.
     """,
     "depends": ["mrp"],
     "data" : [

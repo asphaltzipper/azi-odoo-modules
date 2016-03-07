@@ -2,9 +2,9 @@
 ##############################################################################
 #
 #    OpenERP Module
-#    
-#    Copyright (C) 2014 Asphalt Zipper, Inc.
-#    Author scosist
+#
+# Author: Scott Saunders. Copyright Asphalt Zipper, Inc.
+# Contributors: Matt Taylor
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -29,9 +29,11 @@
     "author": "scosist",
     "website": "http://www.github.com/asphaltzipper/azi-odoo-modules",
     'description': """
-Separate MO/RFQ generation from Procurement Order generation.
+        Separate MO/RFQ generation from Procurement Order generation.
+
+        Note: this module is not compatible with the Calendars on Orderpoints (stock_calendar) module.
     """,
-    "depends": ["mrp", "mrp_time_bucket"],
+    "depends": ["mrp", "purchase", "mrp_time_bucket"],
     "data" : [
         'security/security.xml',
         'security/ir.model.access.csv',
