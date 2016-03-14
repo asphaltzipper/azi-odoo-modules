@@ -1,16 +1,16 @@
 {
-    'name': 'Sale Gateway',
+    'name': 'Sale Giveaway',
     'category': 'sale',
-    'summary': 'Sale Gateway Reasons',
+    'summary': 'Sale Giveaway Reasons',
     'version': '1.0',
     'description': """
-Sale Gateway Reasons code
+Sale Giveaway Reason Codes
         """,
     'author': "Bista Solutions",
     'depends': ['base', 'web', 'sale', 'account'],
     'data': [
-        'sale_gateway_reason_view.xml'
+        'sale_giveaway_reason_view.xml'
     ],
     'installable': True,
-    'auto_install': True,
+    'auto_install': False,
 }
