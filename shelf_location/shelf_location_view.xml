@@ -6,24 +6,9 @@
         <field name="priority">5</field>
         <field name="inherit_id" ref="product.product_template_form_view"/>
         <field name="arch" type="xml">
-            <page name="sales" position="after">
-                <page string="Location">
-                    <field name="location_ids">
-                        <form string="Location">
-                            <group>
-                                <field name="location_name"/>
-                                <field name="item_assign"/>
-                                <field name="inactives"/>
-                            </group>
-                        </form>
-                        <tree string="Location" editable="bottom">
-                            <field name="location_name"/>
-                            <field name="item_assign"/>
-                            <field name="inactives"/>
-                        </tree>
-                    </field>
-                </page>
-            </page>
+            <xpath expr="//div[@name='volume']" position="after">
+                <field name="shelf_ids" string="Shelves" widget="many2many_tags" placeholder="Shelf..."></field>
+            </xpath>
         </field>
     </record>
 
@@ -34,7 +19,32 @@
             <form string="Location">
                 <group>
                     <field name="location_id"/>
-                    <field name="product_id"/>
+                    <field name="product_id">
+                        <form string="Product Form">
+                        <group>
+                            <field name="name"/>
+                            <field name="standard_price"/>
+                            <field name="categ_id"/>
+                            <field name="type"/>
+                            <field name="qty_available"/>
+                            <field name="virtual_available"/>
+                            <field name="active"/>
+                        </group>
+                    </form>
+                    <tree string="Product Tree">
+                        <field name="name"/>
+                        <field name="standard_price"/>
+                        <field name="categ_id"/>
+                        <field name="type"/>
+                        <field name="qty_available"/>
+                        <field name="virtual_available"/>
+                        <field name="active"/>
+                    </tree>
+
+                    </field>
+                </group>
+                <group colspan="4">
+                    <field name="inactives"/>
                 </group>
             </form>
         </field>
@@ -46,6 +56,8 @@
         <field name="arch" type="xml">
             <tree string="Location">
                 <field name="location_id"/>
+                <field name="product_count"/>
+                <field name="inactives"/>
             </tree>
         </field>
     </record>
@@ -57,7 +69,7 @@
         <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem name="Shelf Location" parent="mrp.menu_mrp_manufacturing"
+    <menuitem name="Shelf Location" parent="stock.menu_stock_inventory_control"
         id="menu_shelf_location"
         action="action_view_shelf_location_form"
         sequence="2"/>
@@ -90,17 +102,5 @@
             </tree>
         </field>
     </record>
-
-    <record id="action_view_tools_master_form" model="ir.actions.act_window">
-        <field name="name">Tools</field>
-        <field name="res_model">tools.master</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
-    </record>
-
-    <menuitem name="Tools" parent="mrp.menu_mrp_manufacturing"
-        id="menu_tools_master"
-        action="action_view_tools_master_form"
-        sequence="3"/>
 
 </odoo>
