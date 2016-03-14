@@ -14,9 +14,9 @@ class ProcurementOrder(models.Model):
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
-    product_qty = fields.Float(related='product_variant_ids.product_qty')
+    default_proc_qty = fields.Float(related='product_variant_ids.default_proc_qty')
 
 class ProductProduct(models.Model):
     _inherit = 'product.product'
 
-    product_qty = fields.Float(string='Quantity')
+    default_proc_qty = fields.Float(string='Procurement Qty', help="Default order quantity when requseting procurements by barcode scanning")
