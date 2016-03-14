@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+    <record id="procurement_order_inherit_barcode" model="ir.ui.view">
+        <field name="name">procurement.order.inherit.barcode</field>
+        <field name="model">procurement.order</field>
+        <field name="inherit_id" ref="procurement.procurement_form_view"/>
+        <field name="arch" type="xml">
+            <field name="priority" position="after">
+                <field name="product_barcode" invisible="1"/>
+            </field>
+        </field>
+    </record>
+
+</data></openerp>

@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="view_request_release_form" model="ir.ui.view">
+        <field name="name">Request Release Details</field>
+        <field name="model">request.release</field>
+        <field name="arch" type="xml">
+            <form string="Transfer details">
+                <group>
+                    <field name="product_ids">
+                        <form string="Item">
+                            <field name="product_id"/>
+                            <field name="product_qty"/>
+                            <field name="sourceloc_id"/>
+                            <field name="destinationloc_id"/>
+                            <field name="request_date"/>
+                        </form>
+                        <tree string="Items" editable="bottom">
+                            <field name="product_id"/>
+                            <field name="product_qty"/>
+                            <field name="sourceloc_id"/>
+                            <field name="destinationloc_id"/>
+                            <field name="request_date"/>
+                        </tree>
+                    </field>
+                </group>
+                <footer>
+                    <button name="do_picking_create" string="_Apply" type="object" class="oe_highlight"/>
+                    or
+                    <button string="_Cancel" class="oe_link" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_request_release_form" model="ir.actions.act_window">
+        <field name="name">Request Release Details</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">request.release</field>
+        <field name="view_id" ref="view_request_release_form"/>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+
+</odoo>

@@ -1,0 +1,57 @@
+.o_stock_barcode_main_menu_container {
+    .o-flex-display();
+    .o-flex-flow(column, nowrap);
+    .o-justify-content(center);
+    .o-align-items(center);
+
+    @media (min-width: @screen-xs-max) {
+        background: url("../../../../web/static/src/img/application-switcher-bg.jpg") no-repeat center center fixed;
+        background-size: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+}
+
+.o_stock_barcode_main_menu {
+    width: 100%;
+    text-align: center;
+    background-color: #fff;
+    padding: 2em;
+
+    h1 {
+        margin: 0;
+    }
+
+    img {
+        margin-top: 2em;
+        width: 200px;
+    }
+
+    p {
+        text-align: left;
+        margin: 2em 0;
+    }
+
+    button {
+        font-size: 1.2em;
+        margin-bottom: 1em;
+        width: 100%;
+    }
+
+    button:last-child {
+        margin-bottom: 0;
+    }
+
+    @media (min-width: @screen-xs-max) {
+        flex: 0 0 auto;
+        width: 550px;
+        border-radius: 10px;
+        background-color: rgba(255,255,255,0.8);
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.6);
+        font-size: 1.2em;
+        padding: 3em;
+    }
+}

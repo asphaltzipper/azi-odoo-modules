@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<odoo>
+    <record model="ir.ui.view" id="purchase_order_form_inherit_blanket">
+        <field name="name">purchase.order.form.inherit.blanket</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <field name="date_order" position="after">
+                <field name="blanket"/>
+            </field>
+            <button name="action_rfq_send" position="after">
+                <button name="%(action_request_release_form)d" string="Reuqest Release" type="action" attrs="{'invisible': ['|', ('blanket','=',False), ('state', 'in', ['done','cancel'])]}"/>
+            </button>
+
+            <xpath expr="//div[@name='button_box']" position="replace">
+                <div class="oe_button_box" name="button_box" attrs="{'invisible': [('state', 'not in', ('purchase', 'done', 'cancel'))]}">
+                    <button type="object"
+                        name="action_view_picking"
+                        class="oe_stat_button"
+                        attrs="{'invisible': [('blanket','=',True)]}"
+                        icon="fa-truck">
+                        <field name="picking_count" widget="statinfo" string="Shipment" help="Incoming Shipments"/>
+                    </button>
+                      <button type="object"
+                            name="action_view_picking_request"
+                            attrs="{'invisible': [('blanket','=',False)]}"
+                            class="oe_stat_button"
+                            icon="fa-truck">
+                            <field name="blanket_count" attrs="{'invisible': [('blanket','=',False)]}" widget="statinfo" string="Shipment" help="Incoming Shipments"/>
+                    </button>
+                    <button type="object"  name="action_view_invoice"
+                        class="oe_stat_button"
+                        icon="fa-pencil-square-o">
+                        <field name="invoice_count" widget="statinfo" string="Invoices"/>
+                    </button>
+            </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

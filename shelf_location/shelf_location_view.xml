@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="product_template_form_view_bista" model="ir.ui.view">
+        <field name="name">product.template.form.inherit.bista</field>
+        <field name="model">product.template</field>
+        <field name="priority">5</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <page name="sales" position="after">
+                <page string="Location">
+                    <field name="location_ids">
+                        <form string="Location">
+                            <group>
+                                <field name="location_name"/>
+                                <field name="item_assign"/>
+                                <field name="inactives"/>
+                            </group>
+                        </form>
+                        <tree string="Location" editable="bottom">
+                            <field name="location_name"/>
+                            <field name="item_assign"/>
+                            <field name="inactives"/>
+                        </tree>
+                    </field>
+                </page>
+            </page>
+        </field>
+    </record>
+
+    <record id="view_shelf_location_form" model="ir.ui.view">
+        <field name="name">view.shelf.location.form</field>
+        <field name="model">shelf.location</field>
+        <field name="arch" type="xml">
+            <form string="Location">
+                <group>
+                    <field name="location_id"/>
+                    <field name="product_id"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="view_shelf_location_tree">
+        <field name="name">view.shelf.location.tree</field>
+         <field name="model">shelf.location</field>
+        <field name="arch" type="xml">
+            <tree string="Location">
+                <field name="location_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_view_shelf_location_form" model="ir.actions.act_window">
+        <field name="name">Shelf Location</field>
+        <field name="res_model">shelf.location</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem name="Shelf Location" parent="mrp.menu_mrp_manufacturing"
+        id="menu_shelf_location"
+        action="action_view_shelf_location_form"
+        sequence="2"/>
+
+       <act_window
+            context="{'location': active_id}"
+            id="act_product_location_open_tools"
+            name="Products"
+            res_model="product.product"
+            src_model="tools.master"/>
+
+     <record id="view_tools_master_form" model="ir.ui.view">
+        <field name="name">view.tools.master.form</field>
+        <field name="model">tools.master</field>
+        <field name="arch" type="xml">
+            <form string="Tools">
+                <group>
+                    <field name="name"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="view_tools_master_tree">
+        <field name="name">view.tools.master.tree</field>
+         <field name="model">tools.master</field>
+        <field name="arch" type="xml">
+            <tree string="Tools">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_view_tools_master_form" model="ir.actions.act_window">
+        <field name="name">Tools</field>
+        <field name="res_model">tools.master</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem name="Tools" parent="mrp.menu_mrp_manufacturing"
+        id="menu_tools_master"
+        action="action_view_tools_master_form"
+        sequence="3"/>
+
+</odoo>
