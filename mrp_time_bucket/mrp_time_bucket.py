@@ -3,7 +3,7 @@
 
 import time
 from datetime import datetime, timedelta
-from openerp import models
+from openerp import models, fields, api
 from dateutil.relativedelta import relativedelta
 from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT, \
     DEFAULT_SERVER_DATE_FORMAT, float_compare, float_round
@@ -159,7 +159,8 @@ class procurement_order(models.Model):
                     if rule.action == 'manufacture':
                         days += product.produce_delay or 0.0
                         days += product.product_tmpl_id.company_id.manufacturing_lead
-        date_start = datetime.combine(datetime.strptime(to_date, DEFAULT_SERVER_DATE_FORMAT) - relativedelta(days=days), datetime.min.time())
+        #date_start = datetime.combine(datetime.strptime(to_date, DEFAULT_SERVER_DATE_FORMAT) - relativedelta(days=days), datetime.min.time())
+        date_start = datetime.strptime(to_date, DEFAULT_SERVER_DATETIME_FORMAT) - relativedelta(days=days)
         return date_start.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
 
     # stock/procurement
@@ -179,6 +180,10 @@ class procurement_order(models.Model):
                                         self._prepare_orderpoint_procurement(cr, uid, op, qty_rounded, context=context),
                                         context=context)
         return proc_id
+
+    @api.model
+    def _get_context_dt(self, utc_dt):
+        return fields.Datetime.context_timestamp(self, timestamp=utc_dt)
 
     # override stock/procurement
     def _procure_orderpoint_confirm(self, cr, uid, use_new_cursor=False, company_id = False, context=None):
@@ -204,7 +209,8 @@ class procurement_order(models.Model):
         # consider adjusting bucket datetime objects relative to user timezone
         time_bucket = self._get_bucket_size(cr, uid, context=context)
         # get bucket datetime objects
-        utc_dt = datetime.combine(datetime.utcnow().date(), datetime.min.time())
+        # as Odoo runs in UTC, datetime.now() is equivalent to datetime.utcnow()
+        utc_dt = datetime.combine(datetime.now().date(), datetime.min.time())
         first_bucket_dt = time_bucket == 7 and utc_dt - timedelta(days=utc_dt.weekday()) or utc_dt
         last_bucket_dt = utc_dt
         last_procurement = procurement_obj.search(cr, uid, [('state', '=', 'running')], order="date_planned DESC", limit=1)
@@ -240,12 +246,18 @@ class procurement_order(models.Model):
             for key in sorted(product_dict.keys()):
                 plan_days = 0
                 while plan_days <= planning_horizon:
-                    to_date = first_bucket_dt.date() + relativedelta(days=plan_days)
+                    #to_date = first_bucket_dt.date() + relativedelta(days=plan_days)
+                    to_date = first_bucket_dt + relativedelta(days=plan_days)
                     _logger.info("to_date: %s", to_date)
 
                     ctx = context and context.copy() or {}
                     ctx.update({'location': ops_dict[key][0].location_id.id})
-                    ctx.update({'bucket_date': (to_date - relativedelta(days=self._get_bucket_delay(cr, uid, context=context))).strftime(DEFAULT_SERVER_DATE_FORMAT)})
+                    #ctx.update({'bucket_date': (to_date - relativedelta(days=self._get_bucket_delay(cr, uid, context=context))).strftime(DEFAULT_SERVER_DATE_FORMAT)})
+                    #ctx.update({'bucket_date': (to_date - relativedelta(days=self._get_bucket_delay(cr, uid, context=context))).strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
+                    #ctx.update({'bucket_date': (datetime.combine(to_date.date(), datetime.now().time()) - relativedelta(days=self._get_bucket_delay(cr, uid, context=context))).strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
+                    # adjust bucket_date relative to user timezone
+                    context_hour = self._get_context_dt(cr, uid, context=context, utc_dt=to_date).hour
+                    ctx.update({'bucket_date': (to_date + timedelta(hours=context_hour > 12 and 24 - context_hour or 0 - context_hour) - relativedelta(days=self._get_bucket_delay(cr, uid, context=context))).strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
                     ctx.update({'to_date': to_date.strftime(DEFAULT_SERVER_DATE_FORMAT)})
                     ctx.update({'procurement_autorun_defer': True})
                     prod_qty = product_obj._product_available(cr, uid, [x.id for x in product_dict[key]],
