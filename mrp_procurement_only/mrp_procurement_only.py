@@ -204,7 +204,7 @@ class procurement_order(models.Model):
         parent_location_id = parent_rule_id and self.pool.get('procurement.rule').browse(cr, uid, parent_rule_id)[0].location_src_id or False
         res = {
             'name': product.product_tmpl_id.name,
-            'date_planned': context['child_to_date'],
+            'date_planned': context['bom_effectivity_date'],
             'product_id': product.id,
             'product_qty': product_qty,
             'company_id': product.product_tmpl_id.company_id.id,
@@ -212,7 +212,7 @@ class procurement_order(models.Model):
             'location_id': parent_location_id and parent_location_id.id or product.property_stock_production.id,
             'origin': 'OUT/PROC/' + '%%0%sd' % 5 % context['parent_proc_id'],
             'warehouse_id': orderpoint.warehouse_id.id,
-            'date_start': context['child_to_date'],
+            'date_start': context['bom_effectivity_date'],
             'orderpoint_id': child_orderpoint_id and child_orderpoint_id[0] or False,
         }
         _logger.info("OUT res: %s", res)
@@ -240,10 +240,10 @@ class procurement_order(models.Model):
                 # get components and workcenter_lines from BoM structure
                 factor = uom_obj._compute_qty(cr, uid, proc_point.product_uom.id, proc_point.product_qty, bom_point.product_uom.id)
                 # product_lines, workcenter_lines (False)
+                #context['bom_effectivity_date'] = proc_point.date_start
                 res = bom_obj._bom_explode(cr, uid, bom_point, proc_point.product_id, factor / bom_point.product_qty, context=context)
                 # product_lines
                 results = res[0]
-                context['child_to_date'] = proc_point.date_start
                 context['parent_proc_id'] = proc_id
                 # process procurements for results
                 for product in results:
@@ -253,7 +253,7 @@ class procurement_order(models.Model):
                                                     self._prepare_outbound_procurement(cr, uid, op, product_point, product['product_qty'], product['product_uom'], context=context),
                                                     context=context)
                     proc_id and proc_ids.append(proc_id) or False
-                context.pop('child_to_date')
+                #context.pop('bom_effectivity_date')
                 context.pop('parent_proc_id')
         return proc_ids
 

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # See __openerp__.py file for full copyright and licensing details.
 
+import time
 from datetime import datetime, timedelta
 from openerp import models
 from dateutil.relativedelta import relativedelta
@@ -10,6 +11,72 @@ from psycopg2 import OperationalError
 import openerp
 import logging
 _logger = logging.getLogger(__name__)
+
+
+class mrp_bom(models.Model):
+    _inherit = 'mrp.bom'
+
+    # override mrp/mrp
+    def _bom_find(self, cr, uid, product_tmpl_id=None, product_id=None, properties=None, context=None):
+        """ Finds BoM for particular product and product uom.
+        @param product_tmpl_id: Selected product.
+        @param product_uom: Unit of measure of a product.
+        @param properties: List of related properties.
+        @return: False or BoM id.
+        """
+        if not context:
+            context = {}
+        if properties is None:
+            properties = []
+        if product_id:
+            if not product_tmpl_id:
+                product_tmpl_id = self.pool['product.product'].browse(cr, uid, product_id, context=context).product_tmpl_id.id
+            domain = [
+                '|',
+                    ('product_id', '=', product_id),
+                    '&',
+                        ('product_id', '=', False),
+                        ('product_tmpl_id', '=', product_tmpl_id)
+            ]
+        elif product_tmpl_id:
+            domain = [('product_id', '=', False), ('product_tmpl_id', '=', product_tmpl_id)]
+        else:
+            # neither product nor template, makes no sense to search
+            return False
+        if context.get('company_id'):
+            domain = domain + [('company_id', '=', context['company_id'])]
+        domain = domain + [ '|', ('date_start', '=', False), ('date_start', '<=', (context and context.get('bom_effectivity_date') or time.strftime(DEFAULT_SERVER_DATE_FORMAT))),
+                            '|', ('date_stop', '=', False), ('date_stop', '>=', (context and context.get('bom_effectivity_date') or time.strftime(DEFAULT_SERVER_DATE_FORMAT)))]
+        # order to prioritize bom with product_id over the one without
+        ids = self.search(cr, uid, domain, order='sequence, product_id', context=context)
+        # Search a BoM which has all properties specified, or if you can not find one, you could
+        # pass a BoM without any properties with the smallest sequence
+        bom_empty_prop = False
+        for bom in self.pool.get('mrp.bom').browse(cr, uid, ids, context=context):
+            if not set(map(int, bom.property_ids or [])) - set(properties or []):
+                if not properties or bom.property_ids:
+                    return bom.id
+                elif not bom_empty_prop:
+                    bom_empty_prop = bom.id
+        return bom_empty_prop
+
+    # override mrp/mrp
+    def _skip_bom_line(self, cr, uid, line, product, context=None):
+        """ Control if a BoM line should be produce, can be inherited for add
+        custom control.
+        @param line: BoM line.
+        @param product: Selected product produced.
+        @return: True or False
+        """
+        # date_start and date_stop really should be a fields.Datetime and not a fields.Date, see odoo #3961
+        if line.date_start and line.date_start >= (context and context.get('bom_effectivity_date') or time.strftime(DEFAULT_SERVER_DATE_FORMAT)) or \
+            line.date_stop and line.date_stop < (context and context.get('bom_effectivity_date') or time.strftime(DEFAULT_SERVER_DATE_FORMAT)):
+                return True
+        # all bom_line_id variant values must be in the product
+        if line.attribute_value_ids:
+            if not product or (set(map(int,line.attribute_value_ids or [])) - set(map(int,product.attribute_value_ids))):
+                return True
+        return False
 
 
 class procurement_order(models.Model):
@@ -144,6 +211,7 @@ class procurement_order(models.Model):
 
                                 qty_rounded = float_round(qty, precision_rounding=op.product_uom.rounding)
                                 if qty_rounded > 0:
+                                    ctx.update({'bom_effectivity_date': self._get_procurement_date_start(cr, uid, op, ctx['bucket_date'], context=ctx)})
                                     proc_id = self._plan_orderpoint_procurement(cr, uid, op, qty_rounded, context=ctx)
                                     tot_procs.extend(proc_id) if isinstance(proc_id, list) else tot_procs.append(proc_id)
                                 if use_new_cursor:
