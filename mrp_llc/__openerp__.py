@@ -33,7 +33,7 @@
 
         Note: this module is not compatible with the Calendars on Orderpoints (stock_calendar) module.
     """,
-    "depends": ["mrp", "mrp_time_bucket"],
+    "depends": ["mrp"],
     "data" : [
         'security/ir.model.access.csv',
     ],

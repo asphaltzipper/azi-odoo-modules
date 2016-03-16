@@ -10,52 +10,6 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
-class stock_warehouse_orderpoint(models.Model):
-    _inherit = 'stock.warehouse.orderpoint'
-
-    # override stock/stock:subtract_procurements_from_orderpoints
-    def subtract_procurements_from_orderpoints(self, cr, uid, orderpoint_ids, context=None):
-        '''This function returns quantity of product that needs to be deducted from the orderpoint computed quantity because there's already a procurement created with aim to fulfill it.
-        We are also considering procurement-only demand for the product and subtracting it from the returned quantity. This method could return a negative quantity, assuming that there is more demand than supply.
-        '''
-
-        # only consider procurements within current plan step (context['to_date'])
-        cr.execute("""select op.id, p.id, p.product_uom, p.product_qty, pt.uom_id, sm.product_qty, p.origin from procurement_order as p left join stock_move as sm ON sm.procurement_id = p.id,
-                                    stock_warehouse_orderpoint op, product_product pp, product_template pt
-                                WHERE p.orderpoint_id = op.id AND p.state not in ('done', 'cancel') AND (sm.state IS NULL OR sm.state not in ('draft'))
-                                AND pp.id = p.product_id AND pp.product_tmpl_id = pt.id
-                                AND op.id IN %s
-                                AND p.date_planned <= %s
-                                ORDER BY op.id, p.id
-                   """, (tuple(orderpoint_ids), context.get('to_date', datetime.max),))
-        results = cr.fetchall()
-        current_proc = False
-        current_op = False
-        uom_obj = self.pool.get("product.uom")
-        op_qty = 0
-        res = dict.fromkeys(orderpoint_ids, 0.0)
-        for move_result in results:
-            op = move_result[0]
-            if current_op != op:
-                if current_op:
-                    res[current_op] = op_qty
-                current_op = op
-                op_qty = 0
-            proc = move_result[1]
-            if proc != current_proc:
-                if 'OUT/' in move_result[6]:
-                    # subtract outbound procurements for production
-                    op_qty -= uom_obj._compute_qty(cr, uid, move_result[2], move_result[3], move_result[4], round=False)
-                else:
-                    op_qty += uom_obj._compute_qty(cr, uid, move_result[2], move_result[3], move_result[4], round=False)
-                current_proc = proc
-            if move_result[5]: #If a move is associated (is move qty)
-                op_qty -= move_result[5]
-        if current_op:
-            res[current_op] = op_qty
-        return res
-
-
 class procurement_order(models.Model):
     _inherit = 'procurement.order'
     _order = 'priority desc, date_start, date_planned, id asc'
@@ -165,23 +119,6 @@ class procurement_order(models.Model):
                 except Exception:
                     pass
         return {}
-
-    def _get_procurement_date_start(self, cr, uid, orderpoint, to_date, context=None):
-        days = 0.0
-        # make addition of lead_days an optional setting
-        days += orderpoint.lead_days or 0.0
-        product = orderpoint.product_id
-        for route in product.route_ids:
-            if route.pull_ids:
-                for rule in route.pull_ids:
-                    if rule.action == 'buy':
-                        days += product._select_seller(product).delay or 0.0
-                        days += product.product_tmpl_id.company_id.po_lead
-                    if rule.action == 'manufacture':
-                        days += product.produce_delay or 0.0
-                        days += product.product_tmpl_id.company_id.manufacturing_lead
-        date_start = datetime.combine(datetime.strptime(to_date, DEFAULT_SERVER_DATE_FORMAT) - relativedelta(days=days), datetime.min.time())
-        return date_start.strftime(DEFAULT_SERVER_DATE_FORMAT)
 
     # stock/procurement,mrp_time_bucket/mrp_time_bucket
     def _prepare_orderpoint_procurement(self, cr, uid, orderpoint, product_qty, context=None):
