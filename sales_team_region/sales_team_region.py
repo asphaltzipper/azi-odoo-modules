@@ -29,8 +29,7 @@ from openerp.tools.translate import _
 class crm_team(models.Model):
     _inherit = 'crm.team'
 
-    region_id = fields.Many2one('sales.team.region', 'Sales Region',
-                                translate=True)
+    region_id = fields.Many2one('sales.team.region', 'Sales Region')
 
 
 class res_partner(models.Model):
