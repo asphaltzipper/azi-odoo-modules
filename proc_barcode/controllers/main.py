@@ -16,12 +16,12 @@ class StockBarcodeController(http.Controller):
                         'name': product.name,
                         'product_id': product.id,
                         'product_uom':product.uom_id.id,
-                        'product_qty':product.product_qty,
-                        'product_barcode': product.barcode,
+                        'product_qty':product.default_proc_qty,
+                        #'product_barcode': product.barcode,
                         'location_id': location.id,
                          'proc_date': datetime.datetime.utcnow().date()
 
-                })
+                }, context={'procurement_autorun_defer': True})
             else:
                 return True
 
