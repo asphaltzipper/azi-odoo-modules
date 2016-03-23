@@ -145,7 +145,7 @@ class procurement_order(models.Model):
         bucket_delay = time_bucket - bucket_day
         return bucket_delay
 
-    def _get_procurement_date_start(self, cr, uid, orderpoint, to_date, context=None):
+    def _get_procurement_date_start(self, cr, uid, orderpoint, product_qty, to_date, context=None):
         days = 0.0
         # make addition of lead_days an optional setting
         days += orderpoint.lead_days or 0.0
@@ -154,7 +154,7 @@ class procurement_order(models.Model):
             if route.pull_ids:
                 for rule in route.pull_ids:
                     if rule.action == 'buy':
-                        days += product._select_seller(product).delay or 0.0
+                        days += product._select_seller(product, quantity=product_qty, date=to_date, uob_id=orderpoint.product_uom).delay or 0.0
                         days += product.product_tmpl_id.company_id.po_lead
                     if rule.action == 'manufacture':
                         days += product.produce_delay or 0.0
@@ -287,7 +287,7 @@ class procurement_order(models.Model):
 
                                 qty_rounded = float_round(qty, precision_rounding=op.product_uom.rounding)
                                 if qty_rounded > 0:
-                                    ctx.update({'bom_effectivity_date': self._get_procurement_date_start(cr, uid, op, ctx['bucket_date'], context=ctx)})
+                                    ctx.update({'bom_effectivity_date': self._get_procurement_date_start(cr, uid, op, qty_rounded, ctx['bucket_date'], context=ctx)})
                                     proc_id = self._plan_orderpoint_procurement(cr, uid, op, qty_rounded, context=ctx)
                                     tot_procs.extend(proc_id) if isinstance(proc_id, list) else tot_procs.append(proc_id)
                                 if use_new_cursor:

@@ -123,7 +123,7 @@ class procurement_order(models.Model):
     # stock/procurement,mrp_time_bucket/mrp_time_bucket
     def _prepare_orderpoint_procurement(self, cr, uid, orderpoint, product_qty, context=None):
         res = super(procurement_order, self)._prepare_orderpoint_procurement(cr, uid, orderpoint, product_qty, context=context)
-        res['date_start'] = self._get_procurement_date_start(cr, uid, orderpoint, context['bucket_date'], context=context)
+        res['date_start'] = self._get_procurement_date_start(cr, uid, orderpoint, product_qty, context['bucket_date'], context=context)
         _logger.info(" IN res: %s", res)
         return res
 
