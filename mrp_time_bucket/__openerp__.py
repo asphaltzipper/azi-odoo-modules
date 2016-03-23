@@ -37,7 +37,7 @@
     """,
     "depends": ["mrp", "mrp_llc"],
     "data" : [
-#        'mrp_time_bucket_view.xml',
+        'mrp_time_bucket_view.xml',
     ],
     "demo": [],
     "test":[],
