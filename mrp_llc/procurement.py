@@ -2,6 +2,9 @@
 # See __openerp__.py file for full copyright and licensing details.
 
 from openerp import models, api
+from openerp.tools import float_compare, float_round
+from psycopg2 import OperationalError
+import openerp
 
 
 class procurement_order(models.Model):
