@@ -427,7 +427,7 @@ class procurement_order(models.Model):
             if route.pull_ids:
                 for rule in route.pull_ids:
                     if rule.action == 'buy':
-                        days += product._select_seller(product, quantity=product_qty, date=to_date, uob_id=orderpoint.product_uom).delay or 0.0
+                        days += product._select_seller(product, quantity=product_qty, date=to_date, uom_id=orderpoint.product_uom).delay or 0.0
                         days += product.product_tmpl_id.company_id.po_lead
                     if rule.action == 'manufacture':
                         days += product.produce_delay or 0.0
