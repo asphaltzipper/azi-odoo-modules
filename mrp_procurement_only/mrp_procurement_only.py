@@ -212,4 +212,9 @@ class procurement_order(models.Model):
             if use_new_cursor:
                 cr.commit()
 
+        # TODO: create outbound procurement orders for manufacturing orders matching:
+        #   * independent_mts=True
+        #   * state='draft'
+
+
         super(procurement_order, self)._procure_orderpoint_confirm(cr, uid, use_new_cursor, company_id, context=context)
