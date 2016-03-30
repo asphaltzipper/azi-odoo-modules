@@ -35,7 +35,7 @@
 
         Note: this module is not compatible with the Calendars on Orderpoints (stock_calendar) module.
     """,
-    "depends": ["mrp", "mrp_llc"],
+    "depends": ["mrp", "mrp_llc", "mrp_bom_effectivity"],
     "data" : [
         'mrp_time_bucket_view.xml',
     ],
