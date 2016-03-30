@@ -15,43 +15,44 @@ Usage
 
 * Set BOM validity dates
 * Verify the correct BOM is selected for SO/PO/MO validation given the proper date in each case:
-  * Sale Order (SO): Move Date (move.date)
-  * Purchase Order (PO): Order Date (line.order_id.date_order) and Move Date (move.date)
-  * Manufacturing Order (MO): Scheduled Date (production.date_planned)
+ * Sale Order (SO): Move Date (move.date)
+ * Purchase Order (PO): Order Date (line.order_id.date_order) and Move Date (move.date)
+ * Manufacturing Order (MO): Scheduled Date (production.date_planned)
 
 Affected methods and when they are called:
+
 * confirm sale for product w/BOM
-  * mrp/stock:_action_explode
-  * creates running outbound sales procurement
+ * mrp/stock:_action_explode
+ * creates running outbound sales procurement
 * run schedulers
-  * for an mfg procurement
-    * mrp/procurement:check_bom_exists
-      * mrp/procurement:_prepare_mo_vals
-      * mrp/mrp:_prepare_lines
-  * creates running inbound mfg procurement
-    * creates confirmed (ARM) MO
-      * change qty
-        * mrp/wizard/change_production_qty:change_prod_qty
-        * mrp/mrp:_prepare_lines
-      * reserve/force reservation
-      * produce>confirm
-  * creates running inbound purch procurement
-    * creates draft PO
-      * confirm order
-        * purchase/purchase:_get_bom_delivered
-        * purchase/purchase:_get_bom_delivered
-        * mrp/stock:_action_explode
-        * purchase/purchase:_get_bom_delivered
-        * purchase/purchase:_get_bom_delivered
-        * sets PO to purchase state
-      * receive
-      * (stock.picking) validate>apply
-        * purchase/purchase:_get_bom_delivered
-      * set to done
-        * purchase/purchase:_get_bom_delivered
+ * for an mfg procurement
+  * mrp/procurement:check_bom_exists
+   * mrp/procurement:_prepare_mo_vals
+   * mrp/mrp:_prepare_lines
+ * creates running inbound mfg procurement
+  * creates confirmed (ARM) MO
+   * change qty
+    * mrp/wizard/change_production_qty:change_prod_qty
+    * mrp/mrp:_prepare_lines
+   * reserve/force reservation
+   * produce>confirm
+ * creates running inbound purch procurement
+  * creates draft PO
+   * confirm order
+    * purchase/purchase:_get_bom_delivered
+    * purchase/purchase:_get_bom_delivered
+    * mrp/stock:_action_explode
+    * purchase/purchase:_get_bom_delivered
+    * purchase/purchase:_get_bom_delivered
+    * sets PO to purchase state
+   * receive
+   * (stock.picking) validate>apply
+    * purchase/purchase:_get_bom_delivered
+   * set to done
+    * purchase/purchase:_get_bom_delivered
 * (stock.picking) reserve/force availability (outgoing transfer)
-  * validate
-    * sale_mrp/sale_mrp:_get_delivered_qty
+ * validate
+  * sale_mrp/sale_mrp:_get_delivered_qty
 
 Bug Tracker
 ===========
