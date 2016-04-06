@@ -5,17 +5,25 @@
 Manufacturing Orders as Independent Demand
 ==========================================
 
-This module creates a field on the Manufacturing Order form to flag an order as independent demand (make-to-stock).  This is used to instruct the scheduling algorithm to create dependent demand for components of the flagged MO.  Creating dependent demand for the components means creating "outbound" procurement orders.  An outbound procurement order is defined as one having destination (location_id) equal to the production location.
+This module makes the following changes:
+* Create computed field independent_mts on the Manufacturing Order
+* Provide filters for managing these MOs
+* Provide list actions for confirming, cancelling, and deleting MOs
+* Add wizard for connecting SOs to ID MOs
 
-This module is only useful when combined with the functionality of mrp_procurement_only module.
+The independent_mts field marks an MO as independent demand.  This is used to provide the user with master schedule functionality.  All of the ID MOs will need to be confirmed in order to create dependent demand (stock moves) for the components.  Changes to the schedule require the ID MOs to be canceled and deleted.
+
+The list actions allow the user to manage Independent MTS demand in batches.
+
+Independent demand is implied when is associated with an SO, or the MO is NOT associated with a procurement order.
 
 Usage
 =====
 
 * Go to Manufacturing > Manufacturing > Manufacturing Orders
 * Edit an existing MO and fill in the Independent MTS field
-* Don't confirm the MO
-* Executing Run Schedulers (from mrp_procurement_only) will generate procurement orders for the dependent demand on the MO (raw materials)
+* Confirm the MO
+* Executing Run Schedulers will generate orders for the dependent demand on the MOs (raw materials)
 
 Bug Tracker
 ===========

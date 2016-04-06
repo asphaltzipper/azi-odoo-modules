@@ -63,19 +63,19 @@ The mrp_procurements_only module modifies the scheduling algorithm to create pro
 Management Interface Changes
 ============================
 
-Purchase Buyer Management
--------------------------------
+Purchase Buyer Management Interface
+-----------------------------------
 
 The purchasing agent (buyer) needs an interface for managing procurement orders.  For this, we add a new menu item, action and tree view to Purchase > Purchase.  The list is filtered to only show items where:
 * Either, the route for the product is set to Buy
 * Or, the rule on the procurement order is set to Buy
 
-Manufacturing Planner Management
-------------------------------------
+Manufacturing Planner Management Interface
+------------------------------------------
 
 The production planner needs an interface for managing procurement orders.  For this, we add a new menu item, action and tree view to Purchase > Purchase.  The list is filtered to only show items where:
+
 * Either, the route for the product is set to Manufacture
 * Or, the rule on the procurement order is set to Manufacture
 
 We also add a Due Date field to the manufacturing order.  This is to allow the production planner to inform production workers of the expected due date for manufacturing orders.
-

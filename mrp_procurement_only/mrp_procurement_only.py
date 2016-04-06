@@ -187,15 +187,17 @@ class procurement_order(models.Model):
                     product_obj = self.pool.get('product.product')
                     product_point = product_obj.browse(cr, uid, product['product_id'])
                     proc_id += procurement_obj.create(cr, uid,
-                                                    self._prepare_outbound_procurement(cr, uid, op, product_point, product['product_qty'], product['product_uom'], context=context),
-                                                    context=context)
+                                                      self._prepare_outbound_procurement(
+                                                          cr, uid, op, product_point, product['product_qty'],
+                                                          product['product_uom'], context=context),
+                                                      context=context)
                     proc_id and proc_ids.append(proc_id) or False
                 #context.pop('bom_effectivity_date')
                 context.pop('parent_proc_id')
         return proc_ids
 
-    # stock/procurement,mrp_time_bucket/mrp_time_bucket
-    def _procure_orderpoint_confirm(self, cr, uid, use_new_cursor=False, company_id = False, context=None):
+    # purge procurements created by the scheduler in a previous run of the algorithm
+    def purge_old_plan(self, cr, uid, use_new_cursor=False, context=None):
         # delete all procurements matching
         #   created by engine
         #   in confirmed state
@@ -212,9 +214,22 @@ class procurement_order(models.Model):
             if use_new_cursor:
                 cr.commit()
 
-        # TODO: create outbound procurement orders for manufacturing orders matching:
-        #   * independent_mts=True
-        #   * state='draft'
+    # hook for other modules to add independent demand to the plan
+    # this happens after purging the old plan's procurements, but before planning for new material requirements
+    def plan_independent_demand(self, cr, uid, use_new_cursor=False, company_id=False, context=None):
+        # create procurements representing dependent demand, based on components of items having independent demand
+        # independent demand may originate from:
+        #  * forecast
+        #  * master schedule
+        pass
 
+    # stock/procurement,mrp_time_bucket/mrp_time_bucket
+    def _procure_orderpoint_confirm(self, cr, uid, use_new_cursor=False, company_id=False, context=None):
+
+        # purge procurements from the old plan
+        self.purge_old_plan(cr, uid, use_new_cursor, context)
+
+        # create dependent demand from independent demand
+        self.plan_independent_demand(cr, uid, use_new_cursor, context)
 
         super(procurement_order, self)._procure_orderpoint_confirm(cr, uid, use_new_cursor, company_id, context=context)
