@@ -9,13 +9,13 @@ This module makes the following changes:
 * Create computed field independent_mts on the Manufacturing Order
 * Provide filters for managing these MOs
 * Provide list actions for confirming, cancelling, and deleting MOs
-* Add wizard for connecting SOs to ID MOs
+* Add wizard for connecting SO Lines to Independent MOs
 
 The independent_mts field marks an MO as independent demand.  This is used to provide the user with master schedule functionality.  All of the ID MOs will need to be confirmed in order to create dependent demand (stock moves) for the components.  Changes to the schedule require the ID MOs to be canceled and deleted.
 
 The list actions allow the user to manage Independent MTS demand in batches.
 
-Independent demand is implied when is associated with an SO, or the MO is NOT associated with a procurement order.
+Independent demand is implied when an MO is associated with an SO, or when the MO is NOT associated with a procurement order.
 
 Usage
 =====
