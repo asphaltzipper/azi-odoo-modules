@@ -124,7 +124,7 @@ class procurement_order(models.Model):
     def _prepare_orderpoint_procurement(self, cr, uid, orderpoint, product_qty, context=None):
         res = super(procurement_order, self)._prepare_orderpoint_procurement(cr, uid, orderpoint, product_qty, context=context)
         res['date_start'] = self._get_procurement_date_start(cr, uid, orderpoint, product_qty, context['bucket_date'], context=context)
-        _logger.info(" IN res: %s", res)
+        _logger.debug(" IN res: %s", res)
         return res
 
     def _prepare_outbound_procurement(self, cr, uid, orderpoint, product, product_qty, product_uom, context=None):
@@ -152,7 +152,7 @@ class procurement_order(models.Model):
             'date_start': context['bom_effectivity_date'],
             'orderpoint_id': child_orderpoint_id and child_orderpoint_id[0] or False,
         }
-        _logger.info("OUT res: %s", res)
+        _logger.debug("OUT res: %s", res)
         return res
 
     # override mrp_time_bucket/mrp_time_bucket
@@ -207,12 +207,20 @@ class procurement_order(models.Model):
                ('purchase_line_id', '=', False),
                ('production_id', '=', False),
                '|', ('origin', 'like', 'OP/'), ('origin', 'like', 'OUT/')]
+        _logger.info("Begin search for old plan")
         proc_ids = procurement_obj.search(cr, uid, dom) or []
+        _logger.info("Found %s procurement orders in the old plan", len(proc_ids))
         if proc_ids:
-            procurement_obj.cancel(cr, SUPERUSER_ID, proc_ids, context=context)
-            procurement_obj.unlink(cr, SUPERUSER_ID, proc_ids, context=context)
+            #_logger.info("Canceling %s procurement orders", len(proc_ids))
+            #procurement_obj.cancel(cr, SUPERUSER_ID, proc_ids, context=context)
+            #_logger.info("Deleting %s procurement orders", len(proc_ids))
+            #procurement_obj.unlink(cr, SUPERUSER_ID, proc_ids, context=context)
+            _logger.info("Directly unlinking %s procurement orders", len(proc_ids))
+            models.Model.unlink(cr, SUPERUSER_ID, proc_ids, context=context)
+            _logger.info("Done unlinking")
             if use_new_cursor:
                 cr.commit()
+            _logger.info("Done committing unlinking")
 
     # hook for other modules to add independent demand to the plan
     # this happens after purging the old plan's procurements, but before planning for new material requirements

@@ -88,6 +88,7 @@ class procurement_order(models.Model):
         orderpoint_obj = self.pool.get('stock.warehouse.orderpoint')
         procurement_obj = self.pool.get('procurement.order')
         product_obj = self.pool.get('product.product')
+        move_obj = self.pool.get('stock.move')
 
         #TODO:
         # set up time_bucket as mfg cfg setting
@@ -106,10 +107,21 @@ class procurement_order(models.Model):
             last_bucket_dt = datetime.strptime(procurement_obj.browse(cr, uid, last_procurement_id)['date_planned'], DEFAULT_SERVER_DATETIME_FORMAT)
             last_bucket_dt = time_bucket == 7 and last_bucket_dt + timedelta(days=time_bucket - last_bucket_dt.isoweekday()) or last_bucket_dt
             last_bucket_dt = (last_bucket_dt < first_bucket_dt) and first_bucket_dt or last_bucket_dt
+
+        last_move = move_obj.search(cr, uid, [('state', '!=', 'cancel'), ('state', '!=', 'done')], order="date DESC", limit=1)
+        if last_move:
+            last_move_id = last_move[0]
+            last_move_dt = datetime.strptime(move_obj.browse(cr, uid, last_move_id)['date'], DEFAULT_SERVER_DATETIME_FORMAT)
+            if last_move_dt > last_bucket_dt:
+                last_bucket_dt = last_move_dt
+                last_bucket_dt = time_bucket == 7 and last_bucket_dt + timedelta(days=time_bucket - last_bucket_dt.isoweekday()) or last_bucket_dt
+
         # get delta from first to last bucket datetime objects
         planning_horizon = (last_bucket_dt - first_bucket_dt).days + time_bucket
 
         dom = company_id and [('company_id', '=', company_id)] or []
+        _logger.info("Begin search for all orderpoints")
+        # TODO: query db
         orderpoint_ids = orderpoint_obj.search(cr, uid, dom, order="location_id, llc")
         prev_ids = []
         tot_procs = []
@@ -118,9 +130,12 @@ class procurement_order(models.Model):
             del orderpoint_ids[:1000]
             product_dict = {}
             ops_dict = {}
+            _logger.info("Browsing 1000 orderpoints")
+            # TODO: use list of dicts
             ops = orderpoint_obj.browse(cr, uid, ids, context=context)
+            _logger.info("Done browsing 1000 orderpoints")
 
-            #Calculate groups that can be executed together
+            # Calculate groups that can be executed together
             for op in ops:
                 key = (op.location_id.id, op.llc)
                 if not product_dict.get(key):
@@ -135,7 +150,7 @@ class procurement_order(models.Model):
                 while plan_days <= planning_horizon:
                     #to_date = first_bucket_dt.date() + relativedelta(days=plan_days)
                     to_date = first_bucket_dt + relativedelta(days=plan_days)
-                    _logger.info("to_date: %s", to_date)
+                    _logger.info("llc: %s; to_date: %s", ops_dict[key][0].llc, to_date)
 
                     ctx = context and context.copy() or {}
                     ctx.update({'location': ops_dict[key][0].location_id.id})
@@ -153,8 +168,8 @@ class procurement_order(models.Model):
                     for op in ops_dict[key]:
                         try:
                             prods = prod_qty[op.product_id.id]['virtual_available']
-                            _logger.info("op: %s", op)
-                            _logger.info("prods: %s", prods)
+                            _logger.debug("op: %s", op)
+                            _logger.debug("prods: %s", prods)
                             if prods is None:
                                 continue
                             if float_compare(prods, op.product_min_qty, precision_rounding=op.product_uom.rounding) <= 0:
@@ -162,8 +177,8 @@ class procurement_order(models.Model):
 
                                 # maintain qty_multiple by subtracting procurements first
                                 qty -= subtract_qty[op.id]
-                                _logger.info("subtract_qty: %s", subtract_qty[op.id])
-                                _logger.info("qty: %s", qty)
+                                _logger.debug("subtract_qty: %s", subtract_qty[op.id])
+                                _logger.debug("qty: %s", qty)
 
                                 reste = op.qty_multiple > 0 and qty % op.qty_multiple or 0.0
                                 if float_compare(reste, 0.0, precision_rounding=op.product_uom.rounding) > 0:
