@@ -123,104 +123,120 @@ class procurement_order(models.Model):
         _logger.info("Begin search for all orderpoints")
         # TODO: query db
         orderpoint_ids = orderpoint_obj.search(cr, uid, dom, order="location_id, llc")
-        prev_ids = []
         tot_procs = []
-        while orderpoint_ids:
-            ids = orderpoint_ids[:1000]
-            del orderpoint_ids[:1000]
-            product_dict = {}
-            ops_dict = {}
-            _logger.info("Browsing 1000 orderpoints")
-            # TODO: use list of dicts
-            ops = orderpoint_obj.browse(cr, uid, ids, context=context)
-            _logger.info("Done browsing 1000 orderpoints")
 
-            # Calculate groups that can be executed together
-            for op in ops:
-                key = (op.location_id.id, op.llc)
-                if not product_dict.get(key):
-                    product_dict[key] = [op.product_id]
-                    ops_dict[key] = [op]
-                else:
-                    product_dict[key] += [op.product_id]
-                    ops_dict[key] += [op]
+        ids = orderpoint_ids
+        product_dict = {}
+        ops_dict = {}
+        _logger.info("Browsing all orderpoints")
+        # TODO: use list of dicts
+        ops = orderpoint_obj.browse(cr, uid, ids, context=context)
+        _logger.info("Done browsing all orderpoints")
 
-            for key in sorted(product_dict.keys()):
-                plan_days = 0
-                while plan_days <= planning_horizon:
-                    #to_date = first_bucket_dt.date() + relativedelta(days=plan_days)
-                    to_date = first_bucket_dt + relativedelta(days=plan_days)
-                    _logger.info("llc: %s; to_date: %s", ops_dict[key][0].llc, to_date)
+        # Calculate groups that can be executed together
+        for op in ops:
+            key = (op.location_id.id, op.llc)
+            if not product_dict.get(key):
+                product_dict[key] = [op.product_id]
+                ops_dict[key] = [op]
+            else:
+                product_dict[key] += [op.product_id]
+                ops_dict[key] += [op]
 
-                    ctx = context and context.copy() or {}
-                    ctx.update({'location': ops_dict[key][0].location_id.id})
-                    #ctx.update({'bucket_date': (to_date - relativedelta(days=self._get_bucket_delay(cr, uid, context=context))).strftime(DEFAULT_SERVER_DATE_FORMAT)})
-                    #ctx.update({'bucket_date': (to_date - relativedelta(days=self._get_bucket_delay(cr, uid, context=context))).strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
-                    #ctx.update({'bucket_date': (datetime.combine(to_date.date(), datetime.now().time()) - relativedelta(days=self._get_bucket_delay(cr, uid, context=context))).strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
-                    # adjust bucket_date relative to user timezone
-                    context_hour = self._get_context_dt(cr, uid, context=context, utc_dt=to_date).hour
-                    ctx.update({'bucket_date': (to_date + timedelta(hours=context_hour > 12 and 24 - context_hour or 0 - context_hour) - relativedelta(days=self._get_bucket_delay(cr, uid, context=context))).strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
-                    ctx.update({'to_date': to_date.strftime(DEFAULT_SERVER_DATE_FORMAT)})
-                    ctx.update({'procurement_autorun_defer': True})
-                    prod_qty = product_obj._product_available(cr, uid, [x.id for x in product_dict[key]],
-                                                            context=ctx)
-                    subtract_qty = orderpoint_obj.subtract_procurements_from_orderpoints(cr, uid, [x.id for x in ops_dict[key]], context=ctx)
-                    for op in ops_dict[key]:
-                        try:
-                            prods = prod_qty[op.product_id.id]['virtual_available']
-                            _logger.debug("op: %s", op)
-                            _logger.debug("prods: %s", prods)
-                            if prods is None:
-                                continue
-                            if float_compare(prods, op.product_min_qty, precision_rounding=op.product_uom.rounding) <= 0:
-                                qty = max(op.product_min_qty, op.product_max_qty) - prods
+        for key in sorted(product_dict.keys()):
+            plan_days = 0
+            while plan_days <= planning_horizon:
+                #to_date = first_bucket_dt.date() + relativedelta(days=plan_days)
+                to_date = first_bucket_dt + relativedelta(days=plan_days)
+                _logger.info("llc: %s; to_date: %s", ops_dict[key][0].llc, to_date)
 
-                                # maintain qty_multiple by subtracting procurements first
-                                qty -= subtract_qty[op.id]
-                                _logger.debug("subtract_qty: %s", subtract_qty[op.id])
-                                _logger.debug("qty: %s", qty)
+                ctx = context and context.copy() or {}
+                ctx.update({'location': ops_dict[key][0].location_id.id})
+                #ctx.update({'bucket_date': (to_date - relativedelta(days=self._get_bucket_delay(cr, uid, context=context))).strftime(DEFAULT_SERVER_DATE_FORMAT)})
+                #ctx.update({'bucket_date': (to_date - relativedelta(days=self._get_bucket_delay(cr, uid, context=context))).strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
+                #ctx.update({'bucket_date': (datetime.combine(to_date.date(), datetime.now().time()) - relativedelta(days=self._get_bucket_delay(cr, uid, context=context))).strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
+                # adjust bucket_date relative to user timezone
+                context_hour = self._get_context_dt(cr, uid, context=context, utc_dt=to_date).hour
+                ctx.update({'bucket_date': (to_date + timedelta(hours=context_hour > 12 and 24 - context_hour or 0 - context_hour) - relativedelta(days=self._get_bucket_delay(cr, uid, context=context))).strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
+                ctx.update({'to_date': to_date.strftime(DEFAULT_SERVER_DATE_FORMAT)})
+                ctx.update({'procurement_autorun_defer': True})
 
-                                reste = op.qty_multiple > 0 and qty % op.qty_multiple or 0.0
-                                if float_compare(reste, 0.0, precision_rounding=op.product_uom.rounding) > 0:
-                                    qty += op.qty_multiple - reste
+                _logger.info("start _product_available llc:%s, to_date:%s, products:%s", ops_dict[key][0].llc, to_date, len(product_dict[key]))
+                prod_qty = product_obj._product_available(cr, uid, [x.id for x in product_dict[key]], context=ctx)
+                _logger.info("end _product_available llc:%s, to_date:%s, products:%s", ops_dict[key][0].llc, to_date, len(product_dict[key]))
 
-                                if float_compare(qty, 0.0, precision_rounding=op.product_uom.rounding) < 0:
-                                    continue
+                _logger.info("start subtract_procurements_from_orderpoints llc:%s, to_date:%s, ops:%s", ops_dict[key][0].llc, to_date, len(ops_dict[key]))
+                subtract_qty = orderpoint_obj.subtract_procurements_from_orderpoints(cr, uid, [x.id for x in ops_dict[key]], context=ctx)
+                _logger.info("end subtract_procurements_from_orderpoints llc:%s, to_date:%s, ops:%s", ops_dict[key][0].llc, to_date, len(ops_dict[key]))
 
-                                qty_rounded = float_round(qty, precision_rounding=op.product_uom.rounding)
-                                if qty_rounded > 0:
-                                    ctx.update({'bom_effectivity_date': self._get_procurement_date_start(cr, uid, op, qty_rounded, ctx['bucket_date'], context=ctx)})
-                                    proc_id = self._plan_orderpoint_procurement(cr, uid, op, qty_rounded, context=ctx)
-                                    tot_procs.extend(proc_id) if isinstance(proc_id, list) else tot_procs.append(proc_id)
-                                if use_new_cursor:
-                                    cr.commit()
-                        except OperationalError:
-                            if use_new_cursor:
-                                orderpoint_ids.append(op.id)
-                                cr.rollback()
-                                continue
-                            else:
-                                raise
-                    plan_days = plan_days + time_bucket
-            try:
-                tot_procs.reverse()
-                self._process_procurement(cr, uid, tot_procs, context=context)
-                tot_procs = []
-                if use_new_cursor:
-                    cr.commit()
-            except OperationalError:
-                if use_new_cursor:
-                    cr.rollback()
-                    continue
-                else:
-                    raise
+                for op in ops_dict[key]:
+                    prods = prod_qty[op.product_id.id]['virtual_available']
+                    _logger.debug("op: %s", op)
+                    _logger.debug("prods: %s", prods)
+                    if prods is None:
+                        continue
 
+                    _logger.info("start float_compare1 llc:%s, to_date:%s, op:%s", ops_dict[key][0].llc,
+                                 to_date, op)
+                    # TODO: we need to consider subtract_qty here
+                    test1 = float_compare(prods, op.product_min_qty, precision_rounding=op.product_uom.rounding)
+                    _logger.info("end float_compare1 llc:%s, to_date:%s, op:%s", ops_dict[key][0].llc,
+                                 to_date, op)
+
+                    if test1 <= 0:
+
+                        _logger.info("start qty calc llc:%s, to_date:%s, op:%s", ops_dict[key][0].llc,
+                                     to_date, op)
+
+                        qty = max(op.product_min_qty, op.product_max_qty) - prods
+
+                        # maintain qty_multiple by subtracting procurements first
+                        qty -= subtract_qty[op.id]
+                        _logger.debug("subtract_qty: %s", subtract_qty[op.id])
+                        _logger.debug("qty: %s", qty)
+
+                        reste = op.qty_multiple > 0 and qty % op.qty_multiple or 0.0
+                        # if reste > 0.0
+                        if float_compare(reste, 0.0, precision_rounding=op.product_uom.rounding) > 0:
+                            qty += op.qty_multiple - reste
+
+                        # if qty < 0.0
+                        if float_compare(qty, 0.0, precision_rounding=op.product_uom.rounding) < 0:
+                            continue
+
+                        qty_rounded = float_round(qty, precision_rounding=op.product_uom.rounding)
+
+                        _logger.info("end qty calc llc:%s, to_date:%s, op:%s", ops_dict[key][0].llc,
+                                     to_date, op)
+
+                        if qty_rounded > 0:
+
+                            _logger.info("start _get_procurement_date_start llc:%s, to_date:%s, op:%s", ops_dict[key][0].llc, to_date, op)
+                            ctx.update({'bom_effectivity_date': self._get_procurement_date_start(cr, uid, op, qty_rounded, ctx['bucket_date'], context=ctx)})
+                            _logger.info("end _get_procurement_date_start llc:%s, to_date:%s, op:%s", ops_dict[key][0].llc, to_date, op)
+
+                            _logger.info("start create llc:%s, to_date:%s, op:%s", ops_dict[key][0].llc, to_date, op)
+                            proc_id = self._plan_orderpoint_procurement(cr, uid, op, qty_rounded, context=ctx)
+                            _logger.info("end create llc:%s, to_date:%s, op:%s", ops_dict[key][0].llc, to_date, op)
+
+                            tot_procs.extend(proc_id) if isinstance(proc_id, list) else tot_procs.append(proc_id)
+                        if use_new_cursor:
+                            _logger.info("start commit llc:%s, to_date:%s, op:%s", ops_dict[key][0].llc, to_date, op)
+                            cr.commit()
+                            _logger.info("end commit llc:%s, to_date:%s, op:%s", ops_dict[key][0].llc, to_date, op)
+
+                plan_days = plan_days + time_bucket
+        try:
+            tot_procs.reverse()
+            self._process_procurement(cr, uid, tot_procs, context=context)
+            tot_procs = []
             if use_new_cursor:
                 cr.commit()
-            if prev_ids == ids:
-                break
+        except OperationalError:
+            if use_new_cursor:
+                cr.rollback()
             else:
-                prev_ids = ids
+                raise
 
         if use_new_cursor:
             cr.commit()
