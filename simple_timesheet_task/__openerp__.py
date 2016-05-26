@@ -34,7 +34,7 @@ Specify Tasks on Timesheet Details Tab
     """,
     "depends": ["hr_timesheet", "hr_timesheet_sheet"],
     "data": [
-        'simple_timesheet_task_view.xml',
+        'views/simple_timesheet_task_view.xml',
     ],
     "installable": True,
     "auto_install": False,
