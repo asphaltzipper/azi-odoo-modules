@@ -32,7 +32,7 @@
 Specify Tasks on Timesheet Details Tab
 =========================================
     """,
-    "depends": ["hr_timesheet", "hr_timesheet_sheet"],
+    "depends": ["hr_timesheet", "hr_timesheet_sheet", "project_timesheet"],
     "data": [
         'views/simple_timesheet_task_view.xml',
     ],
