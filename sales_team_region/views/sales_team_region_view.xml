@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2014-2016 Scott Saunders
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+
+<openerp>
+<data>
+
+<record id="sales_team_region_view_form" model="ir.ui.view">
+    <field name="name">sales.team.region.form</field>
+    <field name="model">sales.team.region</field>
+    <field name="arch" type="xml">
+        <form string="Sales Region" name="sales_region">
+            <sheet>
+                <div class="oe_title">
+                    <label for="name" class="oe_edit_only" />
+                    <h1>
+                        <field name="name" />
+                    </h1>
+                </div>
+                <notebook>
+                    <page string="Country Groups" name="country_groups">
+                        <field name="country_groups" />
+                    </page>
+                    <page string="Countries" name="countries">
+                        <field name="countries" />
+                    </page>
+                    <page string="States" name="states">
+                        <!--<field name="state_ids" invisible="0" />-->
+                        <field name="states">
+                            <tree>
+                                <field name="name" />
+                                <field name="code" />
+                                <field name="country_id" />
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+            </sheet>
+        </form>
+    </field>
+</record>
+
+<!--<record id="sales_team_region_search_form_view" model="ir.ui.view">
+    <field name="name">sales.team.region.search</field>
+    <field name="model">sales.team.region</field>
+    <field name="arch" type="xml">
+        <search string="Region">
+            <field name="name" string="Region" filter_domain="[('name','ilike',self)]"/>-->
+            <!--<field name="name" string="Region" filter_domain="['|',('state.name','ilike',self),('name','ilike',self)]"/>
+            <filter string='US' name="us" icon="terp-accessories-achiver" domain="[('states.country_id','in',235)]" />
+            <group expand='0' string='Group by...'>
+                <filter string='State' domain="[]" context="{'group_by' : 'states'}"/>
+                <filter string='Country' icon="terp-mrp" domain="[]" context="{'group_by' : 'countries'}"/>-->
+            <!--</group>
+        </search>
+    </field>
+</record>-->
+
+<record id="sales_team_region_view_tree" model="ir.ui.view">
+    <field name="name">sales.team.region.tree</field>
+    <field name="model">sales.team.region</field>
+    <field name="arch" type="xml">
+        <tree string="Sales Team Regions" name="sales_team_regions">
+            <field name="name" />
+            <field name="states" />
+            <field name="countries" />
+            <field name="country_groups" />
+        </tree>
+    </field>
+</record>
+
+<act_window name="Sales Regions"
+    res_model="sales.team.region"
+    view_mode="tree,form"
+    target="current"
+    id="sales_team_region_act_window"/>
+
+<menuitem action="sales_team_region_act_window" id="menu_sales_team_region_act" parent="base.menu_sale_config" sequence="7" groups="base.group_configuration" />
+
+</data>
+</openerp>
