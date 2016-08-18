@@ -4,6 +4,7 @@
 
 from openerp import api, fields, models
 from openerp.exceptions import ValidationError
+from openerp.tools.translate import _
 
 
 class Partner(models.Model):
@@ -87,8 +88,8 @@ class Partner(models.Model):
                 #return False
             #if self.env['res.users'].has_group('base.group_multi_salesteams') and record.customer and not record.team_id.id:
             if record.customer and not record.team_id.id:
-                raise ValidationError("Customers require a valid Sales Team."
-                                      " (%s)" % record.team_id)
+                raise ValidationError(_("Customers require a valid Sales Team."
+                                        " (%s)") % record.team_id)
         #return True
 
     # added due to Error triggered during 8.0 database update 20150320:

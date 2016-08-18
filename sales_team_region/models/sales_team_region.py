@@ -4,6 +4,7 @@
 
 from openerp import api, fields, models
 from openerp.exceptions import ValidationError
+from openerp.tools.translate import _
 
 
 class SalesTeamRegion(models.Model):
@@ -31,9 +32,10 @@ class SalesTeamRegion(models.Model):
         for record in self:
             if not (record.states or record.countries or
                     record.country_groups):
-                raise ValidationError("Sales regions require a valid region"
-                                      " definition. Please select at least one"
-                                      " state, country, or country group.")
+                raise ValidationError(_("Sales regions require a valid region"
+                                        " definition. Please select at least"
+                                        " one state, country, or country"
+                                        " group."))
 
                 # exclude state country_ids
     @api.multi

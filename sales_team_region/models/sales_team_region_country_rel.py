@@ -10,10 +10,8 @@ class SalesTeamRegionCountryRel(models.Model):
     _name = 'sales.team.region.country.rel'
 
     region_id = fields.Many2one('sales.team.region', 'Sales Region',
-                                required=True, translate=True,
-                                ondelete='cascade')
-    country_id = fields.Many2one('res.country', 'Country', required=True,
-                                 translate=True)
+                                required=True, ondelete='cascade')
+    country_id = fields.Many2one('res.country', 'Country', required=True)
 
     _sql_constraints = [
         ('rel_country_uniq', 'unique(country_id)',
