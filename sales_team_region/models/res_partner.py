@@ -104,32 +104,30 @@ class Partner(models.Model):
     state_trigger = fields.Boolean(store=False, default=False,
                                    search='_st_search')
 
-    @api.multi
-    def onchange_state(self, state_id=False, customer=False,
-                       state_trigger=False):
-        if state_id:
-            res = super(Partner, self).onchange_state(state_id)
-            res['value']['state_trigger'] = state_trigger
-            res['value']['team_id'] = self._lookup_team(state_id, customer)
+    @api.onchange('state_id')
+    @api.depends('customer')
+    def onchange_state(self, state_trigger=True):
+        if self.state_id:
+            super(Partner, self).onchange_state()
+            self.state_trigger = state_trigger
+            self.team_id = self._lookup_team(self.state_id.id, self.customer)
         else:
-            res = {'value': {'state_trigger': False}}
-        return res
+            self.state_trigger = False
 
-    @api.multi
-    def onchange_country(self, country_id=False, customer=False,
-                         state_trigger=False):
-        res = {'value': {'state_trigger': False}}
-        if not state_trigger:
-            res['value']['state_id'] = self.env[
-                'res.country.state'].browse().id
-            res['value']['team_id'] = self._lookup_team(customer=customer,
-                                                        country_id=country_id)
-        return res
+    @api.onchange('country_id')
+    @api.depends('customer', 'state_trigger')
+    def onchange_country(self):
+        if not self.state_trigger:
+            self.state_id = self.env['res.country.state'].browse().id
+            self.team_id = self._lookup_team(customer=self.customer,
+                                              country_id=self.country_id.id)
+        self.state_trigger = False
 
-    @api.multi
-    def onchange_customer(self, state_id=False, country_id=False,
-                          customer=False):
-        if state_id:
-            return self.onchange_state(state_id, customer)
-        if country_id:
-            return self.onchange_country(country_id, customer)
+    @api.onchange('customer')
+    @api.depends('state_id', 'country_id')
+    def onchange_customer(self):
+        if self.state_id:
+            return self.onchange_state(False)
+        if self.country_id:
+            self.state_trigger = False
+            return self.onchange_country()

@@ -75,7 +75,7 @@
     target="current"
     id="sales_team_region_act_window"/>
 
-<menuitem action="sales_team_region_act_window" id="menu_sales_team_region_act" parent="base.menu_sale_config" sequence="7" groups="base.group_configuration" />
+<menuitem action="sales_team_region_act_window" id="menu_sales_team_region_act" parent="sales_team.menu_sale_config" sequence="7" groups="base.group_erp_manager" />
 
 </data>
 </openerp>

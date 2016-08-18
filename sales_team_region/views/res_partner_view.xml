@@ -13,15 +13,6 @@
         <field name="image" position="after">
             <field name="state_trigger" invisible="1" />
         </field>
-        <xpath expr="//form/sheet/group/group/div/field[@name='state_id']" position="attributes">
-            <attribute name="on_change">onchange_state(state_id,customer,True)</attribute>
-        </xpath>
-        <xpath expr="//form/sheet/group/group/div/field[@name='country_id']" position="attributes">
-            <attribute name="on_change">onchange_country(country_id,customer,state_trigger)</attribute>
-        </xpath>
-        <xpath expr="//form/sheet/notebook/page[@name='sales_purchases']/group/group[@name='sale']/field[@name='customer']" position="attributes">
-            <attribute name="on_change">onchange_customer(state_id,country_id,customer)</attribute>
-        </xpath>
         <field name="user_id" position="after">
             <field name="team_id" completion="1" />
         </field>
