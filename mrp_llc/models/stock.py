@@ -6,7 +6,5 @@ from openerp import fields, models
 
 class stock_warehouse_orderpoint(models.Model):
     _inherit = 'stock.warehouse.orderpoint'
-    _order = 'llc'
 
-    llc = fields.Integer(string='Low Level Code', store=True, default=0,
-                         readonly=True)
+    llc = fields.Integer(string='Low Level Code', default=0, readonly=True)

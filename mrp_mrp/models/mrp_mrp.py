@@ -132,6 +132,56 @@ class MrpMaterialPlan(models.Model):
         bucket_list = [last_bucket_dt + datetime.timedelta(days=x) for x in range(0, self.BucketSize)]
         return bucket_list
 
+    def _get_orderpoints(self):
+
+        # get cumulative inventory state by orderpoint
+        self._cr.execute("""
+            -- procurement quantities (confirmed, exception, running)
+            -- later, subtract without a stock move
+            SELECT
+                orderpoint.id,
+                procurement.id,
+                procurement.product_uom,
+                procurement.product_qty,
+                template.uom_id,
+                move.product_qty
+            FROM stock_warehouse_orderpoint AS orderpoint
+            JOIN procurement_order AS procurement ON procurement.orderpoint_id = orderpoint.id
+            JOIN product_product AS product ON product.id = procurement.product_id
+            JOIN product_template AS template ON template.id = product.product_tmpl_id
+            LEFT JOIN stock_move AS move ON move.procurement_id = procurement.id
+            WHERE procurement.state not in ('done', 'cancel')
+            AND (move.state IS NULL OR move.state != 'draft')
+            ORDER BY orderpoint.id, procurement.id
+        """)
+
+        # quantity of product that needs to be added to the inventory state because there's a procurement existing with
+        # aim to fulfill it
+        # procurements associated to an orderpoint
+        # state in (confirmed, exception, running)
+        # less associated stock moves
+        self._cr.execute("""
+            -- procurement quantities (confirmed, exception, running)
+            -- later, subtract without a stock move
+            SELECT
+                orderpoint.id,
+                procurement.id,
+                procurement.product_uom,
+                procurement.product_qty,
+                template.uom_id,
+                move.product_qty
+            FROM stock_warehouse_orderpoint AS orderpoint
+            JOIN procurement_order AS procurement ON procurement.orderpoint_id = orderpoint.id
+            JOIN product_product AS product ON product.id = procurement.product_id
+            JOIN product_template AS template ON template.id = product.product_tmpl_id
+            LEFT JOIN stock_move AS move ON move.procurement_id = procurement.id
+            WHERE procurement.state not in ('done', 'cancel')
+            AND (move.state IS NULL OR move.state != 'draft')
+            ORDER BY orderpoint.id, procurement.id
+        """)
+
+        # add procurement supply to inventory state
+
     @api.model
     def run_mrp(self):
         # mrp algorithm to calculate requirements

@@ -4,11 +4,10 @@
 from openerp import api, fields, models
 
 
-class mrp_bom_llc(models.Model):
+class MrpBomLlc(models.Model):
     _name = "mrp.bom.llc"
     _description = "MRP Low Level Code"
     _auto = False
-    _order = 'llc'
 
     llc = fields.Integer('Orderpoint LLC', readonly=True)
 
@@ -58,6 +57,6 @@ class mrp_bom_llc(models.Model):
 
     @api.model
     def update_orderpoint_llc(self):
-        for llc in self.env['mrp.bom.llc'].search([]):
+        for llc in self:
             for op in self.env['stock.warehouse.orderpoint'].browse(llc.id):
                 op.llc = llc.llc

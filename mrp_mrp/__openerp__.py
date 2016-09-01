@@ -10,7 +10,9 @@
     "author": "mtaylor",
     "website": "http://www.github.com/asphaltzipper/azi-odoo-modules",
     "depends": [
-        "mrp_procurement_only"
+        "mrp",
+        "procurement",
+        "mrp_llc",
     ],
     "data": [
         "views/mrp_production_view.xml",
