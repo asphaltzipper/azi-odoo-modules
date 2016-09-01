@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from openerp.osv import fields, osv
-from openerp.tools.translate import _
+from openerp import models, fields, api, _
+from odoo.exceptions import ValidationError
+
 import re
 
 # TODO: Add domain on mrp.production.product.line field product_id
@@ -9,125 +10,106 @@ import re
 #       Investigate bug on domain on purchase.order.line field product_id
 
 
-# class product_template(osv.Model):
-#
-#     """
-#     store default_code so we can sort tree views
-#     """
-#
-#     _inherit = "product.template"
-#     _order = "default_code"
-#
-#     _columns = {
-#         'default_code': fields.related('product_variant_ids', 'default_code', type='char', string='Internal Reference', store=True),
-#     }
+class ProductTemplate(models.Model):
+    """
+        Add product manager field
+        Add default proc field
+    """
+    _inherit = "product.template"
+
+    product_manager = fields.Many2one('res.users', 'Product Manager')
+
+    default_proc_qty = fields.Float(related='product_variant_ids.default_proc_qty')
 
 
-# class product_product(osv.Model):
-#
-#     """
-#     Enforce unique product code (default_code)
-#     Enforce product code formatting
-#     Require product code for Stockable products (type='product')
-#     TODO: Add produce_ok to product.product
-#     TODO: Only require product code on Stockable products when setting purchase_ok, sale_ok, or produce_ok
-#     """
-#
-#     _inherit = "product.product"
-#
-#     _sql_constraints = [ ('default_code_uniq', 'unique (default_code)', """Product Code must be unique."""), ]
-#
-#     default_code_pattern = r'^((COPY\.)?[_A-Z0-9-]+\.[A-Z-][0-9])$'
-#
-#     def _require_default_code(self, cr, uid, ids, context=None):
-#         # verify that we have a product code before allowing procurements
-#         for product in self.browse(cr, uid, ids, context=context):
-#             # require default_code when flagging for sale, purchase, produce
-#             if product.type=='product' and not product.default_code and (product.purchase_ok or product.sale_ok):
-#                 return False
-#         return True
-#
-#     def _validate_default_code(self, cr, uid, ids, context=None):
-#         # require valid default_code, making allowance for copies
-#         for product in self.browse(cr, uid, ids, context=context):
-#             if product.default_code and not re.match(self.default_code_pattern, product.default_code):
-#                 return False
-#         return True
-#
-#     def _validate_default_code_copy(self, cr, uid, ids, context=None):
-#         # require completely valid default_code before allowing procurements
-#         for product in self.browse(cr, uid, ids, context=context):
-#             pattern = r'^COPY\..*$'
-#             if product.default_code and re.match(pattern, product.default_code) and (product.purchase_ok or product.sale_ok):
-#                 return False
-#         return True
-#
-#     _constraints = [
-#         (_require_default_code, 'Stockable product type requires a valid Reference code (default_code field).', ['type','default_code','purchase_ok','sale_ok']),
-#         (_validate_default_code, "Reference code (default_code) must match this format: r'" + default_code_pattern + "'", ['default_code']),
-#         (_validate_default_code_copy, 'For procurements, copied Reference codes are not allowed', ['type','default_code','purchase_ok','sale_ok']),
-#     ]
-#
-#     def copy(self, cr, uid, id, default=None, context=None):
-#         if context is None:
-#             context={}
-#         product = self.read(cr, uid, id, ['default_code'], context=context)
-#         if not default:
-#             default = {}
-#         default = default.copy()
-#         default['default_code'] = _('COPY.') + product['default_code']
-#
-#         # unset purchase, sale, produce okay flags
-#         if product.type == 'product':
-#             default['purchase_ok'] = False
-#             default['sale_ok'] = False
-#             #default['produce_ok'] = False
-#
-#         return super(product_code_unique_product, self).copy(cr=cr, uid=uid, id=id, default=default, context=context)
+class ProductProduct(models.Model):
+    """
+    Enforce unique product code (default_code)
+    Enforce product code formatting
+    Require product code for Stockable products (type='product')
+    TODO: Add produce_ok to product.product and constrain when setting this field
+    """
+
+    _inherit = "product.product"
+
+    _sql_constraints = [('default_code_uniq', 'unique (default_code)', "Product Code must be unique."), ]
+
+    default_proc_qty = fields.Float(
+        string='Procurement Qty',
+        help="Default order quantity when requesting procurements by barcode scanning")
+
+    default_code_pattern = r'^((COPY\.)?[_A-Z0-9-]+\.[A-Z-][0-9])$'
+
+    @api.constrains('type', 'default_code', 'purchase_ok', 'sale_ok')
+    def _require_default_code(self):
+        # verify that we have a product code before allowing procurements
+        for product in self:
+            # require default_code when flagging for sale, purchase, produce
+            if product.type == 'product' and not product.default_code and (product.purchase_ok or product.sale_ok):
+                raise ValidationError(_('Stockable product type requires a valid Reference code (default_code field).'))
+        return True
+
+    @api.constrains('default_code')
+    def _validate_default_code(self):
+        # require valid default_code, making allowance for copies
+        for product in self:
+            if product.default_code and not re.match(self.default_code_pattern, product.default_code):
+                raise ValidationError(_('Reference code (default_code) must match this format:') + " r'%s'" % self.default_code_pattern)
+        return True
+
+    @api.constrains('type', 'default_code', 'purchase_ok', 'sale_ok')
+    def _validate_default_code_copy(self):
+        # require completely valid default_code before allowing procurements
+        for product in self:
+            pattern = r'^COPY\..*$'
+            if product.default_code and re.match(pattern, product.default_code) and (product.purchase_ok or product.sale_ok):
+                raise ValidationError(_('For procurements, copied Reference codes are not allowed.'))
+        return True
+
+    @api.one
+    def copy(self, default=None):
+        product = self
+        if default is None:
+            default = {}
+        default = default.copy()
+        default['default_code'] = _('COPY.') + product['default_code']
+        # unset purchase, sale, produce okay flags
+        if product.type == 'product':
+            default['purchase_ok'] = False
+            default['sale_ok'] = False
+            # default['produce_ok'] = False
+        return super(ProductProduct, self).copy(default=default)
 
 
-
-class uom_categ_unique(osv.Model):
-
+class ProductUomCategory(models.Model):
     """Enforce unique UOM category name"""
 
     _inherit = 'product.uom.categ'
 
-    _sql_constraints = [ ('name_uniq', 'unique (name)', """Category name must be unique."""), ]
+    _sql_constraints = [('name_uniq', 'unique (name)', """Category name must be unique."""), ]
 
-    def copy(self, cr, uid, id, default=None, context=None):
-        if context is None:
-            context={}
-
-        product = self.read(cr, uid, id, ['name'], context=context)
+    @api.multi
+    def copy(self, default=None):
         if not default:
             default = {}
         default = default.copy()
-        default['name'] = product['name'] + _(' (copy)')
+        default['name'] = self.name + _(' (copy)')
 
-        return super(product_uom_categ_unique, self).copy(cr=cr, uid=uid, id=id, default=default, context=context)
+        return super(ProductUomCategory, self).copy(default=default)
 
 
-class uom_unique(osv.Model):
-    
+class ProductUom(models.Model):
     """Enforce unique UOM name"""
-    
+
     _inherit = 'product.uom'
-      
-    _sql_constraints = [ ('name_uniq', 'unique (name)', """UOM Name must be unique."""), ]
 
-    def copy(self, cr, uid, id, default=None, context=None):
-        if context is None:
-            context={}
+    _sql_constraints = [('name_uniq', 'unique (name)', """UOM Name must be unique."""), ]
 
-        product = self.read(cr, uid, id, ['name'], context=context)
+    @api.multi
+    def copy(self, default=None):
         if not default:
             default = {}
         default = default.copy()
-        default['name'] = product['name'] + _(' (copy)')
+        default['name'] = self.name + _(' (copy)')
 
-        return super(product_uom_categ_unique, self).copy(cr=cr, uid=uid, id=id, default=default, context=context)
-
-
-
-
+        return super(ProductUom, self).copy(default=default)

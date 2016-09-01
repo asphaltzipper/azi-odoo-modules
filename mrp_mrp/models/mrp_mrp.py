@@ -4,7 +4,12 @@
 
 from openerp import models, fields, api
 import odoo.addons.decimal_precision as dp
+from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT, DEFAULT_SERVER_DATE_FORMAT, float_compare, float_round
+from datetime import datetime, timedelta
+# from dateutil.relativedelta import relativedelta
 
+import logging
+_logger = logging.getLogger(__name__)
 
 class MrpMaterialPlan(models.Model):
     """
@@ -23,7 +28,11 @@ class MrpMaterialPlan(models.Model):
     """
 
     _name = "mrp.material_plan"
-    _description = "Plan Material Data"
+    _description = "Plan Material Moves"
+
+    name = fields.Char(
+        'Name', copy=False, required=True,
+        default=lambda self: self.env['ir.sequence'].next_by_code('mrp.material_plan'))
 
     product_id = fields.Many2one(
         comodel_name='product.product',
@@ -52,7 +61,7 @@ class MrpMaterialPlan(models.Model):
         selection=[('make', 'Make'), ('buy', 'Buy'), ('move', 'Move')],
         string="Supply Route",
         track_visibility='onchange',
-        help='Supply route that was assumed in planned this order.')
+        help='Supply route that was assumed in planning this order.')
 
     warehouse_id = fields.Many2one(
         comodel_name='stock.warehouse',
@@ -61,7 +70,7 @@ class MrpMaterialPlan(models.Model):
         readonly=True,
         help='Warehouse to consider for the route selection')
 
-    date_finish = fields.Datetime(
+    date_finish = fields.Date(
         string='Finish Date',
         required=True,
         readonly=True,
@@ -71,7 +80,7 @@ class MrpMaterialPlan(models.Model):
              'For purchased products, this is the date of delivery from vendor.  '
              'For manufactured products, this is the date the product is moved from production to stock.')
 
-    date_start = fields.Datetime(
+    date_start = fields.Date(
         string='Start Date',
         required=False,
         index=True,
@@ -80,50 +89,137 @@ class MrpMaterialPlan(models.Model):
         help='Start date of this order.  Calculated as the planned date of completion (Finish Date) minus the lead '
              'time for this product.')
 
+    origin = fields.Char(
+        string='Demand Origin',
+        help="Reference of the Supply/Make order that has consumes this Demand/Move order.")
+
+    @api.model
+    def purge_old_plan(self):
+        # delete all planned moves
+        _logger.info("Deleting %s planned moves", len(self))
+        self.search([]).unlink()
+        _logger.info("Done deleting")
+
+    def _get_bucket_size(self):
+        # TODO: set up time_bucket as mfg cfg setting
+        # daily = 1
+        # weekly = 7
+        # TODO: add capability for monthly buckets
+        return 1
+
+    BucketSize = _get_bucket_size()
+
+    def _get_bucket_from_date(self, str_date=None):
+        # as Odoo runs in UTC, datetime.now() is equivalent to datetime.utcnow()
+        in_date = str_date and datetime.strptime(str_date, DEFAULT_SERVER_DATE_FORMAT) or datetime.now().date()
+        # TODO: add handling for monthly buckets
+        return self.BucketSize == 7 and in_date - timedelta(days=in_date.weekday()) or in_date
+
+    def _get_bucket_list(self):
+        # TODO: add option to choose day of week/month for procurement
+        first_bucket_dt = self._get_bucket_from_date()
+        last_bucket_dt = first_bucket_dt
+
+        # get last procurement date
+        ProcurementOrder = self.env['procurement.order']
+        last_procurement = ProcurementOrder.search([('state', '=', 'running')], order="date_planned DESC", limit=1)
+        if last_procurement:
+            last_procurement_id = last_procurement[0]
+            last_proc_date = ProcurementOrder.browse(last_procurement_id)['date_planned']
+            last_bucket_dt = self._get_bucket_from_date(last_proc_date)
+
+        # generate list of dates ranging from first bucket date to last bucket date
+        bucket_list = [last_bucket_dt + datetime.timedelta(days=x) for x in range(0, self.BucketSize)]
+        return bucket_list
 
     @api.model
     def run_mrp(self):
         # mrp algorithm to calculate requirements
 
+        ProcOrder = self.env['procurement.order']
+
         # delete old plan
+        self.purge_old_plan()
 
         # get buckets
+        bucket_list = self._get_bucket_list()
 
         # get orderpoints by llc
+        op_list = self._get_orderpoints()
+        OrderPoint = self.env['stock.warehouse.orderpoint']
+        orderpoints_noprefetch = OrderPoint.with_context(prefetch_fields=False).search(
+            order=ProcOrder._procurement_from_orderpoint_get_order())
 
-        # build planned inventory activity matrix (start with all zeros)
-        # a = {
+        move_list = []
+
+        # get default leadtime and route for orderpoint products
+        # crit = {
+        #     'X000001.-0': {
+        #         'leadtime': 1,
+        #         'route': 'make',
+        #     }
+        # }
+
+        # build data matrix container
+        # data = {
         #     '2017-01-01': {
-        #         'X000001.-0': 0,
-        #         'X000002.-0': 0,
+        #         'X000001.-0': {},
+        #         'X000002.-0': {},
         #         ...
         #     },
         #     '2017-01-02': {
-        #         'X000001.-0': 0,
-        #         'X000002.-0': 0,
+        #         'X000001.-0': {},
+        #         'X000002.-0': {},
         #         ...
         #     }
         #     ...
         # }
 
-        # build real inventory state matrix (copy from above and populate with sql query)
-        # s = a.copy()
+        # add detail dict at each cell
+        # data['2017-01-01']['X000001.-0'] = {
+        #     'real_state': 0,
+        #     'cumulative_plan': 0,
+        #     'activity': 0,
+        # }
 
-        # loop buckets
+        # loop low-level codes
+        while orderpoints_noprefetch:
+            orderpoints = OrderPoint.browse(orderpoints_noprefetch[:1000].ids)
+            orderpoints_noprefetch = orderpoints_noprefetch[1000:]
 
-            # get inventory state at bucket date
+            # loop buckets
 
-            # loop orderpoints
+                # get inventory state at bucket date
 
-                # add supply activity (positive/inbound)
+                # loop orderpoints
 
-                # if route == make
+                    # add supply activity (positive/inbound)
 
-                    # explode bom
+                    # if route == make
 
-                    # subtract demand activity (negative/outbound)
-                    # report exception when products with dependent demand have no reorder rule
+                        # explode bom
+
+                        # subtract demand activity (negative/outbound)
+                        # report exception when products with dependent demand have no reorder rule
 
         # write new plan
 
         pass
+
+
+@api.multi
+def convert_to_procurements(self):
+    procurement_order = self.env['procurement.order']
+    for plan_move in self:
+        procurement_order.create({
+            'name': '%s\nuser: %s\nqty: %s\nstart: %s\nfinish: %s' % (
+            plan_move.name, self.env.user.login, plan_move.product_qty, plan_move.date_start, plan_move.date_finish),
+            'date_planned': plan_move.date_finish,
+            'product_id': plan_move.product_id.id,
+            'product_qty': plan_move.product_qty,
+            'product_uom': plan_move.product_id.uom_id.id,
+            'warehouse_id': plan_move.warehouse_id.id,
+            'location_id': plan_move.warehouse_id.lot_stock_id.id,
+            'company_id': plan_move.warehouse_id.company_id.id})
+        plan_move.unlink()
+
