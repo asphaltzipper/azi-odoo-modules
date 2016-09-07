@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- country groups -->
+        <record id="africa" model="res.country.group">
+            <field name="name">Africa</field>
+            <field name="country_ids" eval="[(6,0,[
+                ref('base.dz'),ref('base.ao'),ref('base.bj'),ref('base.bw'),
+                ref('base.bf'),ref('base.bi'),ref('base.cm'),ref('base.cv'),
+                ref('base.cf'),ref('base.td'),ref('base.km'),ref('base.cd'),
+                ref('base.cg'),ref('base.dj'),ref('base.eg'),ref('base.gq'),
+                ref('base.er'),ref('base.et'),ref('base.ga'),ref('base.gm'),
+                ref('base.gh'),ref('base.gn'),ref('base.gw'),ref('base.ci'),
+                ref('base.ke'),ref('base.ls'),ref('base.lr'),ref('base.ly'),
+                ref('base.mg'),ref('base.mw'),ref('base.ml'),ref('base.mr'),
+                ref('base.mu'),ref('base.ma'),ref('base.mz'),ref('base.na'),
+                ref('base.ne'),ref('base.ng'),ref('base.rw'),ref('base.st'),
+                ref('base.sn'),ref('base.sc'),ref('base.sl'),ref('base.so'),
+                ref('base.za'),ref('base.ss'),ref('base.sd'),ref('base.sz'),
+                ref('base.tz'),ref('base.tg'),ref('base.tn'),ref('base.ug'),
+                ref('base.zm'),ref('base.zw'),ref('base.tf'),ref('base.sh'),
+                ref('base.yt'),ref('base.re')
+                ])]"/>
+        </record>
+        <record id="asia" model="res.country.group">
+            <field name="name">Asia</field>
+            <field name="country_ids" eval="[(6,0,[
+                ref('base.af'),ref('base.am'),ref('base.az'),ref('base.bd'),
+                ref('base.bt'),ref('base.bn'),ref('base.kh'),ref('base.cn'),
+                ref('base.ge'),ref('base.in'),ref('base.id'),ref('base.jp'),
+                ref('base.kz'),ref('base.kp'),ref('base.kr'),ref('base.kg'),
+                ref('base.la'),ref('base.my'),ref('base.mv'),ref('base.mn'),
+                ref('base.mm'),ref('base.np'),ref('base.pk'),ref('base.ph'),
+                ref('base.ru'),ref('base.sg'),ref('base.lk'),ref('base.tj'),
+                ref('base.th'),ref('base.tp'),ref('base.tm'),ref('base.uz'),
+                ref('base.vn'),ref('base.tw'),ref('base.io'),ref('base.cx'),
+                ref('base.cc'),ref('base.hk'),ref('base.mo')
+                ])]"/>
+        </record>
+        <record id="caribbean" model="res.country.group">
+            <field name="name">Caribbean</field>
+            <field name="country_ids" eval="[(6,0,[
+                ref('base.bs'),ref('base.tc'),ref('base.cu'),ref('base.ht'),
+                ref('base.do'),ref('base.jm'),ref('base.ky'),ref('base.pr'),
+                ref('base.vi'),ref('base.vg'),ref('base.ai'),ref('base.ag'),
+                ref('base.mf'),ref('base.sx'),ref('base.bq'),ref('base.bl'),
+                ref('base.kn'),ref('base.ms'),ref('base.gp'),ref('base.dm'),
+                ref('base.mq'),ref('base.lc'),ref('base.vc'),ref('base.gd'),
+                ref('base.bb'),ref('base.tt'),ref('base.an'),ref('base.aw'),
+                ref('base.cw')
+                ])]"/>
+        </record>
+        <record id="central_america" model="res.country.group">
+            <field name="name">Central America</field>
+            <field name="country_ids" eval="[(6,0,[
+                ref('base.bz'),ref('base.cr'),ref('base.sv'),ref('base.gt'),
+                ref('base.hn'),ref('base.ni'),ref('base.pa')
+                ])]"/>
+        </record>
+        <!--<record id="eurasia" model="res.country.group">
+            <field name="name">Eurasia</field>
+            <field name="country_ids" eval="[(6,0,[
+                ref('base.'),ref('base.'),ref('base.'),ref('base.'),
+                ref('base.'),ref('base.'),ref('base.')
+                ])]"/>
+        </record>-->
+        <!-- redefine builtin europe -->
+        <!--<record id="europe" model="res.country.group">
+            <field name="name">Europe</field>
+            <field name="country_ids" eval="[(6,0,[
+                ref('at'),ref('be'),ref('bg'),ref('hr'),ref('cy'),
+                ref('cz'),ref('dk'),ref('ee'),ref('fi'),ref('fr'),
+                ref('de'),ref('gr'),ref('hu'),ref('ie'),ref('it'),
+                ref('lv'),ref('lt'),ref('lu'),ref('mt'),ref('nl'),
+                ref('pl'),ref('pt'),ref('ro'),ref('sk'),ref('si'),
+                ref('es'),ref('se'),ref('uk')])]"/>
+        </record>-->
+        <record id="middle_east" model="res.country.group">
+            <field name="name">Middle East</field>
+            <field name="country_ids" eval="[(6,0,[
+                ref('base.bh'),ref('base.cy'),ref('base.ir'),ref('base.iq'),
+                ref('base.il'),ref('base.jo'),ref('base.kw'),ref('base.lb'),
+                ref('base.om'),ref('base.ps'),ref('base.qa'),ref('base.sa'),
+                ref('base.sy'),ref('base.tr'),ref('base.ae'),ref('base.ye')
+                ])]"/>
+        </record>
+        <record id="oceania" model="res.country.group">
+            <field name="name">Oceania</field>
+            <field name="country_ids" eval="[(6,0,[
+                ref('base.au'),ref('base.fj'),ref('base.ki'),ref('base.mh'),
+                ref('base.fm'),ref('base.nr'),ref('base.nz'),ref('base.pw'),
+                ref('base.pg'),ref('base.ws'),ref('base.sb'),ref('base.to'),
+                ref('base.tv'),ref('base.vu'),ref('base.ck'),ref('base.nu'),
+                ref('base.as'),ref('base.pf'),ref('base.gu'),ref('base.nc'),
+                ref('base.nf'),ref('base.mp'),ref('base.pn'),ref('base.tk'),
+                ref('base.wf')
+                ])]"/>
+        </record>
+        <record id="south_america" model="res.country.group">
+            <field name="name">South America</field>
+            <field name="country_ids" eval="[(6,0,[
+                ref('base.ar'),ref('base.bo'),ref('base.br'),ref('base.cl'),
+                ref('base.co'),ref('base.ec'),ref('base.gy'),ref('base.py'),
+                ref('base.pe'),ref('base.sr'),ref('base.uy'),ref('base.ve'),
+                ref('base.fk'),ref('base.gs'),ref('base.gf')
+                ])]"/>
+        </record>
+        <!--<record id="" model="res.country.group">
+            <field name="name"></field>
+            <field name="country_ids" eval="[(6,0,[
+                ref('base.'),ref('base.'),ref('base.'),ref('base.'),
+                ref('base.'),ref('base.'),ref('base.')
+                ])]"/>
+        </record>-->
+
+    </data>
+</openerp>

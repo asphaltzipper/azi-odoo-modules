@@ -1,0 +1,12 @@
+# -*- coding: utf-8 -*-
+# Copyright 2016 Scott Saunders
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+
+from openerp import fields, models
+
+
+class CrmTeamRegionType(models.Model):
+    _name = 'crm.team.region.type'
+
+    name = fields.Char('Region Type', required=True, translate=True)
+    color = fields.Integer('Color Index')

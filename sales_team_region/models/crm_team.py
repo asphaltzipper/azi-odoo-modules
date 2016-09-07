@@ -8,4 +8,4 @@ from openerp import fields, models
 class CrmTeam(models.Model):
     _inherit = 'crm.team'
 
-    region_id = fields.Many2one('sales.team.region', 'Sales Region')
+    region_id = fields.Many2one('crm.team.region', 'Sales Region')

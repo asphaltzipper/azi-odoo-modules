@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2016 Scott Saunders
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+
+<openerp>
+<data>
+
+<!-- update sales team kanban view here -->
+
+<!-- update sales team search view here -->
+
+<record id="crm_team_view_tree" model="ir.ui.view">
+    <field name="name">crm.team.tree.inherited</field>
+    <field name="model">crm.team</field>
+    <field name="inherit_id" ref="sales_team_region.crm_team_view_tree" />
+    <field name="arch" type="xml">
+        <xpath expr="//tree/field[@name='region_id']" position="before">
+            <field name="all_industries"/>
+            <field name="partner_industries" />
+        </xpath>
+    </field>
+</record>
+
+<record id="crm_team_view_form" model="ir.ui.view">
+    <field name="name">crm.team.form.inherited</field>
+    <field name="model">crm.team</field>
+    <field name="inherit_id" ref="sales_team_region.crm_team_view_form" />
+    <field name="arch" type="xml">
+        <field name="region_id" position="before">
+            <field name="all_industries"/>
+            <field name="partner_industries" widget="many2many_tags" placeholder="Tags..." options="{'no_quick_create': True}" />
+        </field>
+    </field>
+</record>
+
+</data>
+</openerp>

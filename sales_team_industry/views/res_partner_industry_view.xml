@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2016 Scott Saunders
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+
+<openerp>
+<data>
+
+<act_window name="Partner Industries"
+    res_model="res.partner.industry"
+    view_mode="tree,form"
+    target="current"
+    id="res_partner_industry_act_window"/>
+
+<menuitem action="res_partner_industry_act_window" id="menu_res_partner_industry_act" parent="sales_team.menu_sale_config" sequence="9" groups="base.group_erp_manager" />
+
+</data>
+</openerp>

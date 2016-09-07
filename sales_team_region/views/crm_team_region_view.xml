@@ -5,9 +5,9 @@
 <openerp>
 <data>
 
-<record id="sales_team_region_view_form" model="ir.ui.view">
-    <field name="name">sales.team.region.form</field>
-    <field name="model">sales.team.region</field>
+<record id="crm_team_region_view_form" model="ir.ui.view">
+    <field name="name">crm.team.region.form</field>
+    <field name="model">crm.team.region</field>
     <field name="arch" type="xml">
         <form string="Sales Region" name="sales_region">
             <sheet>
@@ -17,16 +17,22 @@
                         <field name="name" />
                     </h1>
                 </div>
+                <label for="region_types" class="oe_edit_only" />
+                <field name="region_types" widget="many2many_tags" placeholder="Tags..." options="{'no_quick_create': True}" />
+                <!--<field name="region_type_id" options="{'no_quick_create': True}" />-->
                 <notebook>
                     <page string="Country Groups" name="country_groups">
-                        <field name="country_groups" />
+                        <field name="cg_dom" invisible="1" />
+                        <field name="country_groups" domain="[('id', 'not in', cg_dom[0][2])]" />
                     </page>
                     <page string="Countries" name="countries">
-                        <field name="countries" />
+                        <field name="c_dom" invisible="1" />
+                        <field name="countries" domain="[('id', 'not in', c_dom[0][2])]" />
                     </page>
                     <page string="States" name="states">
                         <!--<field name="state_ids" invisible="0" />-->
-                        <field name="states">
+                        <field name="s_dom" invisible="1" />
+                        <field name="states" domain="[('id', 'not in', s_dom[0][2])]">
                             <tree>
                                 <field name="name" />
                                 <field name="code" />
@@ -40,9 +46,9 @@
     </field>
 </record>
 
-<!--<record id="sales_team_region_search_form_view" model="ir.ui.view">
-    <field name="name">sales.team.region.search</field>
-    <field name="model">sales.team.region</field>
+<!--<record id="crm_team_region_search_form_view" model="ir.ui.view">
+    <field name="name">crm.team.region.search</field>
+    <field name="model">crm.team.region</field>
     <field name="arch" type="xml">
         <search string="Region">
             <field name="name" string="Region" filter_domain="[('name','ilike',self)]"/>-->
@@ -56,12 +62,13 @@
     </field>
 </record>-->
 
-<record id="sales_team_region_view_tree" model="ir.ui.view">
-    <field name="name">sales.team.region.tree</field>
-    <field name="model">sales.team.region</field>
+<record id="crm_team_region_view_tree" model="ir.ui.view">
+    <field name="name">crm.team.region.tree</field>
+    <field name="model">crm.team.region</field>
     <field name="arch" type="xml">
-        <tree string="Sales Team Regions" name="sales_team_regions">
+        <tree string="Sales Team Regions" name="crm_team_regions">
             <field name="name" />
+            <field name="region_types" />
             <field name="states" />
             <field name="countries" />
             <field name="country_groups" />
@@ -70,12 +77,12 @@
 </record>
 
 <act_window name="Sales Regions"
-    res_model="sales.team.region"
+    res_model="crm.team.region"
     view_mode="tree,form"
     target="current"
-    id="sales_team_region_act_window"/>
+    id="crm_team_region_act_window"/>
 
-<menuitem action="sales_team_region_act_window" id="menu_sales_team_region_act" parent="sales_team.menu_sale_config" sequence="7" groups="base.group_erp_manager" />
+<menuitem action="crm_team_region_act_window" id="menu_crm_team_region_act" parent="sales_team.menu_sale_config" sequence="7" groups="base.group_erp_manager" />
 
 </data>
 </openerp>

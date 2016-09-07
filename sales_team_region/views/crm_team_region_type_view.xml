@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2016 Scott Saunders
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+
+<openerp>
+<data>
+    <!--
+<record id="crm_team_type_search_form_view" model="ir.ui.view">
+    <field name="name">crm.team.type.search</field>
+    <field name="model">crm.team.type</field>
+    <field name="arch" type="xml">
+        <search string="Team Type">
+            <field name="name" string="Type" filter_domain="[('name','ilike',self)]"/>
+        </search>
+    </field>
+</record>
+
+<record id="crm_team_type_tree_view" model="ir.ui.view">
+    <field name="name">crm.team.type.tree</field>
+    <field name="model">crm.team.type</field>
+    <field name="arch" type="xml">
+        <tree string="Team Type" create="false" edit="false">
+            <field name="name" />
+        </tree>
+    </field>
+</record>
+-->
+
+<act_window name="Sales Region Types"
+    res_model="crm.team.region.type"
+    view_mode="tree,form"
+    target="current"
+    id="crm_team_type_act_window"/>
+
+<menuitem action="crm_team_type_act_window" id="menu_crm_team_type_act" parent="sales_team.menu_sale_config" sequence="6" groups="base.group_erp_manager" />
+
+</data>
+</openerp>
