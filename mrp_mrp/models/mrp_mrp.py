@@ -156,10 +156,9 @@ class MrpMaterialPlan(models.Model):
         """)
 
         # quantity of product that needs to be added to the inventory state because there's a procurement existing with
-        # aim to fulfill it
+        # aim to supply it, less associated stock moves that have already been created
         # procurements associated to an orderpoint
         # state in (confirmed, exception, running)
-        # less associated stock moves
         self._cr.execute("""
             -- procurement quantities (confirmed, exception, running)
             -- later, subtract without a stock move
@@ -167,7 +166,7 @@ class MrpMaterialPlan(models.Model):
                 orderpoint.id,
                 procurement.id,
                 procurement.product_uom,
-                procurement.product_qty,
+                procurement.product_qty / uom.factor as product_qty,
                 template.uom_id,
                 move.product_qty
             FROM stock_warehouse_orderpoint AS orderpoint
@@ -175,6 +174,7 @@ class MrpMaterialPlan(models.Model):
             JOIN product_product AS product ON product.id = procurement.product_id
             JOIN product_template AS template ON template.id = product.product_tmpl_id
             LEFT JOIN stock_move AS move ON move.procurement_id = procurement.id
+            left join product_uom as uom on uom.id=procurement.product_uom
             WHERE procurement.state not in ('done', 'cancel')
             AND (move.state IS NULL OR move.state != 'draft')
             ORDER BY orderpoint.id, procurement.id
