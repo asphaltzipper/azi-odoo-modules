@@ -46,21 +46,21 @@
     </field>
 </record>
 
-<!--<record id="crm_team_region_search_form_view" model="ir.ui.view">
+<record id="crm_team_region_view_search" model="ir.ui.view">
     <field name="name">crm.team.region.search</field>
     <field name="model">crm.team.region</field>
     <field name="arch" type="xml">
         <search string="Region">
-            <field name="name" string="Region" filter_domain="[('name','ilike',self)]"/>-->
-            <!--<field name="name" string="Region" filter_domain="['|',('state.name','ilike',self),('name','ilike',self)]"/>
-            <filter string='US' name="us" icon="terp-accessories-achiver" domain="[('states.country_id','in',235)]" />
-            <group expand='0' string='Group by...'>
-                <filter string='State' domain="[]" context="{'group_by' : 'states'}"/>
-                <filter string='Country' icon="terp-mrp" domain="[]" context="{'group_by' : 'countries'}"/>-->
-            <!--</group>
+            <field name="name" string="Sales Region" filter_domain="[('name','ilike',self)]"/>
+            <field name="name" string="Region Team Type(s)" filter_domain="[('region_types.name','ilike',self)]"/>
+            <field name="name" string="States" filter_domain="[('states.name','ilike',self)]"/>
+            <field name="name" string="Countries" filter_domain="[('countries.name','ilike',self)]"/>
+            <field name="name" string="Country Groups" filter_domain="[('country_groups.name','ilike',self)]"/>
+            <filter string='State in US' name="us-state" icon="terp-accessories-achiver" domain="[('states.country_id', '=', 235)]" />
+            <filter string='Province in CA' name="ca-province" icon="terp-accessories-achiver" domain="[('states.country_id', '=', 39)]" />
         </search>
     </field>
-</record>-->
+</record>
 
 <record id="crm_team_region_view_tree" model="ir.ui.view">
     <field name="name">crm.team.region.tree</field>
