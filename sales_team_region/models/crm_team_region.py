@@ -11,7 +11,6 @@ class CrmTeamRegion(models.Model):
     _name = 'crm.team.region'
 
     name = fields.Char('Sales Region', required=True, translate=True)
-    # region_type_id = fields.Many2one('crm.team.region.type', 'Region Type')
     region_types = fields.Many2many('crm.team.region.type',
                                     column1='region_type_id',
                                     column2='region_id',
@@ -38,7 +37,6 @@ class CrmTeamRegion(models.Model):
     # workaround to filter sub-region lists on form view load as follows
     # note: domain fields parameter must not be defined for this to work
     @api.multi
-    #@api.depends('country_groups', 'countries', 'states', 'region_types')
     def _compute_dom(self):
         self.s_dom = self._region_domain(1)
         self.c_dom = self._region_domain(2)
@@ -67,30 +65,20 @@ class CrmTeamRegion(models.Model):
                                         " one state, country, or country"
                                         " group."))
 
-                # exclude state country_ids
     @api.multi
     @api.depends('region_types')
     def _region_domain(self, geoslice=False):
-        #if geoslice:
-        #    return list()
-        #else:
-        #    return set(), set(), set()
         state_ids = set()
         state_country_ids = set()
         country_ids = set()
         country_group_ids = set()
-        #import pdb
-        #pdb.set_trace()
         # add existing regions for domain exclusion
         # look at optimizing this in the future
         for record in self.env['crm.team.region'].search(
                 [('region_types', 'in', self.region_types.ids)]):
             for state in record.states:
                 state_ids.add(state.id)
-                # exclude state country_ids
                 state_country_ids.add(state.country_id.id)
-                #for country_group in self.env['res.country'].search([('id','=',state.country_id.id)]).country_group_ids:
-                #    country_group_ids.add(country_group.id)
             for country in record.countries:
                 country_ids.add(country.id)
                 for state in self.env['res.country.state'].search(
@@ -126,8 +114,6 @@ class CrmTeamRegion(models.Model):
         for state in self.states:
             for state_id in self.env['res.country.state'].browse(state.id):
                 state_country_ids.add(state_id.country_id.id)
-                #for country_group in self.env['res.country.group'].search([('country_ids','in',state_id.country_id.id)]):
-                #    country_group_ids.add(country_group.id)
         for country_id in state_country_ids:
             country_ids.add(country_id)
             for country_group in self.env['res.country'].search(

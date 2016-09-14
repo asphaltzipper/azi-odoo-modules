@@ -4,27 +4,6 @@
 
 <openerp>
 <data>
-    <!--
-<record id="crm_team_type_search_form_view" model="ir.ui.view">
-    <field name="name">crm.team.type.search</field>
-    <field name="model">crm.team.type</field>
-    <field name="arch" type="xml">
-        <search string="Team Type">
-            <field name="name" string="Type" filter_domain="[('name','ilike',self)]"/>
-        </search>
-    </field>
-</record>
-
-<record id="crm_team_type_tree_view" model="ir.ui.view">
-    <field name="name">crm.team.type.tree</field>
-    <field name="model">crm.team.type</field>
-    <field name="arch" type="xml">
-        <tree string="Team Type" create="false" edit="false">
-            <field name="name" />
-        </tree>
-    </field>
-</record>
--->
 
 <act_window name="Sales Region Types"
     res_model="crm.team.region.type"

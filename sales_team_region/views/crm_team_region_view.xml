@@ -19,7 +19,6 @@
                 </div>
                 <label for="region_types" class="oe_edit_only" />
                 <field name="region_types" widget="many2many_tags" placeholder="Tags..." options="{'no_quick_create': True}" />
-                <!--<field name="region_type_id" options="{'no_quick_create': True}" />-->
                 <notebook>
                     <page string="Country Groups" name="country_groups">
                         <field name="cg_dom" invisible="1" />
@@ -30,7 +29,6 @@
                         <field name="countries" domain="[('id', 'not in', c_dom[0][2])]" />
                     </page>
                     <page string="States" name="states">
-                        <!--<field name="state_ids" invisible="0" />-->
                         <field name="s_dom" invisible="1" />
                         <field name="states" domain="[('id', 'not in', s_dom[0][2])]">
                             <tree>
