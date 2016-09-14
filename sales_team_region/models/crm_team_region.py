@@ -19,61 +19,14 @@ class CrmTeamRegion(models.Model):
     states = fields.Many2many('res.country.state',
                               'crm_team_region_state_rel', 'region_id',
                               'state_id')
-    #                          'state_id', domain=lambda self: [
-    #                              ('id', 'not in', self._region_domain(1))])
     countries = fields.Many2many('res.country',
                                  'crm_team_region_country_rel', 'region_id',
                                  'country_id')
-    #                             'country_id', domain=lambda self: [
-    #                                 ('id', 'not in', self._region_domain(2))])
     country_groups = fields.Many2many('res.country.group',
                                       'crm_team_region_country_group_rel',
                                       'region_id', 'country_group_id')
-    #                                  'region_id', 'country_group_id',
-    #                                  domain=lambda self: [
-    #                                      ('id', 'not in',
-    #                                       self._region_domain(3))])
 
     # domain fields parameter appears to no longer be supported
-
-    # https://www.odoo.com/fr_FR/forum/aide-1/question/conditionally-apply-domain-on-a-field-25468
-    # https://www.odoo.com/fr_FR/forum/aide-1/question/filter-column-with-domain-and-funtion-72329
-    # using fields_view_get is too early in the load process, we don't have the
-    #  form view region object yet
-    #@api.model
-    #def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
-    #    res = super(CrmTeamRegion, self).fields_view_get(view_id, view_type, toolbar=toolbar, submenu=submenu)
-    #    if view_type != 'form':
-    #        return res
-    #    from lxml import etree
-    #    doc = etree.XML(res['arch'])
-    #    for node in doc.xpath("//field[@name='states']"):
-    #        domain = "[('id', 'not in'," + str(self._region_domain(1)) + ")]"
-    #        node.set('domain', domain)
-    #        res['arch'] = etree.tostring(doc)
-    #    return res
-
-    # https://www.odoo.com/fr_FR/forum/aide-1/question/filter-column-with-domain-and-funtion-72329
-    # http://stackoverflow.com/questions/30341476/is-there-any-way-to-call-a-function-when-a-record-is-requested-to-be-shown-in-a
-    # unfinished attempts at default_get and read for sub-region domain
-    #  filtering on create and read
-    # should perhaps consider trying set_value
-    #@api.model
-    #def default_get(self, fields):
-    #    res = super(CrmTeamRegion, self).default_get(fields)
-    #    domain = "[('id', 'not in'," + str(self._region_domain(1)) + ")]"
-    #    res = {'domain': {'states': domain }}
-    #    return res
-
-    # broken: never enters the if and seems to be resetting the domain
-    #@api.multi
-    #def read(self, fields=None, load='_classic_read'):
-    #    res = super(CrmTeamRegion, self).read(fields, load=load)
-    #    if 'states' in fields and '__last_update' in fields:
-    #        domain = "[('id', 'not in',self._region_domain(1))]"
-    #       #res['domain']['states'] = domain
-    #        self.states.domain = domain
-    #    return res
 
     # https://www.odoo.com/fr_FR/forum/aide-1/question/conditionally-apply-domain-on-a-field-25468
     # https://www.odoo.com/fr_FR/groups/community-59/community-13935621?mode=thread&date_begin=&date_end=
