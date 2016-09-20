@@ -42,7 +42,8 @@ class Partner(models.Model):
             for region_id in region_ids:
                 if industry_id:
                     domain = [('region_id', '=', region_id),
-                            ('partner_industries', 'in', industry_id)]
+                              '|', ('partner_industries', 'in', industry_id),
+                              ('all_industries', '=', True)]
                 else:
                     domain = [('region_id', '=', region_id)]
                 r_teams = self.env['crm.team'].search(domain)

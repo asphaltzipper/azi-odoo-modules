@@ -28,7 +28,7 @@
     <field name="arch" type="xml">
         <field name="region_id" position="before">
             <field name="all_industries"/>
-            <field name="partner_industries" widget="many2many_tags" placeholder="Tags..." options="{'no_quick_create': True}" />
+            <field name="partner_industries" widget="many2many_tags" placeholder="Tags..." options="{'no_quick_create': True}" attrs="{'readonly':[('all_industries', '=', True)]}" />
         </field>
     </field>
 </record>
