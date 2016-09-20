@@ -20,13 +20,13 @@ class Partner(models.Model):
             if not country_id:
                 country_id = self.env['res.country.state'].browse(
                     state_id)['country_id']['id']
-            c_regions = self.env['sales.team.region'].search(
+            c_regions = self.env['crm.team.region'].search(
                 [('countries', 'in', country_id)])
             for c_region in c_regions:
                 if c_region and c_region.id:
                     region_ids.add(c_region.id)
             if state_id:
-                s_regions = self.env['sales.team.region'].search(
+                s_regions = self.env['crm.team.region'].search(
                     [('states', 'in', state_id)])
                 for s_region in s_regions:
                     if s_region and s_region.id:
@@ -34,7 +34,7 @@ class Partner(models.Model):
             country_group_ids = self.env['res.country.group'].search(
                 [('country_ids', 'in', country_id)])
             for country_group_id in country_group_ids:
-                g_regions = self.env['sales.team.region'].search(
+                g_regions = self.env['crm.team.region'].search(
                     [('country_groups', 'in', country_group_id.id)])
                 for g_region in g_regions:
                     if g_region and g_region.id:
