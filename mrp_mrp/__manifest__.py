@@ -5,7 +5,7 @@
 {
     "name": "MRP-1",
     "version": "2.3",
-    "summary": "Material Requirements Planning One ",
+    "summary": "Material Requirements Planning One",
     "category": "Manufacturing",
     "author": "mtaylor",
     "website": "http://www.github.com/asphaltzipper/azi-odoo-modules",

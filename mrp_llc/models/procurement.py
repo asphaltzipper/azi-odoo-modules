@@ -8,12 +8,13 @@ class ProcurementOrder(models.Model):
     _inherit = 'procurement.order'
 
     @api.model
-    def _update_llc(self):
-        llc_obj = self.env['mrp.bom.llc']
-        llc_obj.update_orderpoint_llc()
+    def _procurement_from_orderpoint_get_grouping_key(self, orderpoint_ids):
+        res = super(ProcurementOrder, self)._procurement_from_orderpoint_get_grouping_key()
+        orderpoints = self.env['stock.warehouse.orderpoint'].browse(orderpoint_ids)
+        return res, orderpoints.llc
 
     @api.model
     def _procurement_from_orderpoint_get_order(self):
-        self._update_llc()
         res = super(ProcurementOrder, self)._procurement_from_orderpoint_get_order()
+        self.env['mrp.bom.llc'].update_orderpoint_llc()
         return res + ',llc'

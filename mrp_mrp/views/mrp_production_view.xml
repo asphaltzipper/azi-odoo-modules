@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <record  id="mrp_production_view_independent_mts_form" model="ir.ui.view">
-        <field name="name">mrp.production.independent_mts.form</field>
-        <field name="model">mrp.production</field>
-        <field name="inherit_id" ref="mrp.mrp_production_form_view" />
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='date_planned']" position="after">
-                <field name="due_date" />
-            </xpath>
-        </field>
-    </record>
-</odoo>
 
+    <menuitem action="action_procurement_compute" id="menu_procurement_compute" parent="menu_stock_sched" sequence="2"/>
+
+</odoo>
