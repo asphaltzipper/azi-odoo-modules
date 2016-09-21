@@ -13,5 +13,5 @@ Shelf Location
         'shelf_location_view.xml'
     ],
     'installable': True,
-    'auto_install': True,
+    'auto_install': False,
 }

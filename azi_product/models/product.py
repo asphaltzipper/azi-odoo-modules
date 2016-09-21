@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, fields, api, _
+from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
 import re
@@ -53,8 +53,9 @@ class ProductProduct(models.Model):
     def _validate_default_code(self):
         # require valid default_code, making allowance for copies
         for product in self:
-            if product.default_code and not re.match(self.default_code_pattern, product.default_code):
-                raise ValidationError(_('Reference code (default_code) must match this format:') + " r'%s'" % self.default_code_pattern)
+            if product.type in ('consu', 'product'):
+                if product.default_code and not re.match(self.default_code_pattern, product.default_code):
+                    raise ValidationError(_('Reference code (default_code) must match this format:') + " r'%s'" % self.default_code_pattern)
         return True
 
     @api.constrains('type', 'default_code', 'purchase_ok', 'sale_ok')

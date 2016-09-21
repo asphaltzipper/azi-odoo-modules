@@ -260,7 +260,7 @@ class MrpMaterialPlan(models.Model):
         # TODO: add capability for monthly buckets
         return 1
 
-    BucketSize = _get_bucket_size()
+    BucketSize = _get_bucket_size
 
     def _get_bucket_from_date(self, str_date=None):
         """

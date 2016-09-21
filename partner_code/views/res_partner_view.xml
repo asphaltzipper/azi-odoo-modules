@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<openerp>
+    <template id="assets_backend" name="partner code assets" inherit_id="web.assets_backend">
+        <xpath expr="." position="inside">
+            <link rel="stylesheet" href="/partner_code/static/src/css/partner.css"/>
+        </xpath>
+    </template>
+    <record id="view_partner_tree_inherited" model="ir.ui.view">
+        <field name="name">view.res.partner.tree.inherited</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree" />
+        <field name="arch" type="xml">
+            <xpath expr="//tree/field[@name='display_name']" position="after">
+                <field name="code" />
+            </xpath>
+        </field>
+    </record>
+    <record id="view_res_partner_form_inherited" model="ir.ui.view">
+        <field name="name">view.res.partner.form.inherited</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form" />
+        <field name="arch" type="xml">
+            <field name="parent_id" position="before">
+                <label for="code" class="pc_oe_left_first_child oe_edit_only" attrs="{'invisible': [('is_company', '=', False)]}" />
+                <field name="code" class="pc_oe_left_second_child" attrs="{'invisible': [('is_company', '=', False)], 'required': [('is_company','=',True)]}" />
+            </field>
+        </field>
+    </record>
+    <record id="view_res_partner_filter_inherited" model="ir.ui.view">
+        <field name="name">view.res.partner.select.inherited</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter" />
+        <field name="arch" type="xml">
+            <!--https://doc.odoo.com/v6.1/developer/03_modules_3.html/#inheritance-in-views-->
+            <xpath expr="//search/field[@name='name']" position="attributes">
+                <attribute name="filter_domain">['|','|','|',('display_name','ilike',self),('ref','=',self),('email','ilike',self),('code','ilike',self)]</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_res_partner_kanban_view_inherited" model="ir.ui.view">
+        <field name="name">view.res.partner.kanban.view.inherited</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.res_partner_kanban_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//kanban/field[@name='display_name']" position="after">
+                <field name="code" />
+            </xpath>
+            <xpath expr="//kanban/templates/t/div/div/strong" position="after">
+                <ul>
+                    <li t-if="record.code.raw_value"><field name="code" /></li>
+                </ul>
+            </xpath>
+        </field>
+    </record>
+</openerp>

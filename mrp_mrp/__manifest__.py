@@ -15,6 +15,7 @@
         "mrp_llc",
     ],
     "data": [
+        "wizard/mrp_material_plan_compute_views.xml",
         "views/mrp_production_view.xml",
     ],
     "installable": True,

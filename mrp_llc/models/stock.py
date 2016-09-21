@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # See __openerp__.py file for full copyright and licensing details.
 
-from openerp import fields, models
+from odoo import fields, models
 
 
 class stock_warehouse_orderpoint(models.Model):

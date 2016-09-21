@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # See __openerp__.py file for full copyright and licensing details.
 
-from openerp import api, fields, models
+from odoo import api, fields, models
 
 
 class MrpBomLlc(models.Model):
@@ -16,7 +16,9 @@ class MrpBomLlc(models.Model):
         'mrp.bom.line': ['product_id', 'bom_id'],
     }
 
-    def init(self, cr):
+    @api.model_cr
+    def init(self):
+        cr = self._cr
         cr.execute("""create or replace view mrp_bom_llc as (
             with j as (
                 -- if only template specified on mrp.bom, then expand list with all variants
