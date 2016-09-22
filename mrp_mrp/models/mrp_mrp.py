@@ -200,7 +200,7 @@ class MrpMaterialPlan(models.Model):
             # we are supplying demand for this product sometime in the bucket,
             # but we don't know which day of the bucket, so we assume the worst:
             # set target finish date to the previous bucket date
-            date_finish -= timedelta(days=self.BucketSize)
+            date_finish -= timedelta(days=self.BucketSize())
             date_start = date_finish - timedelta(days=self._get_supply_delay_days(op, make_flag, qty, date_finish))
 
         # get warehouse
@@ -271,7 +271,7 @@ class MrpMaterialPlan(models.Model):
         """
         in_date = str_date and datetime.strptime(str_date, DEFAULT_SERVER_DATE_FORMAT) or datetime.now().date()
         # TODO: add handling for monthly buckets
-        if self.BucketSize == 7:
+        if self.BucketSize() == 7:
             return in_date - timedelta(days=in_date.weekday()) + timedelta(days=7)
         else:
             return in_date
@@ -291,9 +291,13 @@ class MrpMaterialPlan(models.Model):
             last_procurement_id = last_procurement[0]
             last_proc_date = ProcurementOrder.browse(last_procurement_id)['date_planned']
             last_bucket_dt = self._get_bucket_from_date(last_proc_date)
+        else:
+            last_bucket_dt += timedelta(days=self.BucketSize())
 
         # generate list of dates ranging from first bucket date to last bucket date
-        bucket_list = [last_bucket_dt + datetime.timedelta(days=x) for x in range(0, self.BucketSize)]
+        bucket_count = int((last_bucket_dt - first_bucket_dt).days / self.BucketSize())
+        # bucket_list = map(lambda for x: )
+        bucket_list = [last_bucket_dt + timedelta(days=x) for x in range(0, bucket_count, self.BucketSize())]
         return bucket_list
 
     @api.model
