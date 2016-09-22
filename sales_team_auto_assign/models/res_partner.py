@@ -88,7 +88,7 @@ class Partner(models.Model):
         default=True)
 
     @api.onchange('state_id')
-    @api.depends('customer', 'partner_industry', 'auto_assign_team')
+    @api.depends('customer', 'industry_id', 'auto_assign_team')
     def onchange_state(self, state_trigger=True):
         if self.state_id:
             super(Partner, self).onchange_state()
@@ -96,12 +96,12 @@ class Partner(models.Model):
             if self.auto_assign_team:
                 self.team_ids = self._lookup_team(
                     self.state_id.id, self.customer,
-                    industry_id=self.partner_industry.id)
+                    industry_id=self.industry_id.id)
         else:
             self.state_trigger = False
 
     @api.onchange('country_id')
-    @api.depends('customer', 'state_trigger', 'partner_industry',
+    @api.depends('customer', 'state_trigger', 'industry_id',
                  'auto_assign_team')
     def onchange_country(self):
         if not self.state_trigger:
@@ -109,10 +109,10 @@ class Partner(models.Model):
             if self.auto_assign_team:
                 self.team_ids = self._lookup_team(
                     customer=self.customer, country_id=self.country_id.id,
-                    industry_id=self.partner_industry.id)
+                    industry_id=self.industry_id.id)
         self.state_trigger = False
 
-    @api.onchange('customer', 'partner_industry', 'auto_assign_team')
+    @api.onchange('customer', 'industry_id', 'auto_assign_team')
     @api.depends('state_id', 'country_id')
     def onchange_customer(self):
         if self.state_id:

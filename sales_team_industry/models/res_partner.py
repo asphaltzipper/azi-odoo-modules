@@ -8,4 +8,4 @@ from openerp import fields, models
 class Partner(models.Model):
     _inherit = 'res.partner'
 
-    partner_industry = fields.Many2one('res.partner.industry', 'Industry')
+    industry_id = fields.Many2one('res.partner.industry', 'Industry')

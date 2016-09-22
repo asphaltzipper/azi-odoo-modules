@@ -11,7 +11,7 @@
     <field name="inherit_id" ref="sales_team_region.res_partner_view_form" />
     <field name="arch" type="xml">
         <field name="team_ids" position="before">
-            <field name="partner_industry" completion="1" options="{'no_create': True}" />
+            <field name="industry_id" completion="1" options="{'no_create': True}" />
         </field>
     </field>
 </record>
