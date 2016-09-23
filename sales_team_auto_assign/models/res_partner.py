@@ -50,8 +50,10 @@ class Partner(models.Model):
                 for team in r_teams:
                     if team and team.id:
                         teams.add(team)
-            if teams:
-                return [(6, 0, [t.id for t in teams or []])]
+            return [(6, 0, [t.id for t in teams or
+                            []])] if teams else self._default_team()
+        else:
+            return [(6, 0, [])]
 
     @api.model
     def lookup_team(self, state_id=False, customer=False, country_id=False,
@@ -71,7 +73,11 @@ class Partner(models.Model):
         for record in self:
             if record.customer and not record.team_ids:
                 raise ValidationError(_("Customers require a valid Sales Team."
-                                        " (%s)") % record.team_id)
+                                        " (%s)\n\nIf you have selected one or"
+                                        " more teams, ensure a Sales Region is"
+                                        " assigned to each team or disable"
+                                        " Auto Assign Team(s).") %
+                                      record.team_ids)
 
     # added due to Error triggered during 8.0 database update 20150320:
     #   Error: 'boolean' object has no attribute '_fnct_search'" while parsing
@@ -120,3 +126,36 @@ class Partner(models.Model):
         if self.country_id:
             self.state_trigger = False
             return self.onchange_country()
+
+    @api.model
+    def _ensure_team(self, vals):
+        state_id = (vals.get('state_id') if 'state_id' in vals else None or
+                    self.state_id.id if hasattr(self, 'state_id') else None)
+        customer = (vals.get('customer') if 'customer' in vals else None or
+                    self.customer if hasattr(self, 'customer') else None)
+        country_id = (vals.get('country_id') if 'country_id' in vals else None
+                      or self.country_id.id if hasattr(self, 'country_id') else
+                      None)
+        industry_id = (vals.get('industry_id') if 'industry_id' in vals else
+                       None or self.industry_id.id if hasattr(
+                           self, 'industry_id') else None)
+        if state_id:
+            return self._lookup_team(
+                state_id, customer, industry_id=industry_id)
+        elif country_id:
+            return self._lookup_team(
+                customer=customer, country_id=country_id,
+                industry_id=industry_id)
+
+    @api.multi
+    def write(self, vals):
+        if (vals.get('auto_assign_team') or self.auto_assign_team and
+                'auto_assign_team' not in vals):
+            vals['team_ids'] = self._ensure_team(vals)
+        return super(Partner, self).write(vals)
+
+    @api.model
+    def create(self, vals):
+        if vals.get('auto_assign_team'):
+            vals['team_ids'] = self._ensure_team(vals)
+        return super(Partner, self).create(vals)
