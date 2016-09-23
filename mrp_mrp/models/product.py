@@ -13,8 +13,8 @@ class Product(models.Model):
     def _get_mrp_planned_quantity(self, to_date=None):
         """Get total net move quantity of planned orders for specified products"""
 
-        # build domain
-        domain = [('product', 'in', self.ids)]
+        # build domain for searching mrp.material_plan records
+        domain = [('product_id', 'in', self.ids)]
         if to_date:
             domain += [('date_finish', '<', datetime.strftime(to_date, DEFAULT_SERVER_DATE_FORMAT))]
         domain_in = domain + [('move_type', '=', 'supply')]
@@ -31,5 +31,5 @@ class Product(models.Model):
         res = dict()
         for product in self.with_context(prefetch_fields=False):
             qty = moves_in.get(product.id, 0.0) - moves_out.get(product.id, 0.0)
-            res['product_id'] = float_round(qty, precision_rounding=product.uom_id.rounding)
+            res[product.id] = float_round(qty, precision_rounding=product.uom_id.rounding)
         return res
