@@ -11,7 +11,7 @@ class Partner(models.Model):
     _inherit = 'res.partner'
 
     @api.model
-    def _lookup_team(self, state_id=False, customer=False, country_id=False,
+    def lookup_team(self, state_id=False, customer=False, country_id=False,
                      industry_id=False):
         if (state_id or country_id) and customer:
             domain = []
@@ -52,14 +52,10 @@ class Partner(models.Model):
                         teams.add(team)
             return [(6, 0, [t.id for t in teams or
                             []])] if teams else self._default_team()
+        elif customer:
+            return self._default_team()
         else:
             return [(6, 0, [])]
-
-    @api.model
-    def lookup_team(self, state_id=False, customer=False, country_id=False,
-                    industry_id=False):
-        return self._lookup_team(state_id, customer, country_id,
-                                 industry_id) or self._default_team()
 
     @api.model
     def _default_team(self):
@@ -100,7 +96,7 @@ class Partner(models.Model):
             super(Partner, self).onchange_state()
             self.state_trigger = state_trigger
             if self.auto_assign_team:
-                self.team_ids = self._lookup_team(
+                self.team_ids = self.lookup_team(
                     self.state_id.id, self.customer,
                     industry_id=self.industry_id.id)
         else:
@@ -113,7 +109,7 @@ class Partner(models.Model):
         if not self.state_trigger:
             self.state_id = self.env['res.country.state'].browse().id
             if self.auto_assign_team:
-                self.team_ids = self._lookup_team(
+                self.team_ids = self.lookup_team(
                     customer=self.customer, country_id=self.country_id.id,
                     industry_id=self.industry_id.id)
         self.state_trigger = False
@@ -139,13 +135,7 @@ class Partner(models.Model):
         industry_id = (vals.get('industry_id') if 'industry_id' in vals else
                        None or self.industry_id.id if hasattr(
                            self, 'industry_id') else None)
-        if state_id:
-            return self._lookup_team(
-                state_id, customer, industry_id=industry_id)
-        elif country_id:
-            return self._lookup_team(
-                customer=customer, country_id=country_id,
-                industry_id=industry_id)
+        return self.lookup_team(state_id, customer, country_id, industry_id)
 
     @api.multi
     def write(self, vals):
