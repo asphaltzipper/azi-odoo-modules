@@ -183,6 +183,36 @@ class MrpMaterialPlan(models.Model):
             days += orderpoint.product_id.product_tmpl_id.company_id.po_lead
         return days
 
+    def _look_backward(self, product_id, bucket_date):
+        """
+        Merge a planned order into a previously planned order, within the lead time for the product.
+        Example: A supply order was planned in the previous bucket.  The lead time for this product is 3 weeks.
+                 We have found additional demand in the current bucket.  Rather than create another planned order
+                 in this bucket, we may increase the quantity of the previous order.
+        :param product_id:
+        :param bucket_date:
+        :return previous_order:
+        """
+        # TODO: create merge_back config parameter
+        # get merge_back config parameter
+        merge_back = True
+        if not merge_back:
+            return
+
+        # get previous order
+        domain = [('product_id', '=', product_id), ('date_start', '<', bucket_date), ('date_finish', '>', bucket_date)]
+        previous_order = self.search(domain, order='date_finish DESC', limit=1)
+        if not previous_order:
+            return
+
+        # compare dates
+        prev_date_start = previous_order.date_start
+        prev_date_finish = previous_order.date_finish
+        lead = previous_order.date_finish - previous_order.date_start
+        new_date_start = bucket_date - timedelta(days=lead)
+        if prev_date_start < new_date_start < prev_date_finish:
+            return previous_order
+
     def _prepare_planned_order(self, product, qty, bucket_date, op=None, origin=None, demand=False):
 
         move_type = demand and 'demand' or 'supply'
@@ -259,7 +289,7 @@ class MrpMaterialPlan(models.Model):
         # TODO: set up time_bucket as mfg cfg setting
         # daily = 1
         # weekly = 7
-        # TODO: add capability for monthly buckets
+        # TODO: add handling for monthly buckets
         return 1
 
     BucketSize = _get_bucket_size
@@ -272,13 +302,16 @@ class MrpMaterialPlan(models.Model):
         It is of course also the same as the opening boundary date of the next bucket (if there is a later bucket)
         :param string str_date: arbitrary date string, default=now()
         """
-        in_date = str_date and datetime.strptime(str_date[0:10], DEFAULT_SERVER_DATE_FORMAT).date() or datetime.now().date()
+        if not str_date:
+            return datetime.now().date() + timedelta(days=self.BucketSize())
+
+        in_date = datetime.strptime(str_date[0:10], DEFAULT_SERVER_DATE_FORMAT).date()
         # TODO: add handling for monthly buckets
         if self.BucketSize() == 7:
             # We always use Monday as the boundary because that's how PostgreSQL truncates dates by week
             return in_date - timedelta(days=in_date.weekday()) + timedelta(days=7)
         else:
-            return in_date
+            return in_date + timedelta(days=self.BucketSize())
 
     def _get_bucket_list(self):
         """
@@ -301,9 +334,9 @@ class MrpMaterialPlan(models.Model):
             (first_bucket_dt.strftime(DEFAULT_SERVER_DATE_FORMAT), last_bucket_dt.strftime(DEFAULT_SERVER_DATE_FORMAT)))
 
         # generate list of dates ranging from first bucket date to last bucket date
-        bucket_days = int((last_bucket_dt - first_bucket_dt).days)
+        bucket_days = int((last_bucket_dt - first_bucket_dt).days) + 1
         # bucket_list = map(lambda for x: )
-        bucket_list = [last_bucket_dt + timedelta(days=x) for x in range(0, bucket_days, self.BucketSize())]
+        bucket_list = [first_bucket_dt + timedelta(days=x) for x in range(0, bucket_days, self.BucketSize())]
         return bucket_list
 
     @api.model
@@ -340,6 +373,7 @@ class MrpMaterialPlan(models.Model):
         # batch_done = 1
 
         _logger.info("starting with %d batches and %d buckets" % (batch_count, bucket_count))
+        ops_exec_start = time.time()
 
         while orderpoints_noprefetch:
             orderpoints = OrderPoint.browse(orderpoints_noprefetch[:1000].ids)
@@ -357,6 +391,8 @@ class MrpMaterialPlan(models.Model):
             for location_id, location_data in location_data.iteritems():
                 location_orderpoints = location_data['orderpoints']
                 product_context = dict(self._context, location=location_orderpoints[0].location_id.id)
+                product_quantity = location_data['products'].with_context(product_context).bucket_virtual_available(
+                    bucket_list, self.BucketSize())
 
                 # TODO: modify subtract_procurements_from_orderpoints to accept to_date in context
                 # Should we make subtract_procurements_from_orderpoints() consider to_date in context,
@@ -368,18 +404,15 @@ class MrpMaterialPlan(models.Model):
                 subtract_quantity = location_orderpoints.subtract_procurements_from_orderpoints()
 
                 for bucket_date in bucket_list:
-                    avail_exec_start = time.time()
-                    product_context['to_date'] = bucket_date.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
-                    product_quantity = location_data['products'].with_context(product_context)._product_available()
-                    avail_exec_stop = time.time()
-                    plan_exec_start = time.time()
-                    planned_quantity = location_data['products']._get_mrp_planned_quantity(bucket_date)
-                    plan_exec_stop = time.time()
+                    planned_quantity = location_data['products'].planned_virtual_available(bucket_date)
 
-                    ops_exec_start = time.time()
                     for orderpoint in location_orderpoints:
                         try:
-                            op_product_virtual = product_quantity[orderpoint.product_id.id]['virtual_available']
+                            key = (orderpoint.product_id.id, bucket_date)
+                            if not key in product_quantity.keys():
+                                import pdb
+                                pdb.set_trace()
+                            op_product_virtual = product_quantity[key]
                             if op_product_virtual is None:
                                 continue
                             op_product_virtual += planned_quantity[orderpoint.product_id.id]
@@ -400,18 +433,23 @@ class MrpMaterialPlan(models.Model):
 
                                 qty_rounded = float_round(qty, precision_rounding=orderpoint.product_uom.rounding)
                                 if qty_rounded > 0:
-                                    new_order = self.create(
-                                        self._prepare_planned_order(
-                                            orderpoint.product_id,
-                                            qty_rounded,
-                                            bucket_date,
-                                            op=orderpoint,
-                                            origin=orderpoint
+                                    existing_order = self._look_backward(orderpoint.product_id.id, bucket_date)
+                                    if existing_order:
+                                        existing_order.write({'product_qty': existing_order.product_qty + qty_rounded})
+                                        if existing_order.make:
+                                            existing_order._create_dependent_demand(orderpoint)
+                                    else:
+                                        new_order = self.create(
+                                            self._prepare_planned_order(
+                                                orderpoint.product_id,
+                                                qty_rounded,
+                                                bucket_date,
+                                                op=orderpoint,
+                                                origin=orderpoint
+                                            )
                                         )
-                                    )
-
-                                    if new_order.make:
-                                        new_order._create_dependent_demand(orderpoint)
+                                        if new_order.make:
+                                            new_order._create_dependent_demand(orderpoint)
 
                                 if use_new_cursor:
                                     cr.commit()
@@ -424,22 +462,34 @@ class MrpMaterialPlan(models.Model):
                             else:
                                 raise
 
-                    ops_exec_stop = time.time()
-
-                    _logger.info("avail=%d,plan=%d,create=%d" % (
-                        avail_exec_stop - avail_exec_start,
-                        plan_exec_stop - plan_exec_start,
-                        ops_exec_stop - ops_exec_start))
-
         if use_new_cursor:
             cr.commit()
             cr.close()
         return {}
 
+        ops_exec_stop = time.time()
+        _logger.info("create=%d" % (ops_exec_stop - ops_exec_start))
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ##############################################################################
 
 def _get_orderpoints(self):
     # get cumulative inventory state by orderpoint
