@@ -28,6 +28,7 @@ class procurement_order(models.Model):
         if context is None:
             context = {}
         self._update_llc(cr, uid, use_new_cursor=use_new_cursor, context=context)
+        # notify stock minimums start
         if use_new_cursor:
             cr = openerp.registry(cr.dbname).cursor()
         orderpoint_obj = self.pool.get('stock.warehouse.orderpoint')

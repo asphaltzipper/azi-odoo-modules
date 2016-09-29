@@ -56,11 +56,11 @@ class procurement_order(models.Model):
         res['date_planned'] = context['bucket_date']
         return res
 
-    # Method to override in mrp_procurement_only module
+    # Intended for mrp_procurement_only to override
     def _process_procurement(self, cr, uid, ids, context=None):
         self.run(cr, uid, ids)
 
-    # Method to override in mrp_procurement_only module
+    # Intended for mrp_procurement_only to override
     def _plan_orderpoint_procurement(self, cr, uid, op, qty_rounded, context=None):
         procurement_obj = self.pool.get('procurement.order')
         proc_id = procurement_obj.create(cr, uid,
