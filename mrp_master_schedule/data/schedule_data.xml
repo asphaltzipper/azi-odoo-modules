@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="sequence_mrp_schedule" model="ir.sequence">
+            <field name="name">Schedule</field>
+            <field name="code">mrp.schedule</field>
+            <field name="prefix">SID/</field>
+            <field name="padding">5</field>
+            <field name="number_next">1000</field>
+            <field name="number_increment">1</field>
+        </record>
+
+        <record id="sequence_mrp_schedule_line" model="ir.sequence">
+            <field name="name">Scheduled Build</field>
+            <field name="code">mrp.schedule.line</field>
+            <field name="prefix">BID/</field>
+            <field name="padding">5</field>
+            <field name="number_next">10000</field>
+            <field name="number_increment">1</field>
+        </record>
+
+    </data>
+</odoo>
