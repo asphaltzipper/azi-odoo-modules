@@ -12,14 +12,14 @@ class Product(models.Model):
 
     @api.multi
     def planned_virtual_available(self, to_date=None):
-        """Get total net move quantity of planned orders for specified products"""
+        """Return planned net move quantity, for select products, through the given date"""
 
         # build domain for searching mrp.material_plan records
         domain = [('product_id', 'in', self.ids)]
         if to_date:
             domain += [('date_finish', '<', datetime.strftime(to_date, DEFAULT_SERVER_DATE_FORMAT))]
         domain_in = domain + [('move_type', '=', 'supply')]
-        domain_out = [('move_type', '=', 'demand')]
+        domain_out = domain + [('move_type', '=', 'demand')]
 
         # get moves
         MrpPlan = self.env['mrp.material_plan']
@@ -33,6 +33,76 @@ class Product(models.Model):
         for product in self.with_context(prefetch_fields=False):
             qty = moves_in.get(product.id, 0.0) - moves_out.get(product.id, 0.0)
             res[product.id] = float_round(qty, precision_rounding=product.uom_id.rounding)
+        return res
+
+    @api.multi
+    def bucket_planned_available(self, bucket_list, bucket_size):
+        """Return planned net move quantity, for select products, grouped by bucket date"""
+
+        # if 2064 in self.ids:
+        #     import pdb
+        #     pdb.set_trace()
+
+        if bucket_list[0] < datetime.now().date():
+            raise UserError(_('The beginning bucket date is in the past.  All bucket dates must be in the future.'))
+        date_group_out = bucket_size == 7 and 'date_start:week' or 'date_start:day'
+        date_group_in = bucket_size == 7 and 'date_finish:week' or 'date_finish:day'
+        # TODO: why is date:day not returned in DEFAULT_SERVER_DATE_FORMAT?
+        date_format = bucket_size == 7 and 'W%W %Y' or '%d %b %Y'
+        init_date = bucket_list[0].strftime(DEFAULT_SERVER_DATE_FORMAT)
+
+        # build domain for searching mrp.material_plan records
+        domain = [('product_id', 'in', self.ids)]
+        domain_in = domain + [('move_type', '=', 'supply')]
+        domain_out = domain + [('move_type', '=', 'demand')]
+
+        # get planned moves up to the initial bucket date
+        MrpPlan = self.env['mrp.material_plan']
+        moves_in_init = dict(
+            (item['product_id'][0], item['product_qty']) for item in
+            MrpPlan.read_group(
+                [('date_finish', '<', init_date)] + domain_in,
+                ['product_id', 'product_qty'],
+                ['product_id'])
+        )
+        moves_out_init = dict(
+            (item['product_id'][0], item['product_qty']) for item in
+            MrpPlan.read_group(
+                [('date_finish', '<', init_date)] + domain_out,
+                ['product_id', 'product_qty'],
+                ['product_id'])
+        )
+
+        # get planned moves, after the initial bucket date, grouped by bucket dates
+        moves_in = dict(
+            ((item['product_id'][0], item[date_group_in]), item['product_qty']) for item in
+            MrpPlan.read_group(
+                [('date_finish', '>=', init_date)] + domain_in,
+                ['product_id', 'date_finish', 'product_qty'],
+                ['product_id', date_group_in],
+                lazy=False)
+        )
+        moves_out = dict(
+            ((item['product_id'][0], item[date_group_out]), item['product_qty']) for item in
+            MrpPlan.read_group(
+                [('date_finish', '>=', init_date)] + domain_out,
+                ['product_id', 'date_start', 'product_qty'],
+                ['product_id', date_group_out],
+                lazy=False)
+        )
+
+        res = dict()
+        for product in self.with_context(prefetch_fields=False):
+            planned_available = moves_in_init.get(product.id, 0.0)
+            planned_available -= moves_out_init.get(product.id, 0.0)
+            init_key = (product.id, bucket_list[0])
+            res[init_key] = float_round(planned_available, precision_rounding=product.uom_id.rounding)
+            for bucket_date in bucket_list[1:]:
+                key = (product.id, bucket_date.strftime(date_format))
+                planned_available += moves_in.get(key, 0.0)
+                planned_available -= moves_out.get(key, 0.0)
+                res[(product.id, bucket_date)] = float_round(planned_available, precision_rounding=product.uom_id.rounding)
+
         return res
 
     @api.multi
@@ -54,7 +124,7 @@ class Product(models.Model):
         # for these locations
         domain_quant_loc, domain_move_in_loc, domain_move_out_loc = self._get_domain_locations()
 
-        # for thes products
+        # for these products
         domain_quant = [('product_id', 'in', self.ids)] + domain_quant_loc
         domain_move_in = [('product_id', 'in', self.ids)] + domain_move_in_loc
         domain_move_out = [('product_id', 'in', self.ids)] + domain_move_out_loc
@@ -84,19 +154,6 @@ class Product(models.Model):
                           Quant.read_group(domain_quant, ['product_id', 'qty'], ['product_id']))
 
         # get moves grouped by bucket dates
-        # MoveBuckets = self.env['stock.move_buckets']
-        # moves_in_res = dict(((item['product_id'][0], item[bucket_group_field]), item['product_qty']) for item in
-        #                     MoveBuckets.read_group(
-        #                         domain_move_in,
-        #                         ['product_id', bucket_group_field, 'product_qty'],
-        #                         ['product_id', bucket_group_field]
-        #                     ))
-        # moves_out_res = dict(((item['product_id'][0], item[bucket_group_field]), item['product_qty']) for item in
-        #                      MoveBuckets.read_group(
-        #                          domain_move_out,
-        #                          ['product_id', bucket_group_field, 'product_qty'],
-        #                          ['product_id', bucket_group_field]
-        #                      ))
         moves_in_res = dict(
             ((item['product_id'][0], item[date_group]), item['product_qty']) for item in
             Move.read_group(

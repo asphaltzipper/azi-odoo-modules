@@ -4,7 +4,7 @@
 
 {
     "name": "MRP-1",
-    "version": "2.3",
+    "version": "1.0",
     "summary": "Material Requirements Planning One",
     "category": "Manufacturing",
     "author": "mtaylor",
