@@ -59,6 +59,6 @@ class MrpBomLlc(models.Model):
 
     @api.model
     def update_orderpoint_llc(self):
-        for llc in self:
+        for llc in self.search([]):
             for op in self.env['stock.warehouse.orderpoint'].browse(llc.id):
                 op.llc = llc.llc
