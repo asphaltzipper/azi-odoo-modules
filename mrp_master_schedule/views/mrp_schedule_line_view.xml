@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- copyright 2014-2016 scott saunders
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+
+<odoo>
+<data>
+
+<record id="mrp_schedule_line_view_tree" model="ir.ui.view">
+    <field name="name">mrp.schedule.line.tree</field>
+    <field name="model">mrp.schedule.line</field>
+    <field name="arch" type="xml">
+        <tree string="Schedule Line" name="schedule_line" create="false" edit="false">
+            <field name="name" />
+            <field name="description" />
+            <field name="product_tmpl_id" />
+            <field name="product_id" />
+            <field name="target_usage" />
+            <field name="date_finish" />
+        </tree>
+    </field>
+</record>
+
+<record id="mrp_schedule_line_view_form" model="ir.ui.view">
+    <field name="name">mrp.schedule.line.form</field>
+    <field name="model">mrp.schedule.line</field>
+    <field name="arch" type="xml">
+        <form string="Schedule Line" name="schedule_line">
+            <sheet>
+                <div class="oe_title">
+                    <label for="name" class="oe_edit_only" />
+                    <h1>
+                        <field name="name" />
+                    </h1>
+                    <field name="description" />
+                </div>
+                <group>
+                    <group>
+                        <field name="product_tmpl_id"/>
+                        <field name="product_id"/>
+                        <field name="target_usage" />
+                    </group>
+                    <group>
+                        <field name="lot_id"/>
+                        <field name="production_id"/>
+                        <field name="schedule_id"/>
+                    </group>
+                    <group name="scheduling" string="Scheduling">
+                        <field name="date_finish" />
+                    </group>
+                </group>
+                <notebook>
+                    <page string="Extra Information">
+                        <group>
+                            <group>
+                                <field name="ext_ref" placeholder="e.g. 7405"/>
+                            </group>
+                        </group>
+                    </page>
+                </notebook>
+            </sheet>
+        </form>
+    </field>
+</record>
+
+<record id="mrp_schedule_line_action" model="ir.actions.act_window">
+    <field name="name">Schedule Lines</field>
+    <field name="res_model">mrp.schedule.line</field>
+    <field name="domain">[]</field>
+    <field name="view_id" ref="mrp_schedule_line_view_tree"/>
+    <field name="help" type="html">
+        <p class="oe_view_nocontent_create">
+            You need to import a Schedule.
+            </p><p>
+            This is the list of all MRP Schedule Lines. Make sure you have created/imported a schedule and then run Inventory > Schedulers > Run Material Requirements Planning.
+        </p>
+    </field>
+</record>
+
+<menuitem id="mrp_schedule_line_menu"
+    name="Schedule Lines"
+    sequence="103"
+    action="mrp_schedule_line_action"
+    parent="stock.menu_stock_inventory_control"
+    groups="base.group_user"/>
+
+</data>
+</odoo>

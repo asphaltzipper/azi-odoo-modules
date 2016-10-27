@@ -36,6 +36,20 @@ class MrpSchedule(models.Model):
         readonly=True,
         help='Reference identifier for integrating with external scheduling application.')
 
+    @api.multi
+    def action_release(self):
+        domain = [('state', '=', 'released')]
+        released_builds = self.env['mrp.schedule'].search(domain)
+        for build in released_builds:
+            build.state = 'superseded'
+        for record in self:
+            record.state = 'released'
+
+    @api.multi
+    def action_unrelease(self):
+        for record in self:
+            record.state = 'pending'
+
 
 class MrpScheduleLine(models.Model):
     _name = "mrp.schedule.line"

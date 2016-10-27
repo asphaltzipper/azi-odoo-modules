@@ -124,7 +124,8 @@ class MrpMaterialPlan(models.Model):
         help="Reference of the Supply/Make order that consumes this Demand/Move order.")
 
     @api.multi
-    def convert_to_procurements(self):
+    def action_convert_to_procurements(self):
+        warehouse = self.env['stock.warehouse'].search([], limit=1)
         # TODO: add option to choose day of week for procurement with weekly buckets
         procurement_order = self.env['procurement.order']
         for plan_move in self:
@@ -141,9 +142,9 @@ class MrpMaterialPlan(models.Model):
                     'product_id': plan_move.product_id.id,
                     'product_qty': plan_move.product_qty,
                     'product_uom': plan_move.product_id.uom_id.id,
-                    'warehouse_id': plan_move.warehouse_id.id,
-                    'location_id': plan_move.warehouse_id.lot_stock_id.id,
-                    'company_id': plan_move.warehouse_id.company_id.id
+                    'warehouse_id': plan_move.orderpoint_id.warehouse_id.id if plan_move.orderpoint_id else warehouse[0].id if warehouse else False,
+                    'location_id': plan_move.location_id.id,
+                    'company_id': plan_move.location_id.company_id.id
                 }
             )
             plan_move.unlink()

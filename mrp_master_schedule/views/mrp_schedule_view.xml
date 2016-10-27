@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- copyright 2014-2016 scott saunders
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+
+<odoo>
+<data>
+
+<record id="mrp_schedule_view_tree" model="ir.ui.view">
+    <field name="name">mrp.schedule.tree</field>
+    <field name="model">mrp.schedule</field>
+    <field name="arch" type="xml">
+        <tree string="Schedules" name="schedule" decoration-danger="state == 'pending'" decoration-info="state == 'released'" decoration-muted="state == 'superseded'" create="false" edit="false">
+            <field name="name" />
+            <field name="release_date" />
+            <field name="state" />
+        </tree>
+    </field>
+</record>
+
+<record id="mrp_schedule_view_form" model="ir.ui.view">
+    <field name="name">mrp.schedule.form</field>
+    <field name="model">mrp.schedule</field>
+    <field name="arch" type="xml">
+        <form string="Schedules" name="schedule">
+            <header>
+                <button name="action_release" states="pending" string="Release" class="oe_highlight" type="object"/>
+                <button name="action_unrelease" states="released" string="Unrelease" class="oe_highlight" type="object"/>
+                <field name="state" readonly="1" widget="statusbar" statusbar_visible="pending,released,superseded" />
+            </header>
+            <sheet>
+                <div class="oe_title">
+                    <label for="name" class="oe_edit_only" />
+                    <h1>
+                        <field name="name" />
+                    </h1>
+                </div>
+                <group>
+                    <group name="scheduling" string="Scheduling">
+                        <field name="release_date" />
+                    </group>
+                </group>
+                <notebook>
+                    <page string="Extra Information">
+                        <group>
+                            <group>
+                                <field name="ext_ref" placeholder="e.g. 7405"/>
+                            </group>
+                        </group>
+                    </page>
+                </notebook>
+            </sheet>
+        </form>
+    </field>
+</record>
+
+<record id="mrp_schedule_action" model="ir.actions.act_window">
+    <field name="name">Schedules</field>
+    <field name="res_model">mrp.schedule</field>
+    <field name="domain">[]</field>
+    <field name="view_id" ref="mrp_schedule_view_tree"/>
+    <field name="help" type="html">
+        <p class="oe_view_nocontent_create">
+            Not seeing any records here? You need to import a Schedule.
+            </p><p>
+            This is the list of all MRP Schedules. Make sure you have created/imported a schedule. Schedules are used for running Inventory > Schedulers > Run Material Requirements Planning.
+        </p>
+    </field>
+</record>
+
+<menuitem id="mrp_schedule_menu"
+    name="Schedules"
+    sequence="102"
+    action="mrp_schedule_action"
+    parent="stock.menu_stock_inventory_control"
+    groups="base.group_user"/>
+
+</data>
+</odoo>
+
