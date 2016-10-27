@@ -85,11 +85,19 @@ class MrpScheduleLine(models.Model):
         ondelete='cascade',
         readonly=True)
 
+    state = fields.Selection(
+        string="Schedule State",
+        related='schedule_id.state',
+        store=True
+    )
+
     product_id = fields.Many2one(
         comodel_name='product.product',
         string='Product',
         ondelete='set null',
-        readonly=True)
+        readonly=True,
+        states={'pending': [('readonly', False)]}
+    )
 
     product_tmpl_id = fields.Many2one(
         comodel_name='product.template',
@@ -124,6 +132,7 @@ class MrpScheduleLine(models.Model):
         readonly=True,
         index=True,
         track_visibility='onchange',
+        states={'pending': [('readonly', False)]},
         help='Planned date of completion for this build.')
 
     ext_ref = fields.Integer(

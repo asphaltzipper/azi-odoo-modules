@@ -65,6 +65,12 @@ class MrpMaterialPlan(models.Model):
         readonly=True,
         required=True)
 
+    default_supplier_id = fields.Many2one(
+        comodel_name='res.partner',
+        string='Default Vendor',
+        ondelete='cascade',
+        readonly=True)
+
     product_qty = fields.Float(
         string='Quantity',
         digits=dp.get_precision('Product Unit of Measure'),
@@ -205,13 +211,15 @@ class MrpMaterialPlan(models.Model):
         days = 0.0
         # make addition of lead_days an optional setting
         days += orderpoint and orderpoint.lead_days or 0.0
+        supplier = self.env['res.partner']
         if make_flag:
             days += product.produce_delay or 0.0
             days += product.product_tmpl_id.company_id.manufacturing_lead
         else:
-            days += product._select_seller(quantity=product_qty, date=to_date, uom_id=product.uom_id).delay or 0.0
+            supplier = product._select_seller(quantity=product_qty, date=to_date, uom_id=product.uom_id)
+            days += supplier.delay or 0.0
             days += product.product_tmpl_id.company_id.po_lead
-        return days
+        return {'days': days, 'supplier_id': supplier and supplier.name.id}
 
     def _look_backward(self, product_id, bucket_date):
         """
@@ -262,13 +270,14 @@ class MrpMaterialPlan(models.Model):
         # get supply delay
         date_finish = bucket_date
         date_start = bucket_date
+        supply_delay = {}
         if not demand:
             # we are supplying demand for this product sometime in the bucket,
             # but we don't know which day of the bucket, so we assume the worst:
             # set target finish date to the previous bucket boundary
             date_finish -= timedelta(days=self._bucket_size)
             supply_delay = self._get_supply_delay_days(product, make_flag, qty, date_finish, orderpoint=op)
-            date_start = date_finish - timedelta(days=supply_delay)
+            date_start = date_finish - timedelta(days=supply_delay['days'])
         else:
             # TODO: apply a delay for demand-type moves (from stock to production)
             # we hard-code a delay of one day for moves from stock to production
@@ -282,6 +291,7 @@ class MrpMaterialPlan(models.Model):
         res = {
             'name': name,
             'product_id': product.id,
+            'default_supplier_id': supply_delay.get('supplier_id'),
             'product_qty': qty,
             'move_type': move_type,
             'make': make_flag,
@@ -373,7 +383,7 @@ class MrpMaterialPlan(models.Model):
         # check for a later procurement date
         proc_domain = [('state', '=', 'running')]
         last_proc = self.env['procurement.order'].search(proc_domain, order="date_planned DESC", limit=1)
-        last_proc_date = last_proc and datetime.strptime(last_proc.date_planned, DEFAULT_SERVER_DATETIME_FORMAT)
+        last_proc_date = last_proc and datetime.strptime(last_proc.date_planned, DEFAULT_SERVER_DATETIME_FORMAT).date()
         if last_proc and last_proc_date > last_bucket_date:
             last_bucket_date = self._get_bucket_from_date(last_proc.date_planned)
 
@@ -383,6 +393,8 @@ class MrpMaterialPlan(models.Model):
         """Returns a list of bucket closing boundary dates."""
         first_bucket_date = self._get_bucket_from_date()
         last_bucket_date = self._get_planning_horizon()
+        if first_bucket_date > last_bucket_date:
+            last_bucket_date = first_bucket_date + timedelta(days=self._bucket_size)
 
         _logger.info(
             'Bucket date range (%s - %s)' %
@@ -418,8 +430,11 @@ class MrpMaterialPlan(models.Model):
         OrderPoint = self.env['stock.warehouse.orderpoint']
 
         # this algorithm assumes the mrp_llc module updates and sorts on low-level-code
+        # we only retrieve orderpoints for stockable type products
+        op_domain = company_id and [('company_id', '=', company_id)] or []
+        op_domain += [('product_id.type', '=', 'product')]
         orderpoints_noprefetch = OrderPoint.with_context(prefetch_fields=False).search(
-            company_id and [('company_id', '=', company_id)] or [],
+            op_domain,
             order=self.env['procurement.order']._procurement_from_orderpoint_get_order())
 
         batch_size = 1000
