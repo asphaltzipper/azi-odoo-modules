@@ -1,15 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- copyright 2014-2016 scott saunders
+<!-- Copyright 2016 Scott Saunders
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 
 <odoo>
 <data>
 
+<record id="mrp_schedule_line_view_search" model="ir.ui.view">
+    <field name="name">mrp.schedule.line.search</field>
+    <field name="model">mrp.schedule.line</field>
+    <field name="arch" type="xml">
+        <search string="BuildID">
+            <field name="name" string="Line" filter_domain="[('name','ilike',self)]"/>
+            <field name="description" string="Description" filter_domain="[('description','ilike',self)]"/>
+            <field name="product_tmpl_id" string="Product Template" filter_domain="[('product_tmpl_id.name','ilike',self)]"/>
+            <field name="product_id" string="Product" filter_domain="[('product_id.name','ilike',self)]"/>
+            <field name="target_usage" string="Usage" filter_domain="[('target_usage','ilike',self)]"/>
+            <field name="production_id" string="ProductionID" filter_domain="[('production_id','=',self)]"/>
+            <field name="notes" string="Notes" filter_domain="[('notes','ilike',self)]"/>
+            <filter string='Stock' name="stock-only" icon="terp-accessories-achiver" domain="[('target_usage', '=', 'stock')]" />
+            <filter string='Demo' name="demo-only" icon="terp-accessories-achiver" domain="[('target_usage', '=', 'demo')]" />
+            <filter string='Sale' name="sale-only" icon="terp-accessories-achiver" domain="[('target_usage', '=', 'sale')]" />
+            <group expand='0' string='Group by...'>
+                <filter string='Schedule' domain="[]" context="{'group_by' : 'schedule_id'}"/>
+                <filter string='Target Usage' icon="terp-mrp" domain="[]" context="{'group_by' : 'target_usage'}"/>
+            </group>
+        </search>
+    </field>
+</record>
+
 <record id="mrp_schedule_line_view_tree" model="ir.ui.view">
     <field name="name">mrp.schedule.line.tree</field>
     <field name="model">mrp.schedule.line</field>
     <field name="arch" type="xml">
-        <tree string="Schedule Line" name="schedule_line" create="false" edit="false">
+        <tree string="Schedule Line" name="schedule_line" create="true" edit="false">
             <field name="name" />
             <field name="description" />
             <field name="product_tmpl_id" />
@@ -21,14 +44,25 @@
     </field>
 </record>
 
+<record id="do_view_schedule_lines" model="ir.actions.act_window">
+    <field name="name">Schedule's Lines</field>
+    <field name="res_model">mrp.schedule.line</field>
+    <field name="view_type">form</field>
+    <field name="view_mode">tree,form</field>
+    <field name="domain">[('schedule_id', '=', active_id)]</field>
+</record>
+
 <record id="mrp_schedule_line_view_form" model="ir.ui.view">
     <field name="name">mrp.schedule.line.form</field>
     <field name="model">mrp.schedule.line</field>
     <field name="arch" type="xml">
         <form string="Schedule Line" name="schedule_line">
             <sheet>
+                <div class="oe_button_box" name="button_box">
+                    <button name="do_view_schedule_lines" class="oe_stat_button" icon="fa-bars" string="Schedule's Lines" type="object"/>
+                </div>
                 <field name="state" invisible="True" />
-                    <div class="oe_title">
+                <div class="oe_title">
                     <label for="name" class="oe_edit_only" />
                     <h1>
                         <field name="name" />
@@ -80,9 +114,9 @@
 
 <menuitem id="mrp_schedule_line_menu"
     name="Schedule Lines"
-    sequence="103"
+    sequence="1"
     action="mrp_schedule_line_action"
-    parent="stock.menu_stock_inventory_control"
+    parent="mrp_mrp.stock_planning_menu"
     groups="base.group_user"/>
 
 </data>

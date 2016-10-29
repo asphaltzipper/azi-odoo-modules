@@ -2,8 +2,8 @@
 # (c) 2016 Matt Taylor
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
-from odoo import models, fields, api, registry
-
+from odoo import api, fields, models, _
+from odoo.exceptions import UserError
 
 class MrpSchedule(models.Model):
     _name = "mrp.schedule"
@@ -36,6 +36,20 @@ class MrpSchedule(models.Model):
         readonly=True,
         help='Reference identifier for integrating with external scheduling application.')
 
+    line_ids = fields.One2many(
+        comodel_name='mrp.schedule.line',
+        inverse_name='schedule_id',
+        string='Schedule Lines',
+    )
+
+    line_count = fields.Integer(
+        "# Lines", compute='_compute_line_count')
+
+    @api.multi
+    def _compute_line_count(self):
+        for schedule in self:
+            schedule.line_count = len(schedule.line_ids)
+
     @api.multi
     def action_release(self):
         domain = [('state', '=', 'released')]
@@ -49,6 +63,19 @@ class MrpSchedule(models.Model):
     def action_unrelease(self):
         for record in self:
             record.state = 'pending'
+
+    @api.multi
+    def do_view_schedule_lines(self):
+        return self.env['mrp.schedule.line'].do_view_schedule_lines(False)
+
+    @api.multi
+    def copy(self, default=None):
+        record = super(MrpSchedule, self).copy(default)
+        default['schedule_id'] = record.id
+        for line in self.line_ids:
+            if line.check_production_state_not_done():
+                line.copy(default)
+        return record
 
 
 class MrpScheduleLine(models.Model):
@@ -83,7 +110,9 @@ class MrpScheduleLine(models.Model):
         comodel_name='mrp.schedule',
         string='Schedule',
         ondelete='cascade',
-        readonly=True)
+        readonly=True,
+        states={False: [('readonly', False)]}
+    )
 
     state = fields.Selection(
         string="Schedule State",
@@ -140,3 +169,31 @@ class MrpScheduleLine(models.Model):
         index=True,
         readonly=True,
         help='Reference identifier for integrating with external scheduling application.')
+
+    @api.multi
+    def do_view_schedule_lines(self, change_domain=True):
+        '''
+        This function returns an action that displays existing schedule lines
+        of same schedule line of given id.
+        '''
+        action = self.env.ref('mrp_master_schedule.do_view_schedule_lines').read()[0]
+        if change_domain:
+            action['domain'] = [('schedule_id', 'in', self.mapped('schedule_id').ids)]
+        return action
+
+    @api.model
+    def check_production_state_not_done(self):
+        return True if not self.production_id or (self.production_id and
+                                                  self.production_id.state not
+                                                  in 'done') else False
+
+    @api.multi
+    def copy(self, default=None):
+        # schedule_id is set by MrpSchedule copy() so skip double check of
+        # production state
+        if (default.get('schedule_id') or
+                self.check_production_state_not_done()):
+            return super(MrpScheduleLine, self).copy(default)
+        else:
+            raise UserError(_("Duplicating a Schedule Line linked to a"
+                              " Completed MfgOrder is not allowed."))
