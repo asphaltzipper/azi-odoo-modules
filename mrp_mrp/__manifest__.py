@@ -16,8 +16,8 @@
     ],
     "data": [
         "wizard/mrp_material_plan_compute_views.xml",
-        "views/mrp_production_view.xml",
         "views/mrp_material_plan_view.xml",
+        "views/mrp_production_view.xml",
     ],
     "installable": True,
     "auto_install": False,
