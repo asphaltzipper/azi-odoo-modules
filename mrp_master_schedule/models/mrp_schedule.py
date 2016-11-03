@@ -50,19 +50,20 @@ class MrpSchedule(models.Model):
         for schedule in self:
             schedule.line_count = len(schedule.line_ids)
 
-    @api.multi
-    def action_release(self):
+    def get_released(self):
         domain = [('state', '=', 'released')]
-        released_builds = self.env['mrp.schedule'].search(domain)
-        for build in released_builds:
-            build.state = 'superseded'
-        for record in self:
-            record.state = 'released'
+        released = self.env['mrp.schedule'].search(domain)
+        return released and released[0]
 
-    @api.multi
+    @api.one
+    def action_release(self):
+        released = self.get_released()
+        released.state = 'superseded'
+        self.state = 'released'
+
+    @api.one
     def action_unrelease(self):
-        for record in self:
-            record.state = 'pending'
+        self.state = 'pending'
 
     @api.multi
     def do_view_schedule_lines(self):
