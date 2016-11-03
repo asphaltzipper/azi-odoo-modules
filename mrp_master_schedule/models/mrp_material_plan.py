@@ -27,8 +27,9 @@ class MrpMaterialPlan(models.Model):
 
         warehouse = self.env['stock.warehouse'].search([], limit=1)
         location = warehouse.lot_stock_id
+        schedule_id = self.env.context.get('schedule_id')
 
-        domain = [('schedule_id.state', '=', 'released'), ('product_id', '!=', False)]
+        domain = [('schedule_id.id', '=', schedule_id), ('product_id', '!=', False)]
         scheduled_builds = self.env['mrp.schedule.line'].search(domain)
         _logger.info("Creating dependent demand from %s scheduled builds", len(scheduled_builds))
         for build in scheduled_builds:

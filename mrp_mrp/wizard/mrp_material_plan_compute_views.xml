@@ -6,7 +6,7 @@
         <field name="arch" type="xml">
             <form string="Parameters">
                 <group>
-                    <label string="Wizard considers material requirements and plans orders, based on min stock rules."/>
+                    <label name="hint" string="Wizard considers material requirements and plans orders, based on min stock rules."/>
                 </group>
                 <footer>
                     <button name="material_plan_calculation" string="Compute MRP" type="object" class="btn-primary"/>

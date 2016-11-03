@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2016 Scott Saunders
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+
+<odoo>
+<data>
+
+<record id="view_mrp_compute_wizard" model="ir.ui.view">
+    <field name="name">Run Material Requirements Planning</field>
+    <field name="model">mrp.material_plan.compute</field>
+    <field name="inherit_id" ref="mrp_mrp.view_mrp_compute_wizard" />
+    <field name="arch" type="xml">
+        <xpath expr="//form/group/label[@name='hint']" position="after">
+            <group name="options">
+                <field name="schedule_id" />
+            </group>
+        </xpath>
+    </field>
+</record>
+
+</data>
+</odoo>

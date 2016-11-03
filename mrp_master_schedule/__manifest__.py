@@ -16,6 +16,7 @@
         "data/schedule_data.xml",
         "views/mrp_schedule_view.xml",
         "views/mrp_schedule_line_view.xml",
+        "wizard/mrp_material_plan_compute_view.xml",
     ],
     "installable": True,
     "auto_install": False,
