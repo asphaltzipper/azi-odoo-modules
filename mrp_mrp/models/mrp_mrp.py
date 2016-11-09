@@ -159,6 +159,8 @@ class MrpMaterialPlan(models.Model):
         We may want to add an interface to the procurement.rule model, so users can change the sequence
         """
 
+        plan_log = self.env['mrp.material_plan.log']
+
         # set domain on locations
         parent_locations = self.env['stock.location']
         child_location = location
@@ -189,7 +191,10 @@ class MrpMaterialPlan(models.Model):
         if not rule:
             # TODO: log exception if no rule found
             # if we can't find a rule, try to make it
-            _logger.info("No supply rule found for product [%s] %s", product.default_code, product.name)
+            message = "No supply rule found for product [%s] %s" % (
+                product.default_code, product.name)
+            _logger.info(message)
+            plan_log.create({'type': 'info', 'message': message})
             import pdb
             pdb.set_trace()
             return True
@@ -201,7 +206,10 @@ class MrpMaterialPlan(models.Model):
                 # move type is not make (no bom explode, no dependent demand)
                 return False
             # TODO: log exception if unknown rule found
-            _logger.info("Unknown supply rule found for product [%s] %s", product.default_code, product.name)
+            message = "Unknown supply rule found for product [%s] %s" % (
+                product.default_code, product.name)
+            _logger.info(message)
+            plan_log.create({'type': 'info', 'message': message})
             # if we get an unknown rule, try to make it
             return True
 
@@ -322,7 +330,11 @@ class MrpMaterialPlan(models.Model):
         bom_id = self.env['mrp.bom']._bom_find(product=self.product_id)
         if not bom_id:
             # TODO: log exception if no bom found
-            _logger.info("No BOM found for product [%s] %s", self.product_id.default_code, self.product_id.name)
+            message = "No BOM found for product [%s] %s" % (
+                self.product_id.default_code, self.product_id.name)
+            _logger.info(message)
+            self.env['mrp.material_plan.log'].create({'type': 'info',
+                                                      'message': message})
             return
         product_qty = additional_qty or self.product_qty
         boms, lines = bom_id.explode(self.product_id, product_qty)
@@ -344,9 +356,18 @@ class MrpMaterialPlan(models.Model):
 
     @api.model
     def purge_old_plan(self):
+        logs = self.env['mrp.material_plan.log'].search([])
+        logs.unlink()
+        message = "Deleted %s planned move log messages" % len(logs)
+        _logger.info(message)
+        self.env['mrp.material_plan.log'].create({'type': 'info',
+                                                  'message': message})
         # delete all planned moves
         records = self.search([])
-        _logger.info("Deleting %s planned moves", len(records))
+        message = "Deleting %s planned moves" % len(records)
+        _logger.info(message)
+        self.env['mrp.material_plan.log'].create({'type': 'info',
+                                                  'message': message})
         records.unlink()
 
     def _get_bucket_from_date(self, str_date=None):
@@ -394,9 +415,12 @@ class MrpMaterialPlan(models.Model):
         if first_bucket_date > last_bucket_date:
             last_bucket_date = first_bucket_date + timedelta(days=self._bucket_size)
 
-        _logger.info(
-            'Bucket date range (%s - %s)' %
-            (first_bucket_date.strftime(DEFAULT_SERVER_DATE_FORMAT), last_bucket_date.strftime(DEFAULT_SERVER_DATE_FORMAT)))
+        message = 'Bucket date range (%s - %s)' % (
+            first_bucket_date.strftime(DEFAULT_SERVER_DATE_FORMAT),
+            last_bucket_date.strftime(DEFAULT_SERVER_DATE_FORMAT))
+        _logger.info(message)
+        self.env['mrp.material_plan.log'].create({'type': 'info',
+                                                  'message': message})
 
         # generate list of dates ranging from first bucket date to last bucket date
         bucket_days = int((last_bucket_date - first_bucket_date).days) + 1
@@ -426,6 +450,8 @@ class MrpMaterialPlan(models.Model):
         bucket_list = self._get_bucket_list()
 
         OrderPoint = self.env['stock.warehouse.orderpoint']
+        plan_log = self.env['mrp.material_plan.log']
+        debug_mrp = self.env.context.get('debug_mrp')
 
         # this algorithm assumes the mrp_llc module updates and sorts on low-level-code
         # we only retrieve orderpoints for stockable type products
@@ -441,7 +467,10 @@ class MrpMaterialPlan(models.Model):
         batch_count = int((op_count+batch_size)/batch_size)
         batch_done = 1
 
-        _logger.info("starting with %d batches and %d buckets" % (batch_count, bucket_count))
+        message = "starting with %d batches and %d buckets" % (
+            batch_count, bucket_count)
+        _logger.info(message)
+        plan_log.create({'type': 'info', 'message': message})
         exec_start = time.time()
 
         while orderpoints_noprefetch:
@@ -526,7 +555,11 @@ class MrpMaterialPlan(models.Model):
                                         if existing_order.make:
                                             existing_order._create_dependent_demand(qty_rounded)
                                         exist_count += 1
-                                        _logger.info("merged order on prod%d" % orderpoint.product_id.id)
+                                        message = "merged order on prod%d" % (
+                                            orderpoint.product_id.id)
+                                        _logger.info(message)
+                                        plan_log.create({'type': 'info',
+                                                         'message': message})
                                     else:
                                         new_order = self.create(
                                             self._prepare_planned_order(
@@ -555,7 +588,7 @@ class MrpMaterialPlan(models.Model):
 
                             op_stop = time.time()
                             op_time += op_stop - op_start
-                            # _logger.info(
+                            # _logger.debug(
                             #     "batch=%d/%d "
                             #     "group=%d/%d "
                             #     "bucket=%d/%d "
@@ -594,7 +627,7 @@ class MrpMaterialPlan(models.Model):
                                 raise
 
                     bucket_stop = time.time()
-                    _logger.info(
+                    message = (
                         "batch=%d/%d "
                         "group=%d/%d "
                         "bucket=%d/%d "
@@ -605,8 +638,7 @@ class MrpMaterialPlan(models.Model):
                         "new=%d "
                         "old=%d "
                         "loc=%s "
-                        "llc=%s" %
-                        (
+                        "llc=%s" % (
                             batch_done,
                             batch_count,
                             group_done,
@@ -623,18 +655,27 @@ class MrpMaterialPlan(models.Model):
                             group_key[1]
                         )
                     )
+                    _logger.debug(message)
+                    if debug_mrp:
+                        plan_log.create({'type': 'debug', 'message': message})
                     bucket_done += 1
 
                 group_done += 1
 
             batch_stop = time.time()
-            _logger.info("Batch %d/%d execution time=%d" % (batch_count, group_done, batch_stop - batch_start))
+            message = "Batch %d/%d execution time=%d" % (
+                batch_count, group_done, batch_stop - batch_start)
+            _logger.info(message)
+            plan_log.create({'type': 'info', 'message': message})
             batch_done += 1
+
+        exec_stop = time.time()
+        message = "plan complete with execution time=%d" % (
+            exec_stop - exec_start)
+        _logger.info(message)
+        plan_log.create({'type': 'info', 'message': message})
 
         if use_new_cursor:
             cr.commit()
             cr.close()
-
-        exec_stop = time.time()
-        _logger.info("plan complete with execution time=%d" % (exec_stop - exec_start))
         return {}

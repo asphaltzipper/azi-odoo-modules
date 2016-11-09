@@ -31,7 +31,9 @@ class MrpMaterialPlan(models.Model):
 
         domain = [('schedule_id.id', '=', schedule_id), ('product_id', '!=', False)]
         scheduled_builds = self.env['mrp.schedule.line'].search(domain)
-        _logger.info("Creating dependent demand from %s scheduled builds", len(scheduled_builds))
+        message = "Creating dependent demand from %s scheduled builds" % len(scheduled_builds)
+        _logger.info(message)
+        self.env['mrp.material_plan.log'].create({'type': 'info', 'message': message})
         for build in scheduled_builds:
             # create independent demand
             new_order = self.create(

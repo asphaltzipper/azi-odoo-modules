@@ -10,10 +10,8 @@
     <field name="model">mrp.material_plan.compute</field>
     <field name="inherit_id" ref="mrp_mrp.view_mrp_compute_wizard" />
     <field name="arch" type="xml">
-        <xpath expr="//form/group/label[@name='hint']" position="after">
-            <group name="options">
-                <field name="schedule_id" />
-            </group>
+        <xpath expr="//form/group/group/field[@name='debug']" position="before">
+            <field name="schedule_id" />
         </xpath>
     </field>
 </record>

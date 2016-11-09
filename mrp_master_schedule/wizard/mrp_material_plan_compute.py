@@ -25,6 +25,7 @@ class MrpMaterialPlanCompute(models.TransientModel):
     def material_plan_calculation(self):
         ctx = dict(self.env.context)
         ctx['schedule_id'] = self.schedule_id.id
+        ctx['debug_mrp'] = self.debug
         threaded_calculation = threading.Thread(target=self.with_context(ctx)._material_plan_compute, args=())
         threaded_calculation.start()
         return {'type': 'ir.actions.act_window_close'}

@@ -7,6 +7,9 @@
             <form string="Parameters">
                 <group>
                     <label name="hint" string="Wizard considers material requirements and plans orders, based on min stock rules."/>
+                    <group name="options">
+                        <field name="debug" />
+                    </group>
                 </group>
                 <footer>
                     <button name="material_plan_calculation" string="Compute MRP" type="object" class="btn-primary"/>

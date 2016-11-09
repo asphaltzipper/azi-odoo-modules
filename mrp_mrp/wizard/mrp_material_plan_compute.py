@@ -6,7 +6,7 @@
 #    - Calculate material requirements and plan orders from orderpoints
 #
 
-from odoo import api, models
+from odoo import api, fields, models
 
 import threading
 
@@ -14,6 +14,11 @@ import threading
 class MrpMaterialPlanCompute(models.TransientModel):
     _name = 'mrp.material_plan.compute'
     _description = 'Compute Material Requirements Plan'
+
+    debug = fields.Boolean(
+        string="Debug",
+        help='Help! Add debug messages to the mrp_material_plan_log table.'
+    )
 
     def _material_plan_compute(self):
         with api.Environment.manage():
@@ -28,6 +33,8 @@ class MrpMaterialPlanCompute(models.TransientModel):
 
     @api.multi
     def material_plan_calculation(self):
-        threaded_calculation = threading.Thread(target=self._material_plan_compute, args=())
+        ctx = dict(self.env.context)
+        ctx['debug_mrp'] = self.debug
+        threaded_calculation = threading.Thread(target=self.with_context(ctx)._material_plan_compute, args=())
         threaded_calculation.start()
         return {'type': 'ir.actions.act_window_close'}
