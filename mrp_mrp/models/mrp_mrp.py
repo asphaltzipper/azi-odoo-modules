@@ -111,7 +111,6 @@ class MrpMaterialPlan(models.Model):
         required=True,
         readonly=True,
         index=True,
-        track_visibility='onchange',
         help='Planned date of completion for this order.  '
              'For purchased products, this is the date of delivery from vendor.  '
              'For manufactured products, this is the date the product is moved from production to stock.')
@@ -120,7 +119,6 @@ class MrpMaterialPlan(models.Model):
         string='Start Date',
         required=False,
         index=True,
-        select=True,
         readonly=True,
         help='Start date of this order.  Calculated as the planned date of completion (Finish Date) minus the lead '
              'time for this product.')
