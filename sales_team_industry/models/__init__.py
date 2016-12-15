@@ -5,3 +5,4 @@
 from . import crm_team
 from . import res_partner_industry
 from . import res_partner
+from . import sale_config_settings

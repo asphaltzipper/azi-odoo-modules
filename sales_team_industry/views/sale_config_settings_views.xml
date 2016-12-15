@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_sales_config_team_industry" model="ir.ui.view">
+        <field name="name">team industry settings</field>
+        <field name="model">sale.config.settings</field>
+        <field name="inherit_id" ref="crm.view_sale_config_settings"/>
+        <field name="arch" type="xml">
+            <field name="group_use_lead" position="after">
+                <field name="require_industry" widget="radio"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>

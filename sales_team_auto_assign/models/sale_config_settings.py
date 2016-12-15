@@ -11,4 +11,5 @@ class SaleConfigSettings(models.Model):
     auto_assign_team = fields.Boolean(
         'Auto Assign Team(s)', help="The auto assign field allows for sales"
         " team auto assignment. Disable to remember manual assignment by"
-        " default.", default=True)
+        " default.",
+        default=True)

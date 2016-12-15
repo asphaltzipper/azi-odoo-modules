@@ -27,8 +27,8 @@
     <field name="inherit_id" ref="sales_team_region.crm_team_view_form" />
     <field name="arch" type="xml">
         <field name="region_id" position="before">
-            <field name="all_industries" attrs="{'invisible':[('partner_industries', '!=', [(6, False, [])])]}" />
-            <field name="partner_industries" widget="many2many_tags" placeholder="Tags..." options="{'no_quick_create': True}" attrs="{'invisible': [('all_industries', '=', True)], 'required': [('all_industries', '=', False)]}" />
+            <field name="all_industries" />
+            <field name="partner_industries" widget="many2many_tags" placeholder="Tags..." options="{'no_quick_create': True}" attrs="{'invisible': [('all_industries', '=', True)]}" />
         </field>
     </field>
 </record>
