@@ -12,6 +12,6 @@ Shelf Location
         'data/tools_master_data.xml',
         'shelf_location_view.xml'
     ],
-    'installable': True,
+    'installable': False,
     'auto_install': False,
 }

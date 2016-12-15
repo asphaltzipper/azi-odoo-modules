@@ -58,7 +58,8 @@ class MrpSchedule(models.Model):
     @api.one
     def action_release(self):
         released = self.get_released()
-        released.state = 'superseded'
+        if released:
+            released.state = 'superseded'
         self.state = 'released'
 
     @api.one
