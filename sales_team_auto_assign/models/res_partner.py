@@ -93,7 +93,6 @@ class Partner(models.Model):
     @api.depends('customer', 'industry_id', 'auto_assign_team')
     def onchange_state(self, state_trigger=True):
         if self.state_id:
-            super(Partner, self).onchange_state()
             self.state_trigger = state_trigger
             if self.auto_assign_team:
                 self.team_ids = self.lookup_team(

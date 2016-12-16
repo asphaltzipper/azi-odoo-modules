@@ -14,8 +14,13 @@ class CrmTeam(models.Model):
     @api.constrains('partner_industries', 'all_industries')
     def _require_industry(self):
         self.ensure_one()
-        industry_required = self.env['sale.config.settings'].search([])[0].require_industry
-        if industry_required and not (self.partner_industries or self.all_industries):
+        industry_required = 0
+        settings_record = self.env['sale.config.settings'].search([])
+        if settings_record:
+            industry_required = settings_record[0].require_industry
+        if not industry_required:
+            return
+        if not (self.partner_industries or self.all_industries):
             raise ValidationError(_("Teams require a valid Industry"))
 
     partner_industries = fields.Many2many(

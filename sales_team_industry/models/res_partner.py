@@ -15,8 +15,11 @@ class Partner(models.Model):
     @api.multi
     @api.constrains('industry_id', 'customer')
     def _require_industry(self):
-        require_industry = self.env['sale.config.settings'].search([])[0].require_industry
-        if not require_industry:
+        industry_required = 0
+        settings_record = self.env['sale.config.settings'].search([])
+        if settings_record:
+            industry_required = settings_record[0].require_industry
+        if not industry_required:
             return
         for record in self:
             if record.customer and not record.industry_id:
