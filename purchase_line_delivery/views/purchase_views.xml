@@ -15,4 +15,15 @@
         </field>
     </record>
 
+    <record model="ir.ui.view" id="purchase_order_form_carrier">
+        <field name="name">purchase.config.settings.carrier</field>
+        <field name="model">purchase.config.settings</field>
+        <field name="inherit_id" ref="purchase.view_purchase_configuration"/>
+        <field name="arch" type="xml">
+            <field name="module_stock_dropshipping" position="after">
+                <field name="default_carrier_id" />
+            </field>
+        </field>
+    </record>
+
 </odoo>
