@@ -8,9 +8,13 @@ from odoo import api, fields, models
 class PurchaseConfigSettings(models.TransientModel):
     _inherit = 'purchase.config.settings'
 
-    default_carrier_id = fields.Many2one(
+   po_carrier_id = fields.Many2one(
         string='Default Purchase Carrier',
         comodel_name='delivery.carrier',
         ondelete='restrict',
-        default_model='purchase.order',
-        help="Default delivery carrier for purchase order when the selected supplier has none.")
+        help="Delivery carrier to use on purchase orders when the supplier has none.")
+
+    @api.multi
+    def set_po_carrier(self):
+        self.env['ir.values'].sudo().set_default('purchase.config.settings', "po_carrier_id", self.po_carrier_id.id)
+ 
