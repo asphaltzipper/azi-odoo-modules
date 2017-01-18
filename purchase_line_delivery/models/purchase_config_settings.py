@@ -8,7 +8,7 @@ from odoo import api, fields, models
 class PurchaseConfigSettings(models.TransientModel):
     _inherit = 'purchase.config.settings'
 
-   po_carrier_id = fields.Many2one(
+    po_carrier_id = fields.Many2one(
         string='Default Purchase Carrier',
         comodel_name='delivery.carrier',
         ondelete='restrict',
