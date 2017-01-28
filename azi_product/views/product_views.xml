@@ -2,26 +2,77 @@
 <openerp>
 
     <!-- add product_manager to product template form view -->
-    <record id="product_template_form_with_product_manager" model="ir.ui.view">
-        <field name="name">product.template.manager.inherit</field>
+    <record id="product_template_form_azi_product" model="ir.ui.view">
+        <field name="name">product.template.azi_product.inherit</field>
         <field name="model">product.template</field>
         <field name="inherit_id" ref="product.product_template_form_view"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='type']" position="after">
                 <field name="product_manager"/>
             </xpath>
-        </field>
-    </record>
-
-    <record model="ir.ui.view" id="product_template_form_default_proc_qty">
-        <field name="name">product.template.default_proc_qty.inherit</field>
-        <field name="model">product.template</field>
-        <field name="inherit_id" ref="product.product_template_form_view"/>
-        <field name="arch" type="xml">
             <xpath expr="//field[@name='type']" position="after">
                 <field name="default_proc_qty" string="Procurement Qty" attrs="{'invisible': [('type','!=','product')]}"/>
             </xpath>
+            <xpath expr="//page[@name='notes']" position="before">
+                <page string="Engineering" name="eng_management">
+                    <group name="eng_management">
+                        <group>
+                            <field name="eng_management" string="Manage"/>
+                            <field name="eco_ref" string="ECO" attrs="{'readonly': [('eng_management', '=', False)]}"/>
+                            <button string="Create Revision"
+                                    class="oe_link"
+                                    type="object"
+                                    name="button_revise"
+                                    attrs="{'invisible': [('eng_management', '=', False)]}"
+                                    groups="mrp_plm.group_plm_user"/>
+                        </group>
+                        <group>
+                            <field name="eng_code" attrs="{'readonly': [('eng_management', '=', False)]}"/>
+                            <field name="rev_delimiter"/>
+                            <field name="eng_rev" string="Revision" attrs="{'readonly': [('eng_management', '=', False)]}"/>
+                        </group>
+                        <field name="eng_categ_id" attrs="{'readonly': [('eng_management', '=', False)]}"/>
+                    </group>
+                </page>
+            </xpath>
         </field>
+    </record>
+
+    <record model="ir.ui.view" id="product_category_form_eng_management">
+        <field name="name">product.category.eng_management.inherit</field>
+        <field name="model">product.category</field>
+        <field name="inherit_id" ref="product.product_category_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='first']" position="after">
+                <group name="eng_management" col="4" string="Engineering Management">
+                    <field name="eng_management"/>
+                    <field name="eng_code_sequence"/>
+                    <field name="default_rev"/>
+                    <field name="rev_delimiter"/>
+                    <field name="def_code_regex"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="product_category_list_eng_management">
+        <field name="name">product.category.eng_management_list.inherit</field>
+        <field name="model">product.category</field>
+        <field name="inherit_id" ref="product.product_category_list_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='display_name']" position="after">
+                <field name="eng_management"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="revise_product_action" model="ir.actions.server">
+        <field name="name">Create Revision</field>
+        <field name="type">ir.actions.server</field>
+        <field name="model_id" ref="azi_product.model_product_product" />
+        <field name="view_mode">form</field>
+        <field name="state">code</field>
+        <field name="code">self.action_revise()</field>
     </record>
 
 </openerp>

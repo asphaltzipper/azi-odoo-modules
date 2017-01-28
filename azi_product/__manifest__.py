@@ -38,7 +38,11 @@ AZI Specialized Customizations to Product
 * Rename, create, inactivate some UOMs and UOM Categories
     """,
     "depends": ["product"],
-    'data': ['views/product_views.xml', ],
+    'data': [
+        'data/product_data.xml',
+        'views/product_views.xml',
+        'views/engineering_category_views.xml',
+    ],
     "installable": True,
     "auto_install": False,
 }

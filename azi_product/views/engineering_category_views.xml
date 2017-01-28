@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+
+    <record id="engineering_category_search_view" model="ir.ui.view">
+        <field name="name">engineering.category.search</field>
+        <field name="model">engineering.category</field>
+        <field name="arch" type="xml">
+            <search string="Engineering Categories">
+                <field name="name" string="Engineering Categories"/>
+                <field name="parent_id"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="engineering_category_form_view" model="ir.ui.view">
+        <field name="name">engineering.category.form</field>
+        <field name="model">engineering.category</field>
+        <field name="arch" type="xml">
+            <form class="oe_form_configuration">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button"
+                            name="%(product.product_template_action_all)d"
+                            icon="fa-th-list"
+                            type="action"
+                            context="{'search_default_eng_categ_id': active_id}">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_value"><field name="product_count"/></span>
+                                <span class="o_stat_text"> Products</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name" string="Category name" class="oe_edit_only"/>
+                        <h1><field name="name" placeholder="e.g. Lamps"/></h1>
+                    </div>
+                    <group name="first" col="4" string="Category Type">
+                        <field name="parent_id"/>
+                        <field name="type"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="engineering_category_list_view" model="ir.ui.view">
+        <field name="name">engineering.category.list</field>
+        <field name="model">engineering.category</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <tree string="Engineering Categories">
+                <field name="display_name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="engineering_category_action_form" model="ir.actions.act_window">
+        <field name="name">Engineering Categories</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">engineering.category</field>
+        <field name="view_type">form</field>
+        <field name="search_view_id" ref="engineering_category_search_view"/>
+        <field name="view_id" ref="engineering_category_list_view"/>
+    </record>
+
+    <menuitem
+        action="azi_product.engineering_category_action_form" id="menu_engineering_category_config_stock"
+        parent="stock.menu_product_in_config_stock" sequence="3"/>
+
+</openerp>
