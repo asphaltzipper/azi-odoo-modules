@@ -7,6 +7,7 @@
     "version": "10.0.1.0.0",
     "category": "Sales",
     "website": "http://www.github.com/asphaltzipper/azi-odoo-modules",
+    'description': "Auto assign sales teams to customers, based on criteria controlled in other modules.",
     "author": "scosist",
     "license": "AGPL-3",
     "application": False,
