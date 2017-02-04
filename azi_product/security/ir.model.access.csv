@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_eng_cat_manager,mrp.engineering_category.manager,model_engineering_category,stock.group_stock_manager,1,1,1,1
+access_eng_cat_all_users,mrp.engineering_category.all_users,model_engineering_category,base.group_user,1,0,0,0

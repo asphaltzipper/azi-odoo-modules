@@ -5,6 +5,7 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 
+
 class MrpSchedule(models.Model):
     _name = "mrp.schedule"
     _description = "Master Schedule Header"
@@ -174,10 +175,10 @@ class MrpScheduleLine(models.Model):
 
     @api.multi
     def do_view_schedule_lines(self, change_domain=True):
-        '''
+        """
         This function returns an action that displays existing schedule lines
         of same schedule line of given id.
-        '''
+        """
         action = self.env.ref('mrp_master_schedule.do_view_schedule_lines').read()[0]
         if change_domain:
             action['domain'] = [('schedule_id', 'in', self.mapped('schedule_id').ids)]

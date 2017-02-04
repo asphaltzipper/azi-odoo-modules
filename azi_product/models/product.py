@@ -66,7 +66,7 @@ class ProductTemplate(models.Model):
         domain="[('type','=','normal')]",
         help="Select category for the current product")
 
-    @api.constrains('eng_management', 'eng_categ_id')
+    @api.constrains('eng_categ_id')
     def _validate_eng_cat(self):
         if self.eng_management:
             if not self.eng_categ_id:

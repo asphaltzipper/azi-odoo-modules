@@ -70,7 +70,6 @@
         <field name="name">Create Revision</field>
         <field name="type">ir.actions.server</field>
         <field name="model_id" ref="azi_product.model_product_product" />
-        <field name="view_mode">form</field>
         <field name="state">code</field>
         <field name="code">self.action_revise()</field>
     </record>
