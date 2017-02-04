@@ -2,7 +2,7 @@
 <!-- Copyright 2016 Scott Saunders
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 
-<openerp>
+<odoo>
 <data>
 
 <act_window name="Sales Region Types"
@@ -14,4 +14,4 @@
 <menuitem action="crm_team_type_act_window" id="menu_crm_team_type_act" parent="sales_team.menu_sale_config" sequence="6" groups="base.group_erp_manager" />
 
 </data>
-</openerp>
+</odoo>
