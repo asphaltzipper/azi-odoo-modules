@@ -74,7 +74,7 @@
     sequence="4"
     action="mrp_material_plan_log_action"
     parent="mrp_mrp.stock_planning_menu"
-    groups="base.group_user"/>
+    groups="stock.group_stock_user"/>
 
 </data>
 </odoo>

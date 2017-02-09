@@ -1,5 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_mrp_material_plan_manager,mrp.material_plan.manager,model_mrp_material_plan,stock.group_stock_manager,1,1,1,1
-access_mrp_material_plan_all_users,mrp.material_plan.all_users,model_mrp_material_plan,base.group_user,1,0,0,0
+access_mrp_material_plan_all_users,mrp.material_plan.all_users,model_mrp_material_plan,stock.group_stock_user,1,0,0,0
 access_mrp_material_plan_log_manager,mrp.material_plan_log.manager,model_mrp_material_plan_log,stock.group_stock_manager,1,1,1,1
-access_mrp_material_plan_log_all_users,mrp.material_plan_log.all_users,model_mrp_material_plan_log,base.group_user,1,0,0,0
+access_mrp_material_plan_log_all_users,mrp.material_plan_log.all_users,model_mrp_material_plan_log,stock.group_stock_user,1,0,0,0

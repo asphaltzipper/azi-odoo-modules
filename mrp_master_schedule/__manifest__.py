@@ -17,6 +17,7 @@
         "views/mrp_schedule_view.xml",
         "views/mrp_schedule_line_view.xml",
         "wizard/mrp_material_plan_compute_view.xml",
+        'security/ir.model.access.csv',
     ],
     "installable": True,
     "auto_install": False,

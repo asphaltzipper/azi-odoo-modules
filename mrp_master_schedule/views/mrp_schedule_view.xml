@@ -77,7 +77,7 @@
     sequence="0"
     action="mrp_schedule_action"
     parent="mrp_mrp.stock_planning_menu"
-    groups="base.group_user"/>
+    groups="stock.group_stock_user"/>
 
 </data>
 </odoo>

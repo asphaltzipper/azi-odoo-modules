@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
 
-    <menuitem action="action_mrp_compute" id="menu_mrp_compute" parent="mrp_mrp.stock_planning_menu" sequence="2"/>
+    <menuitem id="menu_mrp_compute"
+        action="action_mrp_compute"
+        parent="mrp_mrp.stock_planning_menu"
+        sequence="2"
+        groups="stock.group_stock_user"/>
 
 </odoo>

@@ -129,37 +129,35 @@ if env.context.get('active_model') == 'mrp.material_plan' and env.context.get('a
     </field>
 </record>
 
-<menuitem id="menu_stock_sched"
-    name="Schedulers"
-    parent="stock.menu_stock_root"
-    groups="base.group_erp_manager"
-    sequence="50"/>
+<menuitem id="stock.menu_stock_sched"
+    groups="base.group_erp_manager"/>
 
 <menuitem id="stock_planning_menu"
     name="Planning"
     parent="stock.menu_stock_root"
-    sequence="49"/>
+    sequence="49"
+    groups="stock.group_stock_user"/>
 
 <menuitem id="stock_material_plan_menu"
     name="Material Plan"
     sequence="3"
     action="mrp_material_plan_action"
     parent="mrp_mrp.stock_planning_menu"
-    groups="base.group_user"/>
+    groups="stock.group_stock_user"/>
 
 <menuitem id="mrp_material_plan_menu"
     name="Material Plan"
     sequence="3"
     action="mrp_material_plan_action"
     parent="mrp_workorder.mrp_planning_menu_root"
-    groups="base.group_user"/>
+    groups="stock.group_stock_user"/>
 
 <menuitem id="purchase_material_plan_menu"
     name="Material Plan"
     sequence="15"
     action="mrp_material_plan_action"
     parent="purchase.menu_purchase_control"
-    groups="base.group_user"/>
+    groups="stock.group_stock_user"/>
 
 </data>
 </odoo>

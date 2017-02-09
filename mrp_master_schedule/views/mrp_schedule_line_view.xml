@@ -119,7 +119,7 @@
     sequence="1"
     action="mrp_schedule_line_action"
     parent="mrp_mrp.stock_planning_menu"
-    groups="base.group_user"/>
+    groups="stock.group_stock_user"/>
 
 </data>
 </odoo>
