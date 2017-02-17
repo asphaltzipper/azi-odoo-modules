@@ -14,6 +14,7 @@
             <field name="message" string="Log" filter_domain="[('message','ilike',self)]"/>
             <filter string='Info' name="info-only" icon="terp-accessories-achiver" domain="[('type', '=', 'info')]" />
             <filter string='Debug' name="debug-only" icon="terp-accessories-achiver" domain="[('type', '=', 'debug')]" />
+            <filter string='Warning' name="warning-only" icon="terp-accessories-achiver" domain="[('type', '=', 'warning')]" />
             <group expand='0' string='Group by...'>
                 <filter string='Type' domain="[]" context="{'group_by' : 'type'}"/>
             </group>

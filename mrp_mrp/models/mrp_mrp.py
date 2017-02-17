@@ -332,8 +332,8 @@ class MrpMaterialPlan(models.Model):
             # TODO: log exception if no bom found
             message = "No BOM found for product [%s] %s" % (
                 self.product_id.default_code, self.product_id.name)
-            _logger.info(message)
-            self.env['mrp.material_plan.log'].create({'type': 'info',
+            _logger.warning(message)
+            self.env['mrp.material_plan.log'].create({'type': 'warning',
                                                       'message': message})
             return
         product_qty = additional_qty or self.product_qty
@@ -555,11 +555,10 @@ class MrpMaterialPlan(models.Model):
                                         if existing_order.make:
                                             existing_order._create_dependent_demand(qty_rounded)
                                         exist_count += 1
-                                        message = "merged order on prod%d" % (
-                                            orderpoint.product_id.id)
-                                        _logger.info(message)
-                                        plan_log.create({'type': 'info',
-                                                         'message': message})
+                                        message = "merged order on prod%d" % (orderpoint.product_id.id)
+                                        _logger.debug(message)
+                                        if debug_mrp:
+                                            plan_log.create({'type': 'debug', 'message': message})
                                     else:
                                         new_order = self.create(
                                             self._prepare_planned_order(
@@ -664,7 +663,7 @@ class MrpMaterialPlan(models.Model):
 
             batch_stop = time.time()
             message = "Batch %d/%d execution time=%d" % (
-                batch_count, group_done, batch_stop - batch_start)
+                batch_done, batch_count, batch_stop - batch_start)
             _logger.info(message)
             plan_log.create({'type': 'info', 'message': message})
             batch_done += 1

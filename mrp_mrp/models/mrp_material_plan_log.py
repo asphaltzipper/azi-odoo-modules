@@ -13,7 +13,7 @@ class MrpMaterialPlanLog(models.Model):
     _description = "Plan Material Log"
 
     type = fields.Selection(
-        selection=[('info', 'Info'), ('debug', 'Debug')],
+        selection=[('info', 'Info'), ('debug', 'Debug'), ('warning', 'Warning')],
         string='Type',
         required=True,
         readonly=True
