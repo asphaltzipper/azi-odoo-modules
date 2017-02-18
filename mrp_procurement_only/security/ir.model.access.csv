@@ -1,3 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_mrp_procurement_only,mrp.procurement.only,model_procurement_order,,1,1,1,1
-access_procurement_order_run,procurement.order.run,model_procurement_order_run,,1,1,1,1

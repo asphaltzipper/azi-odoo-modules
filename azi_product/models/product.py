@@ -62,7 +62,7 @@ class ProductTemplate(models.Model):
         store=True)
     eng_categ_id = fields.Many2one(
         comodel_name='engineering.category',
-        string='Internal Category',
+        string='Engineering Category',
         domain="[('type','=','normal')]",
         help="Select category for the current product")
 
