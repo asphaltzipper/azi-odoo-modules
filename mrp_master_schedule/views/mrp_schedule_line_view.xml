@@ -21,6 +21,8 @@
             <filter string='Demo' name="demo-only" icon="terp-accessories-achiver" domain="[('target_usage', '=', 'demo')]" />
             <filter string='Sale' name="sale-only" icon="terp-accessories-achiver" domain="[('target_usage', '=', 'sale')]" />
             <group expand='0' string='Group by...'>
+                <filter string="Planned Week" domain="[]" context="{'group_by':'date_finish:week'}"/>
+                <filter string="Product Family" domain="[]" context="{'group_by':'product_tmpl_id'}"/>
                 <filter string='Schedule' domain="[]" context="{'group_by' : 'schedule_id'}"/>
                 <filter string='Target Usage' icon="terp-mrp" domain="[]" context="{'group_by' : 'target_usage'}"/>
             </group>

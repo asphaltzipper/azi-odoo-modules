@@ -70,7 +70,7 @@ class ProductTemplate(models.Model):
     def _validate_eng_cat(self):
         if self.eng_management:
             if not self.eng_categ_id:
-                raise ValidationError("Engineering Category is required for this product category")
+                raise ValidationError("Engineering Category is required for this Product Category")
         return True
 
     @api.depends('product_variant_ids', 'product_variant_ids.eng_code')
@@ -162,9 +162,9 @@ class ProductProduct(models.Model):
         category = self.product_tmpl_id.categ_id
         if category.eng_management:
             if not self.default_code:
-                raise ValidationError("Internal Reference code is required for this product category")
+                raise ValidationError("Internal Reference code is required for this Engineering Category")
             if category.def_code_regex and not re.match(category.def_code_regex, self.default_code):
-                raise ValidationError("Internal Reference code is not valid for this product category")
+                raise ValidationError("Internal Reference code is not valid for this Engineering Category")
         return True
 
     @api.model
@@ -176,6 +176,7 @@ class ProductProduct(models.Model):
             elif vals.get('categ_id'):
                 cat = cat.browse(vals['categ_id'])
             if cat and cat.eng_management:
+                # TODO: figure out why we are incrementing the sequence, when the user specifies a code
                 if not vals.get('eng_code') and cat.eng_code_sequence:
                     vals['eng_code'] = cat.eng_code_sequence.next_by_id()
                 if not vals.get('eng_rev') and cat.default_rev:
