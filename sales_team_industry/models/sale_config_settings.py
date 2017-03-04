@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-# Part of Odoo. See LICENSE file for full copyright and licensing details.
-import logging
+# Copyright 2014-2017 Scott Saunders
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import fields, models
-
-_logger = logging.getLogger(__name__)
+from odoo import api, fields, models
 
 
 class SaleConfiguration(models.TransientModel):
@@ -14,5 +12,10 @@ class SaleConfiguration(models.TransientModel):
         [(0, "Don't require industry"),
          (1, 'Require industry on partner and team')],
         string='Require Industry',
-        help='Partner must reference an industry, sales team must reference one or more',
-        default=0)
+        help='Partner must reference an industry, sales team must reference'
+        ' one or more')
+
+    @api.multi
+    def set_require_industry(self):
+        self.env['ir.values'].sudo().set_default(
+            'sale.config.settings', "require_industry", self.require_industry)

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2014-2016 Scott Saunders
+# Copyright 2014-2017 Scott Saunders
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import api, fields, models
@@ -13,15 +13,19 @@ class Partner(models.Model):
     industry_id = fields.Many2one('res.partner.industry', 'Industry')
 
     @api.multi
-    @api.constrains('industry_id', 'customer')
-    def _require_industry(self):
-        industry_required = 0
-        settings_record = self.env['sale.config.settings'].search([])
-        if settings_record:
-            industry_required = settings_record[0].require_industry
-        if not industry_required:
-            return
-        for record in self:
-            if record.customer and not record.industry_id:
-                raise ValidationError(_("Customers require a valid Industry."
-                                        " (%s)") % record.industry_id)
+    def write(self, vals):
+        if self.env['ir.values'].get_default('sale.config.settings',
+                                             'require_industry'):
+            if ((vals.get('customer') and not vals.get('industry_id')) or
+                (self.customer and 'customer' not in vals and not
+                 self.industry_id and 'industry_id' not in vals)):
+                raise ValidationError(_("Customers require a valid Industry."))
+        return super(Partner, self).write(vals)
+
+    @api.model
+    def create(self, vals):
+        if self.env['ir.values'].get_default('sale.config.settings',
+                                             'require_industry'):
+            if vals.get('customer') and not vals.get('industry_id'):
+                raise ValidationError(_("Customers require a valid Industry."))
+        return super(Partner, self).create(vals)

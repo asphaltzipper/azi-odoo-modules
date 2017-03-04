@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2016 Scott Saunders
+# Copyright 2016-2017 Scott Saunders
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import api, fields, models
@@ -9,19 +9,6 @@ from odoo.tools.translate import _
 
 class CrmTeam(models.Model):
     _inherit = 'crm.team'
-
-    @api.model
-    @api.constrains('partner_industries', 'all_industries')
-    def _require_industry(self):
-        self.ensure_one()
-        industry_required = 0
-        settings_record = self.env['sale.config.settings'].search([])
-        if settings_record:
-            industry_required = settings_record[0].require_industry
-        if not industry_required:
-            return
-        if not (self.partner_industries or self.all_industries):
-            raise ValidationError(_("Teams require a valid Industry"))
 
     partner_industries = fields.Many2many(
         comodel_name='res.partner.industry',
@@ -35,10 +22,23 @@ class CrmTeam(models.Model):
         " associated with this team. Disables manual assignment on teams.",
         default=False)
 
-    # @api.model
-    # @api.onchange('all_industries', 'partner_industries')
-    # def onchange_industry(self):
-    #     if not self.env['sales.config.settings'][0].require_industry:
-    #         return
-    #     if not self.all_industries and not self.partner_industries:
-    #         raise ValidationError(_("Teams require a valid Industry"))
+    @api.multi
+    def write(self, vals):
+        if self.env['ir.values'].get_default('sale.config.settings',
+                                             'require_industry'):
+            if not ((vals.get('partner_industries') or
+                    vals.get('all_industries')) or
+                    (self.partner_industries and 'partner_industries' not in
+                     vals or self.all_industries and 'all_industries' not in
+                     vals)):
+                raise ValidationError(_("Teams require a valid Industry."))
+        return super(CrmTeam, self).write(vals)
+
+    @api.model
+    def create(self, vals):
+        if self.env['ir.values'].get_default('sale.config.settings',
+                                             'require_industry'):
+            if not (vals.get('partner_industries') or
+                    vals.get('all_industries')):
+                raise ValidationError(_("Teams require a valid Industry."))
+        return super(CrmTeam, self).create(vals)
