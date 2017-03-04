@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright 2016 Scott Saunders
+<!-- Copyright 2016-2017 Scott Saunders
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 
-<openerp>
+<odoo>
 <data>
 
 <act_window name="Partner Industries"
@@ -11,7 +11,11 @@
     target="current"
     id="res_partner_industry_act_window"/>
 
-<menuitem action="res_partner_industry_act_window" id="menu_res_partner_industry_act" parent="sales_team.menu_sale_config" sequence="9" groups="base.group_erp_manager" />
+<menuitem action="res_partner_industry_act_window"
+    id="menu_res_partner_industry_act"
+    parent="sales_team_region.menu_crm_team_region_config"
+    sequence="3"
+    groups="sales_team.group_sale_manager" />
 
 </data>
-</openerp>
+</odoo>

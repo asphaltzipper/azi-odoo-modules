@@ -2,7 +2,7 @@
 # Copyright 2014-2017 Scott Saunders
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import api, fields, models
+from odoo import api, fields, models, registry
 from odoo.exceptions import ValidationError
 from odoo.tools.translate import _
 
@@ -148,3 +148,27 @@ class Partner(models.Model):
         if vals.get('auto_assign_team'):
             vals['team_ids'] = self._ensure_team(vals)
         return super(Partner, self).create(vals)
+
+    @api.multi
+    def _assign_all_customers(self, use_new_cursor=False, company_id=False):
+        """ Assign sales team(s) to customers.
+            This is appropriate for batch jobs only.
+        """
+        if use_new_cursor:
+            cr = registry(self._cr.dbname).cursor()
+            self = self.with_env(self.env(cr=cr))
+
+        domain = company_id and [('company_id', '=', company_id)] or []
+        domain += [('customer', '=', True)]
+        for record in self.env['res.partner'].search(domain):
+            if record.auto_assign_team:
+                record.team_ids = self.lookup_team(
+                    state_id=record.state_id.id,
+                    customer=record.customer,
+                    country_id=record.country_id.id,
+                    industry_id=record.industry_id.id)
+
+        if use_new_cursor:
+            cr.commit()
+            cr.close()
+        return {}

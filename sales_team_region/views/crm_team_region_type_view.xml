@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright 2016 Scott Saunders
+<!-- Copyright 2016-2017 Scott Saunders
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 
 <odoo>
@@ -11,7 +11,11 @@
     target="current"
     id="crm_team_type_act_window"/>
 
-<menuitem action="crm_team_type_act_window" id="menu_crm_team_type_act" parent="sales_team.menu_sale_config" sequence="6" groups="base.group_erp_manager" />
+<menuitem action="crm_team_type_act_window"
+    id="menu_crm_team_type_act"
+    parent="menu_crm_team_region_config"
+    sequence="1"
+    groups="sales_team.group_sale_manager" />
 
 </data>
 </odoo>

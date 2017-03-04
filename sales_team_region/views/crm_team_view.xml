@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright 2014-2016 Scott Saunders
+<!-- Copyright 2014-2017 Scott Saunders
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 
 <odoo>
@@ -41,6 +41,18 @@
         </xpath>
     </field>
 </record>
+
+<menuitem name="Teams &amp; Regions"
+    id="menu_crm_team_region_config"
+    parent="sales_team.menu_sale_config"
+    sequence="7"
+    groups="sales_team.group_sale_manager" />
+
+<menuitem action="sales_team.sales_team_config_action"
+    id="sales_team.sales_team_config"
+    parent="menu_crm_team_region_config"
+    sequence="4"
+    groups="sales_team.group_sale_manager" />
 
 </data>
 </odoo>
