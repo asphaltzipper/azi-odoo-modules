@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2016 Scott Saunders
+# Copyright 2016-2017 Scott Saunders
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import fields, models
@@ -8,5 +8,5 @@ from odoo import fields, models
 class CrmTeamRegionType(models.Model):
     _name = 'crm.team.region.type'
 
-    name = fields.Char('Region Type', required=True, translate=True)
+    name = fields.Char('Region Team Type', required=True, translate=True)
     color = fields.Integer('Color Index')
