@@ -2,7 +2,41 @@
     <div class="oe_row oe_spaced">
         <div class="oe_span12">
             <h2 class="oe_slogan">Sales Team Regions</h2>
-            <p>This module was written to extend the functionality of Sales Teams to support sales regions with team types which allow you to assign a team type to a sales region, a sales region to a to sales team, and sales teams to a customer.</p>
+            <p>This module was written to extend the functionality of Sales Teams to support Sales Regions with Sales Region Team Types which allow you to assign a Region Team Type to a Sales Region, a Sales Region to a Sales Team, and Sales Team(s) to a Customer.</p>
+            <p>Sales Team Regions may consist of Country Groups, Countries, and/or States.</p>
+            <p>Regions are restricted from overlapping within the same Sales Region Team Type.</p>
+        </div>
+    </div>
+</section>
+
+<section class="oe_container oe_dark">
+    <div class="oe_row oe_spaced">
+        <div class="oe_span12">
+            <h2 class="oe_slogan">Installation</h2>
+        </div>
+        <div class="oe_span6">
+            <p class="oe_mt32">To install this module, you need to:
+                <ul>
+                    <li>Click "Install"</li>
+                </ul>
+            </p>
+        </div>
+    </div>
+</section>
+
+<section class="oe_container">
+    <div class="oe_row oe_spaced">
+        <div class="oe_span12">
+            <h2 class="oe_slogan">Configuration</h2>
+        </div>
+        <div class="oe_span6">
+            <p class="oe_mt32">To configure this module, you need to:
+                <ul>
+                    <li>Go to the menu <i>Sales > Configuration > Sales Region Types</i> and create multiple Region Team Types if you have multiple types of Sales Teams and need geographically overlapping Regions.</li>
+                    <li>Go to the menu <i>Sales > Configuration > Sales Regions</i> and create one or more Regions. Regions can consist of Country Groups, Countries and/or States.</li>
+                    <li>Go to the menu <i>Sales > Configuration > Partner Industries</i> and create the Industries that can be assigned to Sales Teams and Customers.</li>
+                </ul>
+            </p>
         </div>
     </div>
 </section>
@@ -13,12 +47,42 @@
             <h2 class="oe_slogan">Usage</h2>
         </div>
         <div class="oe_span6">
-            <p class="oe_mt32">Create sales team types and sales team regions. Define sales team regions (from country groups, countries, and/or states) per sales team. Assign sales teams to customers.
+            <p class="oe_mt32">To use this module, you need to:
+                <ul>
+                    <li>Go to the menu <i>Sales > Configuration > Sales Teams</i> and assign a Sales Region to each Sales Team.</li>
+                    <li>Go to the menu <i>Sales > Sales > Customers</i> and assign Sales Team(s) to Customers.</li>
+                </ul>
+            </p>
+            <p class="oe_mt32">
+                <ul>
+                    <li>To create and categorically assign Industries to Sales Teams and Customers see the sales_team_industry module.</li>
+                    <li>For automatic assignment of Sales Teams to Customers see the sales_team_auto_assign module.</li>
+                </ul>
             </p>
             <p class="oe_mt32">For further information, please visit:
                 <ul>
                     <li><a href="https://github.com/asphaltzipper/azi-odoo-modules/tree/master/sales_team_region">https://github.com/asphaltzipper/azi-odoo-modules/tree/master/sales_team_region</a></li>
                     <li><a href="https://www.odoo.com/forum/help-1">https://www.odoo.com/forum/help-1</a></li>
+                </ul>
+            </p>
+        </div>
+    </div>
+</section>
+
+<section class="oe_container">
+    <div class="oe_row oe_spaced">
+        <div class="oe_span12">
+            <h2 class="oe_slogan">Known issues / Roadmap</h2>
+        </div>
+        <div class="oe_span6">
+            <p class="oe_mt32">
+                <ul>
+                    <li>...</li>
+                </ul>
+            </p>
+            <p class="oe_mt32">For further information, please visit:
+                <ul>
+                    <li><a href="https://github.com/asphaltzipper/azi-odoo-modules/tree/master/sales_team_region/README.rst#known-issues-roadmap">https://github.com/asphaltzipper/azi-odoo-modules/tree/master/sales_team_region/README.rst#known-issues-readmap</a></li>
                 </ul>
             </p>
         </div>
