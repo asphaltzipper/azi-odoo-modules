@@ -50,7 +50,7 @@ Affected methods and when they are called:
             * purchase/purchase:_get_bom_delivered
          * set to done
             * purchase/purchase:_get_bom_delivered
-* (stock.   picking) reserve/force availability (outgoing transfer)
+* (stock.picking) reserve/force availability (outgoing transfer)
    * validate
       * sale_mrp/sale_mrp:_get_delivered_qty
 
