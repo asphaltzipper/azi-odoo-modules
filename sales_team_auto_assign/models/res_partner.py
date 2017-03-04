@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2014-2016 Scott Saunders
+# Copyright 2014-2017 Scott Saunders
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import api, fields, models
@@ -69,10 +69,10 @@ class Partner(models.Model):
         for record in self:
             if record.customer and not record.team_ids:
                 raise ValidationError(_("Customers require a valid Sales Team."
-                                        " (%s)\n\nIf you have selected one or"
-                                        " more teams, ensure a Sales Region is"
+                                        " (%s)\n\nEnsure a Sales Region is"
                                         " assigned to each team or disable"
-                                        " Auto Assign Team(s).") %
+                                        " Auto Assign Team(s) to remember"
+                                        " manual assignment.") %
                                       record.team_ids)
 
     # added due to Error triggered during 8.0 database update 20150320:
