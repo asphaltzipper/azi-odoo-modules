@@ -67,13 +67,13 @@ class Partner(models.Model):
     @api.constrains('team_ids', 'customer')
     def _require_team(self):
         for record in self:
-            if record.customer and not record.team_ids:
+            if (record.customer and not record.team_ids and not
+                    record.parent_id):
                 raise ValidationError(_("Customers require a valid Sales Team."
-                                        " (%s)\n\nEnsure a Sales Region is"
+                                        " \n\nEnsure a Sales Region is"
                                         " assigned to each team or disable"
                                         " Auto Assign Team(s) to remember"
-                                        " manual assignment.") %
-                                      record.team_ids)
+                                        " manual assignment."))
 
     # added due to Error triggered during 8.0 database update 20150320:
     #   Error: 'boolean' object has no attribute '_fnct_search'" while parsing

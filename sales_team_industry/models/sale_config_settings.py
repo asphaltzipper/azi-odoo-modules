@@ -10,7 +10,7 @@ class SaleConfiguration(models.TransientModel):
 
     require_industry = fields.Selection(
         [(0, "Don't require industry"),
-         (1, 'Require industry on partner and team')],
+         (1, 'Require industry on a customer and a team')],
         string='Require Industry',
         help='Partner must reference an industry, sales team must reference'
         ' one or more')

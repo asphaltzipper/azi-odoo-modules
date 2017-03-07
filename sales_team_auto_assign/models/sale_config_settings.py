@@ -10,8 +10,8 @@ class SaleConfigSettings(models.TransientModel):
 
     auto_assign_team = fields.Boolean(
         'Auto Assign Team(s)', help="The auto assign field allows for sales"
-        " team auto assignment. Disable to remember manual assignment by"
-        " default.",
+        " team auto assignment on a customer. Disable to remember manual"
+        " assignment by default.",
         default=True)
 
     @api.multi

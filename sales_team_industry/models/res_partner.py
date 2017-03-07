@@ -14,8 +14,10 @@ class Partner(models.Model):
 
     @api.multi
     def write(self, vals):
-        if self.env['ir.values'].get_default('sale.config.settings',
-                                             'require_industry'):
+        if (self.env['ir.values'].get_default(
+            'sale.config.settings', 'require_industry') and not (
+                vals.get('parent_id') or self.parent_id and 'parent_id' not in
+                vals)):
             if ((vals.get('customer') and not vals.get('industry_id')) or
                 (self.customer and 'customer' not in vals and not
                  self.industry_id and 'industry_id' not in vals)):
@@ -24,8 +26,9 @@ class Partner(models.Model):
 
     @api.model
     def create(self, vals):
-        if self.env['ir.values'].get_default('sale.config.settings',
-                                             'require_industry'):
+        if (self.env['ir.values'].get_default(
+            'sale.config.settings', 'require_industry') and not
+                vals.get('parent_id')):
             if vals.get('customer') and not vals.get('industry_id'):
                 raise ValidationError(_("Customers require a valid Industry."))
         return super(Partner, self).create(vals)
