@@ -47,11 +47,45 @@
     </field>
 </record>
 
+<record id="mrp_schedule_line_view_kanban" model="ir.ui.view">
+    <field name="name">mrp.schedule.line.kanban</field>
+    <field name="model">mrp.schedule.line</field>
+    <field name="arch" type="xml">
+        <kanban class="o_kanban_small_column">
+            <field name="name"/>
+            <field name="description"/>
+            <field name="product_tmpl_id"/>
+            <field name="target_usage" />
+            <field name="date_finish"/>
+            <templates>
+                <t t-name="kanban-box">
+                    <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <span t-attf-class="label #{['stock'].indexOf(record.target_usage.raw_value) > -1 ? 'label-default' : ['sale'].indexOf(record.target_usage.raw_value) > -1 ? 'label-danger' : ['demo'].indexOf(record.target_usage.raw_value) > -1 ? 'label-warning' : 'label-primary'}"><t t-esc="record.target_usage.value"/></span>
+                            </div>
+                            <div class="col-xs-6">
+                                <strong><span class="pull-right text-right"><t t-esc="record.date_finish.value"/></span></strong>
+                            </div>
+                        </div>
+                        <div>
+                            <strong><span><t t-esc="record.product_tmpl_id.value"/></span></strong>
+                        </div>
+                        <div class="text-muted">
+                            <span><t t-esc="record.description.value"/></span>
+                        </div>
+                    </div>
+                </t>
+            </templates>
+        </kanban>
+    </field>
+</record>
+
 <record id="do_view_schedule_lines" model="ir.actions.act_window">
     <field name="name">Schedule's Lines</field>
     <field name="res_model">mrp.schedule.line</field>
     <field name="view_type">form</field>
-    <field name="view_mode">tree,form</field>
+    <field name="view_mode">tree,kanban,form</field>
     <field name="domain">[('schedule_id', '=', active_id)]</field>
 </record>
 
@@ -105,6 +139,7 @@
 <record id="mrp_schedule_line_action" model="ir.actions.act_window">
     <field name="name">Schedule Lines</field>
     <field name="res_model">mrp.schedule.line</field>
+    <field name="view_mode">tree,kanban,form</field>
     <field name="domain">[]</field>
     <field name="view_id" ref="mrp_schedule_line_view_tree"/>
     <field name="help" type="html">
