@@ -96,7 +96,7 @@ class MrpScheduleLine(models.Model):
         string='Description',
         required=True)
 
-    notes = fields.Char(
+    notes = fields.Text(
         string='Notes',
         help='To be replaced with some mail chatter feed thing')
 
