@@ -23,7 +23,7 @@
 
 {
     "name": "Requirements Calculator",
-    "version": "0.1",
+    "version": "10.0.1",
     "summary": "Material Requirements Calculator",
     "category": "Warehouse Management",
     "author": "scosist",
@@ -32,14 +32,11 @@
 View material requirements for a given product and related bill of materials.
     """,
     "depends": ["product", "stock", "mrp"],
-    "data" : [
+    "data": [
         'wizard/simulated_pick_view.xml',
-        'simulated_pick_product_view.xml',
+        'views/simulated_pick_product_view.xml',
+        'security/ir.model.access.csv',
     ],
-    "demo": [],
-    "test":[],
-    "js":[],
-    "css":[],
     "installable": True,
     "auto_install": False,
 }

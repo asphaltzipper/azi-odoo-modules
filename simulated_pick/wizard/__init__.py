@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 
-import simulated_pick
+from . import simulated_pick

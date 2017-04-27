@@ -1,112 +1,111 @@
 # -*- coding: utf-8 -*-
-##############################################################################
-#
-#    OpenERP Module
-#    
-#    Copyright (C) 2014 Asphalt Zipper, Inc.
-#    Author scosist
-#
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU Affero General Public License as
-#    published by the Free Software Foundation, either version 3 of the
-#    License, or (at your option) any later version.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU Affero General Public License for more details.
-#
-#    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-#############################################################################
+# (c) 2014 scosist
+# License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
 import time
-import openerp.addons.decimal_precision as dp
-from openerp import models, fields, api, exceptions
-from openerp.tools.translate import _
+import odoo.addons.decimal_precision as dp
+from odoo import models, fields, api, exceptions, _
+from odoo.osv import expression
 from collections import OrderedDict
 
 
-class simulated_pick(models.TransientModel):
+class SimulatedPick(models.TransientModel):
     _name = 'simulated.pick'
     _description = 'Material Requirements Calculator'
 
     product_id = fields.Many2one('product.product', 'Product', required=True, domain=[('type','!=','service'),('bom_ids', '!=', False),('bom_ids.type','!=','phantom')])
     product_qty = fields.Float('Product Quantity', digits_compute=dp.get_precision('Product Unit of Measure'), required=True, default=1)
     date_planned = fields.Date('Scheduled Date', required=True, select=1, copy=False, default=time.strftime('%Y-%m-%d'))
-    
-    @api.model
-    def _action_compute_lines(self, product_id, product_qty, pick_results=None, properties=None, initial_run=0):
-        self = self.with_context(to_date=self.date_planned)
-        if properties is None:
-            properties = []
-        results = []
-        bom = self.env['mrp.bom']
-        uom = self.env['product.uom']
-        prod = self.env['product.product']
-        route = self.env['stock.location.route']
 
-        bom_id = bom._bom_find(product_id=product_id, properties=properties)
-        if bom_id:
-            bom_point = bom.browse(bom_id)
-        else:
-            raise exceptions.except_orm(_('Error!'), _("Cannot find a bill of materials for this product."))
+    def _get_procurement_action(self, product):
+        """
+        Return true if this product should be manufactured, based on procurement rule
+        We may want to add an interface to the procurement.rule model, so users can change the sequence
+        """
+        domain = []
+
+        # try finding a rule on product routes
+        Pull = self.env['procurement.rule']
+        rule = self.env['procurement.rule']
+        product_routes = product.route_ids | product.categ_id.total_route_ids
+        if product_routes:
+            rule = Pull.search(expression.AND([[('route_id', 'in', product_routes.ids)], domain]),
+                               order='route_sequence, sequence', limit=1)
+
+        # try finding a rule on warehouse routes
+        if not rule:
+            warehouse = self.env['stock.warehouse'].search([], order='id', limit=1)
+            warehouse_routes = warehouse.route_ids
+            if warehouse_routes:
+                rule = Pull.search(expression.AND([[('route_id', 'in', warehouse_routes.ids)], domain]),
+                                   order='route_sequence, sequence', limit=1)
+
+        # try finding a rule that handles orders with no route
+        if not rule:
+            rule = Pull.search(expression.AND([[('route_id', '=', False)], domain]), order='sequence', limit=1)
+
+        if not rule:
+            return 'unknown'
+        return rule.action
+
+    @api.model
+    def _action_compute_lines(self, product, product_qty, pick_results=None, initial_run=0, bom=None):
 
         pick_results = pick_results or OrderedDict()
-        for p in prod.browse(product_id):
-            factor = uom._compute_qty(p.uom_id.id, product_qty, bom_point.product_uom.id)
-            results, results2 = bom._bom_explode(bom_point, product_id, factor / bom_point.product_qty, properties)
+        if initial_run:
+            virt = product.with_context(to_date=self.date_planned).virtual_available
+            diff = virt - self.product_qty
+            new_pick = {
+                'product_id': product.id,
+                # TODO: handle products with multiple routes selected
+                'proc_action': self._get_procurement_action(product),
+                'product_qty': self.product_qty,
+                'on_hand_before': virt,
+                'on_hand_after': diff,
+                'short': -diff if diff < 0 else 0,
+            }
+            pick_results[new_pick['product_id']] = new_pick
 
-            if initial_run:
-                diff = p.virtual_available-self.product_qty
-                new_pick = {
-                    'product_id': p.id,
-                    'name': p.product_tmpl_id.name,
-                    'default_code': p.default_code,
-                    'product_uom': p.product_tmpl_id.uom_id.id,
-                    'categ_id': p.product_tmpl_id.categ_id.id,
-                    'route_name': route.browse(p.product_tmpl_id.route_ids.id).name,
-                    'product_qty': self.product_qty,
-                    'on_hand_before': p.virtual_available,
-                    'on_hand_after': diff,
-                    'short': -(diff) if diff < 0 else 0,
-                }
-                pick_results[new_pick['product_id']] = new_pick
-
-            for line in results:
-                p = prod.browse(line['product_id'])
+        bom = bom or self.env['mrp.bom']._bom_find(product=product)
+        bom_uom_qty = product.uom_id._compute_quantity(qty=product_qty, to_unit=bom.product_uom_id)
+        boms, lines = bom.explode(product, bom_uom_qty / bom.product_qty)
+        for bom_line, detail in lines:
+            line_prod = bom_line.product_id
+            if pick_results.get(line_prod.id):
                 # product previously collected in pick_results, update qty
-                if line['product_id'] in pick_results and line['product_id'] == pick_results[line['product_id']]['product_id']:
-                    pick_results[line['product_id']]['product_qty'] += line['product_qty']
-                    diff = p.virtual_available-pick_results[line['product_id']]['product_qty']
-                    pick_results[line['product_id']]['on_hand_after'] = diff
-                    pick_results[line['product_id']]['short'] = -(diff) if diff < 0 else 0
+                pick_results[line_prod.id]['product_qty'] += detail['qty']
+                virt = line_prod.with_context(to_date=self.date_planned).virtual_available
+                diff = virt - pick_results[line_prod.id]['product_qty']
+                pick_results[line_prod.id]['on_hand_after'] = diff
+                pick_results[line_prod.id]['short'] = -diff if diff < 0 else 0
+            else:
                 # not yet collected, prep and collect in pick_results
-                else:
-                    diff = p.virtual_available-line['product_qty']
-                    line['default_code'] = p.default_code
-                    line['categ_id'] = p.product_tmpl_id.categ_id.id
-                    line['route_name'] = route.browse(p.product_tmpl_id.route_ids.id).name
-                    line['on_hand_before'] = p.virtual_available
-                    line['on_hand_after'] = diff
-                    line['short'] = -(diff) if diff < 0 else 0
-                    pick_results[line['product_id']] = line
+                virt = line_prod.with_context(to_date=self.date_planned).virtual_available
+                diff = virt - detail['qty']
+                new_pick = {
+                    'product_id': line_prod.id,
+                    'proc_action': self._get_procurement_action(line_prod),
+                    'product_qty': detail['qty'],
+                    'on_hand_before': virt,
+                    'on_hand_after': diff,
+                    'short': -diff if diff < 0 else 0,
+                }
+                pick_results[line_prod.id] = new_pick
 
-                bom_id = bom._bom_find(product_id=line['product_id'])
-                if bom_id:
-                    self._action_compute_lines(line['product_id'], line['product_qty'], pick_results, properties)
+            if pick_results[line_prod.id]['proc_action'] == 'manufacture':
+                line_bom = bom._bom_find(product=line_prod)
+                if line_bom:
+                    self._action_compute_lines(line_prod, detail['qty'], pick_results=pick_results, bom=line_bom)
 
         return pick_results
 
-
     @api.multi
-    def action_compute(self, properties=None):
+    def action_compute(self):
         context = self._context
 
-        def ref(module, xml_id):
+        def ref(lookup_module, xml_id):
             proxy = self.env['ir.model.data']
-            return proxy.get_object_reference(module, xml_id)
+            return proxy.get_object_reference(lookup_module, xml_id)
 
         model, search_view_id = ref('simulated_pick', 'simulated_pick_product_search_form_view')
         model, tree_view_id = ref('simulated_pick', 'simulated_pick_product_tree_view')
@@ -118,7 +117,7 @@ class simulated_pick(models.TransientModel):
             all_pick_ids.unlink()
 
         # collect simulated.pick results
-        all_picks = self._action_compute_lines(self.product_id.id, self.product_qty, properties=properties, initial_run=1)
+        all_picks = self._action_compute_lines(self.product_id, self.product_qty, initial_run=1)
         for key, pick in all_picks.iteritems():
             pick_prod.create(pick)
 
@@ -138,6 +137,3 @@ class simulated_pick(models.TransientModel):
             'view_id': False,
             'search_view_id': search_view_id,
         }
-
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

@@ -7,11 +7,10 @@
             <field name="model">simulated.pick.product</field>
             <field name="arch" type="xml">
                 <search string="Product">
-                    <field name="name" string="Product" filter_domain="['|',('default_code','ilike',self),('name','ilike',self)]"/>
                     <filter string='Short' name="short" icon="terp-accessories-achiver" domain="[('short','>',0)]" />
                     <group expand='0' string='Group by...'>
+                        <filter string='Action' domain="[]" context="{'group_by' : 'proc_action'}"/>
                         <filter string='Category' domain="[]" context="{'group_by' : 'categ_id'}"/>
-                        <filter string='Default Unit of Measure' icon="terp-mrp" domain="[]" context="{'group_by' : 'product_uom'}"/>
                     </group>
                 </search>
             </field>
@@ -22,14 +21,13 @@
             <field name="model">simulated.pick.product</field>
             <field name="arch" type="xml">
                 <tree string="Component Requirements" create="false" edit="false">
-                    <field name="default_code" />
-                    <field name="name" />
+                    <field name="product_id" />
                     <field name="product_qty" />
                     <field name="on_hand_before" />
                     <field name="on_hand_after" />
                     <field name="short" />
                     <field name="product_uom" />
-                    <field name="route_name" />
+                    <field name="proc_action" />
                 </tree>
             </field>
         </record>
