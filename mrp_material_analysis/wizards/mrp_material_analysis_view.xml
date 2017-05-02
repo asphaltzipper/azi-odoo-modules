@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2017 Scott Saunders
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+
+<odoo>
+<data>
+
+<record id="mrp_material_analysis_view_wizard" model="ir.ui.view">
+    <field name="name">mrp.material.analysis.wizard</field>
+    <field name="model">mrp.material.analysis</field>
+    <field name="arch" type="xml">
+        <form string="Incomplete Transactions">
+            <group string="Analysis Parameters">
+                <label string="Use this assistant to view incomplete transactions for a given product and related master schedule."/>
+            </group>
+            <group col="4">
+                <field name="product_id" class="oe_inline" context='{"default_type": "product"}' />
+                <field name="date_planned" class="oe_inline" />
+                <field name="product_qty" class="oe_inline" />
+            </group>
+            <footer>
+                <button name="action_compute" type="object" string="Run Material Analysis" class="oe_highlight" />
+                or
+                <button special="cancel" string="Cancel" class="oe_link" />
+            </footer>
+        </form>
+    </field>
+</record>
+
+<record id="mrp_material_analysis_action" model="ir.actions.act_window">
+    <field name="name">Material Analysis</field>
+    <field name="res_model">mrp.material.analysis</field>
+    <field name="src_model">mrp.material.analysis.line</field>
+    <field name="view_type">form</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+</record>
+
+<menuitem id="stock_material_analysis_menu"
+    name="Material Analysis"
+    sequence="5"
+    action="mrp_material_analysis_action"
+    parent="mrp_mrp.stock_planning_menu"
+    groups="stock.group_stock_user"/>
+
+</data>
+</odoo>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2017 Scott Saunders
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+
+<odoo>
+<data>
+
+<record id="mrp_material_analysis_line_view_search" model="ir.ui.view">
+    <field name="name">mrp.material.analysis.line.search</field>
+    <field name="model">mrp.material.analysis.line</field>
+    <field name="arch" type="xml">
+        <search string="Product">
+            <filter string='Late' name="late" icon="terp-accessories-achiver" domain="[('late', '=', True)]" />
+            <group expand='0' string='Group by...'>
+                <filter string='Status' domain="[]" context="{'group_by' : 'status'}"/>
+            </group>
+        </search>
+    </field>
+</record>
+
+<record id="mrp_material_analysis_line_view_form" model="ir.ui.view">
+    <field name="name">mrp.material.analysis.line.form</field>
+    <field name="model">mrp.material.analysis.line</field>
+    <field name="arch" type="xml">
+        <field name="product_id" />
+        <field name="product_qty" />
+        <field name="tx_type" />
+        <field name="late" />
+        <field name="status" />
+        <field name="production_id" />
+        <field name="pick_id" />
+        <field name="sale_id" />
+        <field name="purchase_id" />
+        <field name="schedule_line_id" />
+        <field name="material_plan_id" />
+    </field>
+</record>
+
+<record id="mrp_material_analysis_line_view_tree" model="ir.ui.view">
+    <field name="name">mrp.material.analysis.line.tree</field>
+    <field name="model">mrp.material.analysis.line</field>
+    <field name="arch" type="xml">
+        <tree string="Incomplete Transactions" create="false" edit="false">
+            <field name="product_id" />
+            <field name="product_qty" />
+            <field name="tx_type" />
+            <field name="late" />
+            <field name="status" />
+        </tree>
+    </field>
+</record>
+
+</data>
+</odoo>
