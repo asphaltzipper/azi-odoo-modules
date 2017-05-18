@@ -158,59 +158,19 @@ class MrpMaterialPlan(models.Model):
         Flag this orderpoint as manufactured, based on procurement rule
         We may want to add an interface to the procurement.rule model, so users can change the sequence
         """
-
-        plan_log = self.env['mrp.material_plan.log']
-
-        # set domain on locations
-        parent_locations = self.env['stock.location']
-        child_location = location
-        while child_location:
-            parent_locations |= child_location
-            child_location = child_location.location_id
-        domain = [('location_id', 'in', parent_locations.ids)]
-
-        # try finding a rule on product routes
-        Pull = self.env['procurement.rule']
-        rule = self.env['procurement.rule']
-        product_routes = product.route_ids | product.categ_id.total_route_ids
-        if product_routes:
-            rule = Pull.search(expression.AND([[('route_id', 'in', product_routes.ids)], domain]),
-                               order='route_sequence, sequence', limit=1)
-
-        # try finding a rule on warehouse routes
-        if not rule:
-            warehouse_routes = location.get_warehouse().route_ids
-            if warehouse_routes:
-                rule = Pull.search(expression.AND([[('route_id', 'in', warehouse_routes.ids)], domain]),
-                                   order='route_sequence, sequence', limit=1)
-
-        # try finding a rule that handles orders with no route
-        if not rule:
-            rule = Pull.search(expression.AND([[('route_id', '=', False)], domain]), order='sequence', limit=1)
-
-        if not rule:
-            # TODO: log exception if no rule found
-            # if we can't find a rule, try to make it
-            message = "No supply rule found for product [%s] %s" % (
-                product.default_code, product.name)
-            _logger.info(message)
-            plan_log.create({'type': 'info', 'message': message})
-            import pdb
-            pdb.set_trace()
+        proc_action = product.get_procurement_action(location)
+        if proc_action == 'manufacture':
             return True
-
-        if rule.action == 'manufacture':
-            return True
+        elif proc_action in ('move', 'buy'):
+            # move type is not make (no bom explode, no dependent demand)
+            return False
         else:
-            if rule.action in ('move', 'buy'):
-                # move type is not make (no bom explode, no dependent demand)
-                return False
-            # TODO: log exception if unknown rule found
+            plan_log = self.env['mrp.material_plan.log']
             message = "Unknown supply rule found for product [%s] %s" % (
                 product.default_code, product.name)
             _logger.info(message)
             plan_log.create({'type': 'info', 'message': message})
-            # if we get an unknown rule, try to make it
+            # if we get an unknown rule, we will try to manufacture the product
             return True
 
     def _get_supply_delay_days(self, product, make_flag, product_qty, to_date, orderpoint=None):
@@ -495,7 +455,7 @@ class MrpMaterialPlan(models.Model):
                 product_context = dict(self._context, location=location_orderpoints[0].location_id.id)
                 product_quantity = location_data[group_key]['products'].with_context(product_context).bucket_virtual_available(
                     bucket_list, self._bucket_size)
-                planned_quantity = location_data[group_key]['products'].bucket_planned_available(bucket_list, self._bucket_size)
+                planned_quantity = location_data[group_key]['products'].bucket_planned_qty(bucket_list, self._bucket_size)
                 # accumulate planned quantities so we don't have to go to ask the database what we have already planned
                 cum_planned = {}
 

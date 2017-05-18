@@ -5,19 +5,20 @@ from odoo import api, fields, models, _
 from datetime import datetime
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT, float_round
 from odoo.exceptions import UserError
+from odoo.osv import expression
 
 
 class Product(models.Model):
     _inherit = "product.product"
 
     @api.multi
-    def planned_virtual_available(self, to_date=None):
+    def planned_qty(self, to_date=None):
         """Return planned net move quantity, for select products, through the given date"""
 
         # build domain for searching mrp.material_plan records
         domain = [('product_id', 'in', self.ids)]
         if to_date:
-            domain += [('date_finish', '<', datetime.strftime(to_date, DEFAULT_SERVER_DATE_FORMAT))]
+            domain += [('date_finish', '<', to_date)]
         domain_in = domain + [('move_type', '=', 'supply')]
         domain_out = domain + [('move_type', '=', 'demand')]
 
@@ -31,12 +32,17 @@ class Product(models.Model):
         # return dict
         res = dict()
         for product in self.with_context(prefetch_fields=False):
-            qty = moves_in.get(product.id, 0.0) - moves_out.get(product.id, 0.0)
-            res[product.id] = float_round(qty, precision_rounding=product.uom_id.rounding)
+            qty_in = float_round(moves_in.get(product.id, 0.0), precision_rounding=product.uom_id.rounding)
+            qty_out = float_round(moves_out.get(product.id, 0.0), precision_rounding=product.uom_id.rounding)
+            res[product.id] = {
+                'qty_in': qty_in,
+                'qty_out': qty_out,
+                'qty_net': float_round(qty_in - qty_out, precision_rounding=product.uom_id.rounding),
+            }
         return res
 
     @api.multi
-    def bucket_planned_available(self, bucket_list, bucket_size):
+    def bucket_planned_qty(self, bucket_list, bucket_size):
         """Return planned net move quantity, for select products, grouped by bucket date"""
 
         # if 2064 in self.ids:
@@ -185,3 +191,52 @@ class Product(models.Model):
                 res[(product.id, bucket_date)] = float_round(virtual_available, precision_rounding=product.uom_id.rounding)
 
         return res
+
+    @api.multi
+    def get_procurement_action(self, location=None):
+        """
+        Return true if this product should be manufactured, based on procurement rule
+        We may want to add an interface to the procurement.rule model, so users can change the sequence
+        :returns procurement.rule.action :
+         - move
+         - buy
+         - manufacture
+         - ...
+         - unknown
+        """
+        self.ensure_one()
+
+        domain = []
+        if location:
+            # set domain on locations
+            parent_locations = self.env['stock.location']
+            child_location = location
+            while child_location:
+                parent_locations |= child_location
+                child_location = child_location.location_id
+            domain = [('location_id', 'in', parent_locations.ids)]
+
+        # try finding a rule on product routes
+        Pull = self.env['procurement.rule']
+        rule = self.env['procurement.rule']
+        product_routes = self.route_ids | self.categ_id.total_route_ids
+        if product_routes:
+            rule = Pull.search(expression.AND([[('route_id', 'in', product_routes.ids)], domain]),
+                               order='route_sequence, sequence', limit=1)
+
+        # try finding a rule on warehouse routes
+        if not rule:
+            warehouse = self.env['stock.warehouse'].search([], order='id', limit=1)
+            warehouse_routes = warehouse.route_ids
+            if warehouse_routes:
+                rule = Pull.search(expression.AND([[('route_id', 'in', warehouse_routes.ids)], domain]),
+                                   order='route_sequence, sequence', limit=1)
+
+        # try finding a rule that handles orders with no route
+        if not rule:
+            rule = Pull.search(expression.AND([[('route_id', '=', False)], domain]), order='sequence', limit=1)
+
+        if not rule:
+            return 'unknown'
+        return rule.action
+

@@ -12,10 +12,14 @@
                     <group string="Requirement Parameters">
                         <label string="Use this assistant to view material requirements for a given product and related bill of materials."/>
                     </group>
-                    <group col="4">
-                        <field name="product_id" class="oe_inline" context='{"default_type": "product"}' />
-                        <field name="date_planned" class="oe_inline" />
-                        <field name="product_qty" class="oe_inline" />
+                    <group>
+                        <field name="product_id" context='{"default_type": "product"}' />
+                        <group col="4">
+                            <field name="date_planned" class="oe_inline" />
+                            <field name="product_qty" class="oe_inline" />
+                            <field name="consider_plan_in" />
+                            <field name="consider_plan_out" />
+                        </group>
                     </group>
                     <footer>
                         <button name="action_compute" type="object" string="Calculate Requirements" class="oe_highlight" />

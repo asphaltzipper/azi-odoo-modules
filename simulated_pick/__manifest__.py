@@ -31,7 +31,13 @@
     'description': """
 View material requirements for a given product and related bill of materials.
     """,
-    "depends": ["product", "stock", "mrp"],
+    "depends": [
+        "product",
+        "stock",
+        "mrp",
+        "mrp_mrp",
+        "mrp_master_schedule",
+    ],
     "data": [
         'wizard/simulated_pick_view.xml',
         'views/simulated_pick_product_view.xml',
