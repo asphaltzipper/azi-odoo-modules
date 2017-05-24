@@ -4,17 +4,13 @@
 
 import time
 import odoo.addons.decimal_precision as dp
-from odoo import models, fields, api, exceptions, _
-from odoo.osv import expression
+from odoo import models, fields, api, _
 from collections import OrderedDict
 
 
 class SimulatedPick(models.TransientModel):
     _name = 'simulated.pick'
     _description = 'Material Requirements Calculator'
-
-    def _get_released_schedule(self):
-        return self.env['mrp.schedule'].get_released()
 
     product_id = fields.Many2one(
         comodel_name='product.product',
@@ -29,7 +25,7 @@ class SimulatedPick(models.TransientModel):
 
     product_qty = fields.Float(
         string='Product Quantity',
-        digits_compute=dp.get_precision('Product Unit of Measure'),
+        digits=dp.get_precision('Product Unit of Measure'),
         required=True,
         default=1,
         help="Quantity to be produced in simulation")
@@ -43,7 +39,7 @@ class SimulatedPick(models.TransientModel):
         help="Date to simulate product completion")
 
     consider_plan_in = fields.Boolean(
-        string='Consider Plan Inbound',
+        string='Consider Planned In',
         default=False,
         help="REMEMBER TO RUN MRP CALCULATION FIRST.\n"
              "Use MRP planned INBOUND orders as if they were actual orders.\n"
@@ -52,21 +48,13 @@ class SimulatedPick(models.TransientModel):
              "schedule entry")
 
     consider_plan_out = fields.Boolean(
-        string='Consider Plan Outbound',
+        string='Consider Planned Out',
         default=True,
         help="REMEMBER TO RUN MRP CALCULATION FIRST.\n"
              "Use MRP planned OUTBOUND orders as if they were actual orders.\n"
              "When simulating an entry in the Master Schedule, set the "
              "Scheduled Date 1 day earlier than the date on the master "
              "schedule entry")
-
-    # schedule_id = fields.Many2one(
-    #     comodel_name='mrp.schedule',
-    #     string='Schedule',
-    #     required=False,
-    #     default=_get_released_schedule,
-    #     help='Leaving this blank will compute on actual orders only.'
-    # )
 
     def _get_plan_virt_qty(self, to_date, product):
         """Return the quantity available before consumption, and difference or change in quantity after consumption"""
@@ -89,6 +77,7 @@ class SimulatedPick(models.TransientModel):
             virt = self._get_plan_virt_qty(self.date_planned, product)
             diff = virt - self.product_qty
             new_pick = {
+                'sim_prod_id': self.product_id.id,
                 'product_id': product.id,
                 # TODO: handle products with multiple routes selected
                 'proc_action': product.get_procurement_action(),
@@ -119,6 +108,7 @@ class SimulatedPick(models.TransientModel):
                 diff = virt - self.product_qty
                 short = -diff if diff < 0 else 0
                 new_pick = {
+                    'sim_prod_id': self.product_id.id,
                     'product_id': line_prod.id,
                     'proc_action': line_prod.get_procurement_action(),
                     'product_qty': curr_demand,
@@ -140,31 +130,27 @@ class SimulatedPick(models.TransientModel):
     def action_compute(self):
         context = self._context
 
-        def ref(lookup_module, xml_id):
-            proxy = self.env['ir.model.data']
-            return proxy.get_object_reference(lookup_module, xml_id)
-
-        model, search_view_id = ref('simulated_pick', 'simulated_pick_product_search_form_view')
-        model, tree_view_id = ref('simulated_pick', 'simulated_pick_product_tree_view')
-
-        pick_prod = self.env['simulated.pick.product']
+        sim_line = self.env['simulated.pick.product']
         # delete existing records in simulated.pick.product for current uid
-        all_pick_ids = pick_prod.search([('create_uid', '=', self._uid)])
-        if all_pick_ids:
-            all_pick_ids.unlink()
+        old_lines = sim_line.search([('create_uid', '=', self._uid), ('sim_prod_id', '=', self.product_id.id)])
+        if old_lines:
+            old_lines.unlink()
 
         # collect simulated.pick results
-        all_picks = self._action_compute_lines(self.product_id, self.product_qty, initial_run=1)
-        for key, pick in all_picks.iteritems():
-            pick_prod.create(pick)
+        new_lines = self._action_compute_lines(self.product_id, self.product_qty, initial_run=1)
+        for key, line in new_lines.iteritems():
+            sim_line.create(line)
 
+        search_view_id = self.env.ref('simulated_pick.simulated_pick_product_search_form_view')
+        tree_view_id = self.env.ref('simulated_pick.simulated_pick_product_tree_view')
+        form_view_id = self.env.ref('simulated_pick.simulated_pick_product_form_view')
         views = [
-            (tree_view_id, 'tree'),
+            (tree_view_id.id, 'tree'),
+            (form_view_id.id, 'form'),
         ]
-
         return {
             'name': _('Requirements Calculator'),
-            'domain': [('create_uid', '=', self._uid)],
+            'domain': [('create_uid', '=', self._uid), ('sim_prod_id', '=', self.product_id.id)],
             'context': context,
             'view_type': 'form',
             'view_mode': 'tree,form',
@@ -172,5 +158,5 @@ class SimulatedPick(models.TransientModel):
             'type': 'ir.actions.act_window',
             'views': views,
             'view_id': False,
-            'search_view_id': search_view_id,
+            'search_view_id': search_view_id.id,
         }

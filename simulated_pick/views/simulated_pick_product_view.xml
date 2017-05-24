@@ -2,62 +2,67 @@
 <openerp>
     <data>
 
-        <record id="simulated_pick_product_search_form_view" model="ir.ui.view">
-            <field name="name">simulated.pick.product.search</field>
-            <field name="model">simulated.pick.product</field>
-            <field name="arch" type="xml">
-                <search string="Product">
-                    <filter string='Short' name="short" icon="terp-accessories-achiver" domain="[('short','>',0)]" />
-                    <group expand='0' string='Group by...'>
-                        <filter string='Action' domain="[]" context="{'group_by' : 'proc_action'}"/>
-                        <filter string='Category' domain="[]" context="{'group_by' : 'categ_id'}"/>
-                    </group>
-                </search>
-            </field>
-        </record>
+<record id="simulated_pick_product_search_form_view" model="ir.ui.view">
+    <field name="name">simulated.pick.product.search</field>
+    <field name="model">simulated.pick.product</field>
+    <field name="arch" type="xml">
+        <search string="Product">
+            <filter string='Short' name="short" icon="terp-accessories-achiver" domain="[('short','>',0)]" />
+            <field name="product_id" />
+            <group expand='0' string='Group by...'>
+                <filter string='Action' domain="[]" context="{'group_by' : 'proc_action'}"/>
+                <filter string='Category' domain="[]" context="{'group_by' : 'categ_id'}"/>
+            </group>
+        </search>
+    </field>
+</record>
 
-        <record id="simulated_pick_product_tree_view" model="ir.ui.view">
-            <field name="name">simulated.pick.product.tree</field>
-            <field name="model">simulated.pick.product</field>
-            <field name="arch" type="xml">
-                <tree string="Component Requirements" create="false" edit="false">
+<record id="simulated_pick_product_tree_view" model="ir.ui.view">
+    <field name="name">simulated.pick.product.tree</field>
+    <field name="model">simulated.pick.product</field>
+    <field name="arch" type="xml">
+        <tree string="Component Requirements" create="false" edit="false">
+            <field name="product_id" />
+            <field name="product_qty" />
+            <field name="on_hand_before" />
+            <field name="on_hand_after" />
+            <field name="short" />
+            <field name="product_uom" />
+            <field name="proc_action" />
+        </tree>
+    </field>
+</record>
+
+<record id="simulated_pick_product_form_view" model="ir.ui.view">
+    <field name="name">simulated.pick.product.form</field>
+    <field name="model">simulated.pick.product</field>
+    <field name="arch" type="xml">
+        <form string="Component Requirements" create="false" edit="false">
+            <header>
+                <button name="button_material_analysis" string="Material Analysis" class="oe_highlight" type="object" />
+            </header>
+            <group>
+                <group>
+                    <field name="sim_prod_id" />
                     <field name="product_id" />
                     <field name="product_qty" />
+                    <field name="product_uom" />
+                </group>
+                <group>
                     <field name="on_hand_before" />
                     <field name="on_hand_after" />
                     <field name="short" />
-                    <field name="product_uom" />
                     <field name="proc_action" />
-                </tree>
-            </field>
-        </record>
+                </group>
+            </group>
+        </form>
+    </field>
+</record>
 
-        <record id="simulated_pick_product_form_view" model="ir.ui.view">
-            <field name="name">simulated.pick.product.form</field>
-            <field name="model">simulated.pick.product</field>
-            <field name="arch" type="xml">
-                <form string="Component Requirements" create="false" edit="false">
-                    <group>
-                        <group>
-                            <field name="product_id" />
-                            <field name="product_qty" />
-                            <field name="product_uom" />
-                        </group>
-                        <group>
-                            <field name="on_hand_before" />
-                            <field name="on_hand_after" />
-                            <field name="short" />
-                            <field name="proc_action" />
-                        </group>
-                    </group>
-                </form>
-            </field>
-        </record>
-
-        <menuitem action="simulated_pick_act_window"
-                  id="menu_requirements_compute"
-                  parent="mrp_mrp.stock_planning_menu"
-                  sequence="1" />
+<menuitem action="simulated_pick_act_window"
+          id="menu_requirements_compute"
+          parent="mrp_mrp.stock_planning_menu"
+          sequence="1" />
 
     </data>
 </openerp>

@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 {
     "name": "MRP Material Analysis",
-    "summary": "Determine incomplete transactions based on stock moves and a master schedule given a product.",
+    "summary": "Report incomplete transactions based on stock moves and material plan, for a given product.",
     "version": "10.0.1.0.0",
     "category": "Manufacturing",
     "website": "http://www.github.com/asphaltzipper/azi-odoo-modules",
@@ -17,7 +17,5 @@
         'security/ir.model.access.csv',
         'views/mrp_material_analysis_line_view.xml',
         'wizards/mrp_material_analysis_view.xml',
-    ],
-    "demo": [
     ],
 }
