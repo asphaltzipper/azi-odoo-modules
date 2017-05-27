@@ -24,15 +24,23 @@
     <field name="name">mrp.material.analysis.line.form</field>
     <field name="model">mrp.material.analysis.line</field>
     <field name="arch" type="xml">
-        <form string="Pending Material Transactions">
-            <field name="product_id" />
-            <field name="tx_date" />
-            <field name="tx_type" />
-            <field name="product_qty" />
-            <field name="available_qty" />
-            <field name="late" />
-            <field name="status" />
-            <field name="origin" />
+        <form string="Pending Material Transactions" create="false" edit="false">
+            <sheet>
+                <field name="product_id" />
+                <group col="4">
+                    <group>
+                        <field name="status" />
+                        <field name="origin" />
+                        <field name="product_qty" />
+                        <field name="available_qty" />
+                    </group>
+                    <group>
+                        <field name="tx_type" />
+                        <field name="tx_date" />
+                        <field name="late" />
+                    </group>
+                </group>
+            </sheet>
         </form>
     </field>
 </record>
@@ -41,7 +49,7 @@
     <field name="name">mrp.material.analysis.line.tree</field>
     <field name="model">mrp.material.analysis.line</field>
     <field name="arch" type="xml">
-        <tree string="Material Transactions">
+        <tree string="Material Transactions" create="false" edit="false">
             <field name="product_id" />
             <field name="tx_date" />
             <field name="tx_type" />

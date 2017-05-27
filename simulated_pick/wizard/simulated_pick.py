@@ -33,7 +33,7 @@ class SimulatedPick(models.TransientModel):
     date_planned = fields.Date(
         string='Scheduled Date',
         required=True,
-        select=1,
+        index=1,
         copy=False,
         default=time.strftime('%Y-%m-%d'),
         help="Date to simulate product completion")
@@ -74,17 +74,17 @@ class SimulatedPick(models.TransientModel):
 
         pick_results = pick_results or OrderedDict()
         if initial_run:
+            # TODO: call virtual_available on all products at once
             virt = self._get_plan_virt_qty(self.date_planned, product)
-            diff = virt - self.product_qty
+            on_hand_after = virt - self.product_qty
             new_pick = {
                 'sim_prod_id': self.product_id.id,
                 'product_id': product.id,
-                # TODO: handle products with multiple routes selected
                 'proc_action': product.get_procurement_action(),
                 'product_qty': self.product_qty,
                 'on_hand_before': virt,
-                'on_hand_after': diff,
-                'short': -diff if diff < 0 else 0,
+                'on_hand_after': on_hand_after,
+                'short': -on_hand_after if on_hand_after < 0 else 0,
             }
             pick_results[new_pick['product_id']] = new_pick
 
@@ -93,27 +93,28 @@ class SimulatedPick(models.TransientModel):
         boms, lines = bom.explode(product, bom_uom_qty / bom.product_qty)
         for bom_line, detail in lines:
             line_prod = bom_line.product_id
-            curr_demand = detail['qty']
-            curr_demand += pick_results.get(line_prod.id) and pick_results[line_prod.id]['product_qty'] or 0
+            current_demand = detail['qty']
+            previous_demand = pick_results.get(line_prod.id) and pick_results[line_prod.id]['product_qty'] or 0
+            total_demand = current_demand + previous_demand
             if pick_results.get(line_prod.id):
                 # product previously collected in pick_results, update qty
-                diff = pick_results[line_prod.id]['on_hand_before'] - curr_demand
-                short = -diff if diff < 0 else 0
-                pick_results[line_prod.id]['product_qty'] = curr_demand
-                pick_results[line_prod.id]['on_hand_after'] = diff
+                on_hand_after = pick_results[line_prod.id]['on_hand_before'] - total_demand
+                short = -on_hand_after if on_hand_after < 0 else 0
+                pick_results[line_prod.id]['product_qty'] = total_demand
+                pick_results[line_prod.id]['on_hand_after'] = on_hand_after
                 pick_results[line_prod.id]['short'] = short
             else:
                 # not yet collected, prep and collect in pick_results
                 virt = self._get_plan_virt_qty(self.date_planned, line_prod)
-                diff = virt - self.product_qty
-                short = -diff if diff < 0 else 0
+                on_hand_after = virt - total_demand
+                short = -on_hand_after if on_hand_after < 0 else 0
                 new_pick = {
                     'sim_prod_id': self.product_id.id,
                     'product_id': line_prod.id,
                     'proc_action': line_prod.get_procurement_action(),
-                    'product_qty': curr_demand,
+                    'product_qty': total_demand,
                     'on_hand_before': virt,
-                    'on_hand_after': diff,
+                    'on_hand_after': on_hand_after,
                     'short': short,
                 }
                 pick_results[line_prod.id] = new_pick
@@ -122,7 +123,7 @@ class SimulatedPick(models.TransientModel):
                 line_bom = bom._bom_find(product=line_prod)
                 if line_bom and short:
                     # we only simulate demand for components when the parent comes up short
-                    self._action_compute_lines(line_prod, short, pick_results=pick_results, bom=line_bom)
+                    self._action_compute_lines(line_prod, current_demand, pick_results=pick_results, bom=line_bom)
 
         return pick_results
 
