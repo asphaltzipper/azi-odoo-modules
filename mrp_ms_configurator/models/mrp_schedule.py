@@ -10,8 +10,12 @@ class MrpScheduleLine(models.Model):
     _inherit = "mrp.schedule.line"
 
     config_ok = fields.Boolean(
+        string="Configurable",
         related='product_id.config_ok',
-        string="Configurable"
+    )
+    config_name = fields.Char(
+        string='Config Name',
+        related='product_id.config_name',
     )
 
     @api.multi

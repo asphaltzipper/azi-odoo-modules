@@ -20,21 +20,28 @@
         <field name="inherit_id" ref="mrp_master_schedule.mrp_schedule_line_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='product_tmpl_id']" position="before">
-                <field name="config_ok" invisible="1"/>
                 <button name="%(action_wizard_product_configurator_ms)s"
-                        class="oe_highlight"
+                        states="pending"
+                        class="oe_highlight oe_inline"
+                        colspan="4"
                         type="action"
                         style="margin-top: 15px;margin-bottom: 10px;"
                         string="Configure Product"
                         groups="product_configurator.group_product_configurator"
-                        attrs="{'invisible': [('config_ok','!=',False)]}"/>
+                        attrs="{'invisible': ['|', ('config_ok','!=',False), ('state', '|=' 'pending')]}"/>
                 <button name="reconfigure_product"
-                        class="oe_highlight"
+                        states="pending"
+                        class="oe_highlight oe_inline"
+                        colspan="4"
                         type="object"
                         style="margin-top: 15px;margin-bottom: 10px;"
                         string="Reconfigure Product"
                         groups="product_configurator.group_product_configurator"
-                        attrs="{'invisible': [('config_ok','=',False)]}"/>
+                        attrs="{'invisible': ['|', ('config_ok','=',False), ('state', '|=' 'pending')]}"/>
+                <field name="config_ok" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='product_id']" position="after">
+                <field name="config_name" attrs="{'invisible': [('config_ok','=',False)]}"/>
             </xpath>
         </field>
     </record>
