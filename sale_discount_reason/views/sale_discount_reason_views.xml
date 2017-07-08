@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="view_discount_reason_tree" model="ir.ui.view">
+        <field name="name">sale.discount.reason.tree</field>
+        <field name="model">sale.discount.reason</field>
+        <field name="arch" type="xml">
+            <tree string="Sale Discount Reasons">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="sale_discount_reason_action_form" model="ir.actions.act_window">
+        <field name="name">Discount Reasons</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sale.discount.reason</field>
+        <field name="view_type">form</field>
+        <field name="view_id" ref="view_discount_reason_tree"/>
+    </record>
+
+    <menuitem
+        action="sale_discount_reason_action_form"
+        id="discount_reason_config"
+        parent="sale.menu_sales_config"
+        sequence="10"
+        name="Discount Reasons"
+        groups="sales_team.group_sale_manager,account.group_account_user"
+    />
+
+    <record model="ir.ui.view" id="invoice_discount_reason">
+        <field name="name">account.invoice.discount.reason.form</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.invoice_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='price_unit']" position="after">
+                <field name="discount_reason_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="sale_line_discount_reason">
+        <field name="name">sale.order.line.discount.reason.form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']/tree//field[@name='price_unit']" position="before">
+                <field name="discount_reason_id"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/form//field[@name='price_unit']" position="before">
+                <field name="discount_reason_id"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
