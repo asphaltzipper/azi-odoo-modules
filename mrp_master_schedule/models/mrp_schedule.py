@@ -35,6 +35,7 @@ class MrpSchedule(models.Model):
         string='ExternalID',
         index=True,
         readonly=True,
+        copy=False,
         help='Reference identifier for integrating with external scheduling application.')
 
     line_ids = fields.One2many(

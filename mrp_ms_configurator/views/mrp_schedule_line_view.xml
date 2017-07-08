@@ -46,4 +46,19 @@
         </field>
     </record>
 
+    <record id="mrp_schedule_line_search_config" model="ir.ui.view">
+        <field name="name">mrp.schedule.line.search.config</field>
+        <field name="model">mrp.schedule.line</field>
+        <field name="inherit_id" ref="mrp_master_schedule.mrp_schedule_line_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='sale-only']" position="after">
+                <filter string='Configured' name="config" icon="terp-accessories-achiver" domain="[('config_ok', '=', True)]" />
+                <filter string='Not Configured' name="not_config" icon="terp-accessories-achiver" domain="[('config_ok', '=', False)]" />
+            </xpath>
+            <xpath expr="//group" position="inside">
+                <filter string="Configured" domain="[]" context="{'group_by':'config_ok'}"/>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>

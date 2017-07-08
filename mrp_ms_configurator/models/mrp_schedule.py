@@ -12,6 +12,7 @@ class MrpScheduleLine(models.Model):
     config_ok = fields.Boolean(
         string="Configurable",
         related='product_id.config_ok',
+        store=True,
     )
     config_name = fields.Char(
         string='Config Name',
