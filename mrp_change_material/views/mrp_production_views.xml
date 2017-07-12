@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<record id="mrp_production_change_material_form_view" model="ir.ui.view">
+    <field name="name">mrp.production.change.material.form</field>
+    <field name="model">mrp.production</field>
+    <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+    <field name="arch" type="xml">
+        <!-- make the "Inventory Moves" button always show -->
+        <xpath expr="//button[@name='%(action_mrp_production_moves)d']" position="attributes">
+            <attribute name="attrs">{}</attribute>
+        </xpath>
+        <xpath expr="//tree[@name='move_raw_id']" position="attributes">
+            <attribute name="create">1</attribute>
+        </xpath>
+
+    </field>
+</record>
+
+</odoo>
