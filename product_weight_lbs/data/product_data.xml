@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2017 Scott Saunders
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+
+<odoo>
+<data noupdate="1">
+
+    <function model="product.product" name="_init_weight_in_lbs"/>
+    <function model="product.template" name="_init_weight_in_lbs"/>
+
+</data>
+</odoo>

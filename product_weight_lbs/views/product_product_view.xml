@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2017 Scott Saunders
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+
+<odoo>
+
+    <!--<record id="product_product_view_form" model="ir.ui.view">
+</record>-->
+
+<record id="product_variant_easy_edit_view" model="ir.ui.view">
+    <field name="name">product.product.view.form.easy.inherit</field>
+    <field name="model">product.product</field>
+    <field name="inherit_id" ref="product.product_variant_easy_edit_view"/>
+    <field name="arch" type="xml">
+        <xpath expr="//label[@for='weight']" position="before">
+            <label for="weight_in_lbs"/>
+            <div class="o_row">
+                <field name="weight_in_lbs"/>
+                <span>lbs</span>
+            </div>
+        </xpath>
+        <xpath expr="//field[@name='weight']" position="attributes">
+            <attribute name="readonly">1</attribute>
+        </xpath>
+    </field>
+</record>
+
+</odoo>
