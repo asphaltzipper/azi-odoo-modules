@@ -1,0 +1,39 @@
+<odoo>
+
+    <record model="ir.actions.act_window" id="action_list_stock_shelf">
+        <field name="name">Stock Shelf</field>
+        <field name="res_model">stock.shelf</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <menuitem id="menu_stock_shelf" parent="stock.menu_stock_inventory_control" name="Stock Shelf" sequence="1000" action="action_list_stock_shelf"/>
+
+    <record model="ir.ui.view" id="stock_shelf_form_view">
+        <field name="name">stock.shelf.form</field>
+        <field name="model">stock.shelf</field>
+        <field name="arch" type="xml">
+            <form string="Stock Shelf">
+                <field name="name"/>
+                <field name="product_count"/>
+                <field name="inactive_count"/>
+                <field name="product_ids">
+                    <tree string="Assigned Product">
+                        <field name="name"/>
+                    </tree>
+                </field>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="stock_shelf_tree_view">
+        <field name="name">stock.shelf.tree</field>
+        <field name="model">stock.shelf</field>
+        <field name="arch" type="xml">
+            <tree string="Stock Shelf">
+                <field name="name"/>
+                <field name="product_count"/>
+                <field name="inactive_count"/>
+            </tree>
+        </field>
+    </record>
+
+</odoo>
