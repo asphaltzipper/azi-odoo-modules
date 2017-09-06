@@ -15,6 +15,7 @@ AZI Specialized Customizations to Sales
 
 * Filter invoice and delivery addresses by partner on the sales order
 * Add contractors and municipality filters to the crm team search view
+* Improve customer warnings
     """,
     "depends": ['sale', 'crm', 'sales_team_industry'],
     'data': [

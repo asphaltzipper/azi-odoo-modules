@@ -15,6 +15,13 @@
         <xpath expr="//form/sheet/group/group/field[@name='partner_shipping_id']" position="attributes">
             <attribute name="domain">['|', ('parent_id', '=', partner_id), ('id', '=', partner_id)]</attribute>
         </xpath>
+        <xpath expr="//sheet/group" position="after">
+            <group name="warning" style="background-color:#99ddff;">
+                <field name="partner_warn" invisible="1"/>
+                <field name="partner_warn_msg" attrs="{'invisible': [('partner_warn', '=', 'no-message')]}"/>
+                <field name="bypass_warning" attrs="{'invisible': [('partner_warn', '=', 'no-message')]}"/>
+            </group>
+        </xpath>
     </field>
 </record>
 
