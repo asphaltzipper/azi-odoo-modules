@@ -16,10 +16,12 @@ AZI Specialized Customizations to account
 * Add product to journal entry form view
 * Add product to journal item tree view
 * Add menu item for account types
+* Reformat check
     """,
-    "depends": ['account'],
+    "depends": ['account', 'l10n_us_check_printing'],
     'data': [
         'views/account_view_changes.xml',
+        'report/azi_print_check.xml',
     ],
     "installable": True,
     "auto_install": False,
