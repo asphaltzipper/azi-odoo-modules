@@ -13,6 +13,8 @@ Shelf Location
         'views/stock_shelf_views.xml',
         'views/product_views.xml',
         'security/ir.model.access.csv',
+        'report/report_layout.xml',
+        'report/mrp_production_templates.xml',
     ],
     'installable': True,
     'auto_install': False,
