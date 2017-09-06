@@ -289,7 +289,7 @@ class MrpMaterialPlan(models.Model):
         # explode bom
         bom_id = self.env['mrp.bom']._bom_find(product=self.product_id)
         if not bom_id:
-            # TODO: log exception if no bom found
+            # log warning if no bom found
             message = "No BOM found for product [%s] %s" % (
                 self.product_id.default_code, self.product_id.name)
             _logger.warning(message)
@@ -302,6 +302,13 @@ class MrpMaterialPlan(models.Model):
         # create dependent demand
         for line, line_data in lines:
             child_op = self._get_orderpoint(line.product_id, self.location_id)
+            if not child_op and line.product_id.type == 'product':
+                # log warning if no orderpoint found
+                message = "No orderpoint for product %s" % (line.product_id.display_name, )
+                _logger.warning(message)
+                self.env['mrp.material_plan.log'].create({
+                    'type': 'warning',
+                    'message': message})
             self.create(
                 self._prepare_planned_order(
                     line.product_id,
@@ -329,6 +336,12 @@ class MrpMaterialPlan(models.Model):
         self.env['mrp.material_plan.log'].create({'type': 'info',
                                                   'message': message})
         records.unlink()
+
+    @api.model
+    def load_independent_demand(self):
+        # hook for other modules to use for loading independent demand into the plan
+        # the new cursor is passed in context, so super methods can commit as they go
+        pass
 
     def _get_bucket_from_date(self, str_date=None):
         """
@@ -403,9 +416,15 @@ class MrpMaterialPlan(models.Model):
         if use_new_cursor:
             cr = registry(self._cr.dbname).cursor()
             self = self.with_env(self.env(cr=cr))
+            self = self.with_context(use_new_cursor=True)
 
         # delete old plan
         self.purge_old_plan()
+        if use_new_cursor:
+            cr.commit()
+
+        # hook for loading independent demand
+        self.load_independent_demand()
 
         bucket_list = self._get_bucket_list()
 
@@ -581,6 +600,10 @@ class MrpMaterialPlan(models.Model):
                             if use_new_cursor:
                                 orderpoints_noprefetch += orderpoint.id
                                 cr.rollback()
+                                message = "failed planning orderpoint for %s: %s" % (
+                                    orderpoint.product_id.display_name, OperationalError)
+                                plan_log.create({'type': 'warning', 'message': message})
+                                cr.commit()
                                 continue
                             else:
                                 raise

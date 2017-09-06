@@ -21,19 +21,22 @@ class MrpMaterialPlan(models.Model):
     )
 
     @api.model
-    def purge_old_plan(self):
-        # purge old plan
-        super(MrpMaterialPlan, self).purge_old_plan()
+    def load_independent_demand(self):
+        super(MrpMaterialPlan, self).load_independent_demand()
+        cr = self.env.context.get('use_new_cursor') and self.env.cr
 
         warehouse = self.env['stock.warehouse'].search([], limit=1)
         location = warehouse.lot_stock_id
         schedule_id = self.env.context.get('schedule_id')
-
         domain = [('schedule_id.id', '=', schedule_id), ('product_id', '!=', False)]
         scheduled_builds = self.env['mrp.schedule.line'].search(domain)
+
         message = "Creating dependent demand from %s scheduled builds" % len(scheduled_builds)
         _logger.info(message)
         self.env['mrp.material_plan.log'].create({'type': 'info', 'message': message})
+        if cr:
+            cr.commit()
+
         for build in scheduled_builds:
             # create independent demand
             new_order = self.create(
@@ -47,6 +50,8 @@ class MrpMaterialPlan(models.Model):
             )
             # create dependent demand
             new_order._create_dependent_demand()
+            if cr:
+                cr.commit()
 
     def _get_planning_horizon(self):
         last_bucket_date = super(MrpMaterialPlan, self)._get_planning_horizon()
