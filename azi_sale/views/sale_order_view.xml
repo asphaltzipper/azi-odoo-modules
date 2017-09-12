@@ -22,6 +22,11 @@
                 <field name="bypass_warning" attrs="{'invisible': [('partner_warn', '=', 'no-message')]}"/>
             </group>
         </xpath>
+        <xpath expr="//field[@name='note']" position="after">
+            <group name="partner_comment" style="background-color:#99ddff;">
+                <field name="partner_comment"/>
+            </group>
+        </xpath>
     </field>
 </record>
 
