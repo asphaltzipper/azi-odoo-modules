@@ -15,6 +15,7 @@ Change Manufacturing Order Consumed Material
 
 * Add a cancel button to each Consumed Materials line
 * Enable creation of new Consumed Materials lines
+** Mark new lines with a new field on stock move
 * Increase quantity by creating new lines
 * Decrease quantity by creating a new line and canceling the old line
     """,
