@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <report
+            string="Blanket Order"
+            id="action_report_blanket_order"
+            model="purchase.requisition"
+            report_type="qweb-pdf"
+            name="requisition_blanket.blanket_order"
+            file="requisition_blanket.report.blanket_order"
+        />
+
+    </data>
+</odoo>
