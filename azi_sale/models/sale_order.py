@@ -33,7 +33,7 @@ class SaleOrder(models.Model):
     def action_confirm(self):
         for order in self:
             order.confirm_warning()
-        return self.super(SaleOrder, self).action_confirm()
+        return super(SaleOrder, self).action_confirm()
 
     @api.onchange('partner_id')
     def onchange_partner_id_warning(self):

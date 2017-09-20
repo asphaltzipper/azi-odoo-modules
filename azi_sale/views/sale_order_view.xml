@@ -16,14 +16,14 @@
             <attribute name="domain">['|', ('parent_id', '=', partner_id), ('id', '=', partner_id)]</attribute>
         </xpath>
         <xpath expr="//sheet/group" position="after">
-            <group name="warning" style="background-color:#99ddff;">
+            <group name="warning" style="background-color:#99ddff;" attrs="{'invisible': ['|',('partner_warn', '=', 'no-message'),('partner_warn', '=', False)]}">
                 <field name="partner_warn" invisible="1"/>
-                <field name="partner_warn_msg" attrs="{'invisible': [('partner_warn', '=', 'no-message')]}"/>
-                <field name="bypass_warning" attrs="{'invisible': [('partner_warn', '=', 'no-message')]}"/>
+                <field name="partner_warn_msg"/>
+                <field name="bypass_warning"/>
             </group>
         </xpath>
         <xpath expr="//field[@name='note']" position="after">
-            <group name="partner_comment" style="background-color:#99ddff;">
+            <group name="partner_comment" style="border-top: 1px solid black; background-color:#99ddff;">
                 <field name="partner_comment"/>
             </group>
         </xpath>
