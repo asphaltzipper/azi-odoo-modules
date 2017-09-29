@@ -7,7 +7,7 @@
     "version": "10.0.0.1",
     "summary": "MRP Change Material",
     "category": "Manufacturing",
-    "author": "Matt Taylor",
+    "author": "Chris Emigh",
     "website": "http://www.asphaltzipper.com",
     'description': """
 Change Manufacturing Order Consumed Material

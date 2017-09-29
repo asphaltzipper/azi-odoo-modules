@@ -1,20 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <odoo>
-
-<record id="mrp_production_change_material_form_view" model="ir.ui.view">
-    <field name="name">mrp.production.change.material.form</field>
-    <field name="model">mrp.production</field>
-    <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
-    <field name="arch" type="xml">
-        <!-- make the "Inventory Moves" button always show -->
-        <xpath expr="//button[@name='%(action_mrp_production_moves)d']" position="attributes">
-            <attribute name="attrs">{}</attribute>
-        </xpath>
-        <xpath expr="//tree[@name='move_raw_id']" position="attributes">
-            <attribute name="create">1</attribute>
-        </xpath>
-
-    </field>
-</record>
-
+    <record id="mrp_production_change_material_form_view" model="ir.ui.view">
+        <field name="name">mrp.production.change.material.form</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page/field[@name='move_raw_ids']" position="attributes">
+                <attribute name="context">{'default_location_id': location_src_id, 'default_location_dest_id': location_dest_id, 'default_name': name, 'default_origin': name, 'default_added_rm': True}</attribute>
+            </xpath>
+            <xpath expr="//page/field[@name='move_raw_ids']/tree" position="attributes">
+                <attribute name="create">1</attribute>
+            </xpath>
+            <xpath expr="//page/field[@name='move_raw_ids']/tree/field[@name='product_id']" position="attributes">
+                <attribute name="attrs">{'readonly': [('state', '!=', 'draft')]}</attribute>
+            </xpath>
+            <xpath expr="//page/field[@name='move_raw_ids']/tree/field[@name='product_uom']" position="attributes">
+                <attribute name="attrs">{'readonly': [('state', '!=', 'draft')]}</attribute>
+            </xpath>
+            <xpath expr="//page/field[@name='move_raw_ids']/tree/field[@name='product_uom_qty']" position="attributes">
+                <attribute name="attrs">{'readonly': [('state', '!=', 'draft')], 'required': [('product_id', '!=', False)]}</attribute>
+                <attribute name="readonly">0</attribute>
+            </xpath>
+            <xpath expr="//page/field[@name='move_raw_ids']/tree/field[@name='quantity_done']" position="after">
+                <field name="name" required="1" invisible="1"/>
+                <field name="origin" required="1" invisible="1"/>
+                <field name="added_rm" readonly="1" string="Added"/>
+                <button name="action_cancel" type="object" icon="fa-minus-circle" help="Cancel Consumption" confirm="Cancel this Raw Material?"/>
+            </xpath>
+        </field>
+    </record>
 </odoo>
