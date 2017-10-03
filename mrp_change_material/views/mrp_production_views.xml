@@ -6,8 +6,12 @@
         <field name="model">mrp.production</field>
         <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
         <field name="arch" type="xml">
+            <xpath expr="//group/group/field[@name='origin']" position="after">
+                <field name="propagate" invisible="1"/>
+                <field name="procurement_group_id" invisible="1"/>
+            </xpath>
             <xpath expr="//page/field[@name='move_raw_ids']" position="attributes">
-                <attribute name="context">{'default_location_id': location_src_id, 'default_location_dest_id': location_dest_id, 'default_name': name, 'default_origin': name, 'default_added_rm': True}</attribute>
+                <attribute name="context">{'default_location_id': location_src_id, 'default_location_dest_id': location_dest_id, 'default_name': name, 'default_origin': name, 'default_added_rm': True, 'default_group_id': procurement_group_id, 'default_propagate': propagate}</attribute>
             </xpath>
             <xpath expr="//page/field[@name='move_raw_ids']/tree" position="attributes">
                 <attribute name="create">1</attribute>
@@ -24,6 +28,8 @@
             </xpath>
             <xpath expr="//page/field[@name='move_raw_ids']/tree/field[@name='quantity_done']" position="after">
                 <field name="name" required="1" invisible="1"/>
+                <field name="propagate" required="1" invisible="1"/>
+                <field name="group_id" invisible="1"/>
                 <field name="origin" required="1" invisible="1"/>
                 <field name="added_rm" readonly="1" string="Added"/>
                 <button name="action_cancel" type="object" icon="fa-minus-circle" help="Cancel Consumption" confirm="Cancel this Raw Material?"/>
