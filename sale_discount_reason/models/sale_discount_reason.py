@@ -22,7 +22,7 @@ class SaleOrderLine(models.Model):
     @api.multi
     def _prepare_invoice_line(self, qty):
         res = super(SaleOrderLine, self)._prepare_invoice_line(qty)
-        res.update({'discount_reason_id': self.discount_reason_id})
+        res.update({'discount_reason_id': self.discount_reason_id.id})
         return res
 
 

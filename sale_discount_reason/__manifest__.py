@@ -15,9 +15,10 @@ Explanations For Sales Discounts
 
 Choose a reason for discounting a Sales Order Line
     """,
-    "depends": ['sale'],
+    "depends": ['sale', 'sale_margin'],
     "data": [
         'views/sale_discount_reason_views.xml',
+        'report/discount_reason_report_views.xml',
         'security/ir.model.access.csv',
     ],
     "installable": True,
