@@ -10,9 +10,6 @@
             <xpath expr="//field[@name='type']" position="after">
                 <field name="product_manager"/>
             </xpath>
-            <xpath expr="//field[@name='type']" position="after">
-                <field name="default_proc_qty" string="Procurement Qty" attrs="{'invisible': [('type','!=','product')]}"/>
-            </xpath>
             <xpath expr="//page[@name='notes']" position="before">
                 <page string="Engineering" name="eng_management">
                     <group name="eng_management">

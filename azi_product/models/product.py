@@ -45,8 +45,6 @@ class ProductTemplate(models.Model):
 
     product_manager = fields.Many2one('res.users', 'Product Manager')
 
-    default_proc_qty = fields.Float(related='product_variant_ids.default_proc_qty')
-
     eng_management = fields.Boolean(related='categ_id.eng_management', readonly="1")
     rev_delimiter = fields.Char(related='categ_id.rev_delimiter', readonly="1")
     eco_ref = fields.Char(related='product_variant_ids.eco_ref')
@@ -130,13 +128,6 @@ class ProductProduct(models.Model):
         string="Engineering Change Order",
         nocopy=True,
         help="External ECO number")
-
-    # TODO: implement e-kanban module
-    # will be fully implemented later in a separate module
-    # but, we place it here for now so we can import data to this field
-    default_proc_qty = fields.Float(
-        string='Kanban Qty',
-        help="Default order quantity for e-kanban system")
 
     re_code = re.compile(r'^([_A-Z0-9-]+)\.([A-Z-][0-9])$')
     re_code_copy = re.compile(r'^((COPY\.)?[_A-Z0-9-]+\.[A-Z-][0-9])$')
