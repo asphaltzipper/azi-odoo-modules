@@ -141,6 +141,9 @@ class MrpScheduleLine(models.Model):
         store=True,
         index=True)
 
+    tracking = fields.Selection(
+        related='product_id.tracking')
+
     lot_id = fields.Many2one(
         comodel_name='stock.production.lot',
         string='SerialNum',
@@ -174,6 +177,12 @@ class MrpScheduleLine(models.Model):
         readonly=True,
         help='Reference identifier for integrating with external scheduling application.')
 
+    sale_id = fields.Many2one(
+        comodel_name='sale.order',
+        string='Sales Order',
+        index=True,
+        ondelete='set null')
+
     @api.multi
     def do_view_schedule_lines(self, change_domain=True):
         """
@@ -201,3 +210,11 @@ class MrpScheduleLine(models.Model):
         else:
             raise UserError(_("Duplicating a Schedule Line linked to a"
                               " Completed MfgOrder is not allowed."))
+
+    def get_next_serial(self):
+        if not self.product_id:
+            raise UserError(_("Product is required"))
+        self.lot_id = self.env['stock.production.lot'].create({
+            'name': self.env['ir.sequence'].next_by_code('azi.fg.serial'),
+            'product_id': self.product_id.id
+        })

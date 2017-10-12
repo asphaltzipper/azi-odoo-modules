@@ -115,6 +115,7 @@
                     <group>
                         <field name="target_usage"/>
                         <field name="production_id"/>
+                        <field name="sale_id"/>
                     </group>
                 </group>
                 <group name="product">
@@ -122,10 +123,11 @@
                     <field name="product_tmpl_id" colspan="4"/>
                     <field name="product_id" colspan="4"/>
                 </group>
-                <group name="extra">
-                    <separator string="Extras" colspan="4"/>
-                    <group>
+                <group name="misc" string="Misc.">
+                    <group attrs="{'invisible': [('tracking', '!=', 'serial')]}">
+                        <field name="tracking" invisible="1"/>
                         <field name="lot_id"/>
+                        <button string="Next Serial" class="oe_edit_only oe_highlight" name="get_next_serial" help="Add Next Serial Number" type="object"/>
                     </group>
                     <group>
                         <field name="ext_ref" placeholder="e.g. 7405"/>

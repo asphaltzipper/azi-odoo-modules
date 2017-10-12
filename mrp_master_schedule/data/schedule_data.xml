@@ -20,5 +20,13 @@
             <field name="number_increment">1</field>
         </record>
 
+        <record id="az_fg_serial" model="ir.sequence">
+            <field name="name">AZI Finished Goods</field>
+            <field name="code">azi.fg.serial</field>
+            <field name="prefix">AZ</field>
+            <field name="padding">4</field>
+            <field name="number_next">309</field>
+            <field name="number_increment">1</field>
+        </record>
     </data>
 </odoo>
