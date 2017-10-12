@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+
+<odoo>
+
+    <record id="production_lot_crm_search_view" model="ir.ui.view">
+        <field name="name">lot.production.search.view</field>
+        <field name="model">stock.production.lot</field>
+        <field name="inherit_id" ref="stock.search_product_lot_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="/search/field[@name='product_id']" position="after">
+                <field name="partner_id" operator="child_of"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="production_lot_crm_integration_form" model="ir.ui.view">
+        <field name="name">lot.production.sn_integrate</field>
+        <field name="model">stock.production.lot</field>
+        <field name="inherit_id" ref="stock.view_production_lot_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='main_group']/group" position="inside">
+                <field name="partner_id" options="{'no_create': True, 'no_create_edit': True}"/>
+            </xpath>
+            <notebook position="inside">
+                <page name="changes" string="Changes">
+                    <field name="change_ids">
+                        <tree string="BOM Changes" editable="bottom">
+                            <field name="change_type"/>
+                            <field name="change_date"/>
+                            <field name="product_id"/>
+                            <field name="bom_qty"/>
+                            <field name="component_lot_id" domain="[('product_id', '=', product_id"/>
+                        </tree>
+                    </field>
+                </page>
+                <page name="notes" string="Notes">
+                    <field name="notes"/>
+                </page>
+                <page name="Owner" string="Owner">
+                    <field name="owner_ids">
+                        <tree string="Owner" editable="bottom">
+                            <field name="partner_id"/>
+                            <field name="lot_id" invisible="1"/>
+                            <field name="owner_date"/>
+                        </tree>
+                    </field>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+</odoo>
