@@ -33,6 +33,17 @@
                         </tree>
                     </field>
                 </page>
+                <page name="repairs" string="Repairs">
+                    <field name="repair_ids">
+                        <tree string="Repair Orders">
+                            <field name="name"/>
+                            <field name="move_date"/>
+                            <field name="repaired"/>
+                            <field name="partner_id"/>
+                            <field name="guarantee_limit"/>
+                        </tree>
+                    </field>
+                </page>
                 <page name="notes" string="Notes">
                     <field name="notes"/>
                 </page>
