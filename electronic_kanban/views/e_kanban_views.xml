@@ -1,0 +1,29 @@
+<odoo>
+
+    <record model="ir.actions.act_window" id="action_list_e_kanban">
+        <field name="name">E Kanban</field>
+        <field name="res_model">stock.e_kanban_batch</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <menuitem id="menu_e_kanban" parent="stock.menu_stock_inventory_control" name="E Kanban" sequence="1000" action="action_list_e_kanban"/>
+
+    <record model="ir.ui.view" id="e_kanban_form_view">
+        <field name="name">e.kanban.form.view</field>
+        <field name="model">stock.e_kanban_batch</field>
+        <field name="arch" type="xml">
+            <form string="E Kanban">
+                <field name="name"/>
+                <field name="batch_date"/>
+                <field name="line_ids">
+                    <tree string="Bins">
+                        <field name="rfq_qty"/>
+                        <field name="default_supplier_id"/>
+                        <field name="product_id"/>
+                    </tree>
+                </field>
+            </form>
+        </field>
+    </record>
+
+
+</odoo>

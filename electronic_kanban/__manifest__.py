@@ -20,6 +20,8 @@ Electronic Kanban
     "depends": ['product', 'stock', 'mrp_mrp'],
     'data': [
         'views/product_views.xml',
+        'views/e_kanban_views.xml',
+        'data/e_kanban_sequence.xml'
     ],
     "installable": True,
     "auto_install": False,

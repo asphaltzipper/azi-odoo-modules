@@ -128,6 +128,9 @@ class ProductProduct(models.Model):
         string="Engineering Change Order",
         nocopy=True,
         help="External ECO number")
+    product_manager = fields.Many2one(
+        comodel_name='res.users',
+        related='product_tmpl_id.product_manager')
 
     re_code = re.compile(r'^([_A-Z0-9-]+)\.([A-Z-][0-9])$')
     re_code_copy = re.compile(r'^((COPY\.)?[_A-Z0-9-]+\.[A-Z-][0-9])$')
