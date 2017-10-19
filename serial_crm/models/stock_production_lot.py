@@ -30,6 +30,27 @@ class ProductionLot(models.Model):
         inverse_name='lot_id',
         string='Repairs')
 
+    state = fields.Selection(
+        selection=[
+            ('assigned', 'Assigned'),
+            ('internal', 'Inventory'),
+            ('production', 'WIP'),
+            ('customer', 'Shipped'),
+            ('inventory', 'Scrapped'),
+            ('open', 'Open'),
+            ('closed', 'Closed'),
+        ],
+        string='Status',
+        required=True,
+        default='assigned',
+        help="Assigned: product assigned, no stock moves\n"
+             "Inventory: SERIAL moved to stock location\n"
+             "WIP: SERIAL consumed in production location\n"
+             "Shipped: SERIAL moved to customer location\n"
+             "Scrapped: SERIAL moved to scrap location\n"
+             "Open: LOT open for transactions\n"
+             "Open: LOT closed for transactions\n")
+
     @api.depends('owner_ids')
     def _compute_current_owner(self):
         for lot in self:
