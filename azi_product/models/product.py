@@ -7,9 +7,6 @@ import re
 
 
 class ProductCategory(models.Model):
-    """
-    Add engineering management fields
-    """
     _inherit = "product.category"
 
     # products managed by engineering (used in production) should always have a valid default_code
@@ -37,10 +34,6 @@ class ProductCategory(models.Model):
 
 
 class ProductTemplate(models.Model):
-    """
-        Add product manager field
-        Add default proc field
-    """
     _inherit = "product.template"
 
     product_manager = fields.Many2one('res.users', 'Product Manager')
@@ -63,6 +56,12 @@ class ProductTemplate(models.Model):
         string='Engineering Category',
         domain="[('type','=','normal')]",
         help="Select category for the current product")
+    deprecated = fields.Boolean(
+        string='Deprecated',
+        compute='_compute_deprecated',
+        inverse='_set_deprecated',
+        store=True,
+        index=True)
 
     @api.constrains('eng_categ_id')
     def _validate_eng_cat(self):
@@ -97,18 +96,22 @@ class ProductTemplate(models.Model):
         if len(self.product_variant_ids) == 1:
             self.product_variant_ids.eng_rev = self.eng_rev
 
+    @api.depends('product_variant_ids', 'product_variant_ids.deprecated')
+    def _compute_deprecated(self):
+        for template in self:
+            template.deprecated = all([x.deprecated for x in template.product_variant_ids])
+
+    @api.one
+    def _set_deprecated(self):
+        for variant in self.product_variant_ids:
+            variant.deprecated = self.deprecated
+
     def button_revise(self, values=None):
         if len(self.product_variant_ids) == 1:
             self.product_variant_ids.button_revise(values)
 
 
 class ProductProduct(models.Model):
-    """
-    Enforce unique product code (default_code)
-    Validate product code for products with engineering management
-    TODO: Add produce_ok to product.product and constrain when setting this field
-    """
-
     _inherit = "product.product"
 
     _sql_constraints = [('default_code_uniq', 'unique (default_code)', "Product Code must be unique."), ]
@@ -131,6 +134,9 @@ class ProductProduct(models.Model):
     product_manager = fields.Many2one(
         comodel_name='res.users',
         related='product_tmpl_id.product_manager')
+    deprecated = fields.Boolean(
+        string='Deprecated',
+        index=True)
 
     re_code = re.compile(r'^([_A-Z0-9-]+)\.([A-Z-][0-9])$')
     re_code_copy = re.compile(r'^((COPY\.)?[_A-Z0-9-]+\.[A-Z-][0-9])$')
