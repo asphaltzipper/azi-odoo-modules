@@ -7,7 +7,7 @@
         <field name="model">mrp.production</field>
         <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
         <field name="arch" type="xml">
-            <button name="%(action_mrp_production_moves)d" position="attributes">
+            <button name="%(mrp.action_mrp_production_moves)d" position="attributes">
                 <attribute name="attrs"/>
             </button>
             <xpath expr="//page/field[@name='move_raw_ids']/tree/field[@name='has_tracking']" position="attributes">
