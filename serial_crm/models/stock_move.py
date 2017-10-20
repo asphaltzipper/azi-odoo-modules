@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import api, models
+from odoo import api, fields, models
 
 
 class StockMove(models.Model):
@@ -15,3 +15,10 @@ class StockMove(models.Model):
                 if move.move_dest_id.usage in serial_transitions:
                     sn.state = move.move_dest_id.usage
         return super(StockMove, self).action_done()
+
+
+class StockMoveLots(models.Model):
+    _inherit = 'stock.move.lots'
+
+    lot_id = fields.Many2one(domain="[('product_id', '=', product_id), ('state', '=', 'inventory']")
+    lot_produced_id = fields.Many2one(domain="[('product_id', '=', product_id), ('state', '=', 'assigned']")

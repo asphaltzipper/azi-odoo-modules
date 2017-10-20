@@ -117,8 +117,8 @@ class ProductProduct(models.Model):
     _sql_constraints = [('default_code_uniq', 'unique (default_code)', "Product Code must be unique."), ]
 
     default_code = fields.Char(
-        compute='_concat_default_code',
-        inverse='_parse_default_code',
+        compute='_get_eng_code',
+        inverse='_set_eng_code',
         store=True)
     eng_code = fields.Char(
         string="Engineering Code",
@@ -142,20 +142,25 @@ class ProductProduct(models.Model):
     re_code_copy = re.compile(r'^((COPY\.)?[_A-Z0-9-]+\.[A-Z-][0-9])$')
 
     @api.depends('eng_code', 'eng_rev')
-    def _concat_default_code(self):
+    def _get_eng_code(self):
         category = self.product_tmpl_id.categ_id
         if self.eng_code and category.eng_management:
             self.default_code = self.eng_code +\
                                 category.rev_delimiter +\
                                 self.eng_rev
 
-    @api.depends('eng_code', 'eng_rev')
-    def _parse_default_code(self):
+    @api.depends('default_code', 'eng_code', 'eng_rev')
+    def _set_eng_code(self):
         if self.product_tmpl_id.categ_id.eng_management:
-            code_match = re.match(self.product_tmpl_id.categ_id.def_code_regex, self.default_code)
-            if code_match:
-                self.eng_code = code_match.group(1)
-                self.eng_rev = code_match.group(2)
+            self.eng_code, self.eng_rev = self._parse_default_code(
+                self.default_code,
+                self.product_tmpl_id.categ_id.def_code_regex
+            )
+
+    def _parse_default_code(self, default_code, def_code_regex):
+        code_match = re.match(def_code_regex, default_code)
+        res = code_match and (code_match.group(1), code_match.group(2)) or (False, False)
+        return res
 
     @api.constrains('default_code', 'product_tmpl_id')
     def _validate_default_code(self):
@@ -170,16 +175,14 @@ class ProductProduct(models.Model):
     @api.model
     def create(self, vals):
         if not (vals.get('eng_code') and vals.get('eng_rev')):
-            cat = self.env['product.category']
-            if vals.get('product_tmpl_id'):
-                cat = self.env['product.template'].browse(vals['product_tmpl_id']).categ_id
-            elif vals.get('categ_id'):
-                cat = cat.browse(vals['categ_id'])
+            cat_id = vals.get('product_tmpl_id', vals.get('categ_id'))
+            cat = cat_id and self.env['product.category'].browse(cat_id).categ_id
             if cat and cat.eng_management:
-                # TODO: figure out why we are incrementing the sequence, when the user specifies a code
-                if not vals.get('eng_code') and cat.eng_code_sequence:
+                if vals.get('default_code'):
+                    vals['eng_code'], vals['eng_rev'] = self._parse_default_code(vals['default_code'], cat.def_code_regex)
+                else:
+                    # TODO: figure out why we are incrementing the sequence, when the user specifies a code
                     vals['eng_code'] = cat.eng_code_sequence.next_by_id()
-                if not vals.get('eng_rev') and cat.default_rev:
                     vals['eng_rev'] = cat.default_rev
         product = super(ProductProduct, self.with_context(create_product_product=True)).create(vals)
         return product
@@ -189,9 +192,10 @@ class ProductProduct(models.Model):
         if not (values.get('eng_code', self.eng_code) and values.get('eng_rev', self.eng_rev)):
             cat = self.env['product.category'].browse(values.get('categ_id', self.categ_id.id))
             if cat.eng_management:
-                if not values.get('eng_code', self.eng_code) and cat.eng_code_sequence:
+                if values.get('default_code'):
+                    values['eng_code'], values['eng_rev'] = self._parse_default_code(values['default_code'], cat.def_code_regex)
+                else:
                     values['eng_code'] = cat.eng_code_sequence.next_by_id()
-                if not values.get('eng_rev', self.eng_rev) and cat.default_rev:
                     values['eng_rev'] = cat.default_rev
         res = super(ProductProduct, self).write(values)
         return res
@@ -206,7 +210,7 @@ class ProductProduct(models.Model):
     @api.multi
     def button_revise(self, values=None):
         """
-        Best if called by a wizard, which can specify a new rev
+        Best if called by a wizard where the user can specify a new rev
         """
         self.ensure_one()
         if values is None:
