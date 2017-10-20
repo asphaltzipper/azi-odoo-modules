@@ -13,7 +13,8 @@
     """,
     "depends": [
         "base",
-        "stock"
+        "stock",
+        "mrp",
     ],
     "data": [
         # 'security/ir.model.access.csv',
