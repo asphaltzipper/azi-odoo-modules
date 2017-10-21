@@ -19,6 +19,7 @@
         <field name="inherit_id" ref="stock.view_production_lot_form"/>
         <field name="arch" type="xml">
             <xpath expr="//group[@name='main_group']/group" position="inside">
+                <field name="state" widget="statusbar"/>
                 <field name="partner_id" options="{'no_create': True, 'no_create_edit': True}"/>
             </xpath>
             <notebook position="inside">
@@ -57,6 +58,17 @@
                     </field>
                 </page>
             </notebook>
+        </field>
+    </record>
+
+    <record id="view_production_lot_serial_tree" model="ir.ui.view">
+        <field name="name">stock.production.lot.serial.tree</field>
+        <field name="model">stock.production.lot</field>
+        <field name="inherit_id" ref="stock.view_production_lot_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='product_id']" position="before">
+                <field name="state"/>
+            </xpath>
         </field>
     </record>
 

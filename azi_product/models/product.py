@@ -176,10 +176,11 @@ class ProductProduct(models.Model):
     def create(self, vals):
         if not (vals.get('eng_code') and vals.get('eng_rev')):
             cat_id = vals.get('product_tmpl_id', vals.get('categ_id'))
-            cat = cat_id and self.env['product.category'].browse(cat_id).categ_id
+            cat = cat_id and self.env['product.category'].browse(cat_id)
             if cat and cat.eng_management:
                 if vals.get('default_code'):
-                    vals['eng_code'], vals['eng_rev'] = self._parse_default_code(vals['default_code'], cat.def_code_regex)
+                    vals['eng_code'], vals['eng_rev'] =\
+                        self._parse_default_code(vals['default_code'], cat.def_code_regex)
                 else:
                     # TODO: figure out why we are incrementing the sequence, when the user specifies a code
                     vals['eng_code'] = cat.eng_code_sequence.next_by_id()

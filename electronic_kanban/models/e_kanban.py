@@ -14,11 +14,12 @@ class EKanbanBatch(models.Model):
 
     batch_date = fields.Date(
         string='Batch Date',
-        required=False,
-        index=True,
+        required=True,
         readonly=True,
-        help='Start date of this order.  Calculated as the planned date of completion (Finish Date) minus the lead '
-             'time for this product.')
+        default=fields.Date.today(),
+        index=True,
+        copy=False,
+        help="The date this batch was created.")
 
     line_ids = fields.One2many(
         comodel_name='stock.e_kanban_batch.line',
@@ -136,7 +137,7 @@ class EKanbanBatchLine(models.Model):
         procurement_order = self.env['procurement.order']
         for line in self:
             proc_name = "Hello World"
-            procurement_order.create(
+            self.procurement_id = procurement_order.create(
                 {
                     'name': proc_name,
                     'product_id': line.product_id.id,
