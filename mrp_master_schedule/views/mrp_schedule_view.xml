@@ -29,7 +29,7 @@
             </header>
             <sheet>
                 <div class="oe_button_box" name="button_box">
-                    <button name="do_view_schedule_lines" class="oe_stat_button" icon="fa-bars" type="object">
+                    <button name="do_view_schedule_lines" class="oe_stat_button" icon="fa-bars" type="object" context="{'default_schedule_id': active_id}">
                         <field string="Schedule Lines" name="line_count" widget="statinfo"/>
                     </button>
                 </div>

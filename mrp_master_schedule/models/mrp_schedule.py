@@ -113,6 +113,7 @@ class MrpScheduleLine(models.Model):
     schedule_id = fields.Many2one(
         comodel_name='mrp.schedule',
         string='Schedule',
+        required=True,
         ondelete='cascade',
         readonly=True,
         states={False: [('readonly', False)]}
@@ -121,6 +122,7 @@ class MrpScheduleLine(models.Model):
     state = fields.Selection(
         string="Schedule State",
         related='schedule_id.state',
+        readonly=True,
         store=True
     )
 
