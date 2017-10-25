@@ -175,8 +175,10 @@ class ProductProduct(models.Model):
     @api.model
     def create(self, vals):
         if not (vals.get('eng_code') and vals.get('eng_rev')):
-            cat_id = vals.get('product_tmpl_id', vals.get('categ_id'))
-            cat = cat_id and self.env['product.category'].browse(cat_id)
+            cat = vals.get('categ_id') and self.env['product.category'].browse(vals['categ_id'])
+            if not cat:
+                tmpl = self.env['product.template'].browse(vals.get('product_tmpl_id'))
+                cat = tmpl.categ_id
             if cat and cat.eng_management:
                 if vals.get('default_code'):
                     vals['eng_code'], vals['eng_rev'] =\

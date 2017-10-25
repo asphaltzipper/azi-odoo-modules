@@ -9,6 +9,9 @@
             <xpath expr="//sheet/group/group[2]/field[@name='company_id']" position="after">
                 <field name="default_carrier_id"/>
             </xpath>
+            <xpath expr="//field[@name='order_line']/tree/field[@name='date_planned']" position="attributes">
+                <attribute name="context">{'default_carrier_id': default_carrier_id}</attribute>
+            </xpath>
             <xpath expr="//field[@name='order_line']/tree/field[@name='date_planned']" position="after">
                 <field name="carrier_id"/>
             </xpath>

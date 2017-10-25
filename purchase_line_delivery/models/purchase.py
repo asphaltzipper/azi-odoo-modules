@@ -9,12 +9,11 @@ class PurchaseOrder(models.Model):
 
     @api.model
     def _get_default_carrier(self):
-        if self.partner_id and self.partner_id.property_delivery_carrier_id:
+        if self.partner_id.property_delivery_carrier_id:
             return self.partner_id.property_delivery_carrier_id.id
-        elif self.env['ir.values'].get_default('purchase.config.settings', 'po_carrier_id'):
+        if self.env['ir.values'].get_default('purchase.config.settings', 'po_carrier_id'):
             return self.env['ir.values'].get_default('purchase.config.settings', 'po_carrier_id')
-        else:
-            return self.env['delivery.carrier'].search([], limit=1, order='sequence').id
+        return self.env['delivery.carrier'].search([], limit=1, order='sequence').id
 
     @api.onchange('partner_id', 'company_id')
     def onchange_partner_id(self):
@@ -36,10 +35,15 @@ class PurchaseOrderLine(models.Model):
 
     @api.model
     def _get_default_carrier(self):
+        import pdb
+        pdb.set_trace()
+        if self._context.get('default_carrier_id'):
+            return self.env.context['default_carrier_id']
         if self.order_id.partner_id:
             return self.order_id.partner_id.property_delivery_carrier_id.id
-        else:
-            return self.env['res.partner'].browse(1).property_delivery_carrier_id.id
+        if self.env['ir.values'].get_default('purchase.config.settings', 'po_carrier_id'):
+            return self.env['ir.values'].get_default('purchase.config.settings', 'po_carrier_id')
+        return self.env['delivery.carrier'].search([], limit=1, order='sequence').id
 
     carrier_id = fields.Many2one(
         comodel_name='delivery.carrier',
