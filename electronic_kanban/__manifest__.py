@@ -21,7 +21,8 @@ Electronic Kanban
     'data': [
         'views/product_views.xml',
         'views/e_kanban_views.xml',
-        'data/e_kanban_sequence.xml'
+        'views/mrp_material_plan_views.xml',
+        'data/e_kanban_sequence.xml',
     ],
     "installable": True,
     "auto_install": False,

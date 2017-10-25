@@ -55,6 +55,11 @@ class MrpMaterialPlan(models.Model):
         """
         return True
 
+    @api.depends('product_id')
+    def _compute_default_supplier(self):
+        for line in self:
+            line.default_supplier_id = line.product_id.seller_ids and line.product_id.seller_ids[0] or False
+
     name = fields.Char(
         'Name', copy=False, required=True,
         default=lambda self: self.env['ir.sequence'].next_by_code('mrp.material_plan'))
@@ -66,10 +71,11 @@ class MrpMaterialPlan(models.Model):
         required=True)
 
     default_supplier_id = fields.Many2one(
-        comodel_name='res.partner',
-        string='Default Vendor',
-        ondelete='cascade',
-        readonly=True)
+        comodel_name='product.supplierinfo',
+        string='Supplier',
+        compute='_compute_default_supplier',
+        readonly=True,
+        store=True)
 
     product_qty = fields.Float(
         string='Quantity',
@@ -133,12 +139,11 @@ class MrpMaterialPlan(models.Model):
         # TODO: add option to choose day of week for procurement with weekly buckets
         procurement_order = self.env['procurement.order']
         for plan_move in self:
-            proc_name = "%s\nuser: %s\nqty: %s\nstart: %s\nfinish: %s" % (
-                plan_move.name,
+            proc_name = "user: %s\norigin: %s\nstart: %s" % (
+                plan_move.origin,
                 self.env.user.login,
-                plan_move.product_qty,
-                plan_move.date_start,
-                plan_move.date_finish)
+                plan_move.date_start
+            )
             procurement_order.create(
                 {
                     'name': proc_name,
@@ -148,7 +153,8 @@ class MrpMaterialPlan(models.Model):
                     'product_uom': plan_move.product_id.uom_id.id,
                     'warehouse_id': plan_move.orderpoint_id.warehouse_id.id if plan_move.orderpoint_id else warehouse[0].id if warehouse else False,
                     'location_id': plan_move.location_id.id,
-                    'company_id': plan_move.location_id.company_id.id
+                    'company_id': plan_move.location_id.company_id.id,
+                    'origin': plan_move.name,
                 }
             )
             plan_move.unlink()
@@ -501,7 +507,7 @@ class MrpMaterialPlan(models.Model):
 
                     for orderpoint in location_orderpoints:
                         try:
-                            # if orderpoint.product_id.id == 2064:
+                            # if orderpoint.product_id.id == 16735:
                             #     import pdb
                             #     pdb.set_trace()
                             local_create_time = 0

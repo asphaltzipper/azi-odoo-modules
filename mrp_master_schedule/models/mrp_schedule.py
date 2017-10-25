@@ -62,10 +62,12 @@ class MrpSchedule(models.Model):
         released = self.get_released()
         if released:
             released.state = 'superseded'
+        self.release_date = fields.Datetime.now()
         self.state = 'released'
 
     @api.one
     def action_unrelease(self):
+        self.release_date = False
         self.state = 'pending'
 
     @api.multi

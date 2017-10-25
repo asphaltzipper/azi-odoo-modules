@@ -11,4 +11,8 @@ _logger = logging.getLogger(__name__)
 class MrpMaterialPlan(models.Model):
     _inherit = "mrp.material_plan"
 
-    e_kanban = fields.Boolean(related='product_id.e_kanban')
+    e_kanban = fields.Boolean(
+        string="E-Kanban",
+        related='product_id.e_kanban',
+        readonly=True,
+        store=True)

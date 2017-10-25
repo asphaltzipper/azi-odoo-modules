@@ -11,7 +11,7 @@
     <field name="arch" type="xml">
         <search string="Plan">
             <field name="name" string="Plan" filter_domain="[('name','ilike',self)]"/>
-            <field name="product_id" string="Product" filter_domain="[('product_id.name','ilike',self)]"/>
+            <field name="product_id" string="Product" filter_domain="['|','|',('product_id.default_code','ilike',self),('product_id.name','ilike',self),('product_id.barcode','ilike',self)]"/>
             <field name="move_type" string="Move Type" filter_domain="[('move_type','ilike',self)]"/>
             <field name="location_id" string="Location" filter_domain="[('location_id.name','ilike',self)]"/>
             <field name="origin" string="Origin" filter_domain="[('origin','ilike',self)]"/>
@@ -53,6 +53,7 @@ if env.context.get('active_model') == 'mrp.material_plan' and env.context.get('a
             <field name="product_qty" />
             <field name="move_type" />
             <field name="make" />
+            <field name="default_supplier_id" />
             <field name="date_start" />
             <field name="date_finish" />
         </tree>
@@ -89,6 +90,7 @@ if env.context.get('active_model') == 'mrp.material_plan' and env.context.get('a
                     </group>
                     <group>
                         <field name="location_id" domain="[('usage', '=', 'internal')]"/>
+                        <field name="default_supplier_id"/>
                     </group>
                     <group name="scheduling" string="Scheduling">
                         <field name="date_start" />
