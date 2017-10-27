@@ -58,7 +58,7 @@ class MrpMaterialPlan(models.Model):
     @api.depends('product_id')
     def _compute_default_supplier(self):
         for line in self:
-            line.default_supplier_id = line.product_id.seller_ids and line.product_id.seller_ids[0] or False
+            line.default_supplier_id = line.product_id.seller_ids and line.product_id.seller_ids[0].name or False
 
     name = fields.Char(
         'Name', copy=False, required=True,
@@ -71,10 +71,11 @@ class MrpMaterialPlan(models.Model):
         required=True)
 
     default_supplier_id = fields.Many2one(
-        comodel_name='product.supplierinfo',
+        comodel_name='res.partner',
         string='Supplier',
         compute='_compute_default_supplier',
         readonly=True,
+        index=True,
         store=True)
 
     product_qty = fields.Float(
