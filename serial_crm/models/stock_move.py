@@ -12,8 +12,8 @@ class StockMove(models.Model):
         serial_transitions = ['internal', 'inventory', 'production', 'customer']
         for move in self:
             for sn in move.lot_ids.filtered(lambda x: x.product_id.tracking == 'serial'):
-                if move.move_dest_id.usage in serial_transitions:
-                    sn.state = move.move_dest_id.usage
+                if move.location_dest_id.usage in serial_transitions:
+                    sn.state = move.location_dest_id.usage
         return super(StockMove, self).action_done()
 
 

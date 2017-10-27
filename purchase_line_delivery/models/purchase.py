@@ -35,8 +35,6 @@ class PurchaseOrderLine(models.Model):
 
     @api.model
     def _get_default_carrier(self):
-        import pdb
-        pdb.set_trace()
         if self._context.get('default_carrier_id'):
             return self.env.context['default_carrier_id']
         if self.order_id.partner_id:
