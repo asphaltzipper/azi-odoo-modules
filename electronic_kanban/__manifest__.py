@@ -20,6 +20,7 @@ Electronic Kanban
     "depends": ['product', 'stock', 'mrp_mrp'],
     'data': [
         'views/product_views.xml',
+        'security/ir.model.access.csv',
         'views/e_kanban_views.xml',
         'views/mrp_material_plan_views.xml',
         'data/e_kanban_sequence.xml',

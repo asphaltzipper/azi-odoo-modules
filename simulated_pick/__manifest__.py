@@ -41,7 +41,8 @@ View material requirements for a given product and related bill of materials.
     "data": [
         'wizard/simulated_pick_view.xml',
         'views/simulated_pick_product_view.xml',
-        'security/ir.model.access.csv',
+        # TODO: Restrict access
+        # 'security/ir.model.access.csv',
     ],
     "installable": True,
     "auto_install": False,

@@ -14,7 +14,8 @@
     "installable": True,
     "depends": ["crm", "sales_team_industry"],
     "data": [
-        'security/ir.model.access.csv',
+        # TODO: Restrict access
+        # 'security/ir.model.access.csv',
         'views/res_partner_view.xml',
         'wizards/sales_team_assign.xml',
     ],

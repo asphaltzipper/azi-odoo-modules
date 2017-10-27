@@ -1,2 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_serial_info_serial_info,serial_info.serial_info,model_serial_info_serial_info,,1,0,0,0
+access_stock_lot_change_everyone,access_stock_lot_change_everyone,model_stock_lot_change,,1,0,0,0
+access_stock_lot_partner_everyone,access_stock_lot_partner_everyone,model_stock_lot_partner,,1,0,0,0
+access_stock_lot_change,access_stock_lot_change,model_stock_lot_change,stock.group_stock_user,1,1,1,1
+access_stock_lot_partner,access_stock_lot_partner,model_stock_lot_partner,stock.group_stock_user,1,1,1,1

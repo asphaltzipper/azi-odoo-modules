@@ -17,7 +17,7 @@
         "mrp",
     ],
     "data": [
-        # 'security/ir.model.access.csv',
+        'security/ir.model.access.csv',
         'views/stock_lot_views.xml',
         'views/res_partner_views.xml',
     ],
