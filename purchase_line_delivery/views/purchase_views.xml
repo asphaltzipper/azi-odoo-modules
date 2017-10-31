@@ -7,13 +7,24 @@
         <field name="inherit_id" ref="purchase.purchase_order_form"/>
         <field name="arch" type="xml">
             <xpath expr="//sheet/group/group[2]/field[@name='company_id']" position="after">
-                <field name="default_carrier_id"/>
+                <label for="default_carrier_id"/>
+                <div>
+                    <field name="default_carrier_id"/>
+                    <button name="action_set_shipping" type="object"
+                        states="draft,sent"
+                        string="Set shipping to all order lines"
+                        help="This changes the shipping of all order lines to the Shipping Method"
+                        class="fa fa-envelope o_icon_button oe_edit_only"/>
+                </div>
             </xpath>
             <xpath expr="//field[@name='order_line']/tree/field[@name='date_planned']" position="attributes">
                 <attribute name="context">{'default_carrier_id': default_carrier_id}</attribute>
             </xpath>
             <xpath expr="//field[@name='order_line']/tree/field[@name='date_planned']" position="after">
                 <field name="carrier_id"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree/field[@name='product_uom']" position="attributes">
+                <attribute name="string">UOM</attribute>
             </xpath>
         </field>
     </record>

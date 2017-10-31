@@ -29,6 +29,11 @@ class PurchaseOrder(models.Model):
         required=True,
         default=_get_default_carrier)
 
+    @api.multi
+    def action_set_shipping(self):
+        for purchase_order in self:
+            purchase_order.order_line.update({'carrier_id': purchase_order.default_carrier_id})
+
 
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'

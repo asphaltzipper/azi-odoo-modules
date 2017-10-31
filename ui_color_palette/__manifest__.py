@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
+# https://github.com/bistaray/odoo-apps#10.0
+
 {
     'license': 'LGPL-3',
     "name" : "Custom Color Palette",

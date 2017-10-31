@@ -37,7 +37,7 @@ AZI Specialized Customizations to Product
 * Require Unique UOM Name
 * Rename, create, inactivate some UOMs and UOM Categories
     """,
-    "depends": ['product','stock'],
+    "depends": ['product','stock', 'purchase'],
     'data': [
         'data/product_data.xml',
         'views/product_views.xml',

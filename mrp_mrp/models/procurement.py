@@ -1,6 +1,8 @@
 # -*- encoding: utf-8 -*-
 
-from odoo import models
+from odoo import models, fields
+from datetime import datetime
+from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 
 
 class ProcurementOrder(models.Model):
@@ -18,3 +20,10 @@ class ProcurementOrder(models.Model):
             ('requisition_id', 'in', tuple([x.id for x in product_requisitions]))
         )
         return domain
+
+    def _get_purchase_order_date(self, schedule_date):
+        order_date = super(ProcurementOrder, self)._get_purchase_order_date(schedule_date)
+        now = datetime.strptime(fields.Datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT)
+        if order_date < now:
+            return now
+        return order_date
