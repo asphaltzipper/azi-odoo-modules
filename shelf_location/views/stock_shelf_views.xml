@@ -17,7 +17,7 @@
                 <field name="inactive_count"/>
                 <field name="product_ids">
                     <tree string="Assigned Product">
-                        <field name="name"/>
+                        <field name="display_name"/>
                     </tree>
                 </field>
             </form>
