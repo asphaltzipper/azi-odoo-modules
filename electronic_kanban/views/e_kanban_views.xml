@@ -27,11 +27,6 @@
                             <field string="Bin Detail" name="line_count" widget="statinfo"/>
                         </button>
                     </div>
-                    <!--<div class="oe_button_box" name="button_box">-->
-                        <!--<button name="do_view_ekb_lines" class="oe_stat_button" icon="fa-bars" type="object" context="{'default_batch_id': active_id}">-->
-                            <!--<field string="E-Kanban" name="line_count" widget="statinfo"/>-->
-                        <!--</button>-->
-                    <!--</div>-->
                     <group>
                         <field name="name"/>
                         <field name="batch_date"/>
@@ -93,12 +88,12 @@
         <field name="arch" type="xml">
             <search string="Batch Line Filter">
                 <field name="batch_id" string="Batch Line Filter"/>
-                <!--<filter string='Late' name="late" icon="terp-accessories-achiver" domain="[('late', '=', True)]" />-->
-                <!--<group expand='0' string='Group by...'>-->
-                    <!--<filter string='Status' domain="[]" context="{'group_by' : 'status'}"/>-->
-                    <!--<filter string='Type' domain="[]" context="{'group_by' : 'tx_type'}"/>-->
-                    <!--<filter string='Week' domain="[]" context="{'group_by' : 'tx_date:week'}"/>-->
-                <!--</group>-->
+                <filter string='Has Purchase Order' name="procurement" icon="terp-accessories-achiver" domain="[('procurement_id', '!=', False)]" />
+                <filter string='No Purchase Order' name="procurement" icon="terp-accessories-achiver" domain="[('procurement_id', '=', False)]" />
+                <group expand='0' string='Group by...'>
+                    <filter string='Supplier' domain="[]" context="{'group_by' : 'default_supplier_id'}"/>
+                    <filter string='Is Kanban' domain="[]" context="{'group_by' : 'e_kanban'}"/>
+                </group>
             </search>
         </field>
     </record>
