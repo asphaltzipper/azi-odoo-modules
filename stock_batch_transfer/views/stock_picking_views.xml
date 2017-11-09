@@ -5,8 +5,8 @@
         <field name="model_id" ref="stock.model_stock_picking"/>
         <field name="code">records.do_batch_transfer()</field>
     </record>
-    <record model="ir.values" id="account_update_taxes">
-        <field name="model_id" ref="account.model_account_invoice" />
+    <record model="ir.values" id="stock_picking_validate_transfers_multi">
+        <field name="model_id" ref="stock.model_stock_picking" />
         <field name="name">Validate Transfers</field>
         <field name="key2">client_action_multi</field>
         <field name="value" eval="'ir.actions.server,' +str(ref('action_stock_picking_do_batch_transfer'))" />

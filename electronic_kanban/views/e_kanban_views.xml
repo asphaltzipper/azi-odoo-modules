@@ -7,6 +7,14 @@
     </record>
     <menuitem id="menu_e_kanban" parent="stock.menu_stock_inventory_control" name="E Kanban" sequence="1000" action="action_list_e_kanban"/>
 
+    <record id="ekb_view_lines" model="ir.actions.act_window">
+        <field name="name">Batch</field>
+        <field name="res_model">stock.e_kanban_batch.line</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_batch_id': active_id}</field>
+    </record>
+
     <record model="ir.ui.view" id="e_kanban_form_view">
         <field name="name">e.kanban.form.view</field>
         <field name="model">stock.e_kanban_batch</field>
@@ -77,14 +85,6 @@
                 <field name="latest_rcv_date"/>
             </tree>
         </field>
-    </record>
-
-    <record id="ekb_view_lines" model="ir.actions.act_window">
-        <field name="name">Batch</field>
-        <field name="res_model">stock.e_kanban_batch.line</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
-        <field name="context">{'search_default_batch_id': active_id}</field>
     </record>
 
     <record model="ir.ui.view" id="ekb_lot_filter">

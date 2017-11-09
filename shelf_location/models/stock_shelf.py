@@ -5,6 +5,7 @@ from odoo import models, fields, api
 
 class StockShelf(models.Model):
     _name = 'stock.shelf'
+    _order = 'name'
 
     name = fields.Char(
         string='Shelf Location')
