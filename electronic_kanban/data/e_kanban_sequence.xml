@@ -6,7 +6,7 @@
         <record id="e_kanban_sequence" model="ir.sequence">
             <field name="name">E Kanban Sequence</field>
             <field name="code">e.kanban.sequence</field>
-            <field name="prefix">KB/</field>
+            <field name="prefix">BATCH/</field>
             <field name="padding">4</field>
             <field name="number_next">0001</field>
             <field name="number_increment">1</field>

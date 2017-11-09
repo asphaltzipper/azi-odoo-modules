@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from odoo import api, models, fields
+from odoo.exceptions import UserError
 
 
 class EKanbanBatch(models.Model):
     _name = "stock.e_kanban_batch"
+    _inherit = ['barcodes.barcode_events_mixin']
 
     name = fields.Char(
         string='Name',
@@ -41,10 +43,27 @@ class EKanbanBatch(models.Model):
              "Submitted:   Ordered but not received.\n"
              "Done: Received in to Stock.")
 
+    _barcode_scanned = fields.Char(
+        string="Barcode Scanned",
+        help="Value of the last barcode scanned.",
+        store=False)
+
     @api.depends('line_ids')
     def _compute_line_count(self):
         for batch in self:
-            batch.line_count = len(self.line_ids)
+            batch.line_count = len(self.line_ids.ids)
+
+    @api.model
+    def ekb_barcode(self, barcode, ekb_id):
+        batch = self.env['stock.e_kanban_batch'].search([('id', '=', ekb_id)])
+        if not batch:
+            raise UserError(_('No Batch Found/ so Save!'))
+        product_id = self.env['product.product'].search([('barcode', '=', barcode)])
+        line_values = {
+            'product_id': product_id.id,
+            'batch_id': batch.id,
+        }
+        batch.update({'line_ids': [(0, 0, line_values)]})
 
 
 class EKanbanBatchLine(models.Model):
@@ -60,6 +79,18 @@ class EKanbanBatchLine(models.Model):
         string='Product',
         required=True)
 
+    default_proc_qty = fields.Float(
+        string='Bin Qty',
+        related='product_id.default_proc_qty',
+        readonly=True,
+        store=True)
+
+    e_kanban = fields.Boolean(
+        string='Is Kanban',
+        related='product_id.e_kanban',
+        readonly=True,
+        store=True)
+
     procurement_id = fields.Many2one(
         comodel_name='procurement.order',
         string='Procurement',
@@ -68,13 +99,11 @@ class EKanbanBatchLine(models.Model):
     rfq_qty = fields.Float(
         string='Open RFQs',
         readonly=True,
-        # compute='_get_static_rfq_qty',
         required=True)
 
     incoming_qty = fields.Float(
         string='Pending Receipts',
         readonly=True,
-        # compute='_get_static_incoming',
         required=True)
 
     product_manager = fields.Many2one(
@@ -86,7 +115,8 @@ class EKanbanBatchLine(models.Model):
     default_supplier_id = fields.Many2one(
         string='Supplier',
         comodel_name='product.supplierinfo',
-        compute='_compute_default_supplier')
+        compute='_compute_default_supplier',
+        store=True)
 
     latest_rcv_date = fields.Datetime(
         # compute='_get_static_rcv_date',
@@ -182,17 +212,18 @@ class EKanbanBatchLine(models.Model):
     @api.multi
     def action_convert_to_procurements(self):
         warehouse = self.env['stock.warehouse'].search([], limit=1)
-        # TODO: add option to choose day of week for procurement with weekly buckets
         procurement_order = self.env['procurement.order']
         for line in self:
-            proc_name = "Hello World"
-            self.procurement_id = procurement_order.create(
+            if line.procurement_id:
+                raise UserError("Trying to Create Duplicate Order for %s" % line.product_id.display_name)
+            proc_name = "%s/%s" % (line.batch_id.name, line.product_id.default_code)
+            line.procurement_id = procurement_order.create(
                 {
                     'name': proc_name,
                     'product_id': line.product_id.id,
                     'product_qty': line.product_id.default_proc_qty,
                     'product_uom': line.product_id.uom_id.id,
                     'warehouse_id': warehouse.id,
-                    # 'location_id': warehouse.lot_stock_id.id,
+                    'location_id': warehouse.lot_stock_id.id,
                 }
             )
