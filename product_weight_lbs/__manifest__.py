@@ -19,7 +19,7 @@ Product Weight and Shipping Weight in lbs
 * Add weight_in_lbs and shipping_weight_in_lbs fields to stock.picking and stock.quant.package
     """,
     "installable": True,
-    "depends": ['stock', 'delivery'],
+    "depends": ['product', 'stock', 'delivery'],
     'data': [
         'views/product_product_view.xml',
         'views/product_template_view.xml',

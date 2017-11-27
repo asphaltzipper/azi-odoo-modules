@@ -12,7 +12,7 @@
     <field name="model">product.product</field>
     <field name="inherit_id" ref="product.product_variant_easy_edit_view"/>
     <field name="arch" type="xml">
-        <xpath expr="//label[@for='weight']" position="before">
+        <xpath expr="//group[@name='weight']" position="inside">
             <label for="weight_in_lbs"/>
             <div class="o_row">
                 <field name="weight_in_lbs"/>

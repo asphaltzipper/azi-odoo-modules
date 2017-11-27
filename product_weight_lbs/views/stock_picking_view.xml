@@ -9,7 +9,7 @@
     <field name="model">stock.picking</field>
     <field name="inherit_id" ref="delivery.view_picking_withcarrier_out_form"/>
     <field name="arch" type="xml">
-        <xpath expr="//label[@for='weight']" position="before">
+        <xpath expr="//field[@name='shipping_weight']" position="before">
             <label for="weight_in_lbs"/>
             <div class="o_row">
                 <field name="weight_in_lbs"/>
