@@ -54,8 +54,8 @@ class MrpSchedule(models.Model):
 
     def get_released(self):
         domain = [('state', '=', 'released')]
-        released = self.env['mrp.schedule'].search(domain)
-        return released and released[0]
+        released = self.search(domain)
+        return released
 
     @api.one
     def action_release(self):

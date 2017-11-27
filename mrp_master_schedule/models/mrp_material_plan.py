@@ -64,3 +64,10 @@ class MrpMaterialPlan(models.Model):
             last_bucket_date = self._get_bucket_from_date(last_build.date_finish)
 
         return last_bucket_date
+
+    def _cron_plan_compute(self):
+        ctx = dict(self.env.context)
+        schedule = self.env['mrp.schedule'].get_released()
+        if schedule:
+            ctx['schedule_id'] = schedule.id
+        return super(MrpMaterialPlan, self.with_context(ctx))._cron_plan_compute()

@@ -2,7 +2,7 @@
 # © 2016 Matt Taylor
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api, registry
+from odoo import models, fields, tools, api, registry
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT, DEFAULT_SERVER_DATE_FORMAT, float_compare, float_round
 from odoo.osv import expression
 from datetime import datetime, timedelta
@@ -413,6 +413,22 @@ class MrpMaterialPlan(models.Model):
         """Returns tuple of location and llc code"""
         orderpoints = self.env['stock.warehouse.orderpoint'].browse(orderpoint_ids)
         return orderpoints.location_id.id, orderpoints.llc
+
+    def _cron_plan_compute(self):
+        mrp_cron = self.sudo().env.ref('mrp_mrp.ir_cron_azi_mrp_action')
+        try:
+            with tools.mute_logger('odoo.sql_db'):
+                self._cr.execute("SELECT id FROM ir_cron WHERE id = %s FOR UPDATE NOWAIT", (mrp_cron.id,))
+        except Exception:
+            _logger.info('Attempt to run procurement mrp aborted, as already running')
+            self._cr.rollback()
+            self._cr.close()
+            return {}
+        new_cr = self.pool.cursor()
+        self._run_mrp_api(
+            use_new_cursor=new_cr.dbname,
+            company_id=self.env.user.company_id.id)
+        return {}
 
     @api.model
     def _run_mrp_api(self, use_new_cursor=False, company_id=False):

@@ -20,6 +20,7 @@
         "views/mrp_production_view.xml",
         "views/mrp_material_plan_log_view.xml",
         "security/ir.model.access.csv",
+        "data/mrp_data.xml",
     ],
     "installable": True,
     "auto_install": False,
