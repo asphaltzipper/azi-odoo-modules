@@ -88,8 +88,8 @@
         <field name="arch" type="xml">
             <search string="Batch Line Filter">
                 <field name="batch_id" string="Batch Line Filter"/>
-                <filter string='Has Purchase Order' name="procurement" icon="terp-accessories-achiver" domain="[('procurement_id', '!=', False)]" />
-                <filter string='No Purchase Order' name="procurement" icon="terp-accessories-achiver" domain="[('procurement_id', '=', False)]" />
+                <filter string='Converted' name="procurement" icon="terp-accessories-achiver" domain="[('procurement_id', '!=', False)]" />
+                <filter string='Not Converted' name="procurement" icon="terp-accessories-achiver" domain="[('procurement_id', '=', False)]" />
                 <group expand='0' string='Group by...'>
                     <filter string='Supplier' domain="[]" context="{'group_by' : 'default_supplier_id'}"/>
                     <filter string='Is Kanban' domain="[]" context="{'group_by' : 'e_kanban'}"/>
