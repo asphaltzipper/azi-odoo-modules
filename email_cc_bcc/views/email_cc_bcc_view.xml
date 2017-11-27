@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id='view_message_form_inherit' model='ir.ui.view'>
+        <field name="name">mail.message.form.inherit</field>
+        <field name="model">mail.message</field>
+        <field name="inherit_id" ref="mail.view_message_form" />
+        <field name="arch" type="xml">
+            <field name="partner_ids" position="after">
+                <field name="email_cc_ids" widget="many2many_tags"/>
+                <field name="email_bcc_ids" widget="many2many_tags"/>
+            </field>
+        </field>
+    </record>
+
+    <record id='email_compose_message_wizard_form_inherit' model='ir.ui.view'>
+        <field name="name">mail.compose.message.form.inherit</field>
+        <field name="model">mail.compose.message</field>
+        <field name="inherit_id" ref="mail.email_compose_message_wizard_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='notify']" position="before">
+                <field name="is_cc" invisible="1"/>
+                <field name="is_bcc" invisible="1"/>
+                <field name="email_cc_ids" widget="many2many_tags_email" placeholder="Add CC contacts to notify..." context="{'force_email':True, 'show_email':True}" attrs="{'invisible': [('is_cc', '=', False)]}"/>
+                <field name="email_bcc_ids" widget="many2many_tags_email" placeholder="Add BCC contacts to notify..." context="{'force_email':True, 'show_email':True}" attrs="{'invisible': [('is_bcc', '=', False)]}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<odoo>
+    <record model="ir.ui.view" id="purchase_order_send_date">
+        <field name="name">purchase.order.send.date</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree/field[@name='state']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//tree/field[@name='amount_untaxed']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//tree/field[@name='amount_total']" position="after">
+                <field name="send_date"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="purchase_order_search_send_filter" model="ir.ui.view">
+        <field name="name">purchase.order.search.send.filter</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.view_purchase_order_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='invoiced']" position="after">
+                <filter string='Email Sent' name="is_sent" domain="[('send_date', '!=', False)]"/>
+                <filter string='Email Not Sent' name="not_sent" domain="[('send_date', '=', False)]"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
