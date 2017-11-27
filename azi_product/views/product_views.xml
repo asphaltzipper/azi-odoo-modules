@@ -29,38 +29,10 @@
                             <field name="rev_delimiter"/>
                             <field name="eng_rev" string="Revision" attrs="{'readonly': [('eng_management', '=', False)]}"/>
                         </group>
-                        <field name="eng_categ_id" attrs="{'readonly': [('eng_management', '=', False)]}"/>
-                    </group>
-                </page>
-            </xpath>
-        </field>
-    </record>
-
-    <record id="product_template_form_azi_product" model="ir.ui.view">
-        <field name="name">product.template.azi_product.inherit</field>
-        <field name="model">product.template</field>
-        <field name="inherit_id" ref="product.product_template_form_view"/>
-        <field name="arch" type="xml">
-            <xpath expr="//page[@name='notes']" position="before">
-                <page string="Engineering" name="eng_management">
-                    <group name="eng_management">
-                        <group>
-                            <field name="eng_management" string="Manage"/>
-                            <field name="deprecated"/>
-                            <field name="eco_ref" string="ECO" attrs="{'readonly': [('eng_management', '=', False)]}"/>
-                            <button string="Create Revision"
-                                    class="oe_link"
-                                    type="object"
-                                    name="button_revise"
-                                    attrs="{'invisible': [('eng_management', '=', False)]}"
-                                    groups="mrp_plm.group_plm_user"/>
+                        <group colspan="4">
+                            <field name="eng_categ_id" attrs="{'readonly': [('eng_management', '=', False)]}"/>
+                            <field name="eng_notes" placeholder="Catalog Detail"/>
                         </group>
-                        <group>
-                            <field name="eng_code" attrs="{'readonly': [('eng_management', '=', False)]}"/>
-                            <field name="rev_delimiter"/>
-                            <field name="eng_rev" string="Revision" attrs="{'readonly': [('eng_management', '=', False)]}"/>
-                        </group>
-                        <field name="eng_categ_id" attrs="{'readonly': [('eng_management', '=', False)]}"/>
                     </group>
                 </page>
             </xpath>

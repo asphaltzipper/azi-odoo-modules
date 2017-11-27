@@ -48,7 +48,6 @@
                     position="after">
                      <filter name ='today' string="Today" domain="[('date_planned', '&gt;=', datetime.datetime.now().strftime('%Y-%m-%d 00:00:00')),('date_planned', '&lt;=', datetime.datetime.now().strftime('%Y-%m-%d 23:23:59'))]"/>
                 </xpath>
-
                 </field>
         </record>
 

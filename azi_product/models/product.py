@@ -62,6 +62,10 @@ class ProductTemplate(models.Model):
         inverse='_set_deprecated',
         store=True,
         index=True)
+    eng_notes = fields.Text(
+        string='Engineering Notes',
+        compute='_compute_eng_notes',
+        inverse='_set_eng_notes')
 
     @api.constrains('eng_categ_id')
     def _validate_eng_cat(self):
@@ -106,6 +110,19 @@ class ProductTemplate(models.Model):
         for variant in self.product_variant_ids:
             variant.deprecated = self.deprecated
 
+    @api.depends('product_variant_ids', 'product_variant_ids.eng_notes')
+    def _compute_eng_notes(self):
+        unique_variants = self.filtered(lambda template: len(template.product_variant_ids) == 1)
+        for template in unique_variants:
+            template.eng_code = template.product_variant_ids.eng_notes
+        for template in (self - unique_variants):
+            template.eng_notes = ''
+
+    @api.one
+    def _set_eng_notes(self):
+        if len(self.product_variant_ids) == 1:
+            self.product_variant_ids.eng_notes = self.eng_notes
+
     def button_revise(self, values=None):
         if len(self.product_variant_ids) == 1:
             self.product_variant_ids.button_revise(values)
@@ -137,6 +154,7 @@ class ProductProduct(models.Model):
     deprecated = fields.Boolean(
         string='Deprecated',
         index=True)
+    eng_notes = fields.Text('Engineering Notes')
 
     re_code = re.compile(r'^([_A-Z0-9-]+)\.([A-Z-][0-9])$')
     re_code_copy = re.compile(r'^((COPY\.)?[_A-Z0-9-]+\.[A-Z-][0-9])$')
