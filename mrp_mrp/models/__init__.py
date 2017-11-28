@@ -6,3 +6,4 @@ import mrp_mrp
 import mrp_material_plan_log
 import product
 import procurement
+import stock_orderpoint

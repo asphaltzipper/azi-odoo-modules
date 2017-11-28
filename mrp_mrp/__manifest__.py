@@ -19,6 +19,7 @@
         "views/mrp_material_plan_view.xml",
         "views/mrp_production_view.xml",
         "views/mrp_material_plan_log_view.xml",
+        "views/stock_orderpoint_views.xml",
         "security/ir.model.access.csv",
         "data/mrp_data.xml",
     ],

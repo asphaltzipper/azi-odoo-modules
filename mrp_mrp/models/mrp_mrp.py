@@ -414,6 +414,46 @@ class MrpMaterialPlan(models.Model):
         orderpoints = self.env['stock.warehouse.orderpoint'].browse(orderpoint_ids)
         return orderpoints.location_id.id, orderpoints.llc
 
+    def _create_with_demand(self, orderpoint, supply_qty, bucket_date):
+        new_order = self.create(
+            self._prepare_planned_order(
+                orderpoint.product_id,
+                supply_qty,
+                bucket_date,
+                orderpoint.location_id,
+                op=orderpoint,
+                origin=orderpoint.name
+            )
+        )
+        if new_order.make:
+            new_order._create_dependent_demand()
+        return new_order
+
+    def _create_supply(self, orderpoint, supply_qty, bucket_date):
+        plan_log = self.env['mrp.material_plan.log']
+        debug_mrp = self.env.context.get('debug_mrp')
+        new_count = 0
+        exist_count = 0
+        if orderpoint.no_batch:
+            for x in range(int(supply_qty)):
+                self._create_with_demand(orderpoint, 1.0, bucket_date)
+                new_count += 1
+        else:
+            existing_order = self._look_backward(orderpoint.product_id.id, bucket_date)
+            if existing_order:
+                existing_order.write({'product_qty': existing_order.product_qty + supply_qty})
+                if existing_order.make:
+                    existing_order._create_dependent_demand(supply_qty)
+                exist_count += 1
+                message = "merged order on prod%d" % (orderpoint.product_id.id)
+                _logger.debug(message)
+                if debug_mrp:
+                    plan_log.create({'type': 'debug', 'message': message})
+            else:
+                self._create_with_demand(orderpoint, supply_qty, bucket_date)
+                new_count += 1
+        return new_count, exist_count
+
     def _cron_plan_compute(self):
         mrp_cron = self.sudo().env.ref('mrp_mrp.ir_cron_azi_mrp_action')
         try:
@@ -463,6 +503,7 @@ class MrpMaterialPlan(models.Model):
             op_domain,
             order=self.env['procurement.order']._procurement_from_orderpoint_get_order())
 
+        # get parameters for the calculation and for logging
         batch_size = 1000
         bucket_count = len(bucket_list)
         op_count = len(orderpoints_noprefetch)
@@ -476,6 +517,7 @@ class MrpMaterialPlan(models.Model):
         exec_start = time.time()
 
         while orderpoints_noprefetch:
+            # get next 1000 orderpoints
             orderpoints = OrderPoint.browse(orderpoints_noprefetch[:batch_size].ids)
             orderpoints_noprefetch = orderpoints_noprefetch[batch_size:]
 
@@ -516,8 +558,8 @@ class MrpMaterialPlan(models.Model):
                     op_time = 0
                     check_time = 0
                     create_time = 0
-                    new_count = 0
-                    exist_count = 0
+                    new_count_cum = 0
+                    exist_count_cum = 0
 
                     op_done = 1
                     bucket_start = time.time()
@@ -551,32 +593,11 @@ class MrpMaterialPlan(models.Model):
                                 qty_rounded = float_round(qty, precision_rounding=orderpoint.product_uom.rounding)
                                 if qty_rounded > 0:
                                     create_start = time.time()
-                                    existing_order = self._look_backward(orderpoint.product_id.id, bucket_date)
-                                    if existing_order:
-                                        existing_order.write({'product_qty': existing_order.product_qty + qty_rounded})
-                                        if existing_order.make:
-                                            existing_order._create_dependent_demand(qty_rounded)
-                                        exist_count += 1
-                                        message = "merged order on prod%d" % (orderpoint.product_id.id)
-                                        _logger.debug(message)
-                                        if debug_mrp:
-                                            plan_log.create({'type': 'debug', 'message': message})
-                                    else:
-                                        new_order = self.create(
-                                            self._prepare_planned_order(
-                                                orderpoint.product_id,
-                                                qty_rounded,
-                                                bucket_date,
-                                                orderpoint.location_id,
-                                                op=orderpoint,
-                                                origin=orderpoint.name
-                                            )
-                                        )
-                                        if new_order.make:
-                                            new_order._create_dependent_demand()
-                                        new_count += 1
+                                    new_count, exist_count = self._create_supply(orderpoint, qty_rounded, bucket_date)
                                     cum_planned[orderpoint.product_id.id] = cum_planned.get(orderpoint.product_id.id,
                                                                                             0.0) + qty_rounded
+                                    exist_count_cum += exist_count
+                                    new_count_cum += new_count
                                     create_stop = time.time()
                                     create_time += create_stop - create_start
                                     local_create_time = create_stop - create_start
@@ -612,8 +633,8 @@ class MrpMaterialPlan(models.Model):
                             #         op_stop - op_start - local_create_time,
                             #         local_create_time,
                             #         bucket_date.strftime(DEFAULT_SERVER_DATE_FORMAT),
-                            #         new_count,
-                            #         exist_count,
+                            #         new_count_cum,
+                            #         exist_count_cum,
                             #         orderpoint.id
                             #     )
                             # )
@@ -654,8 +675,8 @@ class MrpMaterialPlan(models.Model):
                             op_time,
                             check_time,
                             create_time,
-                            new_count,
-                            exist_count,
+                            new_count_cum,
+                            exist_count_cum,
                             group_key[0],
                             group_key[1]
                         )

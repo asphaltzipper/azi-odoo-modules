@@ -51,7 +51,7 @@
     <field name="name">mrp.schedule.line.kanban</field>
     <field name="model">mrp.schedule.line</field>
     <field name="arch" type="xml">
-        <kanban class="o_kanban_small_column">
+        <kanban class="o_kanban_small_column" default_order="product_tmpl_id, date_finish">
             <field name="name"/>
             <field name="description"/>
             <field name="product_tmpl_id"/>
