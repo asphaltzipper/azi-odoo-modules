@@ -461,8 +461,6 @@ class MrpMaterialPlan(models.Model):
                 self._cr.execute("SELECT id FROM ir_cron WHERE id = %s FOR UPDATE NOWAIT", (mrp_cron.id,))
         except Exception:
             _logger.info('Attempt to run procurement mrp aborted, as already running')
-            self._cr.rollback()
-            self._cr.close()
             return {}
         new_cr = self.pool.cursor()
         self._run_mrp_api(
