@@ -7,7 +7,7 @@
             <field name="code">product.eng_code</field>
             <field name="prefix">X</field>
             <field name="padding">6</field>
-            <field name="number_next" eval="020000"/>
+            <field name="number_next" eval="15000"/>
             <field name="number_increment" eval="1"/>
         </record>
 

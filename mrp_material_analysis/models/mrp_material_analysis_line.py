@@ -9,7 +9,7 @@ import odoo.addons.decimal_precision as dp
 class MrpMaterialAnalysisLine(models.TransientModel):
     _name = 'mrp.material.analysis.line'
     _description = 'Material Requirements Planning'
-    _order = 'product_id, tx_date'
+    _order = 'product_id, tx_date, product_qty desc, id'
 
     product_id = fields.Many2one(
         comodel_name='product.product',

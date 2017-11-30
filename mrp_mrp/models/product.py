@@ -43,9 +43,9 @@ class Product(models.Model):
 
     @api.multi
     def bucket_planned_qty(self, bucket_list, bucket_size):
-        """Return planned net move quantity, for select products, grouped by bucket date"""
+        """Return cumulative planned net move quantity, for select products, grouped by bucket date"""
 
-        # if 2064 in self.ids:
+        # if 13964 in self.ids:
         #     import pdb
         #     pdb.set_trace()
 
@@ -53,8 +53,6 @@ class Product(models.Model):
             raise UserError(_('The beginning bucket date is in the past.  All bucket dates must be in the future.'))
         date_group_out = bucket_size == 7 and 'date_start:week' or 'date_start:day'
         date_group_in = bucket_size == 7 and 'date_finish:week' or 'date_finish:day'
-        # TODO: why is date:day not returned in DEFAULT_SERVER_DATE_FORMAT?
-        date_format = bucket_size == 7 and 'W%W %Y' or '%d %b %Y'
         init_date = bucket_list[0].strftime(DEFAULT_SERVER_DATE_FORMAT)
 
         # build domain for searching mrp.material_plan records
@@ -74,7 +72,7 @@ class Product(models.Model):
         moves_out_init = dict(
             (item['product_id'][0], item['product_qty']) for item in
             MrpPlan.read_group(
-                [('date_finish', '<', init_date)] + domain_out,
+                [('date_start', '<', init_date)] + domain_out,
                 ['product_id', 'product_qty'],
                 ['product_id'])
         )
@@ -91,20 +89,32 @@ class Product(models.Model):
         moves_out = dict(
             ((item['product_id'][0], item[date_group_out]), item['product_qty']) for item in
             MrpPlan.read_group(
-                [('date_finish', '>=', init_date)] + domain_out,
+                [('date_start', '>=', init_date)] + domain_out,
                 ['product_id', 'date_start', 'product_qty'],
                 ['product_id', date_group_out],
                 lazy=False)
         )
 
+        # format bucket dates to match those returned by the read_group() method
+        def format_date(dt):
+            if bucket_size == 7:
+                # odoo date:week doesn't zero pad the week number, but the python %W formatting directive does
+                return "W%d %d" % (dt.isocalendar()[1], dt.year)
+            else:
+                # odoo date:day doesn't returned dates in DEFAULT_SERVER_DATE_FORMAT
+                return dt.strftime('%d %b %Y')
+
         res = dict()
         for product in self.with_context(prefetch_fields=False):
+            # if product.id == 13964:
+            #     import pdb
+            #     pdb.set_trace()
             planned_available = moves_in_init.get(product.id, 0.0)
             planned_available -= moves_out_init.get(product.id, 0.0)
             init_key = (product.id, bucket_list[0])
             res[init_key] = float_round(planned_available, precision_rounding=product.uom_id.rounding)
             for bucket_date in bucket_list[1:]:
-                key = (product.id, bucket_date.strftime(date_format))
+                key = (product.id, format_date(bucket_date))
                 planned_available += moves_in.get(key, 0.0)
                 planned_available -= moves_out.get(key, 0.0)
                 res[(product.id, bucket_date)] = float_round(planned_available, precision_rounding=product.uom_id.rounding)

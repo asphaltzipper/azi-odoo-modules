@@ -56,30 +56,31 @@ class MrpMaterialAnalysis(models.TransientModel):
             })
 
         # get mrp planned moves
-        plan_domain = [('product_id', '=', self.product_id.id)]
-        plan_moves = self.env['mrp.material_plan'].search(plan_domain)
-        for move in plan_moves:
-            if move.move_type == 'supply' and move.make:
-                tx_type = 'pmo'
-                qty_factor = 1
-            elif move.move_type == 'supply' and not move.make:
-                tx_type = 'ppo'
-                qty_factor = 1
-            elif move.move_type == 'demand':
-                tx_type = 'ppick'
-                qty_factor = -1
-            else:
-                continue
-            lines.append({
-                'product_id': self.product_id.id,
-                'tx_type': tx_type,
-                'tx_date': move.date_finish,
-                'product_qty': qty_factor * move.product_qty,
-                'available_qty': 0,
-                'late': move.date_finish < datetime.now().strftime(DEFAULT_SERVER_DATETIME_FORMAT),
-                'status': 'planned',
-                'origin': move.origin,
-            })
+        if self.include_plan:
+            plan_domain = [('product_id', '=', self.product_id.id)]
+            plan_moves = self.env['mrp.material_plan'].search(plan_domain)
+            for move in plan_moves:
+                if move.move_type == 'supply' and move.make:
+                    tx_type = 'pmo'
+                    qty_factor = 1
+                elif move.move_type == 'supply' and not move.make:
+                    tx_type = 'ppo'
+                    qty_factor = 1
+                elif move.move_type == 'demand':
+                    tx_type = 'ppick'
+                    qty_factor = -1
+                else:
+                    continue
+                lines.append({
+                    'product_id': self.product_id.id,
+                    'tx_type': tx_type,
+                    'tx_date': move.date_finish,
+                    'product_qty': qty_factor * move.product_qty,
+                    'available_qty': 0,
+                    'late': move.date_finish < datetime.now().strftime(DEFAULT_SERVER_DATETIME_FORMAT),
+                    'status': 'planned',
+                    'origin': move.origin,
+                })
 
         return lines
 
@@ -99,7 +100,7 @@ class MrpMaterialAnalysis(models.TransientModel):
             analysis_line.create(line)
 
         # sort and compute running inventory level (qty available)
-        virt_qty = self.product_id.virtual_available
+        virt_qty = self.product_id.qty_available
         new_lines = analysis_line.search([('create_uid', '=', self._uid), ('product_id', '=', self.product_id.id)])
         for line in new_lines.sorted():
             virt_qty += line.product_qty

@@ -3,7 +3,6 @@
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 
 <odoo>
-<data>
 
 <record id="mrp_material_plan_view_search" model="ir.ui.view">
     <field name="name">mrp.material_plan.search</field>
@@ -17,6 +16,8 @@
             <field name="origin" string="Origin" filter_domain="[('origin','ilike',self)]"/>
             <filter string='Purchasing' name="purchase_only" icon="terp-accessories-achiver" domain="[('move_type', '=', 'supply'),('make', '=', False)]" />
             <filter string='Manufacturing' name="make_only" icon="terp-accessories-achiver" domain="[('move_type', '=', 'supply'),('make', '=', True)]" />
+            <separator/>
+            <filter string='Due to Start' name="due_to_start" icon="terp-accessories-achiver" domain="[('date_start', '&lt;', (context_today() + relativedelta(days=1)).strftime('%Y-%m-%d'))]" />
             <group expand='0' string='Group by...'>
                 <filter string='Move Type' domain="[]" context="{'group_by' : 'move_type'}"/>
                 <filter string='Make' icon="terp-mrp" domain="[]" context="{'group_by' : 'make'}"/>
@@ -161,5 +162,4 @@ if env.context.get('active_model') == 'mrp.material_plan' and env.context.get('a
     parent="purchase.menu_purchase_control"
     groups="stock.group_stock_user"/>
 
-</data>
 </odoo>

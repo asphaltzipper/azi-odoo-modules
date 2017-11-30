@@ -40,7 +40,7 @@ class MrpMaterialPlan(models.Model):
         # TODO: create bucket_size config parameter
         # daily = 1
         # weekly = 7
-        return 7
+        return 1
 
     @property
     def _merge_back(self):
@@ -370,8 +370,13 @@ class MrpMaterialPlan(models.Model):
     def _get_planning_horizon(self):
         last_bucket_date = self._get_bucket_from_date()
 
-        # get latest stock move
-        move_domain = [('state', 'not in', ('done', 'cancel', 'draft'))]
+        # get latest consumption stock move
+        # consumption or demand-type stock moves have a source location of type 'internal'
+        # i.e. the latest move that decreases inventory on hand of any product
+        self._cr.execute("select distinct location_id from stock_warehouse_orderpoint")
+        loc_res = self._cr.fetchall()
+        loc_ids = loc_res and [x[0] for x in loc_res] or []
+        move_domain = [('state', 'not in', ('done', 'cancel', 'draft')), ('location_id', 'in', loc_ids)]
         last_move = self.env['stock.move'].search(move_domain, order="date DESC", limit=1)
         if last_move:
             last_move_date = last_move.date
@@ -432,11 +437,15 @@ class MrpMaterialPlan(models.Model):
     def _create_supply(self, orderpoint, supply_qty, bucket_date):
         plan_log = self.env['mrp.material_plan.log']
         debug_mrp = self.env.context.get('debug_mrp')
+        if orderpoint.product_id.id == 13964:
+            _logger.info("supplying %s of product %s" % (supply_qty, 'X008034.-0'))
         new_count = 0
         exist_count = 0
         if orderpoint.no_batch:
-            for x in range(int(supply_qty)):
+            # for x in range(int(supply_qty)):
+            while supply_qty > 0:
                 self._create_with_demand(orderpoint, 1.0, bucket_date)
+                supply_qty -= 1.0
                 new_count += 1
         else:
             existing_order = self._look_backward(orderpoint.product_id.id, bucket_date)
@@ -522,6 +531,7 @@ class MrpMaterialPlan(models.Model):
             batch_start = time.time()
 
             # Calculate groups that can be executed together
+            # the key from _get_orderpoint_grouping_key() method should include the low level code
             location_data = defaultdict(
                 lambda: dict(products=self.env['product.product'], orderpoints=self.env['stock.warehouse.orderpoint']))
             for orderpoint in orderpoints:
@@ -538,7 +548,7 @@ class MrpMaterialPlan(models.Model):
                 product_quantity = location_data[group_key]['products'].with_context(product_context).bucket_virtual_available(
                     bucket_list, self._bucket_size)
                 planned_quantity = location_data[group_key]['products'].bucket_planned_qty(bucket_list, self._bucket_size)
-                # accumulate planned quantities so we don't have to go to ask the database what we have already planned
+                # accumulate planned supply qty so we don't have to ask the database what we have already planned
                 cum_planned = {}
 
                 # TODO: modify subtract_procurements_from_orderpoints to accept to_date in context
@@ -564,9 +574,22 @@ class MrpMaterialPlan(models.Model):
 
                     for orderpoint in location_orderpoints:
                         try:
-                            # if orderpoint.product_id.id == 16735:
-                            #     import pdb
-                            #     pdb.set_trace()
+                            if orderpoint.product_id.id == 13964:
+                                m = "X008034.-0 bucket_date=%s, avail_qty=%s, plan_qty=%s, cum_qty=%s, total=%s" % (
+                                        bucket_date.strftime(DEFAULT_SERVER_DATE_FORMAT),
+                                        product_quantity[(orderpoint.product_id.id, bucket_date)],
+                                        planned_quantity[(orderpoint.product_id.id, bucket_date)],
+                                        cum_planned.get(orderpoint.product_id.id, 0.0),
+                                        float_compare(
+                                            product_quantity[(orderpoint.product_id.id, bucket_date)] +
+                                            planned_quantity[(orderpoint.product_id.id, bucket_date)] +
+                                            cum_planned.get(orderpoint.product_id.id, 0.0),
+                                            orderpoint.product_min_qty,
+                                            precision_rounding=orderpoint.product_uom.rounding),
+                                    )
+                                _logger.info(m)
+                                # import pdb
+                                # pdb.set_trace()
                             local_create_time = 0
                             op_start = time.time()
                             op_product_virtual = product_quantity[(orderpoint.product_id.id, bucket_date)]
