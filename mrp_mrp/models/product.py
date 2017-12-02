@@ -133,8 +133,6 @@ class Product(models.Model):
         if bucket_list[0] < datetime.now().date():
             raise UserError(_('The beginning bucket date is in the past.  All bucket dates must be in the future.'))
         date_group = bucket_size == 7 and 'date:week' or 'date:day'
-        # TODO: why is date:day not returned in DEFAULT_SERVER_DATE_FORMAT?
-        date_format = bucket_size == 7 and 'W%W %Y' or '%d %b %Y'
         init_date = bucket_list[0].strftime(DEFAULT_SERVER_DATE_FORMAT)
 
         # for these locations
@@ -187,6 +185,15 @@ class Product(models.Model):
                 lazy=False)
         )
 
+        # format bucket dates to match those returned by the read_group() method
+        def format_date(dt):
+            if bucket_size == 7:
+                # odoo date:week doesn't zero pad the week number, but the python %W formatting directive does
+                return "W%d %d" % (dt.isocalendar()[1], dt.year)
+            else:
+                # odoo date:day doesn't returned dates in DEFAULT_SERVER_DATE_FORMAT
+                return dt.strftime('%d %b %Y')
+
         res = dict()
         for product in self.with_context(prefetch_fields=False):
             virtual_available = quants_res.get(product.id, 0.0)
@@ -195,7 +202,7 @@ class Product(models.Model):
             init_key = (product.id, bucket_list[0])
             res[init_key] = float_round(virtual_available, precision_rounding=product.uom_id.rounding)
             for bucket_date in bucket_list[1:]:
-                key = (product.id, bucket_date.strftime(date_format))
+                key = (product.id, format_date(bucket_date))
                 virtual_available += moves_in_res.get(key, 0.0)
                 virtual_available -= moves_out_res.get(key, 0.0)
                 res[(product.id, bucket_date)] = float_round(virtual_available, precision_rounding=product.uom_id.rounding)
