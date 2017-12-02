@@ -12,14 +12,20 @@
         <field name="model">stock.shelf</field>
         <field name="arch" type="xml">
             <form string="Stock Shelf">
-                <field name="name"/>
-                <field name="product_count"/>
-                <field name="inactive_count"/>
-                <field name="product_ids">
-                    <tree string="Assigned Product">
-                        <field name="display_name"/>
-                    </tree>
-                </field>
+                <sheet>
+                    <group>
+                        <field name="_barcode_scanned" widget="shelf_location_barcode_handler" invisible="1"/>
+                        <field name="name"/>
+                        <field name="product_count"/>
+                        <field name="inactive_count"/>
+                    </group>
+                    <button name="button_delete_all" string="Delete All" type="object" class="oe_highlight" confirm="Are you sure?"/>
+                    <field name="product_ids">
+                        <tree string="Assigned Product">
+                            <field name="display_name"/>
+                        </tree>
+                    </field>
+                </sheet>
             </form>
         </field>
     </record>

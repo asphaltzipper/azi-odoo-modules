@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api
+from odoo.exceptions import UserError
 
 
 class StockShelf(models.Model):
     _name = 'stock.shelf'
     _order = 'name'
+    _inherit = ['barcodes.barcode_events_mixin']
+
 
     name = fields.Char(
-        string='Shelf Location')
+        string='Shelf Name')
 
     product_count = fields.Integer(
         string='Product Count',
@@ -21,6 +24,10 @@ class StockShelf(models.Model):
     product_ids = fields.Many2many(
         comodel_name='product.template',
         string='Products')
+    _barcode_scanned = fields.Char(
+        string="Barcode Scanned",
+        help="Value of the last barcode scanned.",
+        store=False)
 
     def _count(self):
         for shelf in self:
@@ -28,4 +35,16 @@ class StockShelf(models.Model):
 
     def _inactive_count(self):
         for shelf in self:
-            shelf.inactive_count = len(shelf.product_ids.filtered(lambda product: product.active))
+            shelf.inactive_count = len(shelf.product_ids.filtered(lambda product: not product.active))
+
+    @api.model
+    def sl_barcode(self, barcode, sl_id):
+        shelf = self.env['stock.shelf'].search([('id', '=', sl_id)])
+        if not shelf:
+            raise UserError(_('No Shelf Found/ so Save!'))
+        product_id = self.env['product.product'].search([('barcode', '=', barcode)])
+        shelf.update({'product_ids': [(4, product_id.id)]})
+
+    def button_delete_all(self):
+        self.ensure_one()
+        self.update({'product_ids': [(6, 0, [])]})
