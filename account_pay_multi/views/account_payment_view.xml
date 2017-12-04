@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Inherit Form View to Modify it -->
+        <record id="view_account_payment_from_invoices_multi_vendor" model="ir.ui.view">
+            <field name="name">account.register.payments.form.inherit</field>
+            <field name="model">account.register.payments</field>
+            <field name="inherit_id" ref="account.view_account_payment_from_invoices"/>
+            <field name="arch" type="xml">
+                <field name="amount" position="after">
+                    <field name="multiple_supplier" invisible="1" />
+                </field>
+                <field name="partner_type" position="after">
+                    <strong attrs="{'invisible': [('multiple_supplier', '!=', True)]}">Multiple Partner Payment to 
+                        <field name="partner_ids" readonly="1" widget="many2many_tags"/>.<p></p></strong>
+                </field>
+                <field name="partner_id" position="replace">
+                    <strong attrs="{'invisible': [('multiple_supplier', '=', True)]}">Single Partner Payment to 
+                        <field name="partner_id" readonly="1" options='{"no_open": True}'/>.<p></p></strong>
+                </field>
+                <xpath expr="//field[@name='amount']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('multiple_supplier', '=', True)]}</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
