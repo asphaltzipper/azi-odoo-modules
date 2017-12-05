@@ -13,8 +13,10 @@
         "mrp",
         "procurement",
         "mrp_llc",
+        "purchase",
     ],
     "data": [
+        "data/menu_check.yml",
         "wizard/mrp_material_plan_compute_views.xml",
         "views/mrp_material_plan_view.xml",
         "views/mrp_production_view.xml",
