@@ -43,12 +43,6 @@
         </field>
     </record>
 
-    <template id="assets_backend_azi_account_id" name="azi_account assets" inherit_id="web.assets_backend">
-        <xpath expr="." position="inside">
-            <script type="text/javascript" src="/azi_account/static/src/js/azi_account_assets.js"></script>
-        </xpath>
-    </template>
-
     <!-- add aging filters to invoice search view -->
     <record id="view_account_invoice_filter_aged" model="ir.ui.view">
         <field name="name">account.invoice.select</field>
@@ -62,5 +56,17 @@
             </xpath>
         </field>
     </record>
+
+        <!-- Journal Items -->
+        <record id="view_move_line_receipt_form" model="ir.ui.view">
+            <field name="name">account.move.line.receipt.form</field>
+            <field name="model">account.move.line</field>
+            <field name="inherit_id" ref="account.view_move_line_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='blocked']" position="after">
+                    <field name="has_receipt"/>
+                </xpath>
+            </field>
+        </record>
 
 </odoo>

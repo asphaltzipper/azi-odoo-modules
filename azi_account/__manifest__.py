@@ -13,13 +13,18 @@
 AZI Specialized Customizations to account
 =========================================
 
-* Add product to journal entry form view
-* Add product to journal item tree view
+* Show product on journal entry form view
+* Show product on journal item tree view
+* Add fields on reconciliation form
+    * Analytic Tags
+    * Product
+    * Receipt on File
 * Add menu item for account types
 * Reformat check
     """,
     "depends": ['account', 'l10n_us_check_printing'],
     'data': [
+        'views/account.xml',
         'views/account_view_changes.xml',
         'report/azi_print_check.xml',
     ],

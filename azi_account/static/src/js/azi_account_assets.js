@@ -1,37 +1,3 @@
-//odoo.azi_account = function(instance){
-//
-//    instance.account.abstractReconciliationLine.include({
-//
-//    prepareCreatedMoveLinesForPersisting: function(lines) {
-//        var dicts = this._super(lines);
-//        for (var i = 0; i < dicts.length; i++)
-//            dicts[i]['journal_id'] = lines[i].journal_id;
-//        return dicts;
-//    },
-//
-//    prepareCreatedMoveLinesForPersisting: function(lines) {
-//        lines = _.filter(lines, function(line) { return !line.is_tax_line });
-//        return _.collect(lines, function(line) {
-//            var dict = {
-//                account_id: line.account_id,
-//                name: line.label
-//            };
-//            // Use amount_before_tax since the amount of the newly created line is adjusted to
-//            // reflect tax included in price in account_move_line.create()
-//            var amount = line.tax_id ? line.amount_before_tax: line.amount;
-//            dict['credit'] = (amount > 0 ? amount : 0);
-//            dict['debit'] = (amount < 0 ? -1 * amount : 0);
-//            if (line.tax_id) dict['tax_ids'] = [[4, line.tax_id, null]];
-//            if (line.analytic_account_id) dict['analytic_account_id'] = line.analytic_account_id;
-//            if (line.analytic_tag_ids) dict['analytic_tag_ids'] = [[6, 0, line.analytic_tag_ids]];
-//            return dict;
-//        });
-//    },
-//
-//    });
-//}
-
-
 // https://www.odoo.com/forum/help-1/question/inherit-js-file-odoo-9-119251
 // https://stackoverflow.com/questions/43064290/overriding-javascript-function-in-odoo-9
 // use ".include(" rather than ".extend("
@@ -40,6 +6,8 @@ odoo.define('azi_account.aziReconciliationTags', function(require){
     var core = require('web.core');
     var _t = core._t;
     var FieldMany2ManyTags = core.form_widget_registry.get('many2many_tags');
+    var FieldMany2One = core.form_widget_registry.get('many2one');
+    var FieldBoolean = core.form_widget_registry.get('boolean');
 
 
     // TODO: report this bug
@@ -63,9 +31,27 @@ odoo.define('azi_account.aziReconciliationTags', function(require){
     var accountReconciliation = require('account.reconciliation');
     var aziReconciliation = accountReconciliation.abstractReconciliation.include({
 
-        // add analytic tags field to the reconciliation form
         start: function() {
+            this.create_form_fields['account_id']['index'] = 0
+            this.create_form_fields['product_id'] = {
+                // add product field to the reconciliation form
+                id: "product_id",
+                index: 5,
+                corresponding_property: "product_id",
+                label: _t("Product"),
+                required: false,
+                constructor: FieldMany2One,
+                field_properties: {
+                    relation: "product.product",
+                    string: _t("Product"),
+                    type: "many2one",
+                },
+            };
+            this.create_form_fields['label']['index'] = 10
+            this.create_form_fields['analytic_account_id']['index'] = 15
+            this.create_form_fields['amount']['index'] = 20
             this.create_form_fields['analytic_tag_ids'] = {
+                // add analytic tags field to the reconciliation form
                 id: "analytic_tag_ids",
                 index: 25,
                 corresponding_property: "analytic_tag_ids",
@@ -79,11 +65,26 @@ odoo.define('azi_account.aziReconciliationTags', function(require){
                     type: "many2many_tags",
                 },
             };
+            this.create_form_fields['tax_id']['index'] = 30
+            this.create_form_fields['has_receipt'] = {
+                // add has_receipt field to the reconciliation form
+                id: "has_receipt",
+                index: 35,
+                corresponding_property: "has_receipt",
+                label: _t("Receipt on File"),
+                required: false,
+                constructor: FieldBoolean,
+                field_properties: {
+                    string: _t("Receipt on File"),
+                    type: "boolean",
+                },
+            };
             return this._super();
         },
 
         // TODO: super the fetchPresets method, rather than replace it
         // replace this function because I don't know how to super it
+        // fetching presets for analytic_tag_ids and product_id
         fetchPresets: function() {
             var self = this;
             var deferred_last_update = self.model_presets.query(['write_date']).order_by('-write_date').first().then(function (data) {
@@ -104,7 +105,9 @@ odoo.define('azi_account.aziReconciliationTags', function(require){
                             amount: datum.amount,
                             tax_id: datum.tax_id,
                             analytic_account_id: datum.analytic_account_id,
-                            analytic_tag_ids: datum.analytic_tag_ids
+                            analytic_tag_ids: datum.analytic_tag_ids,
+                            product_id: datum.product_id,
+                            has_receipt: datum.has_receipt
                         }]
                     };
                     if (datum.has_second_line) {
@@ -116,7 +119,9 @@ odoo.define('azi_account.aziReconciliationTags', function(require){
                             amount: datum.second_amount,
                             tax_id: datum.second_tax_id,
                             analytic_account_id: datum.second_analytic_account_id,
-                            analytic_tag_ids: datum.second_analytic_tag_ids
+                            analytic_tag_ids: datum.second_analytic_tag_ids,
+                            product_id: datum.second_product_id,
+                            has_receipt: datum.second_has_receipt
                         });
                     }
                     self.presets[datum.id] = preset;
@@ -127,12 +132,15 @@ odoo.define('azi_account.aziReconciliationTags', function(require){
 
     });
 
-    // store the analytic tags to the new account move line
+    // store the analytic tags and product id to the new account move line
     var aziReconciliationLine = accountReconciliation.abstractReconciliationLine.include({
         prepareCreatedMoveLinesForPersisting: function(lines) {
             var dicts = this._super(lines);
-            for (var i=0; i<dicts.length; i++)
+            for (var i=0; i<dicts.length; i++) {
                 if (lines[i].analytic_tag_ids) dicts[i]['analytic_tag_ids'] = [[6, 0, lines[i].analytic_tag_ids]];
+                if (lines[i].product_id) dicts[i]['product_id'] = lines[i].product_id;
+                if (lines[i].has_receipt) dicts[i]['has_receipt'] = true;
+            }
             return dicts;
         },
     });
