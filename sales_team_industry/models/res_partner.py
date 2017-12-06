@@ -32,3 +32,12 @@ class Partner(models.Model):
             if vals.get('customer') and not vals.get('industry_id'):
                 raise ValidationError(_("Customers require a valid Industry."))
         return super(Partner, self).create(vals)
+
+
+class Users(models.Model):
+    _inherit = 'res.users'
+
+    @api.model
+    def create(self, vals):
+        vals['customer'] = False
+        return super(Users, self).create(vals)
