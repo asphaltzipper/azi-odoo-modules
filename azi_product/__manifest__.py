@@ -41,6 +41,7 @@ AZI Specialized Customizations to Product
     'data': [
         'data/product_data.xml',
         'views/product_views.xml',
+        'views/shelf_location_views.xml',
         'views/engineering_category_views.xml',
         'security/ir.model.access.csv',
     ],

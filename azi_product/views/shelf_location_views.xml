@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <record id="shelf_location_view" model="ir.ui.view">
+        <field name="name">shelf.location.view</field>
+        <field name="model">stock.shelf</field>
+        <field name="inherit_id" ref="shelf_location.stock_shelf_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='active']" position="after">
+                <field name="deprecated"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

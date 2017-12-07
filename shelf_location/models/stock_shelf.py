@@ -22,8 +22,10 @@ class StockShelf(models.Model):
         compute='_inactive_count')
 
     product_ids = fields.Many2many(
-        comodel_name='product.template',
-        string='Products')
+        comodel_name='product.product',
+        string='Products',
+        domain=['|', ('active', '=', True), ('active', '=', False)])
+
     _barcode_scanned = fields.Char(
         string="Barcode Scanned",
         help="Value of the last barcode scanned.",
@@ -40,9 +42,11 @@ class StockShelf(models.Model):
     @api.model
     def sl_barcode(self, barcode, sl_id):
         shelf = self.env['stock.shelf'].search([('id', '=', sl_id)])
+        import pdb
+        pdb.set_trace()
         if not shelf:
             raise UserError(_('No Shelf Found/ so Save!'))
-        product_id = self.env['product.product'].search([('barcode', '=', barcode)])
+        product_id = self.env['product.product'].with_context(active_test=False).search([('barcode', '=', barcode)])
         shelf.update({'product_ids': [(4, product_id.id)]})
 
     def button_delete_all(self):

@@ -23,6 +23,7 @@
                     <field name="product_ids">
                         <tree string="Assigned Product">
                             <field name="display_name"/>
+                            <field name="active"/>
                         </tree>
                     </field>
                 </sheet>
