@@ -17,6 +17,7 @@
         # TODO: Restrict access
         # 'security/ir.model.access.csv',
         'views/mrp_material_analysis_line_view.xml',
+        'views/product_views.xml',
         'wizards/mrp_material_analysis_view.xml',
     ],
 }
