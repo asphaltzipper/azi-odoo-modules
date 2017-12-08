@@ -7,7 +7,7 @@ odoo.define('azi_account.aziReconciliationTags', function(require){
     var _t = core._t;
     var FieldMany2ManyTags = core.form_widget_registry.get('many2many_tags');
     var FieldMany2One = core.form_widget_registry.get('many2one');
-    var FieldBoolean = core.form_widget_registry.get('boolean');
+//    var FieldSelection = core.form_widget_registry.get('selection');
 
 
     // TODO: report this bug
@@ -66,19 +66,19 @@ odoo.define('azi_account.aziReconciliationTags', function(require){
                 },
             };
             this.create_form_fields['tax_id']['index'] = 30
-            this.create_form_fields['has_receipt'] = {
-                // add has_receipt field to the reconciliation form
-                id: "has_receipt",
-                index: 35,
-                corresponding_property: "has_receipt",
-                label: _t("Receipt on File"),
-                required: false,
-                constructor: FieldBoolean,
-                field_properties: {
-                    string: _t("Receipt on File"),
-                    type: "boolean",
-                },
-            };
+//            this.create_form_fields['receipt_status'] = {
+//                // add receipt_status field to the reconciliation form
+//                id: "receipt_status",
+//                index: 35,
+//                corresponding_property: "receipt_status",
+//                label: _t("Receipt on File"),
+//                required: false,
+//                constructor: FieldSelection,
+//                field_properties: {
+//                    string: _t("Receipt on File"),
+//                    type: "selection",
+//                },
+//            };
             return this._super();
         },
 
@@ -106,8 +106,8 @@ odoo.define('azi_account.aziReconciliationTags', function(require){
                             tax_id: datum.tax_id,
                             analytic_account_id: datum.analytic_account_id,
                             analytic_tag_ids: datum.analytic_tag_ids,
-                            product_id: datum.product_id,
-                            has_receipt: datum.has_receipt
+                            product_id: datum.product_id
+//                            receipt_status: datum.receipt_status
                         }]
                     };
                     if (datum.has_second_line) {
@@ -120,8 +120,8 @@ odoo.define('azi_account.aziReconciliationTags', function(require){
                             tax_id: datum.second_tax_id,
                             analytic_account_id: datum.second_analytic_account_id,
                             analytic_tag_ids: datum.second_analytic_tag_ids,
-                            product_id: datum.second_product_id,
-                            has_receipt: datum.second_has_receipt
+                            product_id: datum.second_product_id
+//                            receipt_status: datum.second_receipt_status
                         });
                     }
                     self.presets[datum.id] = preset;
@@ -139,7 +139,7 @@ odoo.define('azi_account.aziReconciliationTags', function(require){
             for (var i=0; i<dicts.length; i++) {
                 if (lines[i].analytic_tag_ids) dicts[i]['analytic_tag_ids'] = [[6, 0, lines[i].analytic_tag_ids]];
                 if (lines[i].product_id) dicts[i]['product_id'] = lines[i].product_id;
-                if (lines[i].has_receipt) dicts[i]['has_receipt'] = true;
+//                if (lines[i].receipt_status) dicts[i]['receipt_status'] = lines[i].receipt_status;
             }
             return dicts;
         },

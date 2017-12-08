@@ -26,6 +26,7 @@ AZI Specialized Customizations to account
     'data': [
         'views/account.xml',
         'views/account_view_changes.xml',
+        'views/account_move_line_views.xml',
         'report/azi_print_check.xml',
     ],
     "installable": True,
