@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
     <record model="ir.actions.act_window" id="action_list_e_kanban">
@@ -82,17 +83,18 @@
         </field>
     </record>
 
-    <record model="ir.ui.view" id="ekb_lot_filter">
-        <field name="name">Batch Line Filter</field>
+    <record model="ir.ui.view" id="e_kanban_line_search_view">
+        <field name="name">e.kanban.line.search.view</field>
         <field name="model">stock.e_kanban_batch.line</field>
         <field name="arch" type="xml">
-            <search string="Batch Line Filter">
+            <search string="E-Kanban Batch Line Filter">
                 <field name="batch_id" string="Batch Line Filter"/>
-                <filter string='Converted' name="procurement" icon="terp-accessories-achiver" domain="[('procurement_id', '!=', False)]" />
-                <filter string='Not Converted' name="procurement" icon="terp-accessories-achiver" domain="[('procurement_id', '=', False)]" />
+                <filter string='Converted' name="procurement" domain="[('procurement_id', '!=', False)]" />
+                <filter string='Not Converted' name="no_procurement" domain="[('procurement_id', '=', False)]" />
                 <group expand='0' string='Group by...'>
                     <filter string='Supplier' domain="[]" context="{'group_by' : 'default_supplier_id'}"/>
                     <filter string='Is Kanban' domain="[]" context="{'group_by' : 'e_kanban'}"/>
+                    <filter name="group_manager" string='Product Manager' domain="[]" context="{'group_by' : 'product_manager'}"/>
                 </group>
             </search>
         </field>

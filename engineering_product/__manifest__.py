@@ -3,7 +3,7 @@
 #
 #    OpenERP Module
 #    
-#    Copyright (C) 2014 Asphalt Zipper, Inc.
+#    Copyright (C) 2017 Asphalt Zipper, Inc.
 #    Author Matt Taylor
 
 #    This program is free software: you can redistribute it and/or modify
@@ -22,27 +22,36 @@
 ##############################################################################
 
 {
-    "name": "azi_product",
+    "name": "engineering_product",
     "version": "0.1",
-    "summary": "AZI Product Customizations",
-    "category": "Inventory Control",
+    "summary": "Engineering Features for Products",
+    "category": "Engineering",
     "author": "Matt Taylor",
     "website": "http://www.asphaltzipper.com",
     'description': """
-AZI Customizations to Product
-=============================
+Engineering Features for Products
+=================================
 
-* Add Product Manager field
-* Require Unique UOM Category Name
-* Require Unique UOM Name
+* Require Unique Product Code (product.default_code)
+* Create eng code sequence
+* Create engineering categories
+* Add engineering code and revision fields
+* Constrain eng code format (using regular expression)
+* Add Deprecated field
     """,
     "depends": [
         'product',
         'stock',
-        'purchase',
+        'electronic_kanban',
+        'shelf_location',
     ],
     'data': [
+        'data/product_data.xml',
         'views/product_views.xml',
+        'views/shelf_location_views.xml',
+        'views/engineering_category_views.xml',
+        'views/e_kanban_views.xml',
+        'security/ir.model.access.csv',
     ],
     "installable": True,
     "auto_install": False,

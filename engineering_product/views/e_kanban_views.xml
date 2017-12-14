@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record model="ir.ui.view" id="e_kanban_line_engineering_product_search_view">
+        <field name="name">e.kanban.line.engineering_product.search.view</field>
+        <field name="model">stock.e_kanban_batch.line</field>
+        <field name="inherit_id" ref="electronic_kanban.e_kanban_line_search_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='no_procurement']" position="after">
+                <filter string='Deprecated' name="deprecated" icon="fa-archive" domain="[('deprecated', '!=', False)]" />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="e_kanban_engineering_form_view" model="ir.ui.view">
+        <field name="name">e.kanban.engineering.form.view</field>
+        <field name="model">stock.e_kanban_batch</field>
+        <field name="inherit_id" ref="electronic_kanban.e_kanban_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='e_kanban']" position="after">
+                <field name="deprecated"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="e_kanban_line_engineering_tree_view" model="ir.ui.view">
+        <field name="name">e.kanban.line.engineering.tree.view</field>
+        <field name="model">stock.e_kanban_batch.line</field>
+        <field name="inherit_id" ref="electronic_kanban.e_kanban_line_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='e_kanban']" position="after">
+                <field name="deprecated"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
