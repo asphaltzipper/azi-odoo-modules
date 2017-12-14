@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import api, models, fields
+from odoo import api, models, fields, _
 from odoo.exceptions import UserError
 
 
@@ -77,7 +77,8 @@ class EKanbanBatchLine(models.Model):
     product_id = fields.Many2one(
         comodel_name='product.product',
         string='Product',
-        required=True)
+        required=True,
+        domain=['|', ('active', '=', True), ('active', '=', False)])
 
     default_proc_qty = fields.Float(
         string='Bin Qty',
@@ -108,8 +109,8 @@ class EKanbanBatchLine(models.Model):
 
     product_manager = fields.Many2one(
         comodel_name='res.users',
-        readonly=True,
         related='product_id.product_manager',
+        readonly=True,
         store=True)
 
     default_supplier_id = fields.Many2one(
@@ -211,11 +212,22 @@ class EKanbanBatchLine(models.Model):
 
     @api.multi
     def action_convert_to_procurements(self):
+
+        warn_lines = self.filtered(lambda x: x.product_id.purchase_line_warn != 'no-message')
         warehouse = self.env['stock.warehouse'].search([], limit=1)
         procurement_order = self.env['procurement.order']
-        for line in self:
+        lines = self
+        if len(warn_lines) and len(self) > 1:
+            # if there is a product with a warning,
+            # and if we are converting more than one product,
+            # then we will only convert the products with no message.
+            # we will notify the user with a warning at the end
+            lines = lines.filtered(lambda x: x.product_id.purchase_line_warn == 'no-message')
+        for line in lines:
             if line.procurement_id:
                 raise UserError("Trying to Create Duplicate Order for %s" % line.product_id.display_name)
+            if line.product_id.purchase_line_warn == 'block':
+                raise UserError("Blocked: %s" % line.product_id.purchase_line_warn_msg)
             proc_name = "%s/%s" % (line.batch_id.name, line.product_id.default_code)
             line.procurement_id = procurement_order.create(
                 {
@@ -227,3 +239,26 @@ class EKanbanBatchLine(models.Model):
                     'location_id': warehouse.lot_stock_id.id,
                 }
             )
+            # if there is a warning message on this product,
+            # then the user is only converting a single line,
+            # so it's okay to return from inside the loop,
+            # since all the work is already done
+            if line.product_id.purchase_line_warn != 'no-message':
+                title = "Warning for %s" % line.product_id.default_code
+                message = line.product_id.purchase_line_warn_msg
+                self.env.user.notify_warning(message=message, title=title, sticky=True)
+                return
+
+        if len(warn_lines):
+            messages = []
+            for line in warn_lines:
+                # messages.append(
+                #     "%s\n%s: %s" % (
+                #         line.product_id.display_name,
+                #         line.product_id.purchase_line_warn,
+                #         line.product_id.purchase_line_warn_msg)
+                # )
+                messages.append(line.product_id.default_code)
+            title = "Products with Warnings were skipped and must be converted individually"
+            message = "  |  ".join(messages)
+            self.env.user.notify_warning(message=message, title=title, sticky=True)
