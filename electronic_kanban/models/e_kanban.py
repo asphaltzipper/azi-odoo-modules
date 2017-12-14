@@ -114,7 +114,7 @@ class EKanbanBatchLine(models.Model):
 
     default_supplier_id = fields.Many2one(
         string='Supplier',
-        comodel_name='product.supplierinfo',
+        comodel_name='res.partner',
         compute='_compute_default_supplier',
         store=True)
 
@@ -167,7 +167,7 @@ class EKanbanBatchLine(models.Model):
     @api.depends('product_id')
     def _compute_default_supplier(self):
         for line in self:
-            line.default_supplier_id = line.product_id.seller_ids and line.product_id.seller_ids[0]
+            line.default_supplier_id = line.product_id.seller_ids and line.product_id.seller_ids[0].name or False
 
     @api.depends('product_id')
     def _compute_rfq_qty(self):
