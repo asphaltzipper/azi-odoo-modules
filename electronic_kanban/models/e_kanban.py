@@ -97,15 +97,30 @@ class EKanbanBatchLine(models.Model):
         string='Procurement',
         readonly=True)
 
+    # dynamically updating rfq quantity
+    # rfq_line_ids = fields.One2many(
+    #     comodel_name='purchase.order.line',
+    #     inverse_name='product_id',
+    #     readonly=True,
+    #     domain = [('state', 'not in', ['done', 'purchase', 'cancel'])])
+    # rfq_qty = fields.Float(
+    #     string='Open RFQs',
+    #     readonly=True,
+    #     compute='_compute_rfq_qty',
+    #     store=True)
+
+    # static rfq quantity at the time of scanning
     rfq_qty = fields.Float(
-        string='Open RFQs',
+        string='Orig RFQ Qty',
         readonly=True,
-        required=True)
+        required=True,
+        help="Static RFQ quantity at the time of scanning the bin")
 
     incoming_qty = fields.Float(
         string='Pending Receipts',
         readonly=True,
-        required=True)
+        required=True,
+        help="Static incoming quantity, from POs or MOs, at the time of scanning the bin")
 
     product_manager = fields.Many2one(
         comodel_name='res.users',
@@ -120,9 +135,9 @@ class EKanbanBatchLine(models.Model):
         store=True)
 
     latest_rcv_date = fields.Datetime(
-        # compute='_get_static_rcv_date',
         readonly=True,
-        string='Latest Receipt')
+        string='Latest Receipt',
+        help="Latest received date, at the time of scanning the bin (static)")
 
     def _get_static_incoming(self, product_id):
         loc_id = self.env['stock.warehouse'].search([], limit=1).lot_stock_id.id
@@ -170,45 +185,38 @@ class EKanbanBatchLine(models.Model):
         for line in self:
             line.default_supplier_id = line.product_id.seller_ids and line.product_id.seller_ids[0].name or False
 
-    @api.depends('product_id')
-    def _compute_rfq_qty(self):
-        rfq_lines = self.env['purchase.order.line']
-        for line in self:
-            domain = [
-                ('product_id', '=', line.product_id.id),
-                ('state', 'not in', ['done', 'purchase', 'cancel']),
-            ]
-            rfqs = rfq_lines.search(domain)
-            qty_sum = 0
-            for rfq in rfqs:
-                qty_sum += rfq.product_qty
-            line.rfq_qty = qty_sum
+    # @api.depends('product_id', 'rfq_line_ids')
+    # def _compute_rfq_qty(self):
+    #     for line in self:
+    #         if not line.product_id:
+    #             continue
+    #         line.rfq_qty = sum(line.rfq_line_ids.mapped('product_qty'))
 
-    @api.depends('product_id')
-    def _compute_latest_rcv_date(self):
-        loc_id = self.env['stock.warehouse'].search([], limit=1).wh_input_stock_loc_id.id
-        stock_moves = self.env['stock.move']
-        for line in self:
-            domain = [
-                ('product_id', '=', line.product_id.id),
-                ('state', '=', 'done'),
-                ('location_dest_id', '=', loc_id),
-            ]
-            move = stock_moves.search(domain, order='date desc', limit=1)
-            line.rcv_date = move.date
+    # @api.depends('product_id')
+    # def _compute_latest_rcv_date(self):
+    #     loc_id = self.env['stock.warehouse'].search([], limit=1).wh_input_stock_loc_id.id
+    #     stock_moves = self.env['stock.move']
+    #     for line in self:
+    #         domain = [
+    #             ('product_id', '=', line.product_id.id),
+    #             ('state', '=', 'done'),
+    #             ('location_dest_id', '=', loc_id),
+    #         ]
+    #         move = stock_moves.search(domain, order='date desc', limit=1)
+    #         line.rcv_date = move.date
 
-    @api.depends('product_id')
-    def _compute_incoming(self):
-        loc_id = self.env['stock.warehouse'].search([], limit=1).wh_input_stock_loc_id.id
-        stock_moves = self.env['stock.move']
-        for line in self:
-            domain = [
-                ('product_id', '=', line.product_id.id),
-                ('state', 'not in', ['done', 'cancel']),
-                ('move_dest_id', '=', loc_id),
-            ]
-            moves = stock_moves.read_group(domain, ['product_id', 'product_uom_qty'], ['product_id'])
-            line.incoming_qty = sum([x['product_uom_qty'] for x in moves])
+    # @api.depends('product_id')
+    # def _compute_incoming(self):
+    #     loc_id = self.env['stock.warehouse'].search([], limit=1).wh_input_stock_loc_id.id
+    #     stock_moves = self.env['stock.move']
+    #     for line in self:
+    #         domain = [
+    #             ('product_id', '=', line.product_id.id),
+    #             ('state', 'not in', ['done', 'cancel']),
+    #             ('move_dest_id', '=', loc_id),
+    #         ]
+    #         moves = stock_moves.read_group(domain, ['product_id', 'product_uom_qty'], ['product_id'])
+    #         line.incoming_qty = sum([x['product_uom_qty'] for x in moves])
 
     @api.multi
     def action_convert_to_procurements(self):
