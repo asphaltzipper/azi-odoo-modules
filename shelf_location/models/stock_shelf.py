@@ -42,8 +42,6 @@ class StockShelf(models.Model):
     @api.model
     def sl_barcode(self, barcode, sl_id):
         shelf = self.env['stock.shelf'].search([('id', '=', sl_id)])
-        import pdb
-        pdb.set_trace()
         if not shelf:
             raise UserError(_('No Shelf Found/ so Save!'))
         product_id = self.env['product.product'].with_context(active_test=False).search([('barcode', '=', barcode)])
