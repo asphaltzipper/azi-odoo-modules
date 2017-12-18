@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- add name (Description) field to Initial Demand page on stock.picking form view -->
+    <!-- make the stock moves button always show -->
+    <!-- sort consumed materials to put serialized components at the top -->
+    <!-- show product serial tracking column -->
     <record id="view_picking_form_name" model="ir.ui.view">
         <field name="name">mrp.production.azi.form</field>
         <field name="model">mrp.production</field>
@@ -10,9 +12,12 @@
             <button name="%(mrp.action_mrp_production_moves)d" position="attributes">
                 <attribute name="attrs"/>
             </button>
+            <xpath expr="//page/field[@name='move_raw_ids']/tree" position="attributes">
+                <attribute name="default_order">has_tracking desc, product_id</attribute>
+            </xpath>
             <xpath expr="//page/field[@name='move_raw_ids']/tree/field[@name='has_tracking']" position="attributes">
                 <attribute name="invisible"/>
-                <attribute name="string">Track</attribute>
+                <attribute name="string">Tracking</attribute>
             </xpath>
         </field>
     </record>
