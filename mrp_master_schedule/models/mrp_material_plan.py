@@ -20,6 +20,27 @@ class MrpMaterialPlan(models.Model):
         help='Master Schedule Line item that created this planned order.'
     )
 
+    @api.multi
+    def procurement_create(self, proc_name, proc_warehouse):
+        proc_order = super(MrpMaterialPlan, self).procurement_create(proc_name, proc_warehouse)
+        if self.build_id and proc_order.production_id:
+
+            # set the production_id on all current copies of this schedule line
+            build_name = self.build_id.name
+            sched_lines = self.build_id.search([('name', '=', build_name), ('state', '!=', 'superseded')])
+            sched_lines.production_id = proc_order.production_id.id
+
+            # set serial number on the production_id
+            if self.build_id.lot_id:
+                import pdb
+                pdb.set_trace()
+                # filter move_finished_ids by product_id because there may be byproducts
+                move_lots = proc_order.production_id.move_finished_ids.\
+                    filtered(lambda x: x.product_id.id == self.product_id).mapped('move_lot_ids')
+                move_lots.lot_produced_id = self.build_id.lot_id
+
+        return proc_order
+
     @api.model
     def load_independent_demand(self):
         super(MrpMaterialPlan, self).load_independent_demand()
@@ -39,15 +60,15 @@ class MrpMaterialPlan(models.Model):
 
         for build in scheduled_builds:
             # create independent demand
-            new_order = self.create(
-                self._prepare_planned_order(
-                    build.product_id,
-                    1,
-                    self._get_bucket_from_date(build.date_finish),
-                    location,
-                    origin=build.name
-                )
+            vals = self._prepare_planned_order(
+                build.product_id,
+                1,
+                self._get_bucket_from_date(build.date_finish),
+                location,
+                origin=build.name
             )
+            vals['build_id'] = build.id
+            new_order = self.create(vals)
             # create dependent demand
             new_order._create_dependent_demand()
             if cr:

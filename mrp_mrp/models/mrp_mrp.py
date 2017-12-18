@@ -135,29 +135,36 @@ class MrpMaterialPlan(models.Model):
         help="Reference of the Supply/Make order that consumes this Demand/Move order.")
 
     @api.multi
+    def procurement_create(self, proc_name, proc_warehouse):
+        self.ensure_one()
+        vals = {
+                'name': proc_name,
+                'date_planned': self.date_finish,
+                'product_id': self.product_id.id,
+                'product_qty': self.product_qty,
+                'product_uom': self.product_id.uom_id.id,
+                'warehouse_id': proc_warehouse,
+                'location_id': self.location_id.id,
+                'company_id': self.location_id.company_id.id,
+                'origin': self.name,
+            }
+        return self.env['procurement.order'].create(vals)
+
+    @api.multi
     def action_convert_to_procurements(self):
         warehouse = self.env['stock.warehouse'].search([], limit=1)
         # TODO: add option to choose day of week for procurement with weekly buckets
-        procurement_order = self.env['procurement.order']
+        # proc_warehouse = plan_move.orderpoint_id.warehouse_id.id if plan_move.orderpoint_id else \
+        #     warehouse[0].id if warehouse else False
         for plan_move in self:
+            proc_warehouse = (plan_move.orderpoint_id and plan_move.orderpoint_id.warehouse_id.id) or\
+                             (warehouse and warehouse[0].id) or False
             proc_name = "user: %s\norigin: %s\nstart: %s" % (
                 plan_move.origin,
                 self.env.user.login,
                 plan_move.date_start
             )
-            procurement_order.create(
-                {
-                    'name': proc_name,
-                    'date_planned': plan_move.date_finish,
-                    'product_id': plan_move.product_id.id,
-                    'product_qty': plan_move.product_qty,
-                    'product_uom': plan_move.product_id.uom_id.id,
-                    'warehouse_id': plan_move.orderpoint_id.warehouse_id.id if plan_move.orderpoint_id else warehouse[0].id if warehouse else False,
-                    'location_id': plan_move.location_id.id,
-                    'company_id': plan_move.location_id.company_id.id,
-                    'origin': plan_move.name,
-                }
-            )
+            self.procurement_create(proc_name, proc_warehouse)
             plan_move.unlink()
 
     def _flag_make_from_procurement_rule(self, location, product):
