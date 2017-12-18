@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
+# commit b3416b0fda3847c6bbf99c2c1ec21317a51e9df8
+# Retrieved from github by cemigh on 2017-08-21:
 # https://github.com/bistaray/odoo-apps#10.0
 
 {
