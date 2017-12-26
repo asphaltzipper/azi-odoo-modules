@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<record id="mrp_material_plan_view_tree" model="ir.ui.view">
+    <field name="name">mrp.material_plan.tree</field>
+    <field name="model">mrp.material_plan</field>
+    <field name="inherit_id" ref="mrp_mrp.mrp_material_plan_view_tree"/>
+    <field name="arch" type="xml">
+        <field name="date_finish" position="after">
+            <button name="action_material_analysis" type="object" icon="fa-bar-chart" help="Show Planning Report"/>
+        </field>
+    </field>
+</record>
+
+</odoo>

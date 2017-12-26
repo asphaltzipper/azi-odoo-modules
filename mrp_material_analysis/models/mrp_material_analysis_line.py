@@ -22,6 +22,7 @@ class MrpMaterialAnalysisLine(models.TransientModel):
     tx_type = fields.Selection(
         selection=[
             ('po', 'PO'),
+            ('rfq', 'RFQ'),
             ('mo', 'MO'),
             ('pick', 'Pick'),
             ('so', 'SO'),

@@ -4,3 +4,4 @@
 
 import mrp_material_analysis_line
 import product
+import mrp_material_plan

@@ -11,6 +11,13 @@ class MrpMaterialAnalysis(models.TransientModel):
     _name = 'mrp.material.analysis'
     _description = 'Material Analysis'
 
+    def default_get(self, fields):
+        res = super(MrpMaterialAnalysis, self).default_get(fields)
+        if self._context and self._context.get('product_id'):
+            product = self.env['product.product'].browse(self._context['product_id'])
+            res['product_id'] = product.id
+        return res
+
     product_id = fields.Many2one(
         comodel_name='product.product',
         string='Product',
@@ -26,29 +33,44 @@ class MrpMaterialAnalysis(models.TransientModel):
     def _action_compute_lines(self):
         lines = []
 
+        # get RFQs
+        rfq_domain = [('product_id', '=', self.product_id.id), ('state', '=', 'draft')]
+        rfq_lines = self.env['purchase.order.line'].search(rfq_domain)
+        for line in rfq_lines:
+            lines.append({
+                'product_id': self.product_id.id,
+                'tx_type': 'rfq',
+                'tx_date': line.date_planned,
+                'product_qty': line.product_uom._compute_quantity(qty=line.product_qty, to_unit=line.product_id.uom_id),
+                'available_qty': 0,
+                'late': line.date_planned < datetime.now().strftime(DEFAULT_SERVER_DATETIME_FORMAT),
+                'status': 'actual',
+                'origin': line.order_id.name,
+            })
+
         # get stock moves
         move_domain = [('product_id', '=', self.product_id.id), ('state', 'not in', ['cancel', 'done'])]
         stock_moves = self.env['stock.move'].search(move_domain)
         for move in stock_moves:
             if move.location_id.usage == 'supplier':
                 tx_type = 'po'
-                qty_factor = 1
+                qty_sign = 1
             elif move.location_id.usage == 'production':
                 tx_type = 'mo'
-                qty_factor = 1
+                qty_sign = 1
             elif move.location_dest_id.usage == 'production':
                 tx_type = 'pick'
-                qty_factor = -1
+                qty_sign = -1
             elif move.location_dest_id.usage == 'customer':
                 tx_type = 'so'
-                qty_factor = -1
+                qty_sign = -1
             else:
                 continue
             lines.append({
                 'product_id': self.product_id.id,
                 'tx_type': tx_type,
                 'tx_date': move.date,
-                'product_qty': qty_factor * move.product_qty,
+                'product_qty': qty_sign * move.product_qty,
                 'available_qty': 0,
                 'late': move.date < datetime.now().strftime(DEFAULT_SERVER_DATETIME_FORMAT),
                 'status': 'actual',
@@ -62,20 +84,21 @@ class MrpMaterialAnalysis(models.TransientModel):
             for move in plan_moves:
                 if move.move_type == 'supply' and move.make:
                     tx_type = 'pmo'
-                    qty_factor = 1
+                    qty_sign = 1
                 elif move.move_type == 'supply' and not move.make:
                     tx_type = 'ppo'
-                    qty_factor = 1
+                    qty_sign = 1
                 elif move.move_type == 'demand':
                     tx_type = 'ppick'
-                    qty_factor = -1
+                    qty_sign = -1
                 else:
                     continue
                 lines.append({
                     'product_id': self.product_id.id,
                     'tx_type': tx_type,
                     'tx_date': move.date_finish,
-                    'product_qty': qty_factor * move.product_qty,
+                    # we always plan in the stocking unit of measure
+                    'product_qty': qty_sign * move.product_qty,
                     'available_qty': 0,
                     'late': move.date_finish < datetime.now().strftime(DEFAULT_SERVER_DATETIME_FORMAT),
                     'status': 'planned',

@@ -18,11 +18,7 @@
         # 'security/ir.model.access.csv',
         'views/mrp_material_analysis_line_view.xml',
         'views/product_views.xml',
+        'views/mrp_material_plan_views.xml',
         'wizards/mrp_material_analysis_view.xml',
     ],
 }
-
-
-
-
-
