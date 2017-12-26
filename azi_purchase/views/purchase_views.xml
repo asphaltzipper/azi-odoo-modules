@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
 <odoo>
+
+    <!-- hide state, untaxed and show send_date -->
     <record model="ir.ui.view" id="purchase_order_send_date">
         <field name="name">purchase.order.send.date</field>
         <field name="model">purchase.order</field>
@@ -17,6 +19,7 @@
         </field>
     </record>
 
+    <!-- add a filter on email sent -->
     <record id="purchase_order_search_send_filter" model="ir.ui.view">
         <field name="name">purchase.order.search.send.filter</field>
         <field name="model">purchase.order</field>
@@ -26,6 +29,55 @@
                 <filter string='Email Sent' name="is_sent" domain="[('send_date', '!=', False)]"/>
                 <filter string='Email Not Sent' name="not_sent" domain="[('send_date', '=', False)]"/>
             </xpath>
+        </field>
+    </record>
+
+    <!-- add more detail to purchase order line tree -->
+    <record id="purchase_order_line_azi_tree" model="ir.ui.view">
+        <field name="name">purchase.order.line.azi.tree</field>
+        <field name="model">purchase.order.line</field>
+        <field name="inherit_id" ref="purchase.purchase_order_line_tree"/>
+        <field name="arch" type="xml">
+            <field name="product_qty" position="before">
+                <field name="qty_received" string="Rcv'd Qty"/>
+                <field name="qty_invoiced"/>
+            </field>
+            <field name="product_uom" position="attributes">
+                <attribute name="string">UOM</attribute>
+            </field>
+            <field name="date_planned" position="after">
+                <field name="state"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- show RFQs in purchase order line tree -->
+    <record model="ir.actions.act_window" id="purchase.action_purchase_line_product_tree">
+        <field name="domain">[('product_id.product_tmpl_id','in',active_ids)]</field>
+    </record>
+
+    <!-- load purchase order line tree from product variant button -->
+    <record model="ir.actions.act_window" id="action_purchase_line_product_variant_tree">
+        <field name="context">{}</field>
+        <field name="domain">[('product_id','in',active_ids)]</field>
+        <field name="name">Purchases</field>
+        <field name="res_model">purchase.order.line</field>
+        <field name="view_id" ref="purchase.purchase_order_line_tree"/>
+    </record>
+
+    <!-- add Purchases button to product variant form -->
+    <record id="view_product_variant_purchase_buttons_form" model="ir.ui.view">
+        <field name="name">product.variant.purchase.button.inherit</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view"/>
+        <field name="groups_id" eval="[(4, ref('purchase.group_purchase_user'))]"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+               <button class="oe_stat_button" name="%(azi_purchase.action_purchase_line_product_variant_tree)d"
+                   type="action" icon="fa-shopping-cart">
+                   <field string="Purchases" name="purchase_count" widget="statinfo"/>
+               </button>
+            </div>
         </field>
     </record>
 

@@ -12,6 +12,21 @@ class PurchaseOrder(models.Model):
     )
 
 
+class ProductProduct(models.Model):
+    _inherit = 'product.product'
+
+    @api.multi
+    def _purchase_count(self):
+        """Include draft purchases in the count"""
+        domain = [
+            ('state', 'in', ['draft', 'purchase', 'done']),
+            ('product_id', 'in', self.mapped('id')),
+        ]
+        PurchaseOrderLines = self.env['purchase.order.line'].search(domain)
+        for product in self:
+            product.purchase_count = len(PurchaseOrderLines.filtered(lambda r: r.product_id == product).mapped('order_id'))
+
+
 class MailComposeMessage(models.TransientModel):
     _inherit = 'mail.compose.message'
 
