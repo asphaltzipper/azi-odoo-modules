@@ -1,7 +1,5 @@
 -
   !python {model: ir.model.data}: |
-      import pdb
-      pdb.set_trace()
       xml_id = self.search([('module', '=', 'mrp_workorder'), ('name', '=', 'mrp_planning_menu_root')])
       if not xml_id:
           # create the menu item
@@ -18,4 +16,4 @@
               'res_id': res_id,
           })
       # avoid the xml id and the associated resource being dropped by the orm by manually making a hit on it
-      self._update_dummy(model='ir.ui.menu', module='mrp_workorder', name='mrp_planning_menu_root')
+      self._update_dummy(model='ir.ui.menu', module='mrp_workorder', xml_id='mrp_planning_menu_root')
