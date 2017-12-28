@@ -6,6 +6,13 @@ from odoo import models, fields, api
 class ProductionLot(models.Model):
     _inherit = 'stock.production.lot'
 
+    document_ids = fields.One2many(
+        comodel_name='ir.attachment',
+        inverse_name='res_id',
+        domain=[('res_model', '=', 'stock.production.lot'), ('type', '=', 'binary')],
+        auto_join=True,
+        string="Documents")
+
     partner_id = fields.Many2one(
         comodel_name='res.partner',
         string='Customer',

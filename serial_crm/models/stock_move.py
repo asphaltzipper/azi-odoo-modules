@@ -20,5 +20,6 @@ class StockMove(models.Model):
 class StockMoveLots(models.Model):
     _inherit = 'stock.move.lots'
 
+    # TODO: move this. we will create our own wizard to complete the serials and assign labor
     lot_id = fields.Many2one(domain="[('product_id', '=', product_id), ('state', '=', 'inventory']")
     lot_produced_id = fields.Many2one(domain="[('product_id', '=', product_id), ('state', '=', 'assigned']")
