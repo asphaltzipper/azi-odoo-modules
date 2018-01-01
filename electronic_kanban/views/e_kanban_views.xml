@@ -110,11 +110,11 @@ if env.context.get('active_model') == 'stock.e_kanban_batch.line' and env.contex
     </record>
 
     <record model="ir.values" id="convert_to_procurements_menu">
-    <field name="name">convert_to_procurements</field>
-    <field name="key2">client_action_multi</field>
-    <field name="key">action</field>
-    <field name="model">stock.e_kanban_batch.line</field>
-    <field name="value" eval="'ir.actions.server,%d' % convert_to_procurements_action"/>
-</record>
+        <field name="name">convert_to_procurements</field>
+        <field name="key2">client_action_multi</field>
+        <field name="key">action</field>
+        <field name="model">stock.e_kanban_batch.line</field>
+        <field name="value" eval="'ir.actions.server,%d' % convert_to_procurements_action"/>
+    </record>
 
 </odoo>
