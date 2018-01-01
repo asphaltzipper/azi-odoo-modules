@@ -25,7 +25,12 @@ class ProductionLot(models.Model):
         inverse_name='lot_id',
         string='Owners')
 
-    notes = fields.Text(string="Notes")
+    note_ids = fields.One2many(
+        comodel_name='stock.lot.note',
+        inverse_name='lot_id',
+        string='Notes')
+
+    description = fields.Text(string="Description")
 
     change_ids = fields.One2many(
         comodel_name='stock.lot.change',
@@ -43,7 +48,7 @@ class ProductionLot(models.Model):
             ('internal', 'Inventory'),
             ('production', 'WIP'),
             ('customer', 'Shipped'),
-            ('inventory', 'Scrapped'),
+            ('inventory', 'Lost/Scrapped'),
             ('open', 'Open'),
             ('closed', 'Closed'),
         ],
@@ -54,7 +59,7 @@ class ProductionLot(models.Model):
              "Inventory: SERIAL moved to stock location\n"
              "WIP: SERIAL consumed in production location\n"
              "Shipped: SERIAL moved to customer location\n"
-             "Scrapped: SERIAL moved to scrap location\n"
+             "Lost/Scrapped: SERIAL moved to inventory loss or scrap location\n"
              "Open: LOT open for transactions\n"
              "Open: LOT closed for transactions\n")
 

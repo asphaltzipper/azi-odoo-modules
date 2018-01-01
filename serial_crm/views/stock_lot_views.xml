@@ -46,7 +46,17 @@
                     </field>
                 </page>
                 <page name="notes" string="Notes">
-                    <field name="notes"/>
+                    <group col="1">
+                        <field name="description"/>
+                        <field name="note_ids" nolabel="1" context="{'default_lot_id': active_id}">
+                            <tree editable="top">
+                                <field name="create_uid" readonly="1"/>
+                                <field name="create_date" widget="date" readonly="1"/>
+                                <field name="name"/>
+                                <field name="lot_id" invisible="1"/>
+                            </tree>
+                        </field>
+                    </group>
                 </page>
                 <page name="Owner" string="Owner">
                     <field name="owner_ids">
