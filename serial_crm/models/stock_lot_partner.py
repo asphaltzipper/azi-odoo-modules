@@ -21,3 +21,5 @@ class StockLotPartner(models.Model):
         string='Partner',
         required='True',
         domain=[('customer', '=', True)])
+
+    note = fields.Char(string="Note")

@@ -63,6 +63,10 @@ class ProductionLot(models.Model):
              "Open: LOT open for transactions\n"
              "Open: LOT closed for transactions\n")
 
+    sale_order_ids = fields.Many2many(
+        comodel_name='sale.order',
+        string="Sale Orders")
+
     @api.depends('owner_ids')
     def _compute_current_owner(self):
         for lot in self:
