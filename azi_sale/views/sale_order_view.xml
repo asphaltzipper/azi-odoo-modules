@@ -35,4 +35,16 @@
     </field>
 </record>
 
+    <record id="azi_account_invoice_form" model="ir.ui.view">
+        <field name="name">azi.account.invoice.form</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="sale.account_invoice_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_shipping_id']" position="attributes">
+                <attribute name="context">{'show_address': 1}</attribute>
+                <attribute name="options">{&quot;always_reload&quot;: True}</attribute>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>
