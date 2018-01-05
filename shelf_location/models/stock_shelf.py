@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 
 
@@ -22,7 +22,7 @@ class StockShelf(models.Model):
         compute='_inactive_count')
 
     product_ids = fields.Many2many(
-        comodel_name='product.product',
+        comodel_name='product.template',
         string='Products',
         domain=['|', ('active', '=', True), ('active', '=', False)])
 
@@ -44,8 +44,11 @@ class StockShelf(models.Model):
         shelf = self.env['stock.shelf'].search([('id', '=', sl_id)])
         if not shelf:
             raise UserError(_('No Shelf Found/ so Save!'))
-        product_id = self.env['product.product'].with_context(active_test=False).search([('barcode', '=', barcode)])
-        shelf.update({'product_ids': [(4, product_id.id)]})
+        product_id = self.env['product.template'].with_context(active_test=False).search([('barcode', '=', barcode)])
+        if product_id:
+            shelf.update({'product_ids': [(4, product_id.id)]})
+        else:
+            self.env.user.notify_warning(message=barcode, title="Unknown Barcode", sticky=True)
 
     def button_delete_all(self):
         self.ensure_one()
