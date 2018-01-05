@@ -59,11 +59,14 @@ class EKanbanBatch(models.Model):
         if not batch:
             raise UserError(_('No Batch Found/ so Save!'))
         product_id = self.env['product.product'].search([('barcode', '=', barcode)])
-        line_values = {
-            'product_id': product_id.id,
-            'batch_id': batch.id,
-        }
-        batch.update({'line_ids': [(0, 0, line_values)]})
+        if product_id:
+            line_values = {
+                'product_id': product_id.id,
+                'batch_id': batch.id,
+            }
+            batch.update({'line_ids': [(0, 0, line_values)]})
+        else:
+            self.env.user.notify_warning(message=barcode, title="Unknown Barcode", sticky=True)
 
 
 class EKanbanBatchLine(models.Model):
