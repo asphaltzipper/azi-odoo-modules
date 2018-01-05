@@ -5,7 +5,7 @@
         <t t-foreach="docs" t-as="o">
             <t t-call="report.internal_layout">
                 <div class="page">
-                    <div class="oe_structure"/>
+                    <!--<div class="oe_structure"/>-->
 
                     <h3>Shelf : <span t-field="o.name"/></h3>
 
@@ -45,6 +45,23 @@
                         </tbody>
                     </table>
                     <div class="oe_structure"/>
+                </div>
+                <div class="footer">
+                    <div class="row">
+                        <div class="col-xs-2 pull-left">
+                            <small>
+                                <spat t-field="o.name"/>
+                            </small>
+                        </div>
+                        <div class="col-xs-2 pull-right">
+                            <small>
+                                <span>Page</span>
+                                <span class="page" />
+                                of
+                                <span class="topage" />
+                            </small>
+                        </div>
+                    </div>
                 </div>
             </t>
         </t>
