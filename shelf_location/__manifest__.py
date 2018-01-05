@@ -20,7 +20,7 @@ Shelf Location
         'views/product_views.xml',
         'views/shelf_location_barcode_template.xml',
         'security/ir.model.access.csv',
-        'report/report_layout.xml',
+        'report/shelf_report.xml',
         'report/mrp_production_templates.xml',
     ],
     'installable': True,
