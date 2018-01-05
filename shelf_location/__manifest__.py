@@ -22,6 +22,7 @@ Shelf Location
         'security/ir.model.access.csv',
         'report/shelf_report.xml',
         'report/mrp_production_templates.xml',
+        'report/shelf_count_report_template.xml',
     ],
     'installable': True,
     'auto_install': False,

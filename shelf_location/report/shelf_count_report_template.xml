@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="stock_shelf_count_sheets">
+    <t t-call="report.html_container">
+        <t t-foreach="docs" t-as="o">
+            <t t-call="report.internal_layout">
+                <div class="page">
+                    <div class="oe_structure"/>
+
+                    <h3>Shelf : <span t-field="o.name"/></h3>
+
+                    <p>Items: <span t-field="o.product_count"/></p>
+                    <table class="table table-condensed">
+                        <thead style="display: table-header-group;">
+                            <tr>
+                                <th><strong>Code</strong></th>
+                                <th><strong>Name</strong></th>
+                                <th><strong>Deprecated</strong></th>
+                                <th><strong>UOM</strong></th>
+                                <th><strong>OnHand</strong></th>
+                                <th><strong>Count</strong></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="o.product_ids" t-as="line">
+                                <td>
+                                    <span t-field="line.default_code"/>
+                                </td>
+                                <td>
+                                    <span t-field="line.name"/>
+                                </td>
+                                <td>
+                                    <t t-if="line.deprecated">Yes</t>
+                                </td>
+                                <td>
+                                    <span t-field="line.uom_id.name"/>
+                                </td>
+                                <td>
+                                    <t t-if="line.qty_available">Yes</t>
+                                </td>
+                                <td style="padding:5px 30px;">
+                                    <span> </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="oe_structure"/>
+                </div>
+            </t>
+        </t>
+    </t>
+</template>
+</odoo>

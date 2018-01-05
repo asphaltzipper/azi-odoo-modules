@@ -5,3 +5,4 @@
 import product
 import engineering_category
 import e_kanban
+import stock_shelf

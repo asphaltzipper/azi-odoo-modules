@@ -1,15 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
 
-        <report
-            string="Azi Production Order"
-            id="action_report_production_order_azi"
-            model="mrp.production"
-            name="shelf_location.report_mrporder_azi"
-            file="shelf_location.report.mrp_production_templates"
-            report_type="qweb-pdf"
-        />
+    <report
+        string="Azi Production Order"
+        id="action_report_production_order_azi"
+        model="mrp.production"
+        name="shelf_location.report_mrporder_azi"
+        file="shelf_location.report.mrp_production_templates"
+        report_type="qweb-pdf"
+    />
 
-    </data>
+    <record id="paperformat_landscape_us" model="report.paperformat">
+        <field name="name">US Letter Landscape</field>
+        <field name="default" eval="True" />
+        <field name="format">Letter</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Landscape</field>
+        <field name="margin_top">25</field>
+        <field name="margin_bottom">12</field>
+        <field name="margin_left">12</field>
+        <field name="margin_right">12</field>
+        <field name="header_line" eval="False" />
+        <field name="header_spacing">35</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <report
+        string="Count Sheets"
+        id="action_report_shelf_count_sheets"
+        model="stock.shelf"
+        name="shelf_location.stock_shelf_count_sheets"
+        file="shelf_location.report.shelf_count_report_template"
+        report_type="qweb-pdf"
+        paperformat="paperformat_landscape_us"
+    />
+
 </odoo>
