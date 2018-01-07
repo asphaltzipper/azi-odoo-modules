@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-<template id="stock_shelf_count_sheets">
+<template id="shelf_product_listing">
     <t t-call="report.html_container">
         <t t-foreach="docs" t-as="o">
             <t t-call="report.internal_layout">

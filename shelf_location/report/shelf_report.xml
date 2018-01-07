@@ -17,9 +17,9 @@
         <field name="page_height">0</field>
         <field name="page_width">0</field>
         <field name="orientation">Landscape</field>
-        <field name="margin_top">25</field>
+        <field name="margin_top">12</field>
         <field name="margin_bottom">12</field>
-        <field name="margin_left">12</field>
+        <field name="margin_left">25</field>
         <field name="margin_right">12</field>
         <field name="header_line" eval="False" />
         <field name="header_spacing">35</field>
@@ -27,11 +27,21 @@
     </record>
 
     <report
-        string="Count Sheets"
-        id="action_report_shelf_count_sheets"
+        string="Product Listing"
+        id="action_report_shelf_product_listing"
         model="stock.shelf"
-        name="shelf_location.stock_shelf_count_sheets"
-        file="shelf_location.report.shelf_count_report_template"
+        name="shelf_location.shelf_product_listing"
+        file="shelf_location.report.shelf_product_listing_templates"
+        report_type="qweb-pdf"
+        paperformat="paperformat_landscape_us"
+    />
+
+    <report
+        string="Shelf Count Sheets"
+        id="action_report_shelf_count_sheets"
+        model="stock.shelf.products"
+        name="shelf_location.shelf_count_sheets"
+        file="shelf_location.report.shelf_count_sheets_templates"
         report_type="qweb-pdf"
         paperformat="paperformat_landscape_us"
     />

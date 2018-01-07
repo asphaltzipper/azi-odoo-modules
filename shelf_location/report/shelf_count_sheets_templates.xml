@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<template id="shelf_count_sheets">
+    <t t-call="report.html_container">
+        <t t-foreach="docs" t-as="shelf">
+            <t t-call="report.internal_layout">
+                <div class="page">
+                    <h3>Shelf : <span t-esc="shelf['shelf'].shelf_id.name"/></h3>
+                    <p>Items: <span t-esc="shelf['prod_count']"/></p>
+                    <table class="table table-condensed">
+                        <thead style="display: table-header-group;">
+                            <tr>
+                                <th><strong>Code</strong></th>
+                                <th><strong>Name</strong></th>
+                                <th><strong>Deprecated</strong></th>
+                                <th><strong>UOM</strong></th>
+                                <th><strong>OnHand</strong></th>
+                                <th><strong>Count</strong></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="shelf['products']" t-as="line">
+                                <td>
+                                    <span t-field="line.default_code"/>
+                                </td>
+                                <td>
+                                    <span t-field="line.product_name"/>
+                                </td>
+                                <td>
+                                    <t t-if="line.deprecated">Yes</t>
+                                </td>
+                                <td>
+                                    <span t-field="line.uom_id.name"/>
+                                </td>
+                                <td>
+                                    <t t-if="line.location_qty">Yes</t>
+                                </td>
+                                <td style="padding:5px 30px;">
+                                    <span> </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="footer">
+                    <div class="row">
+                        <div class="col-xs-2 pull-left">
+                            <small>
+                                <spat t-esc="shelf['shelf'].shelf_id.name"/>
+                            </small>
+                        </div>
+                        <div class="col-xs-2 pull-right">
+                            <small>
+                                <span>Page</span>
+                                <span class="page" />
+                                of
+                                <span class="topage" />
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </t>
+</template>
+
+</odoo>
