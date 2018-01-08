@@ -7,7 +7,7 @@ from odoo.addons import decimal_precision as dp
 class StockShelfProducts(models.Model):
     _name = 'stock.shelf.products'
     _auto = False
-    _order = 'shelf_id, product_id'
+    _order = 'shelf_id, default_code, product_name'
 
     # these fields selected from the database view
     shelf_id = fields.Many2one(
@@ -70,21 +70,21 @@ class StockShelfProducts(models.Model):
         store=True)
 
     def group_shelf_products(self):
-        res = {}
         # res = {
-        #   shelf_id1: {
-        #     'shelf': '',
-        #     'products': [],
+        #   shelf_name1: {
+        #     'shelf_name': '',
+        #     'products': set(),
         #     'prod_count': 0,
         #   },
-        #   shelf_id2: {
+        #   shelf_name2: {
+        shelves = {x: {'shelf_name': x, 'prod_count': 0, 'products': self.env['stock.shelf.products']} for x in self.mapped(lambda r: r.shelf_id.name)}
         for line in self:
-            if res.get(line.shelf_id.id):
-                res[line.shelf_id.id]['products'].append(line)
-                res[line.shelf_id.id]['prod_count'] += 1
-            else:
-                res[line.shelf_id.id] = {'shelf': line, 'products': [line], 'prod_count': 1}
-        return res.values()
+            shelves[line.shelf_id.name]['products'] |= line
+            shelves[line.shelf_id.name]['prod_count'] += 1
+        keys = shelves.keys()
+        keys.sort()
+        res = [shelves[k] for k in keys]
+        return res
 
     @api.model_cr
     def init(self):
