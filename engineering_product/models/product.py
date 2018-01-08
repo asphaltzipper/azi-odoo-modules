@@ -159,19 +159,21 @@ class ProductProduct(models.Model):
 
     @api.depends('eng_code', 'eng_rev')
     def _get_eng_code(self):
-        category = self.product_tmpl_id.categ_id
-        if self.eng_code and category.eng_management:
-            self.default_code = self.eng_code +\
-                                category.rev_delimiter +\
-                                self.eng_rev
+        for prod in self:
+            category = prod.product_tmpl_id.categ_id
+            if prod.eng_code and category.eng_management:
+                prod.default_code = prod.eng_code +\
+                                    category.rev_delimiter +\
+                                    prod.eng_rev
 
     @api.depends('default_code', 'eng_code', 'eng_rev')
     def _set_eng_code(self):
-        if self.product_tmpl_id.categ_id.eng_management:
-            self.eng_code, self.eng_rev = self._parse_default_code(
-                self.default_code,
-                self.product_tmpl_id.categ_id.def_code_regex
-            )
+        for prod in self:
+            if prod.product_tmpl_id.categ_id.eng_management:
+                prod.eng_code, prod.eng_rev = prod._parse_default_code(
+                    prod.default_code,
+                    prod.product_tmpl_id.categ_id.def_code_regex
+                )
 
     def _parse_default_code(self, default_code, def_code_regex):
         code_match = re.match(def_code_regex, default_code)
