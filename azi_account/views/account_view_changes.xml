@@ -57,4 +57,17 @@
         </field>
     </record>
 
+    <record model="ir.ui.view" id="invoice_so_reference">
+        <field name="name">account.invoice.so.reference</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.invoice_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/notebook/page/group/group/field[@name='name']" position="replace">
+            </xpath>
+            <xpath expr="//sheet/group/group/field[@name='user_id']" position="before">
+                <field name="name"/>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>
