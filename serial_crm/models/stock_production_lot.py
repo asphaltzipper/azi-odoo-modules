@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api
+from odoo.exceptions import UserError
 
 
 class ProductionLot(models.Model):
@@ -72,3 +73,8 @@ class ProductionLot(models.Model):
         for lot in self:
             owners = lot.owner_ids.sorted(key=lambda r: r.owner_date, reverse=True)
             lot.partner_id = owners and owners[0].partner_id or False
+
+    def get_next_serial(self):
+        if not self.product_id:
+            raise UserError(_("Product is required"))
+        self.name = self.env['ir.sequence'].next_by_code('azi.fg.serial')

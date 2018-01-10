@@ -21,6 +21,7 @@
             <xpath expr="//group[@name='main_group']/group" position="inside">
                 <field name="state"/>
                 <field name="partner_id" options="{'no_create': True, 'no_create_edit': True}"/>
+                <button string="Next Serial" class="oe_edit_only oe_highlight" name="get_next_serial" help="Add Next Serial Number" type="object"/>
             </xpath>
             <notebook position="inside">
                 <page name="changes" string="BOM Changes">
