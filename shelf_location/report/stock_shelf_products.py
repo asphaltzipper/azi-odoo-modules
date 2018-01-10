@@ -34,6 +34,22 @@ class StockShelfProducts(models.Model):
         string='Description',
         related='product_id.name')
 
+    # pretend this is a stored related field so the ORM will provide the alias
+    # caused errors when updating the product type on the product form
+    # product_type = fields.Selection(
+    #     string='Product Type',
+    #     related='product_id.type',
+    #     required=True)
+
+    product_type = fields.Selection(
+        # selection=dict(self.env['product.template'].fields_get(allfields=['type'])['type']['selection'])['key'],
+        selection=[
+            ('product', 'Stockable'),
+            ('consu', 'Consumable'),
+            ('service', 'Service')],
+        string='Product Type',
+        required=True)
+
     # the database view gets a default code even when the product.product is not active
     default_code = fields.Char(
         string='Internal Reference',
@@ -61,13 +77,6 @@ class StockShelfProducts(models.Model):
         comodel_name='stock.location',
         string='Location',
         required=True)
-
-    # pretend this is a stored related field so the ORM will provide the alias
-    product_type = fields.Selection(
-        string='Product Type',
-        related='product_id.type',
-        required=True,
-        store=True)
 
     def group_shelf_products(self):
         # res = {
