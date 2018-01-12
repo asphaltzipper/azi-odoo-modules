@@ -28,6 +28,7 @@ AZI Specialized Customizations to account
         'views/account_view_changes.xml',
         'views/account_move_line_views.xml',
         'report/azi_print_check.xml',
+        'report/report_invoice.xml',
     ],
     "installable": True,
     "auto_install": False,
