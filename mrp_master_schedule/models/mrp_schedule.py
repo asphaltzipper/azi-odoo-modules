@@ -216,6 +216,8 @@ class MrpScheduleLine(models.Model):
                               " Completed MfgOrder is not allowed."))
 
     def get_next_serial(self):
+        if self.lot_id:
+            raise UserError(_("Must Delete existing Serial Number."))
         if not self.product_id:
             raise UserError(_("Product is required"))
         self.lot_id = self.env['stock.production.lot'].create({
