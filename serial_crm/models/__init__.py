@@ -6,5 +6,4 @@ import stock_lot_note
 import res_partner
 import stock_lot_partner
 import mrp_repair
-import stock_move
 import sale_order

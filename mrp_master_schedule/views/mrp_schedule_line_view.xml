@@ -3,7 +3,6 @@
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 
 <odoo>
-<data>
 
 <record id="mrp_schedule_line_view_search" model="ir.ui.view">
     <field name="name">mrp.schedule.line.search</field>
@@ -155,11 +154,10 @@
 </record>
 
 <menuitem id="mrp_schedule_line_menu"
-    name="Schedule Lines"
+    name="All Schedule Lines"
     sequence="1"
     action="mrp_schedule_line_action"
     parent="mrp_mrp.stock_planning_menu"
     groups="stock.group_stock_user"/>
 
-</data>
 </odoo>

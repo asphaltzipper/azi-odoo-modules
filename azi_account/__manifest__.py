@@ -18,16 +18,15 @@ AZI Specialized Customizations to account
 * Add fields on reconciliation form
     * Analytic Tags
     * Product
-    * Receipt on File
+* Add Receipt on File field to journal item
 * Add menu item for account types
 * Reformat check
     """,
-    "depends": ['account', 'l10n_us_check_printing'],
+    "depends": ['account'],
     'data': [
         'views/account.xml',
         'views/account_view_changes.xml',
         'views/account_move_line_views.xml',
-        'report/azi_print_check.xml',
         'report/report_invoice.xml',
     ],
     "installable": True,

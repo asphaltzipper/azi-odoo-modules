@@ -10,5 +10,4 @@ class Repair(models.Model):
         string="Move Date",
         related='move_id.date',
         readonly=True,
-        store=True
-    )
+        store=True)

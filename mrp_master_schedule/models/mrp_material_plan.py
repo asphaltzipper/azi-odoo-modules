@@ -32,8 +32,6 @@ class MrpMaterialPlan(models.Model):
 
             # set serial number on the production_id
             if self.build_id.lot_id:
-                import pdb
-                pdb.set_trace()
                 # filter move_finished_ids by product_id because there may be byproducts
                 move_lots = proc_order.production_id.move_finished_ids.\
                     filtered(lambda x: x.product_id.id == self.product_id).mapped('move_lot_ids')

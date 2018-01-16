@@ -50,19 +50,18 @@ class ProductionLot(models.Model):
             ('production', 'WIP'),
             ('customer', 'Shipped'),
             ('inventory', 'Lost/Scrapped'),
-            ('open', 'Open'),
-            ('closed', 'Closed'),
+            ('lot', 'Lot'),
         ],
+        readonly=True,
         string='Status',
-        required=True,
-        default='assigned',
+        compute='_compute_state',
+        store=True,
         help="Assigned: product assigned, no stock moves\n"
              "Inventory: SERIAL moved to stock location\n"
              "WIP: SERIAL consumed in production location\n"
              "Shipped: SERIAL moved to customer location\n"
              "Lost/Scrapped: SERIAL moved to inventory loss or scrap location\n"
-             "Open: LOT open for transactions\n"
-             "Open: LOT closed for transactions\n")
+             "Lot: multi-unit lot")
 
     sale_order_ids = fields.Many2many(
         comodel_name='sale.order',
@@ -78,3 +77,17 @@ class ProductionLot(models.Model):
         if not self.product_id:
             raise UserError(_("Product is required"))
         self.name = self.env['ir.sequence'].next_by_code('azi.fg.serial')
+
+    @api.multi
+    @api.depends('quant_ids')
+    def _compute_state(self):
+        for serial in self:
+            loc = serial.quant_ids.mapped('location_id')
+            if not loc:
+                serial.state = 'assigned'
+                continue
+            if len(loc) > 1 or len(serial.quant_ids) > 1:
+                serial.state = 'lot'
+                continue
+            if loc.usage in ['internal', 'production', 'customer', 'inventory']:
+                serial.state = loc.usage

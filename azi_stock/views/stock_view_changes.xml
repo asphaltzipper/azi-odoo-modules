@@ -26,7 +26,7 @@
         </field>
     </record>
 
-    <!-- Add Creation Date Column -->
+    <!-- Show Creation Date Column on stock picking form -->
     <record id="stock_picking_creation_date" model="ir.ui.view">
         <field name="name">stock.picking.creation.date.tree</field>
         <field name="model">stock.picking</field>
@@ -35,6 +35,21 @@
             <field name="date" position="attributes">
                 <attribute name="invisible">False</attribute>
             </field>
+        </field>
+    </record>
+
+    <!-- Allow creating serials on inventory adjustments -->
+    <record id="view_inventory_azi_form" model="ir.ui.view">
+        <field name="name">stock.inventory.azi.form</field>
+        <field name="model">stock.inventory</field>
+        <field name="inherit_id" ref="stock.view_inventory_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/group/group/field[@name='lot_id']" position="attributes">
+                <attribute name="options">{'create_edit': True}</attribute>
+            </xpath>
+            <xpath expr="//notebook/page/field/tree/field[@name='prod_lot_id']" position="attributes">
+                <attribute name="options">{'create_edit': True}</attribute>
+            </xpath>
         </field>
     </record>
 

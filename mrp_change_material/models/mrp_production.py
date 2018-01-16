@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import api, models
+from odoo import api, models, _
 from odoo.tools import float_round
 from odoo.exceptions import UserError
 

@@ -222,3 +222,16 @@ class MrpScheduleLine(models.Model):
             'name': self.env['ir.sequence'].next_by_code('azi.fg.serial'),
             'product_id': self.product_id.id
         })
+
+    @api.model
+    def create(self, vals):
+        sched_id = vals.get('schedule_id') or self._context.get('default_schedule_id')
+        if self.env['mrp.schedule'].browse(sched_id).state != 'pending':
+            raise UserError(_("You can only create schedule lines for a pending schedule"))
+        return super(MrpScheduleLine, self).create(vals)
+
+    @api.multi
+    def unlink(self):
+        if any(x != 'pending' for x in self.mapped('schedule_id.state')):
+            raise UserError(_("You can only delete schedule lines for a pending schedule"))
+        return super(MrpScheduleLine, self).unlink()
