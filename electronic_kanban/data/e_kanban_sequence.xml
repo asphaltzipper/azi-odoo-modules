@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <odoo>
-    <data>
+    <data noupdate="1">
 
         <record id="e_kanban_sequence" model="ir.sequence">
             <field name="name">E Kanban Sequence</field>
