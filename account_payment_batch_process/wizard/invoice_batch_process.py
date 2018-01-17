@@ -186,6 +186,7 @@ class AccountRegisterPayments(models.TransientModel):
                                  'account_payment_method_check'):
                 res.update({
                     'check_amount_in_words': group_data['total_check_amount_in_words'] or '',  # noqa
+                    'check_manual_sequencing': self.check_manual_sequencing,
                 })
             return res
 
