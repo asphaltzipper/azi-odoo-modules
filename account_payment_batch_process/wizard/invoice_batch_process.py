@@ -192,11 +192,16 @@ class AccountRegisterPayments(models.TransientModel):
     @api.multi
     def make_payments(self):
         # Make group data either for Customers or Vendors
+        if self.env.context.get('currency_id'):
+            currency = self.env['res.currency'].browse(self.env.context['currency_id'])
+        else:
+            currency = self.env.user.company_id.currency_id
+        prec = currency.decimal_places
         context = dict(self._context or {})
         data = {}
         if self.is_customer:
             context.update({'is_customer': True})
-            if self.total_customer_pay_amount != self.cheque_amount:
+            if round(self.total_customer_pay_amount, prec) != round(self.cheque_amount, prec):
                 raise ValidationError(_('Verification Failed! Total Invoices'
                                         ' Amount and Check amount does not'
                                         ' match!.'))
@@ -271,7 +276,7 @@ class AccountRegisterPayments(models.TransientModel):
                         })
         else:
             context.update({'is_customer': False})
-            if self.total_pay_amount != self.cheque_amount:
+            if round(self.total_pay_amount, prec) != round(self.cheque_amount, prec):
                 raise ValidationError(_('Verification Failed! Total Invoices'
                                         ' Amount and Check amount does not'
                                         ' match!.'))
