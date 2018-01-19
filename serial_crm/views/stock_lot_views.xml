@@ -71,7 +71,7 @@
                     </group>
                 </page>
                 <page name="Owner" string="Owner">
-                    <field name="owner_ids">
+                    <field name="owner_ids" context="{'default_lot_id': active_id}">
                         <tree editable="bottom">
                             <field name="partner_id"/>
                             <field name="lot_id" invisible="1"/>
