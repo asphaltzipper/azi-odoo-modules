@@ -164,7 +164,7 @@ class MrpMaterialPlan(models.Model):
                 self.env.user.login,
                 plan_move.date_start
             )
-            self.procurement_create(proc_name, proc_warehouse)
+            plan_move.procurement_create(proc_name, proc_warehouse)
             plan_move.unlink()
 
     def _flag_make_from_procurement_rule(self, location, product):
