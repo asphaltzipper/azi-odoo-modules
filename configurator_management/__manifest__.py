@@ -13,6 +13,7 @@
     "depends": [
         "mrp",
         "product_configurator",
+        "product_configurator_mrp",
     ],
     "data": [
         "views/product_views.xml",

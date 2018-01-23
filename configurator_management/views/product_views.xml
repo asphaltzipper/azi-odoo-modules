@@ -8,11 +8,18 @@
         <field name="inherit_id" ref="product_configurator.product_template_form_view"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='config_line_ids']" position="before">
-                <button
-                        type="object"
-                        name="copy_configurable_template"
-                        string="Copy Configurable Template"
-                        help="Copy this configurable template with all attributes, restrictions and steps"/>
+                <group>
+                    <group>
+                        <button
+                                type="object"
+                                name="copy_configurable_template"
+                                string="Copy Configurable Template"
+                                help="Copy this configurable template with all attributes, restrictions and steps"/>
+                    </group>
+                    <group>
+                        <field name="default_routing_id"/>
+                    </group>
+                </group>
             </xpath>
         </field>
     </record>

@@ -1,10 +1,23 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, api
+from odoo import models, fields, api
 
 
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
+
+    default_routing_id = fields.Many2one(
+        comodel_name='mrp.routing',
+        string="MRP Routing",
+        help="Manufacturing routing to use on variant BOMs")
+
+    @api.multi
+    def configurator_default_bom(self):
+        # add a routing to the BOM
+        # this depends on a patch from PR#109 on module product_configurator_mrp
+        result = super(ProductTemplate, self).configurator_default_bom()
+        result['routing_id'] = self.default_routing_id.id
+        return result
 
     @api.multi
     def copy_configurable_template(self):
