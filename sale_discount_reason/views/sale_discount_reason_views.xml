@@ -48,7 +48,7 @@
                 <field name="discount_reason_id"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/form//field[@name='price_unit']" position="before">
-                <field name="discount_reason_id"/>
+                <field name="discount_reason_id" attrs="{'required': [('product_id', '!=', False)]}"/>
             </xpath>
         </field>
     </record>

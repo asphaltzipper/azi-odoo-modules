@@ -1,3 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_sale_discount_reason_user,sale.discount.reason.user,model_sale_discount_reason,sales_team.group_sale_salesman,1,0,0,0
 access_sale_discount_reason_manager,sale.discount.reason.manager,model_sale_discount_reason,sales_team.group_sale_manager,1,1,1,1
 access_sale_discount_reason_accountant,sale.discount.reason.accountant,model_sale_discount_reason,account.group_account_user,1,1,1,1
