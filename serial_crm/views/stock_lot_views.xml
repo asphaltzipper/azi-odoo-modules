@@ -53,6 +53,7 @@
                             <field name="confirmation_date"/>
                             <field name="partner_id"/>
                             <field name="partner_shipping_id"/>
+                            <field name="state"/>
                             <field name="invoice_status"/>
                         </tree>
                     </field>

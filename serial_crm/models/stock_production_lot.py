@@ -79,15 +79,18 @@ class ProductionLot(models.Model):
         self.name = self.env['ir.sequence'].next_by_code('azi.fg.serial')
 
     @api.multi
-    @api.depends('quant_ids')
+    @api.depends('quant_ids.location_id')
     def _compute_state(self):
         for serial in self:
-            loc = serial.quant_ids.mapped('location_id')
-            if not loc:
-                serial.state = 'assigned'
-                continue
-            if len(loc) > 1 or len(serial.quant_ids) > 1:
+            if serial.product_id.tracking == 'lot':
                 serial.state = 'lot'
                 continue
-            if loc.usage in ['internal', 'production', 'customer', 'inventory']:
-                serial.state = loc.usage
+            if not serial.quant_ids:
+                serial.state = 'assigned'
+                continue
+            # sum quant_ids quantity, grouping by location
+            # for serials, only one location can have a net quantity, and the quantity must be unity (1)
+            # we sort locations by descending net quantity, and take the first record
+            locs = serial.quant_ids.read_group(domain=[('lot_id', '=', serial.id)], fields=['location_id', 'qty'], groupby=['location_id'], orderby='qty desc')
+            loc = self.env['stock.location'].browse(locs[0]['location_id'][0])
+            serial.state = loc.usage
