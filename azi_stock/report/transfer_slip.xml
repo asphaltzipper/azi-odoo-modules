@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <report
+        string="Transfer Slip"
+        id="action_report_transfer_slip"
+        model="stock.move"
+        name="azi_stock.transfer_slip"
+        file="azi_stock.report.transfer_slip_template"
+        report_type="qweb-pdf"
+    />
+
+</odoo>

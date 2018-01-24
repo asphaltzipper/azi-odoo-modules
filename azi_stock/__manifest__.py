@@ -19,6 +19,8 @@ AZI Specialized Customizations to Stock
     "depends": ['stock'],
     'data': [
         'views/stock_view_changes.xml',
+        'report/transfer_slip.xml',
+        'report/transfer_slip_template.xml',
     ],
     "installable": True,
     "auto_install": False,

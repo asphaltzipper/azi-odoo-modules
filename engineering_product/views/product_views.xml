@@ -25,6 +25,8 @@
                             <field name="eng_code" attrs="{'readonly': [('eng_management', '=', False)]}"/>
                             <field name="rev_delimiter"/>
                             <field name="eng_rev" string="Revision" attrs="{'readonly': [('eng_management', '=', False)]}"/>
+                            <field name="preparation"/>
+                            <field name="coating"/>
                         </group>
                         <group colspan="4">
                             <field name="eng_categ_id" attrs="{'readonly': [('eng_management', '=', False)]}"/>

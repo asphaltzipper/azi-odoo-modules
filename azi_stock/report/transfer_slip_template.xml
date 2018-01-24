@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="transfer_slip">
+    <t t-call="report.html_container">
+        <t t-foreach="docs" t-as="o">
+            <t t-call="report.internal_layout">
+                <div class="page">
+                    <h2>Transfer Slip</h2>
+                    <h3><span t-field="o.product_id"/></h3>
+                    <div style="font-size:large; padding-top: .5in; padding-left: .5in">
+                        <div><img class="oe-left" t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('Code128', o.product_id.barcode, 600, 100)" style="width:350px;height:60px"/><span style="font-size:small" t-field="o.product_id.barcode"/></div>
+                        <div><strong>Quantity: </strong><span t-field="o.product_uom_qty"/></div>
+                        <div><strong>UOM: </strong><span t-field="o.product_uom" options="{'no_open': True, 'no_create': True}" groups="product.group_uom"/></div>
+                        <div><strong>Description: </strong><span t-field="o.name"/></div>
+                        <div><strong>Picking Type: </strong><span t-field="o.picking_type_id"/></div>
+                        <div><strong>Priority: </strong><span t-field="o.priority"/></div>
+                        <!--<div><strong>Expected Date: </strong><span t-field="o.date_expected" attrs="{'invisible': [('state', '=', 'done')]}"/></div>-->
+                        <div><strong>Date: </strong><span t-field="o.date" attrs="{'invisible': [('state', '!=', 'done')]}" t-options ='{"format": "yyyy-MM-dd"}'/></div>
+                        <div><strong>Source Document: </strong><span t-field="o.origin"/></div>
+                        <!--<div><strong>Creation Date: </strong><span t-field="o.create_date" groups="base.group_no_one"/></div>-->
+                        <div><strong>Supply Method: </strong><span t-field="o.procure_method" attrs="{'readonly': [('state', '!=', 'draft')]}" groups="stock.group_adv_location"/></div>
+                        <div><strong>Procurement Group: </strong><span t-field="o.group_id"/></div>
+                        <div><strong>Source Location: </strong><span t-field="o.location_id" groups="stock.group_stock_multi_locations"/></div>
+                        <div><strong>Destination Location: </strong><span t-field="o.location_dest_id"/></div>
+                        <div><strong>Prep: </strong><span t-field="o.product_id.preparation"/></div>
+                        <div><strong>Coating: </strong><span t-field="o.product_id.coating"/></div>
+                        <div><strong>Shelf Location: </strong><span t-foreach="o.product_id.shelf_ids" t-as="loc"><span t-field="loc.name"/>, </span></div>
+                        <img t-if="o.product_id.image_medium"  style="border: 3px solid black;" t-att-src="'data:image/png;base64,%s' % o.product_id.image"/>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </t>
+</template>
+</odoo>

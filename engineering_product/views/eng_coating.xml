@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="prep_list_view" model="ir.ui.view">
+        <field name="name">prep.list</field>
+        <field name="model">engineering.preparation</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <tree string="Preparation" editable="bottom">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="coat_list_view" model="ir.ui.view">
+        <field name="name">coat.list</field>
+        <field name="model">engineering.coating</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <tree string="Coating" editable="bottom">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="prep_action_form" model="ir.actions.act_window">
+        <field name="name">Preparation</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">engineering.preparation</field>
+        <field name="view_type">form</field>
+        <field name="view_id" ref="prep_list_view"/>
+    </record>
+
+    <record id="coat_action_form" model="ir.actions.act_window">
+        <field name="name">Coating</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">engineering.coating</field>
+        <field name="view_type">form</field>
+        <field name="view_id" ref="coat_list_view"/>
+    </record>
+
+
+    <menuitem
+        action="engineering_product.prep_action_form" id="menu_prep_config_stock"
+        parent="stock.menu_product_in_config_stock" sequence="3"/>
+    <menuitem
+        action="engineering_product.coat_action_form" id="menu_coat_config_stock"
+        parent="stock.menu_product_in_config_stock" sequence="3"/>
+
+</odoo>

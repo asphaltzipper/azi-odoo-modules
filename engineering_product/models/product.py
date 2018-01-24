@@ -64,6 +64,13 @@ class ProductTemplate(models.Model):
         string='Engineering Notes',
         compute='_compute_eng_notes',
         inverse='_set_eng_notes')
+    preparation = fields.Many2one(
+        comodel_name='engineering.preparation',
+        string='Prep')
+    coating = fields.Many2one(
+        comodel_name='engineering.coating',
+        string='Coating')
+
 
     @api.constrains('eng_categ_id')
     def _validate_eng_cat(self):
