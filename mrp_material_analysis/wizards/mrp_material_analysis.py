@@ -143,7 +143,6 @@ class MrpMaterialAnalysis(models.TransientModel):
         return {
             'name': _('Material Analysis'),
             'domain': [('create_uid', '=', self._uid), ('product_id', '=', self.product_id.id)],
-            'context': self._context,
             'view_type': 'form',
             'view_mode': 'tree,form,graph,pivot',
             'res_model': 'mrp.material.analysis.line',

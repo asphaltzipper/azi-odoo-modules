@@ -10,9 +10,9 @@
     "author": "scosist",
     "depends": ["mrp", "purchase", "sale_order_dates"],
     "license": "AGPL-3",
-    "installable": False,
     "data": [
         "views/mrp_production_view.xml",
     ],
+    "installable": False,
     "auto_install": False,
 }
