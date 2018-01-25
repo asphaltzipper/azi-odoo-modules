@@ -511,6 +511,9 @@ class MrpMaterialPlan(models.Model):
 
         # this algorithm assumes the mrp_llc module updates and sorts on low-level-code
         # we only retrieve orderpoints for stockable type products
+        _logger.info("Updating LLC and retreiving orderpoints")
+        plan_log.create({'type': 'info', 'message': "Updating LLC and retreiving orderpoints"})
+        cr.commit()
         op_domain = company_id and [('company_id', '=', company_id)] or []
         op_domain += [('product_id.type', '=', 'product')]
         orderpoints_noprefetch = OrderPoint.with_context(prefetch_fields=False).search(
@@ -528,6 +531,7 @@ class MrpMaterialPlan(models.Model):
             batch_count, bucket_count)
         _logger.info(message)
         plan_log.create({'type': 'info', 'message': message})
+        cr.commit()
         exec_start = time.time()
 
         while orderpoints_noprefetch:
@@ -728,6 +732,7 @@ class MrpMaterialPlan(models.Model):
             exec_stop - exec_start)
         _logger.info(message)
         plan_log.create({'type': 'info', 'message': message})
+        self.env.user.notify_warning(message=message, title="MRP Complete", sticky=True)
 
         if use_new_cursor:
             cr.commit()
