@@ -50,9 +50,11 @@ class MrpMaterialPlan(models.Model):
         domain = [('schedule_id.id', '=', schedule_id), ('product_id', '!=', False)]
         scheduled_builds = self.env['mrp.schedule.line'].search(domain)
 
-        message = "Using schedule %s" % schedule_id.name
-        _logger.info(message)
-        self.env['mrp.material_plan.log'].create({'type': 'info', 'message': message})
+        if schedule_id:
+            message = "Using schedule %s" % self.env['mrp.schedule'].browse(schedule_id).name
+            _logger.info(message)
+            self.env['mrp.material_plan.log'].create({'type': 'info', 'message': message})
+
         message = "Creating dependent demand from %s scheduled builds" % len(scheduled_builds)
         _logger.info(message)
         self.env['mrp.material_plan.log'].create({'type': 'info', 'message': message})
