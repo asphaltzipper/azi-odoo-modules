@@ -407,13 +407,6 @@ class MrpMaterialPlan(models.Model):
         if first_bucket_date > last_bucket_date:
             last_bucket_date = first_bucket_date + timedelta(days=self._bucket_size)
 
-        message = 'Bucket date range (%s - %s)' % (
-            first_bucket_date.strftime(DEFAULT_SERVER_DATE_FORMAT),
-            last_bucket_date.strftime(DEFAULT_SERVER_DATE_FORMAT))
-        _logger.info(message)
-        self.env['mrp.material_plan.log'].create({'type': 'info',
-                                                  'message': message})
-
         # generate list of dates ranging from first bucket date to last bucket date
         bucket_days = int((last_bucket_date - first_bucket_date).days) + 1
         # bucket_list = map(lambda for x: )
@@ -504,6 +497,12 @@ class MrpMaterialPlan(models.Model):
         self.load_independent_demand()
 
         bucket_list = self._get_bucket_list()
+
+        message = 'Bucket date range (%s - %s)' % (
+            bucket_list[0].strftime(DEFAULT_SERVER_DATE_FORMAT),
+            bucket_list[-1].strftime(DEFAULT_SERVER_DATE_FORMAT))
+        _logger.info(message)
+        self.env['mrp.material_plan.log'].create({'type': 'info', 'message': message})
 
         OrderPoint = self.env['stock.warehouse.orderpoint']
         plan_log = self.env['mrp.material_plan.log']
@@ -728,8 +727,8 @@ class MrpMaterialPlan(models.Model):
             batch_done += 1
 
         exec_stop = time.time()
-        message = "plan complete with execution time=%d" % (
-            exec_stop - exec_start)
+        message = "plan complete with execution time=%0.1f minutes" % (
+            (exec_stop - exec_start)/60)
         _logger.info(message)
         plan_log.create({'type': 'info', 'message': message})
         self.env.user.notify_warning(message=message, title="MRP Complete", sticky=True)
