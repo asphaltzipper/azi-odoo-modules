@@ -22,7 +22,7 @@
         <field name="arch" type="xml">
             <field name="parent_id" position="before">
                 <label for="code" class="pc_oe_left_first_child oe_edit_only" attrs="{'invisible': [('is_company', '=', False)]}" />
-                <field name="code" class="pc_oe_left_second_child" attrs="{'invisible': [('is_company', '=', False)], 'required': [('is_company','=',True)]}" />
+                <field name="code" class="pc_oe_left_second_child" attrs="{'invisible': [('is_company', '=', False)]}" />
             </field>
         </field>
     </record>

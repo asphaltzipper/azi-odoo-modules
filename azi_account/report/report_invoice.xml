@@ -7,9 +7,24 @@
     </record>
 
     <template id="azi_invoice_address_alignment" inherit_id="account.report_invoice_document">
+        <xpath expr="//div[@t-if='o.partner_id.ref']" position="replace">
+        </xpath>
         <xpath expr="//div[@name='invoice_address']" position="attributes">
             <attribute name="groups">!sale.group_delivery_invoice_address</attribute>
         </xpath>
+        <xpath expr="//div[@class='page']/table/thead/tr/th[6]" position="replace">
+            <th class="text-right"></th>
+        </xpath>
+        <xpath expr="//div[@class='page']/table/thead/tr/th[7]" position="replace">
+            <th class="text-right">Price</th>
+        </xpath>
+        <xpath expr="//div[@class='page']/table/tbody/tr/td[6]" position="replace">
+            <td class="text-right"></td>
+        </xpath>
+        <xpath expr="//t[@t-as='amount_by_group']/tr/td[1]" position="replace">
+            <td><span>Tax</span></td>
+        </xpath>
+        <xpath expr="//div[@class='page']/div[@t-if='len(o.tax_line_ids) > 0']" position="replace"/>
         <xpath expr="//div[@name='invoice_address']" position="before">
             <div style="position: relative; top: 50; padding-bottom: 1.875in;" groups="sale.group_delivery_invoice_address">
                 <div class="mt8" style="position: absolute; top: 0; left: .625in">
