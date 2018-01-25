@@ -15,10 +15,11 @@
     "depends": ["mrp_master_schedule"],
     "data": [
         # TODO: Restrict access
-        # 'security/ir.model.access.csv',
+        'security/ir.model.access.csv',
         'views/mrp_material_analysis_line_view.xml',
         'views/product_views.xml',
         'views/mrp_material_plan_views.xml',
+        'views/mrp_plan_analysis_views.xml',
         'wizards/mrp_material_analysis_view.xml',
     ],
 }

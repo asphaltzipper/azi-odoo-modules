@@ -97,9 +97,9 @@ class StockShelfProducts(models.Model):
 
     @api.model_cr
     def init(self):
-        tools.drop_view_if_exists(self._cr, 'stock_history')
+        tools.drop_view_if_exists(self._cr, 'stock_shelf_products')
         self._cr.execute("""
-            CREATE OR REPLACE VIEW stock_shelf_products AS (
+            CREATE VIEW stock_shelf_products AS (
                 select
                     -- generate a unique integer for the id
                     -- if the id exceeds 2147483647 there may be a problem with python on 32 bit systems 

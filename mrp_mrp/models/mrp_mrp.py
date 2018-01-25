@@ -510,7 +510,7 @@ class MrpMaterialPlan(models.Model):
 
         # this algorithm assumes the mrp_llc module updates and sorts on low-level-code
         # we only retrieve orderpoints for stockable type products
-        _logger.info("Updating LLC and retreiving orderpoints")
+        _logger.info("Updating LLC and retrieving orderpoints")
         plan_log.create({'type': 'info', 'message': "Updating LLC and retreiving orderpoints"})
         cr.commit()
         op_domain = company_id and [('company_id', '=', company_id)] or []

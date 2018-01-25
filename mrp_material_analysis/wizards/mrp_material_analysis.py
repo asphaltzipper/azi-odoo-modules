@@ -69,10 +69,10 @@ class MrpMaterialAnalysis(models.TransientModel):
             lines.append({
                 'product_id': self.product_id.id,
                 'tx_type': tx_type,
-                'tx_date': move.date,
+                'tx_date': move.date_expected,
                 'product_qty': qty_sign * move.product_qty,
                 'available_qty': 0,
-                'late': move.date < datetime.now().strftime(DEFAULT_SERVER_DATETIME_FORMAT),
+                'late': move.date_expected < datetime.now().strftime(DEFAULT_SERVER_DATETIME_FORMAT),
                 'status': 'actual',
                 'origin': move.origin,
             })
@@ -135,16 +135,16 @@ class MrpMaterialAnalysis(models.TransientModel):
         graph_view_id = self.env.ref('mrp_material_analysis.mrp_material_analysis_line_view_graph')
         pivot_view_id = self.env.ref('mrp_material_analysis.mrp_material_analysis_line_view_pivot')
         views = [
+            (graph_view_id.id, 'graph'),
             (tree_view_id.id, 'tree'),
             (form_view_id.id, 'form'),
-            (graph_view_id.id, 'graph'),
             (pivot_view_id.id, 'pivot'),
         ]
         return {
             'name': _('Material Analysis'),
             'domain': [('create_uid', '=', self._uid), ('product_id', '=', self.product_id.id)],
             'view_type': 'form',
-            'view_mode': 'tree,form,graph,pivot',
+            'view_mode': 'graph,tree,form,pivot',
             'res_model': 'mrp.material.analysis.line',
             'type': 'ir.actions.act_window',
             'views': views,
