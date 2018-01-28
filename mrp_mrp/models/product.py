@@ -210,50 +210,43 @@ class Product(models.Model):
         return res
 
     @api.multi
-    def get_procurement_action(self, location=None):
+    def get_procurement_actions(self, orderpoint):
         """
-        Return true if this product should be manufactured, based on procurement rule
-        We may want to add an interface to the procurement.rule model, so users can change the sequence
-        :returns procurement.rule.action :
+        Return a list of procurement rule actions, based on the product's
+        routes and the orderpoint's warehouse.
+        :returns list of procurement.rule.action :
          - move
          - buy
          - manufacture
-         - ...
-         - unknown
         """
         self.ensure_one()
+        rules = self.env['procurement.rule']
+        if orderpoint:
+            rules |= self.route_ids.mapped('pull_ids').filtered(lambda r: r.warehouse_id.id == orderpoint.warehouse_id.id)
+        else:
+            rules |= self.route_ids.mapped('pull_ids')
+        actions = rules and rules.mapped('action') or []
+        return actions
 
-        domain = []
-        if location:
-            # set domain on locations
-            parent_locations = self.env['stock.location']
-            child_location = location
-            while child_location:
-                parent_locations |= child_location
-                child_location = child_location.location_id
-            domain = [('location_id', 'in', parent_locations.ids)]
+    @api.multi
+    def get_procurement_rule(self, orderpoint):
+        """
+        Search and return an appropriate procurement rule based on the
+        orderpoint's warehouse and the product's route.
 
-        # try finding a rule on product routes
-        Pull = self.env['procurement.rule']
-        rule = self.env['procurement.rule']
-        product_routes = self.route_ids | self.categ_id.total_route_ids
-        if product_routes:
-            rule = Pull.search(expression.AND([[('route_id', 'in', product_routes.ids)], domain]),
-                               order='route_sequence, sequence', limit=1)
+        If multiple routes or rules are found, return False.
 
-        # try finding a rule on warehouse routes
-        if not rule:
-            warehouse = self.env['stock.warehouse'].search([], order='id', limit=1)
-            warehouse_routes = warehouse.route_ids
-            if warehouse_routes:
-                rule = Pull.search(expression.AND([[('route_id', 'in', warehouse_routes.ids)], domain]),
-                                   order='route_sequence, sequence', limit=1)
-
-        # try finding a rule that handles orders with no route
-        if not rule:
-            rule = Pull.search(expression.AND([[('route_id', '=', False)], domain]), order='sequence', limit=1)
-
-        if not rule:
-            return 'unknown'
-        return rule.action
-
+        If no rules are found, return false.
+        """
+        self.ensure_one()
+        routes = self.route_ids.sorted(key=lambda r: r.sequence)
+        if len(routes) > 1:
+            return False
+        proc_rule = self.env['procurement.rule']
+        if orderpoint:
+            proc_rule |= routes.mapped('pull_ids').filtered(lambda r: r.warehouse_id.id == orderpoint.warehouse_id.id)
+        else:
+            proc_rule |= routes.mapped('pull_ids')
+        if not proc_rule or len(proc_rule) > 1:
+            return False
+        return proc_rule

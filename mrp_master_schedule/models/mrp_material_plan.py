@@ -21,21 +21,24 @@ class MrpMaterialPlan(models.Model):
     )
 
     @api.multi
-    def procurement_create(self, proc_name, proc_warehouse):
-        proc_order = super(MrpMaterialPlan, self).procurement_create(proc_name, proc_warehouse)
+    def procurement_create(self, proc_name):
+        proc_order = super(MrpMaterialPlan, self).procurement_create(proc_name)
+        # if the proc_order is in exception, then production_id will be False
         if self.build_id and proc_order.production_id:
 
             # set the production_id on all current copies of this schedule line
             build_name = self.build_id.name
             sched_lines = self.build_id.search([('name', '=', build_name), ('state', '!=', 'superseded')])
-            sched_lines.production_id = proc_order.production_id.id
+            sched_lines.update({'production_id': proc_order.production_id.id})
 
             # set serial number on the production_id
             if self.build_id.lot_id:
                 # filter move_finished_ids by product_id because there may be byproducts
+                # TODO: stock.move.lots record doesn't get created until the user executes Check Availability
                 move_lots = proc_order.production_id.move_finished_ids.\
                     filtered(lambda x: x.product_id.id == self.product_id).mapped('move_lot_ids')
-                move_lots.lot_produced_id = self.build_id.lot_id
+                # move_lots.lot_produced_id = self.build_id.lot_id
+                pass
 
         return proc_order
 

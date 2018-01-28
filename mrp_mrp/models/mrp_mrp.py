@@ -135,57 +135,88 @@ class MrpMaterialPlan(models.Model):
         help="Reference of the Supply/Make order that consumes this Demand/Move order.")
 
     @api.multi
-    def procurement_create(self, proc_name, proc_warehouse):
+    def procurement_create(self, proc_name):
+        """
+        For products with route=Buy, in a warehouse with 2 step receipt, we can't send the stock location (usually
+        specified on the orderpoint) to the procurement. Otherwise, the input -> stock procurement rules is selected,
+        and a stock move is created for the internal transfer from input to stock.
+
+        In this case, one of two problems arises:
+            (1) if procurement group is not specified, then the stock move is attached to any open stock picking that
+                has no procurement group
+            (2) if a procurement group is specified, then a separate picking is created for each procurement item.
+
+        When creating the procurement, we give a specific procurement rule, rather than specifying a location and
+        letting the procurement find the rule.
+
+        Our search for an appropriate procurement rule uses the product's route and the orderpoint's warehouse. If we
+        can't find a procurement rule, or if the product has multiple routes, we will notify the user and we will not
+        create the procurement.  In this case, the user will either create the procurement manually or fix the product's
+        routes.
+
+        This way, the stock move and picking for the transfer is created by, and grouped with, the purchase order.
+        """
         self.ensure_one()
+        proc_rule = self.product_id.get_procurement_rule(self.orderpoint_id)
+        if not proc_rule:
+            return False
         vals = {
-                'name': proc_name,
-                'date_planned': self.date_finish,
-                'product_id': self.product_id.id,
-                'product_qty': self.product_qty,
-                'product_uom': self.product_id.uom_id.id,
-                'warehouse_id': proc_warehouse,
-                'location_id': self.location_id.id,
-                'company_id': self.location_id.company_id.id,
-                'origin': self.name,
-            }
+            'name': proc_name,
+            'date_planned': self.date_finish,
+            'product_id': self.product_id.id,
+            'product_qty': self.product_qty,
+            'product_uom': self.product_id.uom_id.id,
+            'origin': self.name,
+            'rule_id': proc_rule.id,
+            'company_id': proc_rule.warehouse_id.company_id.id,
+        }
+        if proc_rule.action == 'manufacture':
+            # apparently production orders don't find their own source location (purchase orders do find their own)
+            vals['location_id'] = self.orderpoint_id.location_id.id or proc_rule.location_id.id
         return self.env['procurement.order'].create(vals)
 
     @api.multi
     def action_convert_to_procurements(self):
-        warehouse = self.env['stock.warehouse'].search([], limit=1)
         # TODO: add option to choose day of week for procurement with weekly buckets
-        # proc_warehouse = plan_move.orderpoint_id.warehouse_id.id if plan_move.orderpoint_id else \
-        #     warehouse[0].id if warehouse else False
         for plan_move in self:
-            proc_warehouse = (plan_move.orderpoint_id and plan_move.orderpoint_id.warehouse_id.id) or\
-                             (warehouse and warehouse[0].id) or False
             proc_name = "user: %s\norigin: %s\nstart: %s" % (
+                plan_move.date_start,
                 plan_move.origin,
-                self.env.user.login,
-                plan_move.date_start
+                self.env.user.login
             )
-            plan_move.procurement_create(proc_name, proc_warehouse)
-            plan_move.unlink()
+            proc_order = plan_move.procurement_create(proc_name)
+            if not proc_order or proc_order.state == 'exception':
+                message = "Order must be converted manually: %s" % self.product_id.display_name
+                _logger.info(message)
+                self.env['mrp.material_plan.log'].create({'type': 'warning', 'message': message})
+                self.env.user.notify_warning(message=message, title="Procurement Failed", sticky=True)
+                proc_order.cancel()
+                proc_order.unlink()
+            else:
+                plan_move.unlink()
 
-    def _flag_make_from_procurement_rule(self, location, product):
+    def _flag_make_from_procurement_rule(self, product, op=None):
         """
-        Flag this orderpoint as manufactured, based on procurement rule
-        We may want to add an interface to the procurement.rule model, so users can change the sequence
+        Flag planned order as manufactured if any such procurement rule action
+        If there are multiple actions, log a warning
         """
-        proc_action = product.get_procurement_action(location)
-        if proc_action == 'manufacture':
+        op = op or self.env['stock.warehouse.orderpoint']
+        proc_actions = product.get_procurement_actions(op)
+        if 'manufacture' in proc_actions:
+            if len(proc_actions) != 1:
+                if len(proc_actions) > 1:
+                    message = "Multiple supply actions. Planned order must" \
+                        "be converted manually: [%s] %s" % product.display_name
+                if len(proc_actions) == 0:
+                    message = "Multiple supply actions. Planned order must" \
+                        "be converted manually: [%s] %s" % product.display_name
+                plan_log = self.env['mrp.material_plan.log']
+                _logger.info(message)
+                plan_log.create({'type': 'warning', 'message': message})
             return True
-        elif proc_action in ('move', 'buy'):
+        else:
             # move type is not make (no bom explode, no dependent demand)
             return False
-        else:
-            plan_log = self.env['mrp.material_plan.log']
-            message = "Unknown supply rule found for product [%s] %s" % (
-                product.default_code, product.name)
-            _logger.info(message)
-            plan_log.create({'type': 'info', 'message': message})
-            # if we get an unknown rule, we will try to manufacture the product
-            return True
 
     def _get_supply_delay_days(self, product, make_flag, product_qty, to_date, orderpoint=None):
         days = 0.0
@@ -245,7 +276,7 @@ class MrpMaterialPlan(models.Model):
         :return dict res:
         """
         move_type = demand and 'demand' or 'supply'
-        make_flag = demand and False or self._flag_make_from_procurement_rule(location, product)
+        make_flag = demand and False or self._flag_make_from_procurement_rule(product, op)
 
         # get supply delay
         date_finish = bucket_date

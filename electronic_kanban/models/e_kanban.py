@@ -225,7 +225,7 @@ class EKanbanBatchLine(models.Model):
     def action_convert_to_procurements(self):
 
         warn_lines = self.filtered(lambda x: x.product_id.purchase_line_warn != 'no-message')
-        warehouse = self.env['stock.warehouse'].search([], limit=1)
+        orderpoint = self.env['stock.warehouse.orderpoint']
         procurement_order = self.env['procurement.order']
         lines = self
         if len(warn_lines) and len(self) > 1:
@@ -240,16 +240,24 @@ class EKanbanBatchLine(models.Model):
             if line.product_id.purchase_line_warn == 'block':
                 raise UserError("Blocked: %s" % line.product_id.purchase_line_warn_msg)
             proc_name = "%s/%s" % (line.batch_id.name, line.product_id.default_code)
-            line.procurement_id = procurement_order.create(
-                {
-                    'name': proc_name,
-                    'product_id': line.product_id.id,
-                    'product_qty': line.product_id.default_proc_qty,
-                    'product_uom': line.product_id.uom_id.id,
-                    'warehouse_id': warehouse.id,
-                    'location_id': warehouse.lot_stock_id.id,
-                }
-            )
+            proc_rule = self.product_id.get_procurement_rule(orderpoint)
+            if not proc_rule:
+                title = line.product_id.default_code
+                message = "Procurement Failed, check supply routes"
+                self.env.user.notify_warning(message=message, title=title, sticky=True)
+                continue
+            vals = {
+                'name': proc_name,
+                'product_id': line.product_id.id,
+                'product_qty': line.product_id.default_proc_qty,
+                'product_uom': line.product_id.uom_id.id,
+                'rule_id': proc_rule.id,
+                'company_id': proc_rule.warehouse_id.company_id.id,
+            }
+            if proc_rule.action == 'manufacture':
+                # apparently production orders don't find their own source location (purchase orders do find their own)
+                vals['location_id'] = proc_rule.location_id.id
+            line.procurement_id = procurement_order.create(vals)
             # if there is a warning message on this product,
             # then the user is only converting a single line,
             # so it's okay to return from inside the loop,
