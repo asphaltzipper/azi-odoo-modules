@@ -206,10 +206,10 @@ class MrpMaterialPlan(models.Model):
             if len(proc_actions) != 1:
                 if len(proc_actions) > 1:
                     message = "Multiple supply actions. Planned order must" \
-                        "be converted manually: [%s] %s" % product.display_name
+                        "be converted manually: %s" % product.display_name
                 if len(proc_actions) == 0:
                     message = "Multiple supply actions. Planned order must" \
-                        "be converted manually: [%s] %s" % product.display_name
+                        "be converted manually: %s" % product.display_name
                 plan_log = self.env['mrp.material_plan.log']
                 _logger.info(message)
                 plan_log.create({'type': 'warning', 'message': message})
