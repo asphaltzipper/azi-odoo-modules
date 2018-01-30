@@ -205,10 +205,10 @@ class MrpMaterialPlan(models.Model):
         if 'manufacture' in proc_actions:
             if len(proc_actions) != 1:
                 if len(proc_actions) > 1:
-                    message = "Multiple supply actions. Planned order must" \
+                    message = "Multiple supply actions. Planned order must " \
                         "be converted manually: %s" % product.display_name
                 if len(proc_actions) == 0:
-                    message = "Multiple supply actions. Planned order must" \
+                    message = "Multiple supply actions. Planned order must " \
                         "be converted manually: %s" % product.display_name
                 plan_log = self.env['mrp.material_plan.log']
                 _logger.info(message)
@@ -500,8 +500,10 @@ class MrpMaterialPlan(models.Model):
             with tools.mute_logger('odoo.sql_db'):
                 self._cr.execute("SELECT id FROM ir_cron WHERE id = %s FOR UPDATE NOWAIT", (mrp_cron.id,))
         except Exception:
-            _logger.info('Attempt to run procurement mrp aborted, as already running')
+            _logger.info('Attempt to run mrp aborted (may be already running)')
+            _logger.info('Cron %s exception: %s' % (mrp_cron.name, Exception.message))
             return {}
+        _logger.info('Starting mrp calculation from cron')
         new_cr = self.pool.cursor()
         self._run_mrp_api(
             use_new_cursor=new_cr.dbname,

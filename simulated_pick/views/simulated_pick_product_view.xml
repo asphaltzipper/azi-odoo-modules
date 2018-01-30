@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
-    <data>
+<odoo>
 
 <record id="simulated_pick_product_search_form_view" model="ir.ui.view">
     <field name="name">simulated.pick.product.search</field>
@@ -28,7 +27,9 @@
             <field name="on_hand_after" />
             <field name="short" />
             <field name="product_uom" />
+            <field name="default_supplier_id" />
             <field name="proc_action" />
+            <button name="action_material_analysis" type="object" icon="fa-bar-chart" help="Show Planning Report" />
         </tree>
     </field>
 </record>
@@ -39,7 +40,7 @@
     <field name="arch" type="xml">
         <form string="Component Requirements" create="false" edit="false">
             <header>
-                <button name="button_material_analysis" string="Material Analysis" class="oe_highlight" type="object" />
+                <button name="action_material_analysis" string="Material Analysis" class="oe_highlight" type="object" />
             </header>
             <sheet>
                 <group>
@@ -48,6 +49,7 @@
                         <field name="product_id" />
                         <field name="product_qty" />
                         <field name="product_uom" />
+                        <field name="default_supplier_id" />
                     </group>
                     <group>
                         <field name="on_hand_before" />
@@ -66,5 +68,4 @@
           parent="mrp_mrp.stock_planning_menu"
           sequence="1" />
 
-    </data>
-</openerp>
+</odoo>

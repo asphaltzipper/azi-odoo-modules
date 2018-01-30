@@ -57,11 +57,20 @@ class SimulatedPickProduct(models.TransientModel):
         string='UoM',
         store=True)
 
+    default_supplier_id = fields.Many2one(
+        comodel_name='res.partner',
+        string='Supplier',
+        compute='_compute_default_supplier',
+        readonly=True,
+        index=True,
+        store=True)
+
+    @api.depends('product_id')
+    def _compute_default_supplier(self):
+        for line in self:
+            line.default_supplier_id = line.product_id.seller_ids and line.product_id.seller_ids[0].name or False
+
     @api.multi
-    def button_material_analysis(self):
+    def action_material_analysis(self):
         self.ensure_one()
-        analysis_rec = self.env['mrp.material.analysis'].create({
-            'product_id': self.product_id.id,
-            'include_plan': True,
-        })
-        return analysis_rec.action_compute()
+        return self.product_id.action_material_analysis()

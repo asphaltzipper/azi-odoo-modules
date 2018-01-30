@@ -77,10 +77,11 @@ class SimulatedPick(models.TransientModel):
             # TODO: call virtual_available on all products at once
             virt = self._get_plan_virt_qty(self.date_planned, product)
             on_hand_after = virt - self.product_qty
+            actions = product.get_procurement_actions(orderpoint=False)
             new_pick = {
                 'sim_prod_id': self.product_id.id,
                 'product_id': product.id,
-                'proc_action': product.get_procurement_action(),
+                'proc_action': '/'.join(actions),
                 'product_qty': self.product_qty,
                 'on_hand_before': virt,
                 'on_hand_after': on_hand_after,
@@ -108,10 +109,11 @@ class SimulatedPick(models.TransientModel):
                 virt = self._get_plan_virt_qty(self.date_planned, line_prod)
                 on_hand_after = virt - total_demand
                 short = -on_hand_after if on_hand_after < 0 else 0
+                actions = line_prod.get_procurement_actions(orderpoint=False)
                 new_pick = {
                     'sim_prod_id': self.product_id.id,
                     'product_id': line_prod.id,
-                    'proc_action': line_prod.get_procurement_action(),
+                    'proc_action': '/'.join(actions),
                     'product_qty': total_demand,
                     'on_hand_before': virt,
                     'on_hand_after': on_hand_after,
