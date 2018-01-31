@@ -240,7 +240,7 @@ class EKanbanBatchLine(models.Model):
             if line.product_id.purchase_line_warn == 'block':
                 raise UserError("Blocked: %s" % line.product_id.purchase_line_warn_msg)
             proc_name = "%s/%s" % (line.batch_id.name, line.product_id.default_code)
-            proc_rule = self.product_id.get_procurement_rule(orderpoint)
+            proc_rule = line.product_id.get_procurement_rule(orderpoint)
             if not proc_rule:
                 title = line.product_id.default_code
                 message = "Procurement Failed, check supply routes"
