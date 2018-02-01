@@ -25,31 +25,49 @@ class MrpProduction(models.Model):
     def post_inventory(self):
         for order in self:
 
+            import pdb
+            pdb.set_trace()
             # Check for Draft Moves
-            # TODO: unhandled case: user adds RM then updates qty to produce... qty to consume isn't updated
+            # Any draft moves will be canceled, rather than posted, when posting inventory.  The action_assign() method
+            # sets draft moves to confirmed.
+            # The action_assign() method also creates stock.move.lots records for the new raw materials.  Without these,
+            # the consumed quantity will get set to zero.
             if order.move_raw_ids.filtered(lambda x: x.state == 'draft'):
                 raise UserError(_('You have new consumed materials. Check availability again.'))
 
-            # Update quantities done on each raw material line
+            # When the user adds RM then updates qty to produce, the qty to consume must be updated.
+            # This case is NOT handled by simply setting the unit_factor field on the stock moves.
+            # Because the ChangeProductionQty wizard only updates stock moves with a bom_line_id, and our added raw
+            # materials didn't come from the BOM, they don't get updated.
+            # We can handle this here for non-tracked raw materials.  It may not behave as expected when there isn't
+            # enough material to reserve the increased quantity.
             moves_added = self.move_raw_ids.filtered(
                 lambda x: (x.has_tracking == 'none') and (x.state not in ('done', 'cancel')) and x.added_rm)
             for move in moves_added:
                 if move.unit_factor:
                     rounding = move.product_uom.rounding
-                    move.quantity_done += float_round(self.product_qty * move.unit_factor,
-                                                      precision_rounding=rounding)
+                    move.quantity_done = float_round(self.product_qty * move.unit_factor, precision_rounding=rounding)
 
-            # Transfer quantities from temporary to final move lots or make them final
-            lot_moves_added = self.move_raw_ids.filtered(
-                lambda x: (x.state not in ('done', 'cancel')) and x.added_rm)
-            for move_lot in lot_moves_added.mapped('move_lot_ids'):
-
-                # Check if move_lot already exists
-                if move_lot.quantity_done <= 0:  # rounding...
-                    move_lot.sudo().unlink()
-                    continue
-                if not move_lot.lot_id:
-                    raise UserError(_('You should provide a lot for a component'))
+            # The default behavior is to cancel stock moves when the serial number is not specified
+            # We don't want to allow the user to post inventory without specifying a serial number for all tracked
+            # components.
+            # There may be a gap here:
+            # If the user adds serial-tracked raw material, after clicking the Plan button, how does the move_lot for
+            # the work order get created?
+            # It's not a problem if we assume the user is using our work order completion wizard.  That's what we will
+            # assume for now.
+            #
+            # TODO: actually handle this
+            # lot_moves_added = self.move_raw_ids.filtered(
+            #     lambda x: (x.state not in ('done', 'cancel')) and x.added_rm)
+            # for move_lot in lot_moves_added.mapped('move_lot_ids'):
+            #
+            #     # Check if move_lot already exists
+            #     if move_lot.quantity_done <= 0:  # rounding...
+            #         move_lot.sudo().unlink()
+            #         continue
+            #     if not move_lot.lot_id:
+            #         raise UserError(_('You should provide a lot for a component'))
                 # Search other move_lot where it could be added:
                 # lots = self.move_lot_ids.filtered(
                 #     lambda x: (x.lot_id.id == move_lot.lot_id.id) and (not x.lot_produced_id) and (not x.done_move))
