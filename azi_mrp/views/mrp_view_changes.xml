@@ -14,6 +14,7 @@
             </button>
             <xpath expr="//page/field[@name='move_raw_ids']/tree" position="attributes">
                 <attribute name="default_order">has_tracking desc, product_id</attribute>
+                <attribute name="limit">1000</attribute>
             </xpath>
             <xpath expr="//page/field[@name='move_raw_ids']/tree/field[@name='has_tracking']" position="attributes">
                 <attribute name="invisible"/>
