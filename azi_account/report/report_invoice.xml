@@ -41,6 +41,46 @@
                 </div>
             </div>
         </xpath>
+        <!--<xpath expr="//table[@class='table table-condensed'][1]" position="attributes">-->
+            <!--<attribute name="style">position: relative; top: 20</attribute>-->
+        <!--</xpath>-->
+    </template>
+
+    <record id="azi_payment_tree" model="ir.ui.view">
+        <field name="name">azi.payment.tree</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_supplier_payment_tree" />
+        <field name="arch" type="xml">
+        <xpath expr="//tree/field[@name='payment_method_id']" position="after">
+                <field name="check_number" string=""></field>
+            </xpath>
+        </field>
+    </record>
+
+    <report
+        id="account_azi_invoice_no_header_footer"
+        model="account.invoice"
+        string="Invoices no Header/Footer"
+        report_type="qweb-pdf"
+        name="azi_account.azi_invoice_no_header_footer_main"
+        file="account.report_invoice_duplicate"
+        attachment_use="True"
+        attachment="(object.state in ('open','paid')) and
+        ('letterhead-'+(object.number or '').replace('/','')+'.pdf')"
+    />
+
+    <template id="azi_invoice_no_header_footer" inherit_id="account.report_invoice_document" primary="True">
+        <xpath expr="//t[@t-call='report.external_layout']" position="attributes">
+            <attribute name="t-call"></attribute>
+        </xpath>
+    </template>
+
+    <template id="azi_invoice_no_header_footer_main">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="azi_account.azi_invoice_no_header_footer" t-lang="o.partner_id.lang"/>
+            </t>
+        </t>
     </template>
 
 </data>
