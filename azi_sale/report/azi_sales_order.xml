@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+    <template id="azi_sales_order" inherit_id="sale.report_saleorder_document">
+        <xpath expr="//div[@t-if='doc.client_order_ref']" position="attributes">
+            <attribute name="class">col-xs-2</attribute>
+        </xpath>
+        <xpath expr="//div[@t-if='doc.date_order']" position="attributes">
+            <attribute name="class">col-xs-2</attribute>
+        </xpath>
+        <xpath expr="//div[@t-if='doc.date_order']/p" position="attributes">
+            <attribute name="t-field-options">{"format": "yyyy-MM-dd"}</attribute>
+        </xpath>
+        <xpath expr="//div[@t-if='doc.user_id.name']" position="attributes">
+            <attribute name="class">col-xs-2</attribute>
+        </xpath>
+        <xpath expr="//div[@name='payment_term']" position="attributes">
+            <attribute name="class">col-xs-2</attribute>
+        </xpath>
+        <xpath expr="//div[@name='payment_term']" position="after">
+            <div name="carrier_id" t-if="doc.carrier_id" class="col-xs-3">
+                <strong>Shipping:</strong>
+                <p t-field="doc.carrier_id"/>
+            </div>
+        </xpath>
+        <xpath expr="//t[@t-as='page']/table/thead/tr/th[5]" position="replace">
+            <th class="text-right"></th>
+        </xpath>
+        <xpath expr="//t[@t-as='page']/table/tbody/t/t/tr/td[5]" position="replace">
+            <th class="text-right"></th>
+        </xpath>
+    </template>
+
+    <record id="sale.report_sale_order" model="ir.actions.report.xml">
+        <field name="attachment_use" eval="True"/>
+        <field name="attachment">object.name+'.pdf'</field>
+    </record>
+
+</data>
+</odoo>

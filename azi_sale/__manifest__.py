@@ -21,6 +21,7 @@ AZI Specialized Customizations to Sales
     'data': [
         'views/crm_team_view.xml',
         'views/sale_order_view.xml',
+        'report/azi_sales_order.xml',
     ],
     "installable": True,
     "auto_install": False,
