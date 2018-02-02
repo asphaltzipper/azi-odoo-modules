@@ -1,95 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-<record model="ir.ui.view" id="mrp_plan_analysis_tree_view">
-    <field name="name">mrp.plan.analysis.tree</field>
-    <field name="model">mrp.plan.analysis</field>
-    <field name="arch" type="xml">
-        <tree string="Plan Analysis">
-            <field name="plan_line_id" invisible="1"/>
-            <field name="product_id"/>
-            <field name="categ_id" invisible="1"/>
-            <field name="product_type" invisible="1"/>
-            <field name="deprecated"/>
-            <field name="e_kanban"/>
-            <field name="product_qty"/>
-            <field name="uom_id"/>
-            <field name="make"/>
-            <field name="date_start"/>
-            <field name="date_finish"/>
-            <field name="lead_days" invisible="1"/>
-            <field name="location_id" invisible="1"/>
-            <field name="origin" invisible="1"/>
-            <field name="partner_id"/>
-            <field name="date_exp_order" invisible="1"/>
-            <field name="expedite_days" invisible="1"/>
-            <field name="expedite_window" invisible="1"/>
-            <field name="expedite_qty" invisible="1"/>
-            <field name="exp_group_id"/>
-            <field name="date_incr_order" invisible="1"/>
-            <field name="trailing_days" invisible="1"/>
-            <field name="increase_qty" invisible="1"/>
-            <field name="incr_group_id"/>
-            <field name="increase_window" invisible="1"/>
-            <field name="blanket_id"/>
-            <button name="action_material_analysis" type="object" icon="fa-bar-chart" help="Show Planning Report"/>
-        </tree>
-    </field>
-</record>
+    <record id="production_move_analysis_tree_view" model="ir.ui.view">
+        <field name="name">production.move.analysis.tree.view</field>
+        <field name="model">production.move.analysis</field>
+        <field name="priority" eval="6"/>
+        <field name="arch" type="xml">
+            <tree decoration-muted="state == 'cancel'" default_order='date_expected, picking_id, sequence' string="Moves">
+                <field name="product_id"/>
+                <field name="date" widget="date"/>
+                <field name="location_id" invisible="1"/>
+                <field name="location_dest_id" invisible="1" />
+                <field name="state"/>
+                <field name="tracking"/>
+                <field name="product_type"/>
+                <field name="route_names"/>
+                <field name="input_qty"/>
+                <field name="stock_qty"/>
+                <field name="res_qty"/>
+                <field name="res_names"/>
+            </tree>
+        </field>
+    </record>
 
-<record model="ir.ui.view" id="mrp_plan_analysis_search_view">
-    <field name="name">mrp.plan.analysis.search</field>
-    <field name="model">mrp.plan.analysis</field>
-    <field name="arch" type="xml">
-        <search string="Plan Analysis">
-        <field name="plan_line_id" string="Name" filter_domain="[('plan_line_id.name','ilike',self)]"/>
-        <field name="product_id" string="Product" filter_domain="['|','|',('product_id.default_code','ilike',self),('product_id.name','ilike',self),('product_id.barcode','ilike',self)]"/>
-        <filter string='Purchasing' name="purchase_only" icon="terp-accessories-achiver" domain="[('make', '=', False)]" />
-        <filter string='Manufacturing' name="make_only" icon="terp-accessories-achiver" domain="[('make', '=', True)]" />
-        <separator/>
-        <filter string='Due to Start' name="due_to_start" icon="terp-accessories-achiver" domain="[('date_start', '&lt;', (context_today() + relativedelta(days=1)).strftime('%Y-%m-%d'))]" />
-        <filter string='Start This Week' name="due_to_start" icon="terp-accessories-achiver" domain="[('date_start', '&lt;', (context_today() + relativedelta(days=(7 - context_today().weekday()))).strftime('%Y-%m-%d'))]" />
-        <separator/>
-        <filter string="Expedite" name="expedite" domain="[('exp_group_id','!=',False)]"/>
-        <filter string="Increase" name="expedite" domain="[('incr_group_id','!=',False)]"/>
-        <filter string="None" name="no_exp_incr" domain="[('exp_group_id','=',False),('incr_group_id','=',False)]"/>
-        <group expand='0' string='Group by...'>
-            <filter string='Default Vendor' icon="terp-mrp" domain="[]" context="{'group_by' : 'partner_id'}"/>
-            <filter string='Category' domain="[]" context="{'group_by' : 'categ_id'}"/>
-        </group>
-        </search>
-    </field>
-</record>
 
-<record id="mrp_plan_analysis_action" model="ir.actions.act_window">
-    <field name="name">Plan Analysis</field>
-    <field name="res_model">mrp.plan.analysis</field>
-    <field name="view_id" ref="mrp_plan_analysis_tree_view"/>
-    <field name="search_view_id" ref="mrp_plan_analysis_search_view"/>
-</record>
 
-<menuitem id="stock_shelf_products_menu"
-    name="MRP Plan Analysis"
-    sequence="270"
-    action="mrp_plan_analysis_action"
-    parent="stock.menu_warehouse_report"
-    groups="stock.group_stock_user"/>
 
-<record id="analysis_convert_to_procurements_action" model="ir.actions.server">
-    <field name="name">Convert to Procurement(s)</field>
-    <field name="model_id" ref="mrp_material_analysis.model_mrp_plan_analysis" />
-    <field name="state">code</field>
-    <field name="code">
-if env.context.get('active_ids'):
-    env['mrp.material_plan'].browse(context['active_ids']).action_convert_to_procurements()</field>
-</record>
+<!--<record model="ir.ui.view" id="mrp_plan_analysis_tree_view">-->
+    <!--<field name="name">mrp.plan.analysis.tree</field>-->
+    <!--<field name="model">mrp.plan.analysis</field>-->
+    <!--<field name="arch" type="xml">-->
+        <!--<tree string="Plan Analysis">-->
+            <!--<field name="plan_line_id" invisible="1"/>-->
+            <!--<field name="product_id"/>-->
+            <!--<field name="categ_id" invisible="1"/>-->
+            <!--<field name="product_type" invisible="1"/>-->
+            <!--<field name="deprecated"/>-->
+            <!--<field name="e_kanban"/>-->
+            <!--<field name="product_qty"/>-->
+            <!--<field name="uom_id"/>-->
+            <!--<field name="make"/>-->
+            <!--<field name="date_start"/>-->
+            <!--<field name="date_finish"/>-->
+            <!--<field name="lead_days" invisible="1"/>-->
+            <!--<field name="location_id" invisible="1"/>-->
+            <!--<field name="origin" invisible="1"/>-->
+            <!--<field name="partner_id"/>-->
+            <!--<field name="date_exp_order" invisible="1"/>-->
+            <!--<field name="expedite_days" invisible="1"/>-->
+            <!--<field name="expedite_window" invisible="1"/>-->
+            <!--<field name="expedite_qty" invisible="1"/>-->
+            <!--<field name="exp_group_id"/>-->
+            <!--<field name="date_incr_order" invisible="1"/>-->
+            <!--<field name="trailing_days" invisible="1"/>-->
+            <!--<field name="increase_qty" invisible="1"/>-->
+            <!--<field name="incr_group_id"/>-->
+            <!--<field name="increase_window" invisible="1"/>-->
+            <!--<field name="blanket_id"/>-->
+            <!--<button name="action_material_analysis" type="object" icon="fa-bar-chart" help="Show Planning Report"/>-->
+        <!--</tree>-->
+    <!--</field>-->
+<!--</record>-->
 
-<record model="ir.values" id="analysis_convert_to_procurements_menu">
-    <field name="name">analysis_convert_to_procurements</field>
-    <field name="key2">client_action_multi</field>
-    <field name="key">action</field>
-    <field name="model">mrp.plan.analysis</field>
-    <field name="value" eval="'ir.actions.server,%d' % analysis_convert_to_procurements_action"/>
-</record>
+<!--<record model="ir.ui.view" id="mrp_plan_analysis_search_view">-->
+    <!--<field name="name">mrp.plan.analysis.search</field>-->
+    <!--<field name="model">mrp.plan.analysis</field>-->
+    <!--<field name="arch" type="xml">-->
+        <!--<search string="Plan Analysis">-->
+        <!--<field name="plan_line_id" string="Name" filter_domain="[('plan_line_id.name','ilike',self)]"/>-->
+        <!--<field name="product_id" string="Product" filter_domain="['|','|',('product_id.default_code','ilike',self),('product_id.name','ilike',self),('product_id.barcode','ilike',self)]"/>-->
+        <!--<filter string='Purchasing' name="purchase_only" icon="terp-accessories-achiver" domain="[('make', '=', False)]" />-->
+        <!--<filter string='Manufacturing' name="make_only" icon="terp-accessories-achiver" domain="[('make', '=', True)]" />-->
+        <!--<separator/>-->
+        <!--<filter string='Due to Start' name="due_to_start" icon="terp-accessories-achiver" domain="[('date_start', '&lt;', (context_today() + relativedelta(days=1)).strftime('%Y-%m-%d'))]" />-->
+        <!--<filter string='Start This Week' name="due_to_start" icon="terp-accessories-achiver" domain="[('date_start', '&lt;', (context_today() + relativedelta(days=(7 - context_today().weekday()))).strftime('%Y-%m-%d'))]" />-->
+        <!--<separator/>-->
+        <!--<filter string="Expedite" name="expedite" domain="[('exp_group_id','!=',False)]"/>-->
+        <!--<filter string="Increase" name="expedite" domain="[('incr_group_id','!=',False)]"/>-->
+        <!--<filter string="None" name="no_exp_incr" domain="[('exp_group_id','=',False),('incr_group_id','=',False)]"/>-->
+        <!--<group expand='0' string='Group by...'>-->
+            <!--<filter string='Default Vendor' icon="terp-mrp" domain="[]" context="{'group_by' : 'partner_id'}"/>-->
+            <!--<filter string='Category' domain="[]" context="{'group_by' : 'categ_id'}"/>-->
+        <!--</group>-->
+        <!--</search>-->
+    <!--</field>-->
+<!--</record>-->
+
+<!--<record id="mrp_plan_analysis_action" model="ir.actions.act_window">-->
+    <!--<field name="name">Plan Analysis</field>-->
+    <!--<field name="res_model">mrp.plan.analysis</field>-->
+    <!--<field name="view_id" ref="mrp_plan_analysis_tree_view"/>-->
+    <!--<field name="search_view_id" ref="mrp_plan_analysis_search_view"/>-->
+<!--</record>-->
+
+<!--<menuitem id="stock_shelf_products_menu"-->
+    <!--name="MRP Plan Analysis"-->
+    <!--sequence="270"-->
+    <!--action="mrp_plan_analysis_action"-->
+    <!--parent="stock.menu_warehouse_report"-->
+    <!--groups="stock.group_stock_user"/>-->
+
+<!--<record id="analysis_convert_to_procurements_action" model="ir.actions.server">-->
+    <!--<field name="name">Convert to Procurement(s)</field>-->
+    <!--<field name="model_id" ref="mrp_material_analysis.model_mrp_plan_analysis" />-->
+    <!--<field name="state">code</field>-->
+    <!--<field name="code">-->
+<!--if env.context.get('active_ids'):-->
+    <!--env['mrp.material_plan'].browse(context['active_ids']).action_convert_to_procurements()</field>-->
+<!--</record>-->
+
+<!--<record model="ir.values" id="analysis_convert_to_procurements_menu">-->
+    <!--<field name="name">analysis_convert_to_procurements</field>-->
+    <!--<field name="key2">client_action_multi</field>-->
+    <!--<field name="key">action</field>-->
+    <!--<field name="model">mrp.plan.analysis</field>-->
+    <!--<field name="value" eval="'ir.actions.server,%d' % analysis_convert_to_procurements_action"/>-->
+<!--</record>-->
 
 </odoo>

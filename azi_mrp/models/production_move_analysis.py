@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+
 from odoo import api, fields, models, tools
 from odoo.addons import decimal_precision as dp
 
@@ -9,21 +10,58 @@ class ProductionMoveAnalysis(models.Model):
     _auto = False
 
     # these fields selected from the database view
-    plan_line_id = fields.Many2one(
-        comodel_name='mrp.material_plan',
-        string='Plan Line',
-        required=True)
-
+    raw_material_production_id = fields.Many2one(
+        'mrp.production', 'Production Order for raw materials')
+    production_id = fields.Many2one('mrp.production', 'Production Order')
+    date = fields.Datetime(
+        'Date', default=fields.Datetime.now, index=True, required=True,
+        help="Move date: scheduled date until move is done, then date of actual move processing")
+    date_expected = fields.Datetime(
+        'Expected', default=fields.Datetime.now, index=True, required=True)
+    picking_id = fields.Many2one('stock.picking', 'Transfer Reference', index=True, states={'done': [('readonly', True)]})
+    sequence = fields.Integer('Sequence', default=10)
+    origin = fields.Char("Source Document")
     product_id = fields.Many2one(
-        comodel_name='product.product',
-        string='Product',
-        required=True)
-
-    categ_id = fields.Many2one(
-        comodel_name='product.category',
-        string='Category',
-        required=True)
-
+        'product.product', 'Product',
+        domain=[('type', 'in', ['product', 'consu'])], index=True, required=True,
+        states={'done': [('readonly', True)]})
+    product_uom_qty = fields.Float(
+        'Quantity',
+        digits=dp.get_precision('Product Unit of Measure'),
+        default=1.0, required=True, states={'done': [('readonly', True)]},
+        help="This is the quantity of products from an inventory "
+             "point of view. For moves in the state 'done', this is the "
+             "quantity of products that were actually moved. For other "
+             "moves, this is the quantity of product that is planned to "
+             "be moved. Lowering this quantity does not generate a "
+             "backorder. Changing this quantity on assigned moves affects "
+             "the product reservation, and should be done with care.")
+    product_uom = fields.Many2one(
+        'product.uom', 'Unit of Measure', required=True, states={'done': [('readonly', True)]})
+    # TDE FIXME: make it stored, otherwise group will not work
+    location_id = fields.Many2one(
+        'stock.location', 'Source Location',
+        auto_join=True, index=True, required=True, states={'done': [('readonly', True)]},
+        help="Sets a location if you produce at a fixed location. This can be a partner location if you subcontract the manufacturing operations.")
+    location_dest_id = fields.Many2one(
+        'stock.location', 'Destination Location',
+        auto_join=True, index=True, required=True, states={'done': [('readonly', True)]},
+        help="Location where the system will stock the finished products.")
+    create_date = fields.Datetime('Creation Date', index=True, readonly=True)
+    state = fields.Selection([
+        ('draft', 'New'), ('cancel', 'Cancelled'),
+        ('waiting', 'Waiting Another Move'), ('confirmed', 'Waiting Availability'),
+        ('assigned', 'Available'), ('done', 'Done')], string='Status',
+        copy=False, default='draft', index=True, readonly=True,
+        help="* New: When the stock move is created and not yet confirmed.\n"
+             "* Waiting Another Move: This state can be seen when a move is waiting for another one, for example in a chained flow.\n"
+             "* Waiting Availability: This state is reached when the procurement resolution is not straight forward. It may need the scheduler to run, a component to be manufactured...\n"
+             "* Available: When products are reserved, it is set to \'Available\'.\n"
+             "* Done: When the shipment is processed, the state is \'Done\'.")
+    tracking = fields.Selection([
+        ('serial', 'By Unique Serial Number'),
+        ('lot', 'By Lots'),
+        ('none', 'No Tracking')], string="Tracking", default='none', required=True)
     product_type = fields.Selection(
         # selection=dict(self.env['product.template'].fields_get(allfields=['type'])['type']['selection'])['key'],
         selection=[
@@ -32,95 +70,19 @@ class ProductionMoveAnalysis(models.Model):
             ('service', 'Service')],
         string='Product Type',
         required=True)
-
-    deprecated = fields.Boolean(
-        string='Obsolete',
-        required=True)
-
-    e_kanban = fields.Boolean(
-        string='BinItem',
-        required=True)
-
-    product_qty = fields.Float(
-        string='Quantity',
-        digits=dp.get_precision('Product Unit of Measure'),
-        required=True)
-
-    uom_id = fields.Many2one(
-        comodel_name='product.uom',
-        string="UOM",
-        related='product_id.uom_id')
-
-    make = fields.Boolean(
-        string='Manufactured',
-        required=True)
-
-    date_start = fields.Date(
-        string='Start Date',
-        required=True)
-
-    date_finish = fields.Date(
-        string='Finish Date',
-        required=True)
-
-    lead_days = fields.Integer(
-        string='LeadDays',
-        required=True)
-
-    location_id = fields.Many2one(
-        comodel_name='stock.location',
-        string='Location',
-        required=True)
-
-    origin = fields.Char(
-        string='Origin',
-        required=True)
-
-    partner_id = fields.Many2one(
-        comodel_name='res.partner',
-        string='Supplier')
-
-    date_exp_order = fields.Date(
-        string='Expedite Order Date')
-
-    expedite_days = fields.Integer(
-        string='ExpediteDays',
-        help="Number of days earlier the order would have to be received")
-
-    expedite_window = fields.Integer(
-        string="ExpediteWindow",
-        help="A percentage of the lead-time days remaining before the order is due to be delivered")
-
-    expedite_qty = fields.Float(
-        string="ExpediteQty")
-
-    exp_group_id = fields.Many2one(
-        comodel_name='procurement.group',
-        string="ExpediteGroup")
-
-    date_incr_order = fields.Date(
-        string='Increase Order Date',
-        required=True)
-
-    trailing_days = fields.Integer(
-        string='ExpediteDays',
-        help="Number of days earlier the order would have to be received")
-
-    increase_qty = fields.Float(
-        string="IncreaseQty",
-        help="The original quantity on the order to be increased")
-
-    incr_group_id = fields.Many2one(
-        comodel_name='procurement.group',
-        string="IncreaseGroup")
-
-    increase_window = fields.Integer(
-        string="IncreaseWindow",
-        help="A percentage of the lead-time days remaining before the order is due to be delivered")
-
-    blanket_id = fields.Many2one(
-        comodel_name='purchase.requisition',
-        string='Blanket Order')
+    route_names = fields.Char(
+        string='Route',)
+    input_qty = fields.Float(
+        string='Input Quantity',
+        default=1.0,)
+    stock_qty = fields.Float(
+        string='Stock Quantity',
+        default=1.0,)
+    res_qty = fields.Float(
+        string='Reserved',
+        default=1.0,)
+    res_names = fields.Char(
+        string='Reservations',)
 
     def action_material_analysis(self):
         self.ensure_one()
@@ -132,9 +94,11 @@ class ProductionMoveAnalysis(models.Model):
         self._cr.execute("""
             CREATE VIEW production_move_analysis AS (
                 select
+                    m.id,
                     m.raw_material_production_id,
                     m.production_id,
                     m.date,
+                    m.date_expected,
                     m.picking_id,
                     m.sequence,
                     m.origin,

@@ -19,6 +19,7 @@ AZI Specialized Customizations to MRP
     "depends": ['stock', 'mrp'],
     'data': [
         'views/mrp_view_changes.xml',
+        'views/production_move_analysis.xml',
     ],
     "installable": True,
     "auto_install": False,
