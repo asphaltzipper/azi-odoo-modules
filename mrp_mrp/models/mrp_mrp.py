@@ -186,7 +186,7 @@ class MrpMaterialPlan(models.Model):
             )
             proc_order = plan_move.procurement_create(proc_name)
             if not proc_order or proc_order.state == 'exception':
-                message = "Order must be converted manually: %s" % self.product_id.display_name
+                message = "Order must be converted manually: %s" % plan_move.product_id.display_name
                 _logger.info(message)
                 self.env['mrp.material_plan.log'].create({'type': 'warning', 'message': message})
                 self.env.user.notify_warning(message=message, title="Procurement Failed", sticky=True)

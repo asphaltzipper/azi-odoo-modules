@@ -25,8 +25,6 @@ class MrpProduction(models.Model):
     def post_inventory(self):
         for order in self:
 
-            import pdb
-            pdb.set_trace()
             # Check for Draft Moves
             # Any draft moves will be canceled, rather than posted, when posting inventory.  The action_assign() method
             # sets draft moves to confirmed.
@@ -68,15 +66,15 @@ class MrpProduction(models.Model):
             #         continue
             #     if not move_lot.lot_id:
             #         raise UserError(_('You should provide a lot for a component'))
-                # Search other move_lot where it could be added:
-                # lots = self.move_lot_ids.filtered(
-                #     lambda x: (x.lot_id.id == move_lot.lot_id.id) and (not x.lot_produced_id) and (not x.done_move))
-                # if lots:
-                #     lots[0].quantity_done += move_lot.quantity_done
-                #     lots[0].lot_produced_id = self.final_lot_id.id
-                #     move_lot.sudo().unlink()
-                # else:
-                #     move_lot.lot_produced_id = self.final_lot_id.id
-                #     move_lot.done_wo = True
+            #     Search other move_lot where it could be added:
+            #     lots = self.move_lot_ids.filtered(
+            #         lambda x: (x.lot_id.id == move_lot.lot_id.id) and (not x.lot_produced_id) and (not x.done_move))
+            #     if lots:
+            #         lots[0].quantity_done += move_lot.quantity_done
+            #         lots[0].lot_produced_id = self.final_lot_id.id
+            #         move_lot.sudo().unlink()
+            #     else:
+            #         move_lot.lot_produced_id = self.final_lot_id.id
+            #         move_lot.done_wo = True
 
         return super(MrpProduction, self).post_inventory()
