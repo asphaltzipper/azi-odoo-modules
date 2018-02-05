@@ -21,7 +21,6 @@ Shelf Location
         'views/shelf_location_barcode_template.xml',
         'security/ir.model.access.csv',
         'report/shelf_report.xml',
-        'report/mrp_production_templates.xml',
         'report/shelf_count_sheets_templates.xml',
         'report/shelf_product_listing_templates.xml',
         'report/stock_shelf_products_views.xml',

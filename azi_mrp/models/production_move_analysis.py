@@ -58,10 +58,10 @@ class ProductionMoveAnalysis(models.Model):
              "* Waiting Availability: This state is reached when the procurement resolution is not straight forward. It may need the scheduler to run, a component to be manufactured...\n"
              "* Available: When products are reserved, it is set to \'Available\'.\n"
              "* Done: When the shipment is processed, the state is \'Done\'.")
-    tracking = fields.Selection([
-        ('serial', 'By Unique Serial Number'),
-        ('lot', 'By Lots'),
-        ('none', 'No Tracking')], string="Tracking", default='none', required=True)
+    tracking = fields.Char(
+        string="Tracking",
+        default='none',
+        required=True)
     product_type = fields.Selection(
         # selection=dict(self.env['product.template'].fields_get(allfields=['type'])['type']['selection'])['key'],
         selection=[
@@ -73,16 +73,27 @@ class ProductionMoveAnalysis(models.Model):
     route_names = fields.Char(
         string='Route',)
     input_qty = fields.Float(
-        string='Input Quantity',
-        default=1.0,)
+        string='Input Quantity')
     stock_qty = fields.Float(
-        string='Stock Quantity',
-        default=1.0,)
+        string='Stock Quantity')
     res_qty = fields.Float(
-        string='Reserved',
-        default=1.0,)
+        string='Reserved')
+    avail_qty = fields.Float(
+        string='Available',
+        help='Stock quantity, minus quantity reserved anywhere, plus quantity reserved to this stock move')
+    assigned_qty = fields.Float(
+        string='Assigned',
+        readonly=True,
+        help='Quantity that has already been reserved for this move')
     res_names = fields.Char(
         string='Reservations',)
+    e_kanban = fields.Boolean(
+        string='E-Kanban',
+        default=False,
+        help="Material planning (MRP) for This product will be handled by electronic kanban")
+    default_proc_qty = fields.Float(
+        string='Kanban Qty',
+        help="Default procurement quantity for electronic kanban ordering")
 
     def action_material_analysis(self):
         self.ensure_one()
@@ -109,20 +120,32 @@ class ProductionMoveAnalysis(models.Model):
                     m.location_dest_id,
                     m.create_date,
                     m.state,
+                    p.e_kanban,
+                    p.default_proc_qty,
                     t.tracking,
                     t.type as product_type,
                     r.route_names,
                     i.qty as input_qty,
                     s.qty as stock_qty,
                     res.res_qty,
-                    res.res_names
+                    res.res_names,
+                    case
+                        when t.type = 'consu'
+                        then m.product_uom_qty
+                        else coalesce(a.res_qty, 0.0)
+                        end as assigned_qty,
+                    case
+                        when t.type = 'consu'
+                        then coalesce(res.res_qty, a.res_qty, m.product_uom_qty, 0.0)
+                        else coalesce(s.qty, 0.0) - coalesce(res.res_qty, 0.0) + coalesce(a.res_qty, 0.0)
+                        end as avail_qty
                 from stock_move as m
                 left join product_product as p on p.id=m.product_id
                 left join product_template as t on t.id=p.product_tmpl_id
                 left join (
                     select
-                        product_id,
-                        string_agg(name, ', ') as route_names
+                    product_id,
+                    string_agg(name, ', ') as route_names
                     from stock_route_product as sr
                     left join stock_location_route as r on r.id=sr.route_id
                     group by product_id
@@ -130,8 +153,8 @@ class ProductionMoveAnalysis(models.Model):
                 left join (
                     -- Input quantity
                     select
-                        q.product_id,
-                        sum(q.qty) as qty
+                    q.product_id,
+                    sum(q.qty) as qty
                     from stock_quant as q
                     left join stock_location as l on l.id=q.location_id
                     where l.name='Input'
@@ -140,8 +163,8 @@ class ProductionMoveAnalysis(models.Model):
                 left join (
                     -- Stock quantity
                     select
-                        q.product_id,
-                        sum(q.qty) as qty
+                    q.product_id,
+                    sum(q.qty) as qty
                     from stock_quant as q
                     left join stock_location as l on l.id=q.location_id
                     where l.name='Stock'
@@ -150,9 +173,9 @@ class ProductionMoveAnalysis(models.Model):
                 left join (
                     -- stock reservation quantity
                     select
-                        q.product_id,
-                        sum(q.qty) as res_qty,
-                        string_agg(m.origin, ', ') as res_names
+                    q.product_id,
+                    sum(q.qty) as res_qty,
+                    string_agg(m.origin, ', ') as res_names
                     from stock_quant as q
                     left join stock_move as m on m.id=q.reservation_id
                     left join stock_location as l on l.id=q.location_id
@@ -160,6 +183,16 @@ class ProductionMoveAnalysis(models.Model):
                     and reservation_id is not null
                     group by q.product_id
                 ) as res on res.product_id=m.product_id
+                left join (
+                    -- this reservation quantity
+                    select
+                    q.product_id,
+                    q.reservation_id,
+                    sum(q.qty) as res_qty
+                    from stock_quant as q
+                    where reservation_id is not null
+                    group by q.product_id, q.reservation_id
+                ) as a on a.product_id=m.product_id and a.reservation_id=m.id
                 order by m.sequence
             )
         """)

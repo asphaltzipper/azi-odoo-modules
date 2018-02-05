@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <report
+        string="Azi Production Order"
+        id="action_report_production_order_azi"
+        model="mrp.production"
+        name="azi_mrp.report_mrporder_azi"
+        file="azi_mrp.report.mrp_production_templates"
+        paperformat="shelf_location.paperformat_landscape_us"
+        report_type="qweb-pdf"
+    />
+
+</odoo>

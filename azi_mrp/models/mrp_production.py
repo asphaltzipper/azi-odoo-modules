@@ -6,6 +6,12 @@ from odoo import fields, models
 class MrpProduction(models.Model):
     _inherit = "mrp.production"
 
+    moves_plus = fields.One2many(
+        comodel_name='production.move.analysis',
+        inverse_name='raw_material_production_id',
+        readonly=True
+    )
+
     # require routings when creating manufacturing orders
     # I wish we could just do this:
     # routing_id = fields.Many2one(required=True)

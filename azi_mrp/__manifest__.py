@@ -16,9 +16,11 @@ AZI Specialized Customizations to MRP
 * Show stock moves button on MO form
 * Add serial-required column to raw material list for sorting
     """,
-    "depends": ['stock', 'mrp'],
+    "depends": ['stock', 'mrp', 'shelf_location'],
     'data': [
         'views/mrp_view_changes.xml',
+        'report/mrp_report.xml',
+        'report/mrp_production_templates.xml',
         'views/production_move_analysis.xml',
     ],
     "installable": True,

@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <report
-        string="Azi Production Order"
-        id="action_report_production_order_azi"
-        model="mrp.production"
-        name="shelf_location.report_mrporder_azi"
-        file="shelf_location.report.mrp_production_templates"
-        report_type="qweb-pdf"
-    />
-
     <record id="paperformat_landscape_us" model="report.paperformat">
         <field name="name">US Letter Landscape</field>
         <field name="default" eval="True" />

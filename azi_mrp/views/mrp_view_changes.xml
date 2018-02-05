@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record model="ir.actions.act_window" id="action_production_material_analysis">
-        <field name="name">Production Material Analysis</field>
+    <record model="ir.actions.act_window" id="action_production_move_analysis">
+        <field name="name">Moves Analysis</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">production.move.analysis</field>
         <field name="view_type">form</field>
-        <!--<field name="view_id" ref="azi_mrp.production_move_analysis_tree_view"/>-->
         <field name="view_mode">tree,form</field>
         <field name="domain">['|', ('raw_material_production_id', '=', active_id), ('production_id', '=', active_id)]</field>
     </record>
@@ -14,6 +13,7 @@
     <!-- make the stock moves button always show -->
     <!-- sort consumed materials to put serialized components at the top -->
     <!-- show product serial tracking column -->
+    <!-- add button for production moves analysis -->
     <record id="view_picking_form_name" model="ir.ui.view">
         <field name="name">mrp.production.azi.form</field>
         <field name="model">mrp.production</field>
@@ -31,7 +31,7 @@
                 <attribute name="string">Tracking</attribute>
             </xpath>
             <xpath expr="//sheet/div[@name='button_box']/button[2]" position="before">
-                <button name="%(action_production_material_analysis)d" type="action" string="Production Material Analysis" class="oe_stat_button" icon="fa-arrows-v"/>
+                <button name="%(action_production_move_analysis)d" type="action" string="Moves Analysis" class="oe_stat_button" icon="fa-arrows-v"/>
             </xpath>
         </field>
     </record>
