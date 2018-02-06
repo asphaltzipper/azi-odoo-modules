@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- add act mrp wo produce wizard button -->
+    <record id="view_production_wo_produce_form" model="ir.ui.view">
+        <field name="name">mrp.production.azi.form</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+        <field name="arch" type="xml">
+            <button name="open_produce_product" position="before">
+                    <button
+                            name="open_wo_produce"
+                            attrs="{'invisible': ['|', ('state', '!=', 'planned'), '|', ('routing_id', '=', False), ('check_to_done', '=', True)]}"
+                            type="object"
+                            string="Produce Workorders"
+                            class="oe_highlight"/>
+            </button>
+        </field>
+    </record>
+
+</odoo>

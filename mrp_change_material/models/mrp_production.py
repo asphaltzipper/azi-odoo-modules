@@ -11,13 +11,14 @@ class MrpProduction(models.Model):
     @api.multi
     def action_assign(self):
         for production in self:
+            # confirm raw material stock moves added by the user
             move_to_assign = production.move_raw_ids.filtered(lambda x: x.state == 'draft')
-            warehouse_id = self.location_src_id.get_warehouse().id
+            warehouse_id = production.location_src_id.get_warehouse().id
             for move in move_to_assign:
                 loc = move.product_id.property_stock_production
                 move.warehouse_id = warehouse_id
                 move.location_dest_id = loc
-                move.unit_factor = move.product_uom_qty / self.product_qty
+                move.unit_factor = move.product_uom_qty / production.product_qty
             move_to_assign.action_confirm()
         return super(MrpProduction, self).action_assign()
 
@@ -31,7 +32,7 @@ class MrpProduction(models.Model):
             # The action_assign() method also creates stock.move.lots records for the new raw materials.  Without these,
             # it seems that the consumed quantity is posted as zero.
             if order.move_raw_ids.filtered(lambda x: x.state == 'draft'):
-                raise UserError(_('You have new consumed materials. Check availability again.'))
+                raise UserError(_('You have new raw materials. Check availability again.'))
 
             # When the user adds RM then updates qty to produce, the qty to consume must be updated.
             # This case is NOT handled by simply setting the unit_factor field on the stock moves.
@@ -39,23 +40,20 @@ class MrpProduction(models.Model):
             # materials didn't come from the BOM, so they don't get updated.
             # We can handle this here for non-tracked raw materials.  It may not behave as expected when there isn't
             # enough material to reserve the increased quantity.
-            moves_added = self.move_raw_ids.filtered(
+            # TODO: This really should be handled by customizing the change.production.qty wizard
+            moves_added = order.move_raw_ids.filtered(
                 lambda x: (x.has_tracking == 'none') and (x.state not in ('done', 'cancel')) and x.added_rm)
             for move in moves_added:
                 if move.unit_factor:
                     rounding = move.product_uom.rounding
-                    move.quantity_done = float_round(self.product_qty * move.unit_factor, precision_rounding=rounding)
+                    move.quantity_done = float_round(order.product_qty * move.unit_factor, precision_rounding=rounding)
 
-            # TODO: handle materials added after planning work orders
-            # The default behavior is to cancel stock moves when the serial number is not specified
-            # We don't want to allow the user to post inventory without specifying a serial number for all tracked
-            # components.  If we are going to build without the tracked component, then cancel it.  If we we actually
-            # have the component, then do an inventory adjustment or something.
             # There may be a gap here:
-            # If the user adds serial-tracked raw material, after clicking the Plan button, how does the move_lot for
-            # the work order get created?  If the user is using our work order completion wizard, he will be prompted
-            # for the serial number.That's what we will assume for now.
-            #
+            # If the user adds serial-tracked raw material, after clicking the Plan button, the move_lot for the work
+            # order doesn't get created.
+            # If the user is using our work order completion wizard it's not a problem because he will be prompted for
+            # the serial number.  That's what we will assume for now.
+            # TODO: handle materials added after planning work orders
             # # This code needs some thoughtful consideration.  It was mostly copied from elsewhere, and may not behave
             # # as expected.
             # lot_moves_added = self.move_raw_ids.filtered(
