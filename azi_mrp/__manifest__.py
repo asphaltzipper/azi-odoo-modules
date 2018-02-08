@@ -22,6 +22,7 @@ AZI Specialized Customizations to MRP
         'report/mrp_report.xml',
         'report/mrp_production_templates.xml',
         'views/production_move_analysis.xml',
+        'security/ir.model.access.csv',
     ],
     "installable": True,
     "auto_install": False,
