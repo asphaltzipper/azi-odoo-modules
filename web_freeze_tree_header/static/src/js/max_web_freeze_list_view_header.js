@@ -1,4 +1,4 @@
-odoo.define('max_web_freeze_list_View_header', function (require) {
+odoo.define('web_freeze_tree_header', function (require) {
 'use strict';
 
     var ListView = require('web.ListView');
