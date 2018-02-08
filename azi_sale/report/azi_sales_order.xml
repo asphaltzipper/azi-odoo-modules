@@ -32,7 +32,7 @@
     </template>
 
     <record id="sale.report_sale_order" model="ir.actions.report.xml">
-        <field name="attachment_use" eval="True"/>
+        <field name="attachment_use" eval="False"/>
         <field name="attachment">object.name+'.pdf'</field>
     </record>
 
