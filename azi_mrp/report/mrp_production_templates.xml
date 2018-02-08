@@ -69,7 +69,59 @@
                         </table>
                     </div>
 
-                    <h3 t-if="o.move_raw_ids">Bill Of Material</h3>
+                    <h3 t-if="o.move_raw_ids.filtered(lambda x: x.has_tracking == 'serial')">Serials</h3>
+
+                    <table class="table table-condensed" t-if="o.move_raw_ids.filtered(lambda x: x.has_tracking == 'serial')">
+                        <thead>
+                            <tr>
+                                <th><strong>Products</strong></th>
+                                <th class="text-right"><strong>Quantity</strong></th>
+                                <th class="text-center"><strong>Serial</strong></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-if="o.moves_plus">
+                                <tr t-foreach="o.move_raw_ids.filtered(lambda x: x.has_tracking == 'serial')" t-as="serials">
+                                    <td style="width:18cm; border-bottom:1px solid #000">
+                                        <span t-field="serials.product_id.code"/>
+                                        <span t-field="serials.product_id.name"/>
+                                    </td>
+                                    <td class="text-right text-nowrap" style="border-bottom:1px solid #000">
+                                        <span t-field="serials.product_uom_qty"/>
+                                        <span t-field="serials.product_uom.name" groups="product.group_uom"/>
+                                    </td>
+                                    <td class="text-right text-nowrap" style="width:10.5cm; border-bottom:1px solid #000">
+                                        <span></span>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+
+                    <h3 t-if="o.routing_id">Labor</h3>
+
+                    <table class="table table-condensed" t-if="o.routing_id">
+                        <thead>
+                            <tr>
+                                <td class="text-left"><strong>Workcenter</strong></td>
+                                <td class="text-center"><strong>User</strong></td>
+                                <td class="text-center"><strong>Date</strong></td>
+                                <td class="text-center"><strong>Hours</strong></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="range(0,9)" t-as="row">
+                            <tr>
+                                <td colspan="4" style="width:10.5cm; border-bottom:1px solid #000; height:.75cm">
+                                    <span></span>
+                                </td>
+                            </tr>
+                            </t>
+                        </tbody>
+                    </table>
+
+                    <h3 t-if="o.move_raw_ids and (o.routing_id or o.move_raw_ids.filtered(lambda x: x.has_tracking == 'serial'))" style="page-break-before:always;">Bill Of Material</h3>
+                    <h3 t-elif="o.move_raw_ids">Bill Of Material</h3>
 
                     <table class="table table-condensed" t-if="o.move_raw_ids">
                         <thead>
@@ -115,6 +167,18 @@
                         </tbody>
                     </table>
                     <div class="oe_structure"/>
+                    <div class="footer" t-if="o.routing_id or o.move_raw_ids.filtered(lambda x: x.has_tracking == 'serial')">
+                        <div class="row">
+                            <div class="col-xs-2 pull-right">
+                                <small>
+                                    <span><span t-field="o.name"/> Page</span>
+                                    <span class="page" />
+                                    of
+                                    <span class="topage" />
+                                </small>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </t>
         </t>
