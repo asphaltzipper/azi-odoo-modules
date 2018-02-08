@@ -200,9 +200,10 @@ class MrpScheduleLine(models.Model):
 
     @api.model
     def check_production_state_not_done(self):
-        return True if not self.production_id or (self.production_id and
-                                                  self.production_id.state not
-                                                  in 'done') else False
+        if self.production_id and self.production_id.state == 'done':
+            return False
+        else:
+            return True
 
     @api.multi
     def copy(self, default=None):
@@ -210,6 +211,8 @@ class MrpScheduleLine(models.Model):
         # production state
         if (default.get('schedule_id') or
                 self.check_production_state_not_done()):
+            if self.production_id and self.production_state == 'cancel':
+                default['production_id'] = False
             return super(MrpScheduleLine, self).copy(default)
         else:
             raise UserError(_("Duplicating a Schedule Line linked to a"

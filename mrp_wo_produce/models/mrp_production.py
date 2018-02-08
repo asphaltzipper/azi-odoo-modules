@@ -20,7 +20,8 @@ class MrpProduction(models.Model):
             # We don't want to allow the user to post inventory without specifying a serial number for all tracked
             # components.  If we are going to build without the tracked component, then cancel the stock move.  If we
             # actually have the component, then do an inventory adjustment or something.
-            serial_moves = order.move_raw_ids.filtered(lambda x: x.has_tracking == 'serial')
+            serial_moves = order.move_raw_ids\
+                .filtered(lambda x: x.state not in ('done', 'cancel') and x.product_id.tracking == 'serial')
             for move_lot in serial_moves.mapped('move_lot_ids'):
                 if not move_lot.lot_id or not move_lot.quantity_done:
                     raise UserError(_('You should provide a lot for a component'))
