@@ -26,14 +26,14 @@
         </xpath>
         <xpath expr="//div[@class='page']/div[@t-if='len(o.tax_line_ids) > 0']" position="replace"/>
         <xpath expr="//div[@name='invoice_address']" position="before">
-            <div style="position: relative; top: 50; padding-bottom: 1.875in;" groups="sale.group_delivery_invoice_address">
-                <div class="mt8" style="position: absolute; top: 0; left: .625in">
+            <div style="position: relative; top: 60; padding-bottom: 1.875in;" groups="sale.group_delivery_invoice_address">
+                <div class="mt8 col-xs-5" style="position: absolute; top: 0; left: .3125in">
                     <strong>Invoicing address:</strong>
                     <div t-field="o.partner_id"
                         t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
                     <span t-if="o.partner_id.vat">TIN: <span t-field="o.partner_id.vat"/></span>
                 </div>
-                <div class="mt8" style="position: absolute; top: 0;  left: 5.25in">
+                <div class="mt8 col-xs-5" style="position: absolute; top: 0;  left: 4.9375in">
                     <strong>Shipping address:</strong>
                     <div t-field="o.partner_shipping_id"
                         t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
@@ -41,9 +41,6 @@
                 </div>
             </div>
         </xpath>
-        <!--<xpath expr="//table[@class='table table-condensed'][1]" position="attributes">-->
-            <!--<attribute name="style">position: relative; top: 20</attribute>-->
-        <!--</xpath>-->
     </template>
 
     <record id="azi_payment_tree" model="ir.ui.view">
