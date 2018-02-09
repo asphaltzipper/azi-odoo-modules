@@ -236,7 +236,7 @@ class MrpWoProduce(models.TransientModel):
         unreported_workorder_ids = self.production_id.workorder_ids\
             .filtered(lambda x: x.id not in reported_workorders.ids and x.duration_expected > 0.0).ids
         work_summary = self.work_ids.read_group(
-            domain=[],
+            domain=[('produce_id', '=', self.id)],
             fields=['workorder_id', 'labor_time'],
             groupby=['workorder_id'])
         zero_work_ids = [
