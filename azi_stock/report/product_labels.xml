@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+    <template id="azi_report_productlabel">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <div class="page text-center">
+                    <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('Code128', o.default_code, 600, 100)" style="width:350px;height:60px"/>
+                    <div style="font-size:175%; font-weight: bold; margin-top: -5px; margin-bottom: -5px" t-field="o.default_code"/>
+                    <div style="overflow: hidden; max-height:3em" t-field="o.name"/>
+                </div>
+            </t>
+        </t>
+    </template>
+
+</data>
+</odoo>

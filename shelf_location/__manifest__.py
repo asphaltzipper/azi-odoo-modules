@@ -20,6 +20,8 @@ Shelf Location
         'views/product_views.xml',
         'views/shelf_location_barcode_template.xml',
         'security/ir.model.access.csv',
+        'report/product_labels.xml',
+        'report/product_report.xml',
         'report/shelf_report.xml',
         'report/shelf_count_sheets_templates.xml',
         'report/shelf_product_listing_templates.xml',

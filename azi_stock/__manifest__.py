@@ -20,6 +20,8 @@ AZI Specialized Customizations to Stock
     'data': [
         'views/stock_view_changes.xml',
         'report/transfer_slip.xml',
+        'report/product_labels.xml',
+        'report/product_report.xml',
         'report/transfer_slip_template.xml',
         'report/stock_quant_views.xml',
     ],

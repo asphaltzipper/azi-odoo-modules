@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="paperformat_barcode" model="report.paperformat">
+            <field name="name">Barcode Printer</field>
+            <field name="default" eval="True" />
+            <field name="format">custom</field>
+            <field name="page_height">24</field>
+            <field name="page_width">64</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">1</field>
+            <field name="margin_bottom">0</field>
+            <field name="margin_left">0</field>
+            <field name="margin_right">0</field>
+            <field name="header_line" eval="False" />
+            <field name="header_spacing">0</field>
+            <field name="dpi">90</field>
+        </record>
+
+        <report
+            id="action_report_azi_product_label"
+            string="Azi Products Labels"
+            model="product.template"
+            paperformat="azi_stock.paperformat_barcode"
+            report_type="qweb-pdf"
+            name="azi_stock.azi_report_productlabel"
+            file="azi_stock.report.azi_report_productlabel"/>
+
+        <report
+            id="action_report_azi_product_product_label"
+            string="Azi Products Labels"
+            model="product.product"
+            paperformat="azi_stock.paperformat_barcode"
+            report_type="qweb-pdf"
+            name="azi_stock.azi_report_productlabel"
+            file="azi_stock.report.azi_report_productlabel"/>
+
+    </data>
+</odoo>
