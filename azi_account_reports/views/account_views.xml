@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<record id="view_account_move_line_filter_azi" model="ir.ui.view">
+    <field name="name">account.move.line.search.azi</field>
+    <field name="model">account.move.line</field>
+    <field name="inherit_id" ref="account.view_account_move_line_filter"/>
+    <field name="arch" type="xml">
+        <field name="name" position="after">
+            <field name="product_id" string="Product" filter_domain="['|','|',('product_id.default_code','ilike',self),('product_id.name','ilike',self),('product_id.barcode','ilike',self)]"/>
+        </field>
+        <xpath expr="//group/filter[@context=&quot;{'group_by':'account_id'}&quot;]" position="after">
+            <filter string="Type"  context="{'group_by':'user_type_id'}"/>
+            <filter string="Product Category" context="{'group_by':'product_categ_id'}"/>
+            <filter string="Product" context="{'group_by':'product_id'}"/>
+        </xpath>
+    </field>
+</record>
+
+</data>
+</odoo>
