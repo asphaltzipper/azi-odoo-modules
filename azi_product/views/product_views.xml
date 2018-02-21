@@ -22,6 +22,7 @@
             <xpath expr="//field[@name='seller_ids']" position="replace">
                 <field name="seller_ids" context="{'default_product_tmpl_id': context.get('product_tmpl_id', active_id)}">
                     <tree>
+                        <field name="sequence" widget="handle"/>
                         <field name="name"/>
                         <field name="product_code"/>
                         <field name="min_qty"/>
