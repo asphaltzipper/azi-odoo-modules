@@ -167,7 +167,7 @@ class MrpPlanAnalysis(models.Model):
                 left join (
                     select distinct on (product_tmpl_id) *
                     from product_supplierinfo
-                    order by product_tmpl_id, sequence desc
+                    order by product_tmpl_id, sequence
                 ) as ds on ds.product_tmpl_id=t.id
                 left join (
                     -- open blanket orders
