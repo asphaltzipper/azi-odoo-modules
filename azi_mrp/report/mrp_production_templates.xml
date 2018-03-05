@@ -128,8 +128,8 @@
                             <tr>
                                 <th><strong>Product</strong></th>
                                 <th class="text-right"><strong>Bin</strong></th>
-                                <th class="text-right"><strong>Assigned</strong></th>
                                 <th class="text-right"><strong>Available</strong></th>
+                                <th class="text-right"><strong>Assigned</strong></th>
                                 <th class="text-right"><strong>Quantity</strong></th>
                                 <th class="text-center"><strong>Shelf Location</strong></th>
                             </tr>
