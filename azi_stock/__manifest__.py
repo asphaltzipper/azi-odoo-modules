@@ -24,6 +24,7 @@ AZI Specialized Customizations to Stock
         'report/product_report.xml',
         'report/transfer_slip_template.xml',
         'report/stock_quant_views.xml',
+        'report/picking_report.xml',
     ],
     "installable": True,
     "auto_install": False,
