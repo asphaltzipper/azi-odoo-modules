@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<odoo>
+
+<!-- add credit_app_date field -->
+<record id="res_partner_view_credit_app" model="ir.ui.view">
+    <field name="name">res.partner.view.credit_app</field>
+    <field name="model">res.partner</field>
+    <field name="inherit_id" ref="account.view_partner_property_form" />
+    <field name="priority" eval="20"/>
+    <field name="arch" type="xml">
+        <field name="trust" position="after">
+            <field name="credit_app_date"/>
+        </field>
+    </field>
+</record>
+
+</odoo>
