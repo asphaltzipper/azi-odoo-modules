@@ -51,7 +51,6 @@ class PurchaseOrderLine(models.Model):
     carrier_id = fields.Many2one(
         comodel_name='delivery.carrier',
         string='Shipping',
-        required=True,
         default=_get_default_carrier)
 
     @api.onchange('product_id', 'order_id')
