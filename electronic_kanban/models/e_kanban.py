@@ -89,6 +89,13 @@ class EKanbanBatchLine(models.Model):
         readonly=True,
         store=True)
 
+    type = fields.Selection(
+        selection=[],
+        string='Product Type',
+        related='product_id.product_tmpl_id.type',
+        default='consu',
+        required=True)
+
     e_kanban = fields.Boolean(
         string='Is Kanban',
         related='product_id.e_kanban',

@@ -71,6 +71,7 @@
             <tree string="Bins">
                 <field name="batch_id" invisible="1"/>
                 <field name="product_id" options="{'no_create': True, 'no_create_edit': True}"/>
+                <field name="type"/>
                 <field name="e_kanban"/>
                 <field name="default_proc_qty"/>
                 <field name="rfq_qty"/>
