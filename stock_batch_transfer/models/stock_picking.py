@@ -42,3 +42,13 @@ class StockPicking(models.Model):
                     pack.unlink()
             pick.do_transfer()
 
+    @api.multi
+    def do_complete_qty(self):
+        """
+        Only allow totally incomplete picking lines.
+        Skip moves requiring serial numbers.
+        """
+        for pick in self:
+            for pack in pick.pack_operation_ids:
+                if pack.qty_done == 0 and not pack.product_id.tracking != 'none':
+                    pack.write({'qty_done': pack.product_qty})
