@@ -194,7 +194,7 @@ class StockInventoryRevaluation(models.Model):
 
     post_date = fields.Datetime(
         'Posting Date',
-        help="Date of actual processing",
+        help="Journal entry date",
         states={'draft': [('readonly', False)]},
         readonly=True)
 
@@ -254,8 +254,8 @@ class StockInventoryRevaluation(models.Model):
 
     @api.model
     def _create_accounting_entry(self):
-        timenow = fields.Date.today()
-        move_data = self._prepare_move_data(timenow)
+        move_date = self.post_date or fields.Date.today()
+        move_data = self._prepare_move_data(move_date)
         datas = self.product_template_id.get_product_accounts()
         move_line_obj = self.env['account.move.line']
         stock_valuation_account_id = False
@@ -354,7 +354,7 @@ class StockInventoryRevaluation(models.Model):
             if revaluation.product_id.categ_id.\
                     property_valuation == 'real_time':
                 revaluation.sudo()._create_accounting_entry()
-            self.post_date = fields.Datetime.now()
+            self.post_date = self.post_date or fields.Datetime.now()
             self.state = 'posted'
 
             amount_diff = 0.0
