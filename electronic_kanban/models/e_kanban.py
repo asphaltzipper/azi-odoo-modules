@@ -93,7 +93,6 @@ class EKanbanBatchLine(models.Model):
         selection=[],
         string='Product Type',
         related='product_id.product_tmpl_id.type',
-        default='consu',
         required=True)
 
     e_kanban = fields.Boolean(
