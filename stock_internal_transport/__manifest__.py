@@ -43,6 +43,7 @@ Modifies Stock Picking to better manage transportation of product transfers betw
     'data': [
         'data/picking_data.xml',
         'views/stock_picking_views.xml',
+        'views/res_company_views.xml',
         'report/picking_reports.xml',
         'report/report_transportdoc.xml',
     ],
