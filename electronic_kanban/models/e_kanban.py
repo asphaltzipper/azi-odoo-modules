@@ -17,9 +17,7 @@ class EKanbanBatch(models.Model):
     batch_date = fields.Date(
         string='Batch Date',
         required=True,
-        readonly=True,
-        default=fields.Date.today(),
-        index=True,
+        default=fields.Date.context_today,
         copy=False,
         help="The date this batch was created.")
 
@@ -64,7 +62,7 @@ class EKanbanBatch(models.Model):
                 'product_id': product_id.id,
                 'batch_id': batch.id,
             }
-            batch.update({'line_ids': [(0, 0, line_values)]})
+            self.env['stock.e_kanban_batch.line'].create(line_values)
         else:
             self.env.user.notify_warning(message=barcode, title="Unknown Barcode", sticky=True)
 
