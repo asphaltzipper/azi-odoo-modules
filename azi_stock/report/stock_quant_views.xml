@@ -27,6 +27,7 @@
                 <group expand='0' string='Group by...'>
                     <filter string='Location' name="locationgroup" domain="[]" context="{'group_by': 'location_id'}"/>
                     <filter string='Product' name="productgroup" context="{'group_by': 'product_id'}"/>
+                    <filter string='Category' name="categorygroup" context="{'group_by': 'category_id'}"/>
                     <filter string='Owner' context="{'group_by': 'owner_id'}" groups="stock.group_tracking_owner"/>
                     <filter string='Lot/Serial Number' context="{'group_by': 'lot_id'}" groups="stock.group_production_lot"/>
                     <filter string='Package' domain="[]" context="{'group_by': 'package_id'}" groups="stock.group_tracking_lot"/>
@@ -41,7 +42,15 @@
         <field name="res_model">stock.quant</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form,pivot</field>
-        <field name="context">{'search_default_internal_loc': 1, 'search_default_stockable': 1, 'search_default_fg': 1, 'group_by': ['location_id']}</field>
+        <field name="context">
+            {
+                'search_default_internal_loc': 1,
+                'search_default_stockable': 1,
+                'search_default_fg': 1,
+                'search_default_positive': 1,
+                'search_default_locationgroup': 1
+            }
+        </field>
         <field name="help">This analysis gives you a fast overview on the current FG stock level of your products and their current inventory value.</field>
     </record>
 
