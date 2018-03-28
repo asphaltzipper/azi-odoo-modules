@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <report
+        string="Transport Document"
+        id="action_report_transportdoc"
+        model="stock.picking"
+        report_type="qweb-pdf"
+        name="stock_internal_transport.report_transportdoc"
+        file="stock_internal_transport.report_transportdoc"
+    />
+
+</odoo>
