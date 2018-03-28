@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--Add confirm to customer archive-->
+    <record id="customer_archive_confirm" model="ir.ui.view">
+        <field name="name">customer.archive.confirm</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/div/button[@name='toggle_active']" position="attributes">
+                <attribute name="confirm">Do you really want to archive?</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!--Add confirm to product archive-->
+    <record id="product_archive_confirm" model="ir.ui.view">
+        <field name="name">product.archive.confirm</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/div/button[@name='toggle_active']" position="attributes">
+                <attribute name="confirm">Do you really want to archive?</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!--Add confirm to BOM-->
+    <record id="bom_archive_confirm" model="ir.ui.view">
+        <field name="name">bom.archive.confirm</field>
+        <field name="model">mrp.bom</field>
+        <field name="inherit_id" ref="mrp.mrp_bom_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/div/button[@name='toggle_active']" position="attributes">
+                <attribute name="confirm">Do you really want to archive?</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!--Add confirm to Reordering Rules-->
+    <record id="bom_archive_confirm" model="ir.ui.view">
+        <field name="name">bom.archive.confirm</field>
+        <field name="model">stock.warehouse.orderpoint</field>
+        <field name="inherit_id" ref="stock.view_warehouse_orderpoint_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/div/button[@name='toggle_active']" position="attributes">
+                <attribute name="confirm">Do you really want to archive?</attribute>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
