@@ -296,4 +296,9 @@ class ProductProduct(models.Model):
                 'product_id': seller.product_id and new_prod.id or False}
             seller.copy(default=defaults)
 
+        # deprecate and set warnings on old revision
+        self.deprecated = True
+        self.purchase_line_warn = 'warning'
+        self.purchase_line_warn_msg = 'This product has been revised'
+
         return new_prod.id
