@@ -295,3 +295,5 @@ class ProductProduct(models.Model):
                 'product_tmpl_id': new_prod.product_tmpl_id.id,
                 'product_id': seller.product_id and new_prod.id or False}
             seller.copy(default=defaults)
+
+        return new_prod.id
