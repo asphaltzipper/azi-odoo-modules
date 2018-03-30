@@ -2,6 +2,7 @@
 
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
+from odoo.tools.float_utils import float_round
 
 
 class StockPicking(models.Model):
@@ -37,7 +38,10 @@ class StockPicking(models.Model):
                 continue
             for pack in pick.pack_operation_ids:
                 if pack.product_qty > 0:
-                    pack.write({'qty_done': pack.product_qty})
+                    this_qty = float_round(
+                        pack.product_qty,
+                        precision_rounding=self.product_id.uom_id.rounding)
+                    pack.write({'qty_done': this_qty})
                 else:
                     pack.unlink()
             pick.do_transfer()
@@ -51,4 +55,7 @@ class StockPicking(models.Model):
         for pick in self:
             for pack in pick.pack_operation_ids:
                 if pack.qty_done == 0 and not pack.product_id.tracking != 'none':
-                    pack.write({'qty_done': pack.product_qty})
+                    this_qty = float_round(
+                        pack.product_qty,
+                        precision_rounding=self.product_id.uom_id.rounding)
+                    pack.write({'qty_done': this_qty})
