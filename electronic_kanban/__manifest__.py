@@ -24,6 +24,8 @@ Electronic Kanban
         'views/e_kanban_views.xml',
         'views/e_kanban_barcode_template.xml',
         'views/mrp_material_plan_views.xml',
+        'reports/bin_scan_report_template.xml',
+        'reports/electronic_kanban_reports.xml',
         'data/e_kanban_sequence.xml',
     ],
     "installable": True,

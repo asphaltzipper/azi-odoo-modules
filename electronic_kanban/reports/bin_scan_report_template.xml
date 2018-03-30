@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<template id="bin_scan_report">
+    <t t-call="report.html_container">
+        <t t-set="loc_num" t-value="0"/>
+            <t t-call="report.internal_layout">
+                <div class="page">
+                    <table class="table table-condensed">
+                        <thead style="display: table-header-group;">
+                            <tr>
+                                <th><strong>Product</strong></th>
+                                <th><strong>Dep.</strong></th>
+                                <th class="text-right"><strong>Bin Qty</strong></th>
+                                <th class="text-right"><strong>Pend. Rec.</strong></th>
+                                <th class="text-center"><strong>Supplier</strong></th>
+                                <th><strong>Manager</strong></th>
+                                <th class="text-right"><strong>Latest Rec.</strong></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="docs" t-as="o">
+                            <tr>
+                                <td style="width: 40%">
+                                    <span t-field="o.product_id"/>
+                                </td>
+                                <td>
+                                    <span t-field="o.deprecated"/>
+                                </td>
+                                <td  class="text-right">
+                                    <span t-field="o.default_proc_qty"/>
+                                </td>
+                                <td class="text-right">
+                                    <span t-field="o.incoming_qty"/>
+                                </td>
+                                <td class="text-center">
+                                    <span t-field="o.default_supplier_id"/>
+                                </td>
+                                <td>
+                                    <span t-field="o.product_manager"/>
+                                </td>
+                                <td class="text-right">
+                                    <span t-field="o.latest_rcv_date"/>
+                                </td>
+                            </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="footer">
+                    <div class="row">
+                        <div class="col-xs-2 pull-right">
+                            <small>
+                                <span>Page</span>
+                                <span class="page" />
+                                of
+                                <span class="topage" />
+                            </small>
+                        </div>
+                    </div>
+                </div>
+        </t>
+        </t>
+</template>
+</odoo>
