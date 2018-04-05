@@ -114,6 +114,7 @@
                                                 <td name="lot_qty">
                                                     <span t-field="packlot.qty"/>
                                                 </td>
+                                                <td>_____</td>
                                             </tr>
                                         </table>
                                     </td>
