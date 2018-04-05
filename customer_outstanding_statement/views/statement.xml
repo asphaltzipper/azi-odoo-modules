@@ -3,8 +3,8 @@
     <template id="customer_outstanding_statement.statement_document">
         <t t-call="report.external_layout">
             <div class="page">
-                <div class="row">
-                    <div class="col-xs-5 col-xs-offset-7">
+                <div class="row" style="padding-top:.75in">
+                    <div class="col-xs-12 pull-left" style="padding-bottom:.25in; padding-left: .5in">
                         <span t-field="o.name"/><br/>
                         <span t-raw="o.contact_address.replace('\n\n', '\n').replace('\n', '&lt;br&gt;')"/>
                         <span t-field="o.vat"/>
@@ -14,7 +14,6 @@
                     </h4>
                     <p>
                         Date: <span t-esc="Date[o.id]" /><br/>
-                        <t t-if="o.ref">Partner ref: <span t-field="o.ref"/></t>
                     </p>
 
                     <t t-if="Lines[o.id]">
@@ -200,5 +199,6 @@
         string="Statement Action to PDF"
         name="customer_outstanding_statement.statement"
         file="customer_outstanding_statement.statement"
+
     />
 </odoo>

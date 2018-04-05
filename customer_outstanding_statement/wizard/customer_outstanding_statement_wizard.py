@@ -47,5 +47,5 @@ class CustomerOutstandingStatementWizard(models.TransientModel):
     def _export(self):
         """Export to PDF."""
         data = self._prepare_outstanding_statement()
-        return self.env['report'].with_context(landscape=True).get_action(
+        return self.env['report'].with_context(landscape=False).get_action(
             self, 'customer_outstanding_statement.statement', data=data)
