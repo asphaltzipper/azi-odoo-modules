@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Inventory Balance -->
+        <record id="account_financial_report_invbalance" model="account.financial.html.report">
+            <field name="name">Inventory Balance</field>
+            <field name="debit_credit" eval="False"/>
+            <field name="report_type">no_date_range_analytic</field>
+            <field name='parent_id' ref='account_reports.account_reports_business_statements_menu'/>
+        </record>
+        <record id="account_financial_report_total_inventory" model="account.financial.html.report.line">
+            <field name="name">INVENTORY</field>
+            <field name="code">INV</field>
+            <field name="financial_report_id" ref="account_financial_report_invbalance"/>
+            <field name="formulas">balance = FG.balance + RM.balance + O.balance</field>
+            <field name="sequence" eval="1"/>
+            <field name="level" eval="0" />
+        </record>
+        <record id="account_financial_report_fg_group" model="account.financial.html.report.line">
+            <field name="name">Finished Goods Inventory</field>
+            <field name="code">FG</field>
+            <field name="parent_id" ref='account_financial_report_total_inventory'/>
+            <field name="domain" eval="[('account_id.tag_ids', 'in', ref('azi_account_reports.azi_account_tag_fg_inventory'))]" />
+            <field name="groupby">product_categ_id</field>
+            <field name="formulas">balance = sum.balance</field>
+            <field name="sequence" eval="1"/>
+            <field name="level" eval="1" />
+        </record>
+        <record id="account_financial_report_rm_group" model="account.financial.html.report.line">
+            <field name="name">Raw Materials Inventory</field>
+            <field name="code">RM</field>
+            <field name="parent_id" ref='account_financial_report_total_inventory'/>
+            <field name="domain" eval="[('account_id.tag_ids', 'in', ref('azi_account_reports.azi_account_tag_rm_inventory'))]" />
+            <field name="groupby">product_categ_id</field>
+            <field name="formulas">balance = sum.balance</field>
+            <field name="sequence" eval="2"/>
+            <field name="level" eval="1" />
+        </record>
+        <record id="account_financial_report_other_group" model="account.financial.html.report.line">
+            <field name="name">Other Inventory</field>
+            <field name="code">O</field>
+            <field name="parent_id" ref='account_financial_report_total_inventory'/>
+            <field name="domain" eval="[('account_id.tag_ids', 'in', ref('azi_account_reports.azi_account_tag_other_inventory'))]" />
+            <field name="groupby">account_id</field>
+            <field name="formulas">balance = sum.balance</field>
+            <field name="sequence" eval="3"/>
+            <field name="level" eval="1" />
+        </record>
+
+    </data>
+</odoo>
