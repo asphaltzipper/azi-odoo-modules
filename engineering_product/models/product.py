@@ -119,7 +119,7 @@ class ProductTemplate(models.Model):
     def _compute_eng_notes(self):
         unique_variants = self.filtered(lambda template: len(template.product_variant_ids) == 1)
         for template in unique_variants:
-            template.eng_code = template.product_variant_ids.eng_notes
+            template.eng_notes = template.product_variant_ids.eng_notes
         for template in (self - unique_variants):
             template.eng_notes = ''
 
