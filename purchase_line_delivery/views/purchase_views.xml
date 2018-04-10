@@ -17,7 +17,7 @@
                         class="fa fa-envelope o_icon_button oe_edit_only"/>
                 </div>
             </xpath>
-            <xpath expr="//field[@name='order_line']/tree/field[@name='date_planned']" position="attributes">
+            <xpath expr="//field[@name='order_line']" position="attributes">
                 <attribute name="context">{'default_carrier_id': default_carrier_id}</attribute>
             </xpath>
             <xpath expr="//field[@name='order_line']/tree/field[@name='date_planned']" position="after">
