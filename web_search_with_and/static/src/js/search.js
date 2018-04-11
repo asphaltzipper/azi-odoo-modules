@@ -11,13 +11,12 @@ odoo.define('web_search_with_and', function (require) {
                 && ui.item.facet.values
                 && ui.item.facet.values.length
                 && String(ui.item.facet.values[0].value).trim() !== "") {
+                return this._super.apply(this, arguments);
+            } else {
                 // In case of an 'AND' search a new facet is added regarding of the previous facets
                 e.preventDefault();
 
                 this.query.add(ui.item.facet, {shiftKey: true});
-            } else {
-
-                return this._super.apply(this, arguments);
             }
         }
     });
