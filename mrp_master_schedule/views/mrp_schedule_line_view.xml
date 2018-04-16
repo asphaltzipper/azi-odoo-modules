@@ -50,7 +50,7 @@
     <field name="name">mrp.schedule.line.kanban</field>
     <field name="model">mrp.schedule.line</field>
     <field name="arch" type="xml">
-        <kanban class="o_kanban_small_column" default_order="product_tmpl_id, date_finish">
+        <kanban class="o_kanban_small_column" default_order="product_tmpl_id, date_finish" default_group_by="date_finish:week">
             <field name="name"/>
             <field name="description"/>
             <field name="product_tmpl_id"/>
@@ -84,7 +84,7 @@
     <field name="name">Schedule's Lines</field>
     <field name="res_model">mrp.schedule.line</field>
     <field name="view_type">form</field>
-    <field name="view_mode">tree,kanban,form</field>
+    <field name="view_mode">kanban,tree,form</field>
     <field name="domain">[('schedule_id', '=', active_id)]</field>
 </record>
 

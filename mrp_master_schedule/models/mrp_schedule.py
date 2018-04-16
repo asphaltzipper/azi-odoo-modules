@@ -4,6 +4,8 @@
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 
 class MrpSchedule(models.Model):
@@ -186,6 +188,13 @@ class MrpScheduleLine(models.Model):
         string='Sales Order',
         index=True,
         ondelete='set null')
+
+    def write(self, vals):
+        if vals.get('date_finish:week'):
+            dt = fields.Date.from_string(self.date_finish)
+            dtw = datetime.strptime(vals['date_finish:week'] + ' 1', "W%W %Y %w")
+            vals['date_finish'] = dtw + relativedelta(days=dt.weekday())
+        return super(MrpScheduleLine, self).write(vals)
 
     @api.multi
     def do_view_schedule_lines(self, change_domain=True):
