@@ -38,9 +38,9 @@
         <field name="model">stock.picking</field>
         <field name="inherit_id" ref="stock.vpicktree"/>
         <field name="arch" type="xml">
-            <field name="date" position="attributes">
-                <attribute name="invisible">False</attribute>
-            </field>
+            <xpath expr="//tree/field[@name='picking_type_id']" position="after">
+                    <field name="date_done"/>
+            </xpath>
         </field>
     </record>
 
