@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 {
     "name": "azi_account",
-    "version": "0.1",
+    "version": "10.0.1.1.0",
     "summary": "AZI account Customizations",
     "category": "Accounting",
     "author": "Matt Taylor",
