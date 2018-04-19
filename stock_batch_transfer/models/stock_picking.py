@@ -55,7 +55,5 @@ class StockPicking(models.Model):
         for pick in self:
             for pack in pick.pack_operation_ids:
                 if pack.qty_done == 0 and not pack.product_id.tracking != 'none':
-                    this_qty = float_round(
-                        pack.product_qty,
-                        precision_rounding=self.product_id.uom_id.rounding)
+                    this_qty = pack.product_qty
                     pack.write({'qty_done': this_qty})
