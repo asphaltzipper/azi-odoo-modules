@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- add product_manager to product template form view -->
+    <record id="product_template_form_mfg_product" model="ir.ui.view">
+        <field name="name">product.template.mfg_product.inherit</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='notes']" position="after">
+                <page string="MFG">
+                    <group>
+                        <group string="Manufacturing">
+                            <field name="rm_product_id"/>
+                            <field name="rm_material_code"/>
+                            <field name="rm_gauge_code"/>
+                            <field name="raw_material_qty"/>
+                            <field name="formed"/>
+                            <field name="mfg_code" invisible="1"/>
+                            <button name="button_create_bom" string="Create BOM" class="oe_edit_only" type="object"/>
+                        </group>
+                        <group string="Laser Parts Info" class="col-xs-2 pull-right">
+                            <field name="common_cutting"/>
+                            <field name="common_cutting_qty"/>
+                            <field name="orientation"/>
+                            <field name="laser_thickness" invisible="1"/>
+                        </group>
+                        <group string="Raw Material Attributes" class="col-xs-2 pull-right">
+                            <field name="material_id"/>
+                            <field name="gauge_id" domain="[('material_id', '=', material_id)]"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="raw_thickness_view" model="ir.ui.view">
+        <field name="name">raw.thickness.view</field>
+        <field name="model">mfg.gauge</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <tree string="Raw Material Thickness" editable="bottom">
+                <field name="name"/>
+                <field name="material_id"/>
+                <field name="laser_gauge"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="raw_material_view" model="ir.ui.view">
+        <field name="name">raw.material.view</field>
+        <field name="model">mfg.material</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <tree string="Raw Material" editable="bottom">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="mfg_gauge_action_form" model="ir.actions.act_window">
+        <field name="name">Raw Material Thickness</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">mfg.gauge</field>
+        <field name="view_type">form</field>
+        <field name="view_id" ref="raw_thickness_view"/>
+    </record>
+
+    <record id="raw_material_action_form" model="ir.actions.act_window">
+        <field name="name">Raw Material</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">mfg.material</field>
+        <field name="view_type">form</field>
+        <field name="view_id" ref="raw_material_view"/>
+    </record>
+
+
+    <menuitem
+        action="mfg_integration.mfg_gauge_action_form" id="menu_mfg_gauge"
+        parent="stock.menu_product_in_config_stock" sequence="3"/>
+    <menuitem
+        action="mfg_integration.raw_material_action_form" id="menu_mfg_material"
+        parent="stock.menu_product_in_config_stock" sequence="3"/>
+
+</odoo>

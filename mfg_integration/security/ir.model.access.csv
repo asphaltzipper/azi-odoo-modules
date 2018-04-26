@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_mfg_gauge_all_users,mfg_gauge_all_users,model_mfg_gauge,base.group_user,1,0,0,0
+access_mfg_material_all_users,mfg_material_all_users,model_mfg_material,base.group_user,1,0,0,0
