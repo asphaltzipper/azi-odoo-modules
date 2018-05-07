@@ -19,6 +19,7 @@ AZI Specialized Customizations to MRP
     "depends": ['stock', 'mrp', 'shelf_location'],
     'data': [
         'views/mrp_view_changes.xml',
+        'views/work_order_view.xml',
         'report/mrp_report.xml',
         'report/mrp_production_templates.xml',
         'views/production_move_analysis.xml',

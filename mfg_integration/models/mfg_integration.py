@@ -153,3 +153,30 @@ class MfgMaterial(models.Model):
     _name = 'mfg.material'
 
     name = fields.Char()
+
+# class MfgWorkImport(models.Model):
+#     _name = 'mfg.work.import'
+#
+#     date = fields.Datetime()
+#     detail_ids = fields.One2many(
+#         points to detail_import
+#     )
+#     batch_ids = fields.One2many(
+#         points to batch
+#     )
+#       create form, with button to close out work orders.
+
+# class MfgDetailImport(models.Model):
+#     _name = 'mfg.detail.import'
+#
+#     # one field for each column jeremy gives me
+#     product_id = fields.Many2one()
+#     workorder_id = fields.Many2one()
+#     import_id = fields.Many2one()
+#
+# class MfgBatchImport(models.Model):
+#     _name = 'mfg.batch.import'
+#
+#     product_id = fields.Many2one()
+#     import_id = fields.Many2one()
+#     # one field for each column jeremy gives me
