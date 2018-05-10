@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+# (c) 2018 Chris Emigh
+# License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
+
 {
     "name": "mfg_integration",
     "version": "0.1",
@@ -17,7 +20,8 @@ Integrate with Manufacturing Machine Software
         'mrp',
     ],
     'data': [
-        'views/mfg_integration_view.xml',
+        'views/product_views.xml',
+        'views/workorder_views.xml',
         'security/ir.model.access.csv',
     ],
     "installable": True,
