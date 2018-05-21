@@ -286,7 +286,12 @@ class MrpMaterialPlan(models.Model):
             # but we don't know which day of the bucket, so we assume the worst:
             # set target finish date to the previous bucket boundary
             date_finish -= timedelta(days=self._bucket_size)
-            supply_delay = self._get_supply_delay_days(product, make_flag, qty, date_finish, orderpoint=op)
+            supply_delay = self._get_supply_delay_days(
+                product,
+                make_flag,
+                qty,
+                datetime.strftime(date_finish, DEFAULT_SERVER_DATE_FORMAT),
+                orderpoint=op)
             date_start = date_finish - timedelta(days=supply_delay['days'])
         else:
             # TODO: apply a delay for demand-type moves (from stock to production)
@@ -616,22 +621,22 @@ class MrpMaterialPlan(models.Model):
 
                     for orderpoint in location_orderpoints:
                         try:
-                            if orderpoint.product_id.id == 13964:
-                                m = "X008034.-0 bucket_date=%s, avail_qty=%s, plan_qty=%s, cum_qty=%s, total=%s" % (
-                                        bucket_date.strftime(DEFAULT_SERVER_DATE_FORMAT),
-                                        product_quantity[(orderpoint.product_id.id, bucket_date)],
-                                        planned_quantity[(orderpoint.product_id.id, bucket_date)],
-                                        cum_planned.get(orderpoint.product_id.id, 0.0),
-                                        float_compare(
-                                            product_quantity[(orderpoint.product_id.id, bucket_date)] +
-                                            planned_quantity[(orderpoint.product_id.id, bucket_date)] +
-                                            cum_planned.get(orderpoint.product_id.id, 0.0),
-                                            orderpoint.product_min_qty,
-                                            precision_rounding=orderpoint.product_uom.rounding),
-                                    )
-                                _logger.info(m)
-                                # import pdb
-                                # pdb.set_trace()
+                            # if orderpoint.product_id.id == 13964:
+                            #     m = "X008034.-0 bucket_date=%s, avail_qty=%s, plan_qty=%s, cum_qty=%s, total=%s" % (
+                            #             bucket_date.strftime(DEFAULT_SERVER_DATE_FORMAT),
+                            #             product_quantity[(orderpoint.product_id.id, bucket_date)],
+                            #             planned_quantity[(orderpoint.product_id.id, bucket_date)],
+                            #             cum_planned.get(orderpoint.product_id.id, 0.0),
+                            #             float_compare(
+                            #                 product_quantity[(orderpoint.product_id.id, bucket_date)] +
+                            #                 planned_quantity[(orderpoint.product_id.id, bucket_date)] +
+                            #                 cum_planned.get(orderpoint.product_id.id, 0.0),
+                            #                 orderpoint.product_min_qty,
+                            #                 precision_rounding=orderpoint.product_uom.rounding),
+                            #         )
+                            #     _logger.info(m)
+                            #     import pdb
+                            #     pdb.set_trace()
                             local_create_time = 0
                             op_start = time.time()
                             op_product_virtual = product_quantity[(orderpoint.product_id.id, bucket_date)]
