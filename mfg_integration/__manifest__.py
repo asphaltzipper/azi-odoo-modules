@@ -22,6 +22,7 @@ Integrate with Manufacturing Machine Software
     'data': [
         'views/product_views.xml',
         'views/workorder_views.xml',
+        'data/mfg_integration_data.xml',
         'security/ir.model.access.csv',
     ],
     "installable": True,

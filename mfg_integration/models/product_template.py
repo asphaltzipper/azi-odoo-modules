@@ -121,7 +121,7 @@ class ProductTemplate(models.Model):
         if not route:
             raise UserError(_('No routing found'))
         new_route = route.copy()
-        new_route.name = bom_id.product_tmpl_id.eng_code
+        new_route.name = self.eng_code
         bom_id.routing_id = new_route.id
 
     _sql_constraints = [

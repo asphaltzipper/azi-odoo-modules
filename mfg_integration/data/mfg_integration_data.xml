@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- workcenters -->
+        <record id="mrp_workcenter_laser" model="mrp.workcenter">
+            <field name="name">Laser</field>
+            <field name="code">laser</field>
+        </record>
+        <record id="mrp_workcenter_brake" model="mrp.workcenter">
+            <field name="name">Press Brake</field>
+            <field name="code">brake</field>
+        </record>
+
+        <!-- laser routing template -->
+        <record id="routing_laser_template" model="mrp.routing">
+            <field name="name">laser_template</field>
+        </record>
+        <record id="routing_template_workcenter_laser1" model="mrp.routing.workcenter">
+            <field name="name">laser</field>
+            <field name="batch">no</field>
+            <field name="time_mode">auto</field>
+            <field name="time_mode_batch" eval="10" />
+            <field name="time_cycle_manual" eval="10" />
+            <field name="workcenter_id" ref="mfg_integration.mrp_workcenter_laser" />
+            <field name="routing_id" ref="mfg_integration.routing_laser_template" />
+        </record>
+
+        <!-- laser-brake routing template -->
+        <record id="routing_laser_brake_template" model="mrp.routing">
+            <field name="name">laser_brake_template</field>
+        </record>
+        <record id="routing_template_workcenter_laser_brake1" model="mrp.routing.workcenter">
+            <field name="name">laser</field>
+            <field name="batch">no</field>
+            <field name="time_mode">auto</field>
+            <field name="time_mode_batch" eval="10" />
+            <field name="time_cycle_manual" eval="10" />
+            <field name="workcenter_id" ref="mfg_integration.mrp_workcenter_laser" />
+            <field name="routing_id" ref="mfg_integration.routing_laser_brake_template" />
+        </record>
+        <record id="routing_template_workcenter_laser_brake2" model="mrp.routing.workcenter">
+            <field name="name">brake</field>
+            <field name="batch">no</field>
+            <field name="time_mode">auto</field>
+            <field name="time_mode_batch" eval="10" />
+            <field name="time_cycle_manual" eval="10" />
+            <field name="workcenter_id" ref="mfg_integration.mrp_workcenter_brake" />
+            <field name="routing_id" ref="mfg_integration.routing_laser_brake_template" />
+        </record>
+
+    </data>
+</odoo>
