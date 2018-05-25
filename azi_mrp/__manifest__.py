@@ -15,6 +15,7 @@ AZI Specialized Customizations to MRP
 
 * Show stock moves button on MO form
 * Add serial-required column to raw material list for sorting
+* Change repair order account move names to the name of the repair order
     """,
     "depends": ['stock', 'mrp', 'shelf_location'],
     'data': [

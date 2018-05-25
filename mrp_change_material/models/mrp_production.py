@@ -9,30 +9,8 @@ class MrpProduction(models.Model):
     _inherit = "mrp.production"
 
     @api.multi
-    def action_assign(self):
-        for production in self:
-            # confirm raw material stock moves added by the user
-            move_to_assign = production.move_raw_ids.filtered(lambda x: x.state == 'draft')
-            warehouse_id = production.location_src_id.get_warehouse().id
-            for move in move_to_assign:
-                loc = move.product_id.property_stock_production
-                move.warehouse_id = warehouse_id
-                move.location_dest_id = loc
-                move.unit_factor = move.product_uom_qty / production.product_qty
-            move_to_assign.action_confirm()
-        return super(MrpProduction, self).action_assign()
-
-    @api.multi
     def post_inventory(self):
         for order in self:
-
-            # Check for Draft Moves
-            # Any draft moves will be canceled, rather than posted, when posting inventory.  The action_assign() method
-            # sets draft moves to confirmed.
-            # The action_assign() method also creates stock.move.lots records for the new raw materials.  Without these,
-            # it seems that the consumed quantity is posted as zero.
-            if order.move_raw_ids.filtered(lambda x: x.state == 'draft'):
-                raise UserError(_('You have new raw materials. Check availability again.'))
 
             # When the user adds RM then updates qty to produce, the qty to consume must be updated.
             # This case is NOT handled by simply setting the unit_factor field on the stock moves.

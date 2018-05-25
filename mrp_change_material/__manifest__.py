@@ -21,6 +21,7 @@ Change Manufacturing Order Consumed Material
     """,
     "depends": ['mrp'],
     'data': [
+        'wizards/add_raw_move.xml',
         'views/mrp_production_views.xml',
     ],
     "installable": True,
