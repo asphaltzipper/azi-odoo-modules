@@ -6,30 +6,25 @@
         <field name="model">mrp.production</field>
         <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
         <field name="arch" type="xml">
-            <xpath expr="//group/group/field[@name='origin']" position="after">
-                <field name="id" invisible="1"/>
-                <field name="propagate" invisible="1"/>
-                <field name="procurement_group_id" invisible="1"/>
-            </xpath>
             <xpath expr="//page/field[@name='move_raw_ids']" position="after">
                 <button type="action"
                     name="%(mrp_change_material.action_add_raw_move)d"
                     string="Add Item" states="confirmed,planned,progress" class="oe_link oe_edit_only"/>
             </xpath>
             <xpath expr="//page/field[@name='move_raw_ids']/tree/field[@name='product_id']" position="attributes">
-                <attribute name="attrs">{'readonly': [('state', '!=', 'draft')]}</attribute>
+                <attribute name="readonly">1</attribute>
             </xpath>
             <xpath expr="//page/field[@name='move_raw_ids']/tree/field[@name='product_uom']" position="attributes">
-                <attribute name="attrs">{'readonly': [('state', '!=', 'draft')]}</attribute>
+                <attribute name="readonly">1</attribute>
+            </xpath>
+            <xpath expr="//page/field[@name='move_raw_ids']/tree/field[@name='product_uom_qty']" position="attributes">
+                <attribute name="readonly">1</attribute>
             </xpath>
             <xpath expr="//page/field[@name='move_raw_ids']/tree/field[@name='quantity_done']" position="after">
-                <field name="name" required="1" invisible="1"/>
-                <field name="propagate" required="1" invisible="1"/>
-                <field name="group_id" invisible="1"/>
-                <field name="origin" required="1" invisible="1"/>
                 <field name="added_rm" readonly="1" string="Added"/>
                 <button name="action_cancel" type="object" icon="fa-minus-circle" help="Cancel Consumption" confirm="Cancel this Raw Material?"/>
             </xpath>
         </field>
     </record>
 </odoo>
+
