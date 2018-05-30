@@ -58,7 +58,7 @@ class RepairLine(models.Model):
             'restrict_lot_id': self.lot_id.id,
             'product_uom_qty': self.product_uom_qty,
             'product_uom': self.product_uom.id,
-            'partner_id': self.address_id.id,
+            'partner_id': self.repair_id.address_id.id,
             'location_id': self.location_id.id,
             'location_dest_id': self.location_dest_id.id,
         }

@@ -95,7 +95,8 @@ class MrpScheduleLine(models.Model):
         required=True,
         index=True,
         default=lambda self: self.env['ir.sequence'].next_by_code('mrp.schedule.line'),
-        readonly=True)
+        readonly=True,
+        copy=False)
 
     description = fields.Char(
         string='Description',
