@@ -15,6 +15,7 @@ AZI Specialized Customizations to Stock
 
 * Add description to picking move lines
 * Show creation date on stock picking tree
+* Prevent negative quants for serial tracked products
     """,
     "depends": ['stock'],
     'data': [
