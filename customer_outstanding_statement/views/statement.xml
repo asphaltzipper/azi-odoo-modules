@@ -5,7 +5,6 @@
             <div class="page">
                 <div class="row" style="padding-top:.75in">
                     <div class="col-xs-12 pull-left" style="padding-bottom:.25in; padding-left: .5in">
-                        <span t-field="o.name"/><br/>
                         <span t-raw="o.contact_address.replace('\n\n', '\n').replace('\n', '&lt;br&gt;')"/>
                         <span t-field="o.vat"/>
                     </div>
