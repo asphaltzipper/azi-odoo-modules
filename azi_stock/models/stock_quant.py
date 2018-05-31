@@ -22,10 +22,17 @@ class StockQuant(models.Model):
         # prevent negative quants for serial tracked products
         if move.location_id.usage == 'internal'\
                 and move.product_id.tracking == 'serial':
-            raise UserError(
-                'Serial number %s is not available in stock location %s' %
-                (move.lot_id.name, move.location_id.display_name)
-            )
+            if lot_id:
+                raise UserError(
+                    'Serial number %s is not available in stock location %s' %
+                    (self.env['stock.production.lot'].browse(lot_id).name,
+                     move.location_id.display_name)
+                )
+            else:
+                raise UserError(
+                    'Serial tracked item %s is not available in stock location %s' %
+                    (move.product_id.display_name, move.location_id.display_name)
+                )
 
         return super(StockQuant, self)._quant_create_from_move(
             qty, move, lot_id, owner_id, src_package_id, dest_package_id,
