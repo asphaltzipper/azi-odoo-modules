@@ -115,7 +115,7 @@ class ProductTemplate(models.Model):
 
         # add routing
         if bom_id.product_tmpl_id.formed:
-            route = self.env.ref('mfg_integration.routing_laser_break_template')
+            route = self.env.ref('mfg_integration.routing_laser_brake_template')
         else:
             route = self.env.ref('mfg_integration.routing_laser_template')
         if not route:
