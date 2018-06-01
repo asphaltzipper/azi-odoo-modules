@@ -26,12 +26,12 @@ class StockQuant(models.Model):
                 raise UserError(
                     'Serial number %s is not available in stock location %s' %
                     (self.env['stock.production.lot'].browse(lot_id).name,
-                     move.location_id.display_name)
+                     force_location_from.display_name)
                 )
             else:
                 raise UserError(
                     'Serial tracked item %s is not available in stock location %s' %
-                    (move.product_id.display_name, move.location_id.display_name)
+                    (move.product_id.display_name, force_location_from.display_name)
                 )
 
         return super(StockQuant, self)._quant_create_from_move(
