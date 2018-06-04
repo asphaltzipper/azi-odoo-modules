@@ -14,7 +14,7 @@
             <field name="e_kanban"/>
             <field name="product_qty"/>
             <field name="uom_id"/>
-            <field name="make"/>
+            <field name="make" string="Make"/>
             <field name="date_start"/>
             <field name="date_finish"/>
             <field name="lead_days" invisible="1"/>
@@ -31,8 +31,10 @@
             <field name="increase_qty" invisible="1"/>
             <field name="incr_group_id"/>
             <field name="increase_window" invisible="1"/>
+            <field name="wc_codes"/>
             <field name="blanket_id"/>
-            <button name="action_material_analysis" type="object" icon="fa-bar-chart" help="Show Planning Report"/>
+            <button name="action_material_analysis_pop" type="object" icon="fa-bar-chart" help="Show Analysis Graph"/>
+            <button name="action_material_analysis" type="object" icon="fa-table" help="Show Analysis List"/>
         </tree>
     </field>
 </record>
@@ -91,5 +93,117 @@ if env.context.get('active_ids'):
     <field name="model">mrp.plan.analysis</field>
     <field name="value" eval="'ir.actions.server,%d' % analysis_convert_to_procurements_action"/>
 </record>
+
+
+<!-- manufacturing views -->
+
+<record model="ir.ui.view" id="mrp_plan_analysis_mfg_tree_view">
+    <field name="name">mrp.plan.analysis.mfg.tree</field>
+    <field name="model">mrp.plan.analysis</field>
+    <field name="arch" type="xml">
+        <tree string="Plan Analysis">
+            <field name="plan_line_id" invisible="1"/>
+            <field name="product_id"/>
+            <field name="categ_id" invisible="1"/>
+            <field name="product_type" invisible="1"/>
+            <field name="deprecated"/>
+            <field name="e_kanban"/>
+            <field name="product_qty"/>
+            <field name="uom_id"/>
+            <field name="make" string="Make"/>
+            <field name="date_start"/>
+            <field name="date_finish"/>
+            <field name="lead_days" invisible="1"/>
+            <field name="location_id" invisible="1"/>
+            <field name="origin" invisible="1"/>
+            <field name="partner_id" invisible="1"/>
+            <field name="date_exp_order" invisible="1"/>
+            <field name="expedite_days" invisible="1"/>
+            <field name="expedite_window" invisible="1"/>
+            <field name="expedite_qty" invisible="1"/>
+            <field name="exp_group_id"/>
+            <field name="date_incr_order" invisible="1"/>
+            <field name="trailing_days" invisible="1"/>
+            <field name="increase_qty" invisible="1"/>
+            <field name="incr_group_id"/>
+            <field name="increase_window" invisible="1"/>
+            <field name="wc_codes"/>
+            <field name="blanket_id" invisible="1"/>
+            <button name="action_material_analysis_pop" type="object" icon="fa-bar-chart" help="Show Analysis Graph"/>
+            <button name="action_material_analysis" type="object" icon="fa-table" help="Show Analysis List"/>
+        </tree>
+    </field>
+</record>
+
+<record id="mrp_plan_analysis_mfg_action" model="ir.actions.act_window">
+    <field name="name">Plan Analysis</field>
+    <field name="res_model">mrp.plan.analysis</field>
+    <field name="view_id" ref="mrp_plan_analysis_mfg_tree_view"/>
+    <field name="search_view_id" ref="mrp_plan_analysis_search_view"/>
+    <field name="context">{'search_default_make_only':1}</field>
+</record>
+
+<menuitem id="mrp_plan_analysis_mfg_menu"
+    name="MRP Plan Analysis"
+    sequence="3"
+    action="mrp_plan_analysis_mfg_action"
+    parent="mrp_workorder.mrp_planning_menu_root"
+    groups="stock.group_stock_user"/>
+
+
+<!-- purchasing views -->
+
+<record model="ir.ui.view" id="mrp_plan_analysis_purch_tree_view">
+    <field name="name">mrp.plan.analysis.purch.tree</field>
+    <field name="model">mrp.plan.analysis</field>
+    <field name="arch" type="xml">
+        <tree string="Plan Analysis">
+            <field name="plan_line_id" invisible="1"/>
+            <field name="product_id"/>
+            <field name="categ_id" invisible="1"/>
+            <field name="product_type" invisible="1"/>
+            <field name="deprecated"/>
+            <field name="e_kanban"/>
+            <field name="product_qty"/>
+            <field name="uom_id"/>
+            <field name="make" string="Make"/>
+            <field name="date_start"/>
+            <field name="date_finish"/>
+            <field name="lead_days" invisible="1"/>
+            <field name="location_id" invisible="1"/>
+            <field name="origin" invisible="1"/>
+            <field name="partner_id"/>
+            <field name="date_exp_order" invisible="1"/>
+            <field name="expedite_days" invisible="1"/>
+            <field name="expedite_window" invisible="1"/>
+            <field name="expedite_qty" invisible="1"/>
+            <field name="exp_group_id"/>
+            <field name="date_incr_order" invisible="1"/>
+            <field name="trailing_days" invisible="1"/>
+            <field name="increase_qty" invisible="1"/>
+            <field name="incr_group_id"/>
+            <field name="increase_window" invisible="1"/>
+            <field name="wc_codes" invisible="1"/>
+            <field name="blanket_id"/>
+            <button name="action_material_analysis_pop" type="object" icon="fa-bar-chart" help="Show Analysis Graph"/>
+            <button name="action_material_analysis" type="object" icon="fa-table" help="Show Analysis List"/>
+        </tree>
+    </field>
+</record>
+
+<record id="mrp_plan_analysis_purch_action" model="ir.actions.act_window">
+    <field name="name">Plan Analysis</field>
+    <field name="res_model">mrp.plan.analysis</field>
+    <field name="view_id" ref="mrp_plan_analysis_purch_tree_view"/>
+    <field name="search_view_id" ref="mrp_plan_analysis_search_view"/>
+    <field name="context">{'search_default_purchase_only':1}</field>
+</record>
+
+<menuitem id="mrp_plan_analysis_purch_menu"
+    name="MRP Plan Analysis"
+    sequence="15"
+    action="mrp_plan_analysis_purch_action"
+    parent="purchase.menu_purchase_control"
+    groups="stock.group_stock_user"/>
 
 </odoo>

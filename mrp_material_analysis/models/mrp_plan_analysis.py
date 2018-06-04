@@ -122,9 +122,17 @@ class MrpPlanAnalysis(models.Model):
         comodel_name='purchase.requisition',
         string='Blanket Order')
 
+    wc_codes = fields.Char(
+        string="Route",
+        help="List of routing work centers")
+
     def action_material_analysis(self):
         self.ensure_one()
         return self.product_id.action_material_analysis()
+
+    def action_material_analysis_pop(self):
+        self.ensure_one()
+        return self.with_context(pop_graph=True).product_id.action_material_analysis()
 
     @api.model_cr
     def init(self):
@@ -160,7 +168,8 @@ class MrpPlanAnalysis(models.Model):
                     i.real_qty as increase_qty,
                     i.group_id as incr_group_id,
                     i.increase_window,
-                    b.blanket_id
+                    b.blanket_id,
+                    r.wc_codes
                 from mrp_material_plan as mp
                 left join product_product as p on p.id=mp.product_id
                 left join product_template as t on t.id=p.product_tmpl_id
@@ -216,6 +225,22 @@ class MrpPlanAnalysis(models.Model):
                     and m.date_expected<p.date_finish
                     order by p.id, trailing_days
                 ) as i on i.id=mp.id
+                left join (
+                    select
+                        product_id,
+                        string_agg(code::varchar, ',') as wc_codes
+                    from (
+                        select distinct
+                            b.product_id,
+                            r.code
+                        from mrp_routing_workcenter as rw
+                        left join mrp_workcenter as w on w.id=rw.workcenter_id
+                        left join resource_resource as r on r.id=w.resource_id
+                        left join mrp_bom as b on b.routing_id=rw.routing_id
+                        order by b.product_id, r.code
+                    ) as t
+                    group by product_id
+                ) as r on r.product_id=mp.product_id
                 where mp.move_type='supply'
                 order by mp.date_start
             )

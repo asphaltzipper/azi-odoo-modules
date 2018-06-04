@@ -134,20 +134,24 @@ class MrpMaterialAnalysis(models.TransientModel):
         form_view_id = self.env.ref('mrp_material_analysis.mrp_material_analysis_line_view_form')
         graph_view_id = self.env.ref('mrp_material_analysis.mrp_material_analysis_line_view_graph')
         pivot_view_id = self.env.ref('mrp_material_analysis.mrp_material_analysis_line_view_pivot')
+        target = 'current'
         views = [
-            (graph_view_id.id, 'graph'),
             (tree_view_id.id, 'tree'),
+            (graph_view_id.id, 'graph'),
             (form_view_id.id, 'form'),
             (pivot_view_id.id, 'pivot'),
         ]
+        if self._context and self._context.get('pop_graph'):
+            target = 'new'
+            views = [(graph_view_id.id, 'graph')]
         return {
             'name': _('Material Analysis'),
             'domain': [('create_uid', '=', self._uid), ('product_id', '=', self.product_id.id)],
             'view_type': 'form',
-            'view_mode': 'graph,tree,form,pivot',
             'res_model': 'mrp.material.analysis.line',
             'type': 'ir.actions.act_window',
             'views': views,
             'view_id': False,
+            'target': target,
             'search_view_id': search_view_id.id,
         }
