@@ -14,9 +14,24 @@
         <field name="model">stock.picking</field>
     </record>
     <record model="ir.actions.server" id="action_stock_picking_do_complete_qty">
-        <field name="name">Complete Quanity"</field>
+        <field name="name">Complete Quanity</field>
         <field name="model_id" ref="stock.model_stock_picking"/>
         <field name="code">records.do_complete_qty()</field>
+    </record>
+    <record model="ir.actions.server" id="action_stock_picking_do_empty_qty">
+        <field name="name">Empty Quanity</field>
+        <field name="model_id" ref="stock.model_stock_picking"/>
+        <field name="code">records.do_empty_qty()</field>
+    </record>
+    <record model="ir.actions.server" id="action_stock_picking_do_complete_qty_line">
+        <field name="name">Complete Quanity Line</field>
+        <field name="model_id" ref="stock.model_stock_pack_operation"/>
+        <field name="code">records.do_complete_qty_line()</field>
+    </record>
+    <record model="ir.actions.server" id="action_stock_picking_do_empty_qty_line">
+        <field name="name">Empty Quanity Line</field>
+        <field name="model_id" ref="stock.model_stock_pack_operation"/>
+        <field name="code">records.do_empty_qty_line()</field>
     </record>
     <record id="complete_quantity_stock_picking" model="ir.ui.view">
         <field name="name">complete.quantity.stock.picking</field>
@@ -25,6 +40,11 @@
         <field name="arch" type="xml">
             <xpath expr="//header/button[@name='do_new_transfer']" position="after">
                 <button name="%(action_stock_picking_do_complete_qty)d" type="action" string="Fill Qty" states="draft,partially_available,assigned"/>
+                <button name="%(action_stock_picking_do_empty_qty)d" type="action" string="Empty Qty" states="draft,partially_available,assigned"/>
+            </xpath>
+            <xpath expr="//notebook/page/field/tree/button[@name='show_details']" position="after">
+                <button name="%(action_stock_picking_do_complete_qty_line)d" type="action" icon="fa-plus-square" states="draft,partially_available,assigned"/>
+                <button name="%(action_stock_picking_do_empty_qty_line)d" type="action" icon="fa-minus-square" states="draft,partially_available,assigned"/>
             </xpath>
         </field>
     </record>

@@ -5,6 +5,7 @@ from odoo.exceptions import UserError
 from odoo.tools.float_utils import float_round
 
 
+
 class StockPicking(models.Model):
     _inherit = "stock.picking"
 
@@ -57,3 +58,34 @@ class StockPicking(models.Model):
                 if pack.qty_done == 0 and not pack.product_id.tracking != 'none':
                     this_qty = pack.product_qty
                     pack.write({'qty_done': this_qty})
+
+    @api.multi
+    def do_empty_qty(self):
+        for pick in self:
+            for pack in pick.pack_operation_ids:
+                if pack.product_id.tracking == 'none':
+                    pack.write({'qty_done': 0})
+
+
+class StockPackOp(models.Model):
+    _inherit = "stock.pack.operation"
+
+    @api.multi
+    def do_complete_qty_line(self):
+        """
+        Only allow totally incomplete picking lines.
+        Skip moves requiring serial numbers.
+        """
+        if self.qty_done == 0 and not self.product_id.tracking != 'none':
+            this_qty = self.product_qty
+            self.write({'qty_done': this_qty})
+        else:
+            raise UserError(_("Not Allowed on tracked items"))
+
+    @api.multi
+    def do_empty_qty_line(self):
+        if self.product_id.tracking == 'none':
+            self.ensure_one()
+            self.write({'qty_done': 0})
+        else:
+            raise UserError(_("Not Allowed on tracked items"))
