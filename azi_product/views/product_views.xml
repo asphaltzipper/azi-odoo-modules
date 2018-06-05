@@ -10,6 +10,9 @@
             <xpath expr="//field[@name='type']" position="after">
                 <field name="product_manager"/>
             </xpath>
+            <xpath expr="//field[@name='image_medium']" position="replace">
+                <field name="image" widget="image" class="pull-right" style="max-height:360px"/>
+            </xpath>
         </field>
     </record>
 
