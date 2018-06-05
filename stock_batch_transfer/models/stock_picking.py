@@ -79,7 +79,7 @@ class StockPackOp(models.Model):
         if self.qty_done == 0 and not self.product_id.tracking != 'none':
             this_qty = self.product_qty
             self.write({'qty_done': this_qty})
-        else:
+        elif self.product_id.tracking != 'none':
             raise UserError(_("Not Allowed on tracked items"))
 
     @api.multi
