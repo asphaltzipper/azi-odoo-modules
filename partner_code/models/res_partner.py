@@ -41,3 +41,35 @@ class ResPartner(models.Model):
         default = default.copy()
         default['code'] = self.code + _('(COPY)')
         return super(ResPartner, self).copy(default)
+
+    @api.multi
+    def _flat_address(self):
+        address_format = "%(street)s, %(city)s, %(state_code)s"
+        args = {
+            'street': self.street or '',
+            'city': self.city or '',
+            'state_code': self.state_id.code or '',
+        }
+        return address_format % args
+
+    @api.multi
+    def name_get(self):
+        if self._context.get('show_address') or self._context.get('show_address_only') or self._context.get('show_email'):
+            res = super(ResPartner, self).name_get()
+            return res
+        res = []
+        for partner in self:
+            name = partner.name or ''
+            if partner.company_name or partner.parent_id:
+                if partner.type in ['invoice', 'delivery', 'other']:
+                    name = "[%s] " % partner.type
+                if not partner.is_company:
+                    flat_address = partner._flat_address()
+                    name = "%s, %s %s" % (
+                        partner.commercial_company_name or partner.parent_id.name,
+                        name.upper(),
+                        flat_address)
+            name = name.replace('\n', ', ')
+            res.append((partner.id, name))
+        return res
+

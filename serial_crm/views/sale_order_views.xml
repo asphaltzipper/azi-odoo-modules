@@ -6,8 +6,18 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-            <field name="confirmation_date" position="after">
-                <field name="lot_ids" widget="many2many_tags" context="{'search_default_partner_id': partner_id}"/>
+            <field name="partner_shipping_id" position="after">
+                <div colspan="2">
+                    <field name="lot_ids" context="{'search_default_partner_id': partner_id}" nolabel="1">
+                        <tree>
+                            <field name="name" string="Related Serials"/>
+                            <field name="product_id"/>
+                        </tree>
+                    </field>
+                </div>
+            </field>
+            <field name="partner_id" position="attributes">
+                <attribute name="domain">[('customer','=',True),('parent_id', '=', False)]</attribute>
             </field>
         </field>
     </record>
