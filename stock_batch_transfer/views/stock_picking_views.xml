@@ -23,9 +23,18 @@
                 <button name="do_empty_qty" type="object" string="Empty Qty" states="draft,partially_available,assigned"/>
             </xpath>
             <xpath expr="//notebook/page/field/tree/button[@name='show_details']" position="after">
-                <button name="do_complete_qty_line" type="object" icon="fa-plus-square" states="draft,partially_available,assigned"/>
-                <button name="do_empty_qty_line" type="object" icon="fa-minus-square" states="draft,partially_available,assigned"/>
+                <button
+                        name="do_complete_qty_line"
+                        type="object"
+                        icon="fa-plus-square"
+                        attrs="{'invisible': ['|', ('lots_visible', '=', True), ('state', 'not in', ['confirmed', 'assigned', 'waiting', 'partially_available','done'])]}"/>
+                <button
+                        name="do_empty_qty_line"
+                        type="object"
+                        icon="fa-minus-square"
+                        attrs="{'invisible': ['|', ('lots_visible', '=', True), ('state', 'not in', ['confirmed', 'assigned', 'waiting', 'partially_available','done'])]}"/>
             </xpath>
         </field>
     </record>
 </odoo>
+

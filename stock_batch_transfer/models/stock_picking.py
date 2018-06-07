@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api, _
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 from odoo.tools.float_utils import float_round
 
 
@@ -79,13 +79,9 @@ class StockPackOp(models.Model):
         if self.qty_done == 0 and not self.product_id.tracking != 'none':
             this_qty = self.product_qty
             self.write({'qty_done': this_qty})
-        elif self.product_id.tracking != 'none':
-            raise UserError(_("Not Allowed on tracked items"))
 
     @api.multi
     def do_empty_qty_line(self):
         if self.product_id.tracking == 'none':
             self.ensure_one()
             self.write({'qty_done': 0})
-        else:
-            raise UserError(_("Not Allowed on tracked items"))
