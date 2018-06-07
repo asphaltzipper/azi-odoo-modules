@@ -472,8 +472,11 @@ class MrpMaterialPlan(models.Model):
     def _create_supply(self, orderpoint, supply_qty, bucket_date):
         plan_log = self.env['mrp.material_plan.log']
         debug_mrp = self.env.context.get('debug_mrp')
-        if orderpoint.product_id.id == 13964:
-            _logger.info("supplying %s of product %s" % (supply_qty, 'X008034.-0'))
+        debug_mrp_product_id = self.env.context.get('debug_mrp_product_id')
+        if debug_mrp and debug_mrp_product_id and debug_mrp_product_id == orderpoint.product_id.id:
+            message = "product-analysis: supplying %s of %s" % (supply_qty, orderpoint.product_id.display_name)
+            _logger.debug(message)
+            plan_log.create({'type': 'debug', 'message': message})
         new_count = 0
         exist_count = 0
         if orderpoint.no_batch:
@@ -489,7 +492,7 @@ class MrpMaterialPlan(models.Model):
                 if existing_order.make:
                     existing_order._create_dependent_demand(supply_qty)
                 exist_count += 1
-                message = "merged order on prod%d" % (orderpoint.product_id.id)
+                message = "merged order on %d" % (orderpoint.product_id.id)
                 _logger.debug(message)
                 if debug_mrp:
                     plan_log.create({'type': 'debug', 'message': message})
@@ -544,6 +547,7 @@ class MrpMaterialPlan(models.Model):
         OrderPoint = self.env['stock.warehouse.orderpoint']
         plan_log = self.env['mrp.material_plan.log']
         debug_mrp = self.env.context.get('debug_mrp')
+        debug_mrp_product_id = self.env.context.get('debug_mrp_product_id')
 
         # this algorithm assumes the mrp_llc module updates and sorts on low-level-code
         # we only retrieve orderpoints for stockable type products
@@ -621,22 +625,22 @@ class MrpMaterialPlan(models.Model):
 
                     for orderpoint in location_orderpoints:
                         try:
-                            # if orderpoint.product_id.id == 13964:
-                            #     m = "X008034.-0 bucket_date=%s, avail_qty=%s, plan_qty=%s, cum_qty=%s, total=%s" % (
-                            #             bucket_date.strftime(DEFAULT_SERVER_DATE_FORMAT),
-                            #             product_quantity[(orderpoint.product_id.id, bucket_date)],
-                            #             planned_quantity[(orderpoint.product_id.id, bucket_date)],
-                            #             cum_planned.get(orderpoint.product_id.id, 0.0),
-                            #             float_compare(
-                            #                 product_quantity[(orderpoint.product_id.id, bucket_date)] +
-                            #                 planned_quantity[(orderpoint.product_id.id, bucket_date)] +
-                            #                 cum_planned.get(orderpoint.product_id.id, 0.0),
-                            #                 orderpoint.product_min_qty,
-                            #                 precision_rounding=orderpoint.product_uom.rounding),
-                            #         )
-                            #     _logger.info(m)
-                            #     import pdb
-                            #     pdb.set_trace()
+                            if debug_mrp and debug_mrp_product_id and debug_mrp_product_id == orderpoint.product_id.id:
+                                message = "product-analysis: %s bucket_date=%s, avail_qty=%s, plan_qty=%s, cum_qty=%s, total=%s" % (
+                                        orderpoint.product_id.default_code,
+                                        bucket_date.strftime(DEFAULT_SERVER_DATE_FORMAT),
+                                        product_quantity[(orderpoint.product_id.id, bucket_date)],
+                                        planned_quantity[(orderpoint.product_id.id, bucket_date)],
+                                        cum_planned.get(orderpoint.product_id.id, 0.0),
+                                        float_compare(
+                                            product_quantity[(orderpoint.product_id.id, bucket_date)] +
+                                            planned_quantity[(orderpoint.product_id.id, bucket_date)] +
+                                            cum_planned.get(orderpoint.product_id.id, 0.0),
+                                            orderpoint.product_min_qty,
+                                            precision_rounding=orderpoint.product_uom.rounding),
+                                    )
+                                _logger.info(message)
+                                plan_log.create({'type': 'debug', 'message': message})
                             local_create_time = 0
                             op_start = time.time()
                             op_product_virtual = product_quantity[(orderpoint.product_id.id, bucket_date)]

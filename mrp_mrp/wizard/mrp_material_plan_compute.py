@@ -20,6 +20,11 @@ class MrpMaterialPlanCompute(models.TransientModel):
         help='Help! Add debug messages to the mrp_material_plan_log table.'
     )
 
+    product_id = fields.Many2one(
+        comodel_name='product.product',
+        string="Debug Product",
+        help="If Debug is selected, this product will get additional messages")
+
     def _material_plan_compute(self):
         with api.Environment.manage():
             # As this function is in a new thread, I need to open a new cursor, because the old one may be closed
@@ -35,6 +40,7 @@ class MrpMaterialPlanCompute(models.TransientModel):
     def material_plan_calculation(self):
         ctx = dict(self.env.context)
         ctx['debug_mrp'] = self.debug
+        ctx['debug_mrp_product_id'] = self.product_id.id
         threaded_calculation = threading.Thread(target=self.with_context(ctx)._material_plan_compute, args=())
         threaded_calculation.start()
         return {'type': 'ir.actions.act_window_close'}

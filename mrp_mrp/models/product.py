@@ -130,6 +130,10 @@ class Product(models.Model):
         :return {(int, datetime): float} res: dictionary of quantities as float
         """
 
+        # if 14106 in self.ids:
+        #     import pdb
+        #     pdb.set_trace()
+
         if bucket_list[0] < datetime.now().date():
             raise UserError(_('The beginning bucket date is in the past.  All bucket dates must be in the future.'))
         date_group = bucket_size == 7 and 'date:week' or 'date:day'
@@ -171,7 +175,7 @@ class Product(models.Model):
         moves_in_res = dict(
             ((item['product_id'][0], item[date_group]), item['product_qty']) for item in
             Move.read_group(
-                [('date', '>=', init_date)] + domain_move_out,
+                [('date', '>=', init_date)] + domain_move_in,
                 ['product_id', 'date', 'product_qty'],
                 ['product_id', date_group],
                 lazy=False)
