@@ -2,9 +2,9 @@
 <odoo>
 <data>
 
-    <record model="ir.ui.view" id="sale.report_invoice_document_inherit_sale">
-        <field name="active">False</field>
-    </record>
+    <!--<record model="ir.ui.view" id="report_invoice_document_inherit_sale">-->
+        <!--<field name="active">False</field>-->
+    <!--</record>-->
 
     <template id="azi_invoice_address_alignment" inherit_id="account.report_invoice_document">
         <xpath expr="//div[@t-if='o.partner_id.ref']" position="replace">
