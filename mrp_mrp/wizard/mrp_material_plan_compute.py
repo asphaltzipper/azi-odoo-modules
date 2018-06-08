@@ -23,7 +23,7 @@ class MrpMaterialPlanCompute(models.TransientModel):
     product_id = fields.Many2one(
         comodel_name='product.product',
         string="Debug Product",
-        help="If Debug is selected, this product will get additional messages")
+        help="This product will post additional log messages, when encountered in the planning algorithm.")
 
     def _material_plan_compute(self):
         with api.Environment.manage():

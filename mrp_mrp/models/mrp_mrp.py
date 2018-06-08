@@ -473,7 +473,7 @@ class MrpMaterialPlan(models.Model):
         plan_log = self.env['mrp.material_plan.log']
         debug_mrp = self.env.context.get('debug_mrp')
         debug_mrp_product_id = self.env.context.get('debug_mrp_product_id')
-        if debug_mrp and debug_mrp_product_id and debug_mrp_product_id == orderpoint.product_id.id:
+        if debug_mrp or debug_mrp_product_id and debug_mrp_product_id == orderpoint.product_id.id:
             message = "product-analysis: supplying %s of %s" % (supply_qty, orderpoint.product_id.display_name)
             _logger.debug(message)
             plan_log.create({'type': 'debug', 'message': message})
@@ -625,7 +625,7 @@ class MrpMaterialPlan(models.Model):
 
                     for orderpoint in location_orderpoints:
                         try:
-                            if debug_mrp and debug_mrp_product_id and debug_mrp_product_id == orderpoint.product_id.id:
+                            if debug_mrp or debug_mrp_product_id and debug_mrp_product_id == orderpoint.product_id.id:
                                 message = "product-analysis: %s bucket_date=%s, avail_qty=%s, plan_qty=%s, cum_qty=%s, total=%s" % (
                                         orderpoint.product_id.default_code,
                                         bucket_date.strftime(DEFAULT_SERVER_DATE_FORMAT),
