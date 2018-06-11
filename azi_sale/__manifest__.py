@@ -20,6 +20,7 @@ AZI Specialized Customizations to Sales
     "depends": ['sale', 'crm', 'sales_team_industry'],
     'data': [
         'views/crm_team_view.xml',
+        'views/res_partner_views.xml',
         'views/sale_order_view.xml',
         'report/azi_sales_order.xml',
     ],

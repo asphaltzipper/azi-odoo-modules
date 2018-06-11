@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+
+<odoo>
+
+    <!-- hide contacts and addresses for child partners -->
+    <record id="res_partner_view_azi" model="ir.ui.view">
+        <field name="name">res.partner.view.azi</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form" />
+        <field name="priority" eval="20"/>
+        <field name="arch" type="xml">
+            <field name="parent_id" position="attributes">
+                <attribute name="domain">[('is_company', '=', True), ('parent_id', '=', False)]</attribute>
+            </field>
+            <xpath expr="//notebook/page[1]" position="attributes">
+                <attribute name="attrs">{'invisible': [('parent_id', '!=', False)]}</attribute>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
