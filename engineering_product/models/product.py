@@ -42,12 +42,10 @@ class ProductTemplate(models.Model):
     eng_code = fields.Char(
         string='Engineering Code',
         compute='_compute_eng_code',
-        inverse='_set_eng_code',
         store=True)
     eng_rev = fields.Char(
         string='Engineering Revision',
-        compute='_compute_eng_rev',
-        inverse='_set_eng_rev',
+        compute='_compute_eng_code',
         store=True)
     eng_categ_id = fields.Many2one(
         comodel_name='engineering.category',
@@ -71,7 +69,6 @@ class ProductTemplate(models.Model):
         comodel_name='engineering.coating',
         string='Coating')
 
-
     @api.constrains('eng_categ_id')
     def _validate_eng_cat(self):
         if self.eng_management:
@@ -79,31 +76,16 @@ class ProductTemplate(models.Model):
                 raise ValidationError("Engineering Category is required for this Product Category")
         return True
 
-    @api.depends('product_variant_ids', 'product_variant_ids.eng_code')
+    @api.depends('product_variant_ids', 'product_variant_ids.default_code')
     def _compute_eng_code(self):
-        unique_variants = self.filtered(lambda template: len(template.product_variant_ids) == 1)
+        unique_variants = self.filtered(lambda template: len(template.product_variant_ids) == 1 and template.categ_id.eng_management)
         for template in unique_variants:
-            template.eng_code = template.product_variant_ids.eng_code
+            template.eng_code, template.eng_rev = template.product_variant_ids._parse_default_code(
+                template.product_variant_ids.default_code,
+                template.categ_id.def_code_regex
+            )
         for template in (self - unique_variants):
-            template.eng_code = ''
-
-    @api.one
-    def _set_eng_code(self):
-        if len(self.product_variant_ids) == 1:
-            self.product_variant_ids.eng_code = self.eng_code
-
-    @api.depends('product_variant_ids', 'product_variant_ids.eng_rev')
-    def _compute_eng_rev(self):
-        unique_variants = self.filtered(lambda template: len(template.product_variant_ids) == 1)
-        for template in unique_variants:
-            template.eng_rev = template.product_variant_ids.eng_rev
-        for template in (self - unique_variants):
-            template.eng_rev = ''
-
-    @api.one
-    def _set_eng_rev(self):
-        if len(self.product_variant_ids) == 1:
-            self.product_variant_ids.eng_rev = self.eng_rev
+            template.eng_code, template.eng_rev = ('', '')
 
     @api.depends('product_variant_ids', 'product_variant_ids.deprecated')
     def _compute_deprecated(self):
@@ -138,17 +120,14 @@ class ProductProduct(models.Model):
 
     _sql_constraints = [('default_code_uniq', 'unique (default_code)', "Product Code must be unique."), ]
 
-    default_code = fields.Char(
-        compute='_get_eng_code',
-        inverse='_set_eng_code',
-        store=True)
     eng_code = fields.Char(
         string="Engineering Code",
-        index=True,
-        nocopy=True)
+        compute='_compute_eng_code',
+        store=True)
     eng_rev = fields.Char(
         string="Engineering Revision",
-        nocopy=True)
+        compute='_compute_eng_code',
+        store=True)
     eco_ref = fields.Char(
         string="Engineering Change Order",
         nocopy=True,
@@ -161,20 +140,11 @@ class ProductProduct(models.Model):
         index=True)
     eng_notes = fields.Text('Engineering Notes')
 
-    re_code = re.compile(r'^([_A-Z0-9-]+)\.([A-Z-][0-9])$')
-    re_code_copy = re.compile(r'^((COPY\.)?[_A-Z0-9-]+\.[A-Z-][0-9])$')
+    # re_code = re.compile(r'^([_A-Z0-9-]+)\.([A-Z-][0-9])$')
+    # re_code_copy = re.compile(r'^((COPY\.)?[_A-Z0-9-]+\.[A-Z-][0-9])$')
 
-    @api.depends('eng_code', 'eng_rev')
-    def _get_eng_code(self):
-        for prod in self:
-            category = prod.product_tmpl_id.categ_id
-            if prod.eng_code and category.eng_management:
-                prod.default_code = prod.eng_code +\
-                                    category.rev_delimiter +\
-                                    prod.eng_rev
-
-    @api.depends('default_code', 'eng_code', 'eng_rev')
-    def _set_eng_code(self):
+    @api.depends('default_code')
+    def _compute_eng_code(self):
         for prod in self:
             if prod.product_tmpl_id.categ_id.eng_management:
                 prod.eng_code, prod.eng_rev = prod._parse_default_code(
@@ -205,26 +175,29 @@ class ProductProduct(models.Model):
                 tmpl = self.env['product.template'].browse(vals.get('product_tmpl_id'))
                 cat = tmpl.categ_id
             if cat and cat.eng_management:
-                if vals.get('default_code'):
-                    vals['eng_code'], vals['eng_rev'] =\
-                        self._parse_default_code(vals['default_code'], cat.def_code_regex)
-                else:
-                    # TODO: figure out why we are incrementing the sequence, when the user specifies a code
-                    vals['eng_code'] = cat.eng_code_sequence.next_by_id()
-                    vals['eng_rev'] = cat.default_rev
+                if not vals.get('default_code'):
+                    vals['default_code'] = "%s%s%s" % (
+                        cat.eng_code_sequence.next_by_id(),
+                        cat.rev_delimiter,
+                        cat.default_rev,
+                    )
         product = super(ProductProduct, self.with_context(create_product_product=True)).create(vals)
         return product
 
     @api.multi
     def write(self, values):
-        if not (values.get('eng_code', self.eng_code) and values.get('eng_rev', self.eng_rev)):
+        if 'default_code' not in values.keys():
+            # the user is not changing the default code, so we assume it still passes requirements
+            pass
+        elif not values.get('default_code'):
+            # the user is deleting the default code, so get the next in sequence
             cat = self.env['product.category'].browse(values.get('categ_id', self.categ_id.id))
             if cat.eng_management:
-                if values.get('default_code'):
-                    values['eng_code'], values['eng_rev'] = self._parse_default_code(values['default_code'], cat.def_code_regex)
-                else:
-                    values['eng_code'] = cat.eng_code_sequence.next_by_id()
-                    values['eng_rev'] = cat.default_rev
+                values['default_code'] = "%s%s%s" % (
+                    cat.eng_code_sequence.next_by_id(),
+                    cat.rev_delimiter,
+                    cat.default_rev,
+                )
         res = super(ProductProduct, self).write(values)
         return res
 
