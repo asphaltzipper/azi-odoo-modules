@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_mfg_create_bom" model="ir.ui.view">
+        <field name="name">Create Raw Material BOM</field>
+        <field name="model">mfg.create.bom</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group name="options">
+                        <field name="product_tmpl_id"/>
+                        <field name="rm_product_id"/>
+                        <field name="rm_qty"/>
+                        <field name="rm_uom_id"/>
+                        <field name="routing_id"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="button_create_bom" string="Create BOM" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-default" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_mfg_create_bom_wizard" model="ir.actions.act_window">
+        <field name="name">Create BOM</field>
+        <field name="res_model">mfg.create.bom</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

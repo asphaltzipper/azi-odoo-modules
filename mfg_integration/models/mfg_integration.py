@@ -4,6 +4,33 @@ from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 
 
+class MfgGauge(models.Model):
+    _name = 'mfg.gauge'
+
+    name = fields.Char(
+        string='Name',
+        required=True)
+
+    laser_code = fields.Char(
+        string='Laser Code',
+        required=True)
+
+    nominal_thk = fields.Float(
+        string='Nominal Thickness',
+        required=True)
+
+
+class MfgMaterial(models.Model):
+    _name = 'mfg.material'
+
+    name = fields.Char(
+        string="Material")
+
+    gauge_ids = fields.Many2many(
+        comodel_name='mfg.gauge',
+        string="Valid Gauges")
+
+
 class MfgWorkImport(models.Model):
     _name = 'mfg.work.import'
 

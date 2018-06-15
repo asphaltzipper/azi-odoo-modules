@@ -1,36 +1,60 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api, _
-from odoo.exceptions import UserError
 
 
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
-    # Manufacturing
+    # Manufacturing Summary Data
     rm_product_id = fields.Many2one(
         comodel_name='product.product',
-        string='Raw Material')
+        string='Raw Material',
+        compute='_compute_mfg_properties',
+        readonly=True)
     raw_material_qty = fields.Float(
-        string='Raw Material Qty')
+        string='Raw Material Qty',
+        compute='_compute_mfg_properties',
+        readonly=True)
     rm_material_code = fields.Char(
-        readonly=True,
         string='Material Code',
-        compute='_compute_material')
+        compute='_compute_mfg_properties',
+        readonly=True)
     rm_gauge_code = fields.Char(
-        readonly=True,
         string='Thickness Code',
-        compute='_compute_gauge')
-    formed = fields.Boolean(
-        string='Formed')
+        compute='_compute_mfg_properties',
+        readonly=True)
     mfg_code = fields.Char(
-        string='File',
-        compute='_compute_mfg_code')
-    mfg_routing = fields.Many2one(
+        string='Mfg Code',
+        compute='_compute_mfg_code',
+        readonly=True)
+    mfg_routing_id = fields.Many2one(
         comodel_name='mrp.routing',
-        string='Routing')
+        string='Routing',
+        compute='_compute_mfg_properties',
+        readonly=True)
+    # only here for backward compatibility
+    # TODO: remove this field
+    formed = fields.Boolean(
+        string="Formed",
+        compute='_compute_formed',
+        readonly=True)
 
-    # Raw Material Attributes
+    # Sheet Metal Manufacturing Attributes
+    cutting_length_outer = fields.Float(
+        string='Outer Cut Length')
+    cutting_length_inner = fields.Float(
+        string='Inner Cut Length')
+    cut_out_count = fields.Integer(
+        string='Cut-Outs')
+    bend_count = fields.Integer(
+        string='Bends')
+
+    # Sheet Metal Raw Material Attributes
+    is_continuous = fields.Boolean(
+        string="Continuous",
+        related='uom_id.category_id.is_continuous',
+        readonly=True)
     material_id = fields.Many2one(
         comodel_name='mfg.material',
         string='Material')
@@ -41,8 +65,8 @@ class ProductTemplate(models.Model):
     # Laser Parts Info
     common_cutting = fields.Selection(
         selection=[('none', 'None'),
-                    ('unrestricted', 'Unrestricted'),
-                    ('same_part', 'Same Part')],
+                   ('unrestricted', 'Unrestricted'),
+                   ('same_part', 'Same Part')],
         default='none',
         string='Common Cutting')
     common_cutting_qty = fields.Integer(
@@ -50,101 +74,46 @@ class ProductTemplate(models.Model):
         default=2)
     orientation = fields.Selection(
         selection=[('1', '0° only'),
-                    ('2', '90° only'),
-                    ('3', '0° or 90°'),
-                    ('4', '0° or 180°'),
-                    ('5', '90° or 270°'),
-                    ('6', '0°, 90°, 180° or 270°'),
-                    ('6', 'any orientation')],
+                   ('2', '90° only'),
+                   ('3', '0° or 90°'),
+                   ('4', '0° or 180°'),
+                   ('5', '90° or 270°'),
+                   ('6', '0°, 90°, 180° or 270°'),
+                   ('6', 'any orientation')],
         string='Orientation')
-    laser_thickness = fields.Char(
+    laser_code = fields.Char(
         readonly=True,
-        string='Laser Thickness',
-        compute='_compute_laser_gauge')
+        string='Laser Thickness Code',
+        compute='_compute_mfg_properties')
 
+    # @api.depends('product_variant_ids', 'product_variant_ids.eng_code', 'product_variant_ids.eng_rev')
     def _compute_mfg_code(self):
+            unique_variants = self.filtered(lambda template: len(template.product_variant_ids) == 1)
+            for template in unique_variants:
+                template.mfg_code = template.product_variant_ids.eng_code + template.product_variant_ids.eng_rev
+            for template in (self - unique_variants):
+                template.mfg_code = ''
+
+    @api.depends('bom_ids')
+    def _compute_mfg_properties(self):
         for rec in self:
-            rec.mfg_code = rec.eng_code + rec.eng_rev
+            if rec.bom_ids and rec.bom_ids[0].one_comp_product_id:
+                bom = rec.bom_ids[0]
+                rec.rm_product_id = bom.one_comp_product_id
+                rec.mfg_routing_id = bom.routing_id
+                rec.raw_material_qty = bom.one_comp_product_qty
+                rec.raw_material_uom_id = bom.one_comp_product_uom_id
+                rec.rm_material_code = bom.one_comp_product_id.material_id.name
+                rec.rm_gauge_code = bom.one_comp_product_id.gauge_id.name
+                rec.laser_code = bom.one_comp_product_id.gauge_id.laser_code
 
-    def _compute_gauge(self):
+    @api.depends('bend_count')
+    def _compute_formed(self):
         for rec in self:
-            rec.rm_gauge_code = rec.rm_product_id.gauge_id.name
-
-    def _compute_material(self):
-        for rec in self:
-            rec.rm_material_code = rec.rm_product_id.material_id.name
-
-    def _compute_laser_gauge(self):
-        for rec in self:
-            rec.laser_thickness = rec.rm_product_id.gauge_id.laser_gauge
-
-    @api.onchange('material_id')
-    def onchange_material_id(self):
-        if self.material_id:
-            self.gauge_id = False
-
-    def button_create_bom(self):
-        self.ensure_one()
-        # get mrp.bom object
-        bom = self.env['mrp.bom']
-        # check for existing bom
-        if bom.search([('product_tmpl_id', '=', self.id)]):
-            raise UserError(_('BOM already Exists'))
-
-        # build dictionary of bom values
-        res = {
-            'product_id': self.product_variant_ids[0].id,
-            'type': 'normal',
-            'product_tmpl_id': self.id,
-            'code': self.default_code,
-            'product_qty': '1',
-            'product_uom_id': self.uom_id.id
-        }
-        bom_id = bom.create(res)
-
-        #  build dict of bom line values
-        bom_line = self.env['mrp.bom.line']
-        # build dictionary of bom line values
-        res = {
-            'bom_id': bom_id.id,
-            'product_id': self.rm_product_id.id,
-            'product_qty': self.raw_material_qty,
-            'product_uom_id': self.rm_product_id.uom_id.id
-        }
-        bom_line.create(res)
-
-        # add routing
-        if bom_id.product_tmpl_id.formed:
-            route = self.env.ref('mfg_integration.routing_laser_brake_template')
-        else:
-            route = self.env.ref('mfg_integration.routing_laser_template')
-        if not route:
-            raise UserError(_('No routing found'))
-        new_route = route.copy()
-        new_route.name = self.eng_code
-        bom_id.routing_id = new_route.id
+            rec.formed = bool(rec.bend_count)
 
     _sql_constraints = [
-        ('common_cutting_qty_check', "CHECK ( common_cutting_qty > 1 )", "The number of common cuts must be greater than 1."),
+        ('common_cutting_qty_check',
+         "CHECK ( common_cutting_qty > 1 )",
+         "The number of common cuts must be greater than 1."),
     ]
-
-
-class MfgGauge(models.Model):
-    _name = 'mfg.gauge'
-
-    name = fields.Char(
-        string='Typical Thickness')
-
-    laser_gauge = fields.Char(
-        string='Laser Thickness')
-
-    material_id = fields.Many2one(
-        comodel_name='mfg.material',
-        string='Raw Material')
-
-
-class MfgMaterial(models.Model):
-    _name = 'mfg.material'
-
-    name = fields.Char(
-        string="Material")

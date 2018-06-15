@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="bom_archive_confirm" model="ir.ui.view">
+        <field name="name">bom.archive.confirm</field>
+        <field name="model">mrp.bom</field>
+        <field name="inherit_id" ref="mrp.mrp_bom_form_view"/>
+        <field name="arch" type="xml">
+            <field name="code" position="after">
+                <field name="routing_detail"/>
+            </field>
+        </field>
+    </record>
+</odoo>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- add product_manager to product template form view -->
+    <!-- add date and priority to WO -->
     <record id="work_order_view_inherit" model="ir.ui.view">
         <field name="name">work.order.view.inherit</field>
         <field name="model">mrp.workorder</field>
@@ -10,6 +10,29 @@
             <xpath expr="//sheet/group/group/field[@name='product_id']" position="after">
                 <field name="production_date"/>
                 <field name="priority_code"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- add routing detail to MO tree view -->
+    <record id="mrp_production_tree_mfg_integration_view" model="ir.ui.view">
+        <field name="name">mrp.production.tree.mfg.integration</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_tree_view"/>
+        <field name="arch" type="xml">
+            <field name="routing_id" position="replace">
+                <field name="routing_detail" groups="mrp.group_mrp_routings"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_mrp_production_filter_mfg_integration" model="ir.ui.view">
+        <field name="name">mrp.production.search.mfg.integration</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.view_mrp_production_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group" position="inside">
+                    <filter string="Routing Detail" domain="[]" context="{'group_by':'routing_detail'}"/>
             </xpath>
         </field>
     </record>

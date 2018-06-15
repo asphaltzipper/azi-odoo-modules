@@ -10,25 +10,48 @@
             <xpath expr="//page[@name='notes']" position="after">
                 <page string="MFG">
                     <group>
-                        <group string="Manufacturing">
+                        <group string="Manufacturing Summary">
+                            <label for="produce_delay" string="Mfg Lead Time" attrs="{'invisible':[('type','=','service')]}"/>
+                            <div attrs="{'invisible':[('type','=','service')]}">
+                                <field name="produce_delay" class="oe_inline"/> days
+                            </div>
                             <field name="rm_product_id"/>
                             <field name="rm_material_code"/>
                             <field name="rm_gauge_code"/>
                             <field name="raw_material_qty"/>
                             <field name="formed"/>
-                            <field name="mfg_code" invisible="1"/>
-                            <button name="button_create_bom" string="Create BOM" class="oe_edit_only" type="object"/>
+                            <field name="mfg_code"/>
+                            <button string="Create BOM" type="action" name="%(mfg_integration.action_mfg_create_bom_wizard)d"/>
                         </group>
-                        <group string="Laser Parts Info" class="col-xs-2 pull-right">
+                        <group string="Laser Parameters" class="col-xs-2 pull-right">
                             <field name="common_cutting"/>
                             <field name="common_cutting_qty"/>
                             <field name="orientation"/>
-                            <field name="laser_thickness" invisible="1"/>
+                            <field name="laser_code"/>
                         </group>
-                        <group string="Raw Material Attributes" class="col-xs-2 pull-right">
+                        <group string="Fabrication Info" class="col-xs-2 pull-right">
+                            <field name="cutting_length_outer"/>
+                            <field name="cutting_length_inner"/>
+                            <field name="cut_out_count"/>
+                            <field name="bend_count"/>
+                        </group>
+
+                        <group string="Sheet Metal Attributes" class="col-xs-2 pull-right" attrs="{'invisible': [('is_continuous', '=', False)]}">
+                            <field name="is_continuous" invisible="1"/>
                             <field name="material_id"/>
                             <field name="gauge_id" domain="[('material_id', '=', material_id)]"/>
                         </group>
+                    </group>
+                    <group string="Bill of Materials">
+                        <field name="bom_ids" nolabel="1" context="{'default_product_tmpl_id': id, 'default_code': default_code}">
+                            <tree>
+                                <field name="one_comp_product_id"/>
+                                <field name="one_comp_product_qty"/>
+                                <field name="one_comp_product_uom_id"/>
+                                <field name="routing_detail"/>
+                                <field name="type"/>
+                            </tree>
+                        </field>
                     </group>
                 </page>
             </xpath>
@@ -42,8 +65,8 @@
         <field name="arch" type="xml">
             <tree string="Raw Material Thickness" editable="bottom">
                 <field name="name"/>
-                <field name="material_id"/>
-                <field name="laser_gauge"/>
+                <field name="laser_code"/>
+                <field name="nominal_thk"/>
             </tree>
         </field>
     </record>
@@ -53,7 +76,7 @@
         <field name="model">mfg.material</field>
         <field name="priority">1</field>
         <field name="arch" type="xml">
-            <tree string="Raw Material" editable="bottom">
+            <tree string="Raw Material">
                 <field name="name"/>
             </tree>
         </field>

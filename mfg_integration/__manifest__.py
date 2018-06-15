@@ -18,10 +18,13 @@ Integrate with Manufacturing Machine Software
     "depends": [
         'product',
         'mrp',
+        'stock',
     ],
     'data': [
         'views/product_views.xml',
+        'views/product_uom_views.xml',
         'views/workorder_views.xml',
+        'wizards/mfg_create_bom_views.xml',
         'data/mfg_integration_data.xml',
         'security/ir.model.access.csv',
     ],
