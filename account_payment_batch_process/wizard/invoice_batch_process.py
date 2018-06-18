@@ -200,13 +200,14 @@ class AccountRegisterPayments(models.TransientModel):
         prec = currency.decimal_places
         context = dict(self._context or {})
         data = {}
+        ordered_keys = []
         if self.is_customer:
             context.update({'is_customer': True})
             if round(self.total_customer_pay_amount, prec) != round(self.cheque_amount, prec):
                 raise ValidationError(_('Verification Failed! Total Invoices'
                                         ' Amount and Check amount does not'
                                         ' match!.'))
-            for paym in self.invoice_customer_payments:
+            for paym in self.invoice_customer_payments.sorted(key=lambda x: x.partner_id.display_name):
                 if paym.receiving_amt > 0:
                     paym.payment_difference = paym.balance_amt - paym.receiving_amt  # noqa
                     partner_id = str(paym.invoice_id.partner_id.id)
@@ -252,6 +253,7 @@ class AccountRegisterPayments(models.TransientModel):
                         # Calculate amount in words
                         amount_word = AmountToTextFractional(
                             paym.receiving_amt)
+                        ordered_keys.append(partner_id)
                         data.update({
                             partner_id: {
                                 'partner_id': partner_id,
@@ -281,7 +283,7 @@ class AccountRegisterPayments(models.TransientModel):
                 raise ValidationError(_('Verification Failed! Total Invoices'
                                         ' Amount and Check amount does not'
                                         ' match!.'))
-            for paym in self.invoice_payments:
+            for paym in self.invoice_payments.sorted(key=lambda x: x.partner_id.display_name):
                 if paym.paying_amt > 0:
                     partner_id = str(paym.invoice_id.partner_id.id)
                     if partner_id in data:
@@ -315,6 +317,7 @@ class AccountRegisterPayments(models.TransientModel):
                             memo = str(paym.invoice_id.number)
                         # Calculate amount in words
                         amount_word = AmountToTextFractional(paym.paying_amt)
+                        ordered_keys.append(partner_id)
                         data.update({
                             partner_id:
                                 {'partner_id': partner_id,
@@ -330,7 +333,7 @@ class AccountRegisterPayments(models.TransientModel):
         context.update({'group_data': data})
         # Making partner wise payment
         payment_ids = []
-        for p in list(data):
+        for p in ordered_keys:
             payment = self.env['account.payment'].with_context(context).\
                 create(self.get_payment_batch_vals(group_data=data[p]))
             payment_ids.append(payment.id)
