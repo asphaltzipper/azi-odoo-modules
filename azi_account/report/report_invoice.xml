@@ -43,17 +43,6 @@
         </xpath>
     </template>
 
-    <record id="azi_payment_tree" model="ir.ui.view">
-        <field name="name">azi.payment.tree</field>
-        <field name="model">account.payment</field>
-        <field name="inherit_id" ref="account.view_account_supplier_payment_tree" />
-        <field name="arch" type="xml">
-        <xpath expr="//tree/field[@name='payment_method_id']" position="after">
-                <field name="check_number" string=""></field>
-            </xpath>
-        </field>
-    </record>
-
     <report
         id="account_azi_invoice_no_header_footer"
         model="account.invoice"
