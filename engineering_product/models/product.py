@@ -42,10 +42,12 @@ class ProductTemplate(models.Model):
     eng_code = fields.Char(
         string='Engineering Code',
         compute='_compute_eng_code',
+        readonly=True,
         store=True)
     eng_rev = fields.Char(
         string='Engineering Revision',
         compute='_compute_eng_code',
+        readonly=True,
         store=True)
     eng_categ_id = fields.Many2one(
         comodel_name='engineering.category',
@@ -123,10 +125,12 @@ class ProductProduct(models.Model):
     eng_code = fields.Char(
         string="Engineering Code",
         compute='_compute_eng_code',
+        readonly=True,
         store=True)
     eng_rev = fields.Char(
         string="Engineering Revision",
         compute='_compute_eng_code',
+        readonly=True,
         store=True)
     eco_ref = fields.Char(
         string="Engineering Change Order",
@@ -220,8 +224,7 @@ class ProductProduct(models.Model):
         # copy product
         defaults = {
             'name': self.name,
-            'eng_code': self.eng_code,
-            'eng_rev': 'Z9',
+            'default_code': self.eng_code + self.product_tmpl_id.rev_delimiter + 'Z9',
         }
         defaults.update(values)
         new_prod = self.copy(default=defaults)
