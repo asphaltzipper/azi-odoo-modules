@@ -75,7 +75,8 @@ class ResPartner(models.Model):
 
     @api.depends('is_company', 'name', 'parent_id.name', 'type', 'company_name')
     def _compute_display_name(self):
-        ctx = dict(self._context)
-        ctx['override_display_name'] = True
-        super(ResPartner, self).with_context(ctx)._compute_display_name()
+        diff = dict(show_address=None, show_address_only=None, show_email=None, override_display_name=True)
+        names = dict(self.with_context(**diff).name_get())
+        for partner in self:
+            partner.display_name = names.get(partner.id)
 
