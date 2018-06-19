@@ -54,7 +54,7 @@ class ResPartner(models.Model):
 
     @api.multi
     def name_get(self):
-        if self._context.get('show_address') or self._context.get('show_address_only') or self._context.get('show_email'):
+        if not self._context.get('override_display_name'):
             res = super(ResPartner, self).name_get()
             return res
         res = []
@@ -72,4 +72,10 @@ class ResPartner(models.Model):
             name = name.replace('\n', ', ')
             res.append((partner.id, name))
         return res
+
+    @api.depends('is_company', 'name', 'parent_id.name', 'type', 'company_name')
+    def _compute_display_name(self):
+        ctx = dict(self._context)
+        ctx['override_display_name'] = True
+        super(ResPartner, self).with_context(ctx)._compute_display_name()
 
