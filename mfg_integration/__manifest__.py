@@ -21,10 +21,12 @@ Integrate with Manufacturing Machine Software
         'stock',
     ],
     'data': [
+        'wizards/mfg_work_import_csv_views.xml',
         'wizards/mfg_create_bom_views.xml',
         'views/product_views.xml',
         'views/product_uom_views.xml',
         'views/workorder_views.xml',
+        'views/mfg_work_views.xml',
         'data/mfg_integration_data.xml',
         'security/ir.model.access.csv',
     ],

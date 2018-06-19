@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+<odoo>
+
+    <record id="mfg_work_import_csv_view" model="ir.ui.view">
+        <field name="name">Import Mfg Work CSV</field>
+        <field name="model">mfg.work.import</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Import Inventory">
+                <label string="Must be CSV format (delimiter=','), with no header row.
+                         Columns:
+                          - Product Mfg Code
+                          - Manufacturing Order Name/Number
+                          - Completed Quantity"
+                       colspan="4"/>
+                <group colspan="4" col="4">
+                    <field name="header_id" invisible="1"/>
+                    <field name="filename"/>
+                    <field name="data_file" filename="filename" colspan="4"/>
+                </group>
+               <separator string="" colspan="4"/>
+               <footer>
+                    <button class="oe_highlight" special="cancel" string="Cancel"/>
+                    <button name="action_import" string="Import" type="object"/>
+               </footer>
+           </form>
+        </field>
+    </record>
+
+    <record id="action_mfg_work_import" model="ir.actions.act_window">
+        <field name="name">Import Mfg Work</field>
+        <field name="res_model">mfg.work.import</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+       <field name="view_id" ref="mfg_work_import_csv_view"/>
+       <field name="target">new</field>
+    </record>
+
+</odoo>

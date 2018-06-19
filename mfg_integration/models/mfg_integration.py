@@ -2,6 +2,7 @@
 
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
+from odoo.tools import float_compare
 
 
 class MfgGauge(models.Model):
@@ -31,70 +32,160 @@ class MfgMaterial(models.Model):
         string="Valid Gauges")
 
 
-class MfgWorkImport(models.Model):
-    _name = 'mfg.work.import'
+class MfgWorkHeader(models.Model):
+    _name = 'mfg.work.header'
 
-    date_import = fields.Datetime(
-        string="Import Date")
+    name = fields.Char(
+        string="Name",
+        compute='_compute_name',
+        readonly=True)
 
-    detail_ids = fields.One2many(
-        comodel_name='mfg.detail.import',
-        inverse_name='import_id')
+    state = fields.Selection(
+        selection=[('draft', 'New'),
+                   ('imported', 'Imported'),
+                   ('closed', 'Done'),
+                   ('cancel', 'Canceled')],
+        string="Closed",
+        default='draft',
+        required=True)
 
-    # batch_ids = fields.One2many(
-    #     comodel_name='mfg.batch.import',
-    #     inverse_name='import_id')
+    work_date = fields.Datetime(
+        string="Import Date",
+        default=fields.Datetime.now())
 
-    is_closed = fields.Boolean(
-        string="Closed")
-
-    user_id = fields.Many2one(
+    work_user_id = fields.Many2one(
         comodel_name='res.users')
 
-    work_hours = fields.Float(
-        string="Work Hours")
+    total_hours = fields.Float(
+        string="Total Hours")
+
+    misc_hours = fields.Float(
+        string="Misc Hours")
+
+    detail_ids = fields.One2many(
+        comodel_name='mfg.work.detail',
+        inverse_name='header_id')
+
+    detail_time = fields.Float(
+        string="Assigned Time",
+        compute='_compute_detail_time',
+        readonly=True,
+        help="Time assigned to detail lines, in hours")
+
+    @api.depends('work_date', 'work_user_id')
+    def _compute_name(self):
+        for rec in self:
+            rec.name = rec.work_user_id.name + ', ' + self.work_date[:10]
+
+    @api.depends('detail_ids')
+    def _compute_detail_time(self):
+        for rec in self:
+            rec.detail_time = sum(rec.detail_ids.mapped('minutes_assigned')) / 60
+
+    def button_distribute_time(self):
+        self.ensure_one()
+        # split and assign time to detail lines
+        factor_sum = 0.0
+        misc_count = 0
+        detail_factors = {}
+        for detail in self.detail_ids:
+            detail.minutes_assigned = 0.0
+            if detail.product_id:
+                t = detail.product_id.rm_product_id.gauge_id.nominal_thk
+                l = detail.product_id.cutting_length_outer + detail.product_id.cutting_length_inner or 1.0
+                b = detail.product_id.bend_count
+                c = detail.product_id.cut_out_count + 1
+                time_factor = b + t * (c + l)
+                time_factor *= detail.actual_quantity
+            else:
+                time_factor = 0.0
+                misc_count += 1
+            detail_factors[detail.id] = time_factor
+            factor_sum += time_factor
+
+        for detail in self.detail_ids:
+            if detail.product_id:
+                detail.minutes_assigned = (self.total_hours-self.misc_hours) * 60 * detail_factors[detail.id] / (factor_sum or 1.0)
+            else:
+                detail.minutes_assigned = self.misc_hours/misc_count
+
+    def button_clear_import(self):
+        self.ensure_one()
+        self.detail_ids.unlink()
+        self.state = 'draft'
 
     def button_apply_work(self):
-        # gather all products produced
-        # adjust MO qty to actual produced
-        # divide work_hours across products by percentage, weighted against beam-time (one of Jeremy's columns)
-        # create labor time entries
-        # complete work orders
-        # complete manufacturing orders
-        # for work in self:
-        #     for detail in work.detail_ids:
-        #         ...
-        pass
+        self.ensure_one()
+
+        precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+        if float_compare(self.detail_time, self.total_hours, precision_rounding=precision) > 0:
+            raise UserError("Time assigned on detail lines ({} hours) doesn't sum to the total time on the batch ({} hours)".format(self.detail_time, self.total_hours))
+
+        for detail in self.detail_ids.filtered(lambda r: r.production_id):
+            mo = detail.production_id
+            if not mo.product_id.id == detail.product_id.id:
+                raise UserError("{} does not match the product on {} ({})".format(detail.product_id.default_code, mo.name, mo.product_id.default_code))
+            if not mo.state == 'planned':
+                raise UserError("MO must be in state 'Planned': {}".format(mo.name))
+            if detail.actual_quantity != mo.product_qty:
+                change_wiz = self.env['change.production.qty'].create({'mo_id': mo.id, 'product_qty': detail.actual_quantity})
+                change_wiz.change_prod_qty()
+            ctx = dict(self.env.context)
+            ctx['default_production_id'] = mo.id
+            produce_wiz = self.env['mrp.wo.produce'].with_context(ctx).create({'production_id': mo.id})
+
+            # divide time evenly across workorders
+            produce_wiz.load_work()
+            wo_count = len(produce_wiz.work_ids)
+            for work in produce_wiz.work_ids:
+                work.update({
+                    'user_id': self.work_user_id.id,
+                    'labor_date': self.work_date,
+                    'labor_time': (detail.minutes_assigned/60)/wo_count,
+                })
+            produce_wiz.do_produce()
+            mo.button_mark_done()
+
+        self.state = 'closed'
 
 
-class MfgDetailImport(models.Model):
-    _name = 'mfg.detail.import'
+class MfgWorkDetail(models.Model):
+    _name = 'mfg.work.detail'
+
+    header_id = fields.Many2one(
+        comodel_name='mfg.work.header',
+        string="Work Header",
+        required=True)
+
+    import_mfg_code = fields.Char(
+        string="Imported Mfg Code",
+        required=True,
+        readonly=True)
+
+    import_production_code = fields.Char(
+        string="Imported Mfg Code",
+        required=True,
+        readonly=True)
+
+    import_quantity = fields.Float(
+        string="Completed Quantity",
+        required=True,
+        readonly=True)
+
+    actual_quantity = fields.Float(
+        string="Actual Quantity",
+        required=True,
+        default=0.0)
+
+    production_id = fields.Many2one(
+        comodel_name='mrp.production',
+        string='Mfg Order')
 
     product_id = fields.Many2one(
         comodel_name='product.product',
         string='Product')
 
-    workorder_id = fields.Many2one(
-        comodel_name='mrp.workorder',
-        string='Workorder')
-
-    import_id = fields.Many2one(
-        comodel_name='mfg.work.import')
-
-    # add one field for each column in the spreadsheet from jeremy
-
-    def _get_latest_import(self):
-        work_import = self.env['mfg.work.import'].search([('is_closed', '=', False)], order='date_import DESC', limit=1)
-        return work_import.id
-
-    def create(self, vals):
-        vals['import_id'] = vals.get('import_id', self._get_latest_import())
-        super(MfgDetailImport, self).create(vals)
-
-
-# class MfgBatchImport(models.Model):
-#     _name = 'mfg.batch.import'
-#
-#     product_id = fields.Many2one()
-#     import_id = fields.Many2one()
-#     # one field for each column jeremy gives me
+    minutes_assigned = fields.Float(
+        string="Assigned Minutes",
+        default=0.0,
+        help="Minutes of total time distributed to this production order")

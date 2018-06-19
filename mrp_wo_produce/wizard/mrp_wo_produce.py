@@ -99,53 +99,64 @@ class MrpWoProduce(models.TransientModel):
 
     @api.model
     def default_get(self, fields):
+
         res = super(MrpWoProduce, self).default_get(fields)
-        if self._context and self._context.get('active_id'):
+        production = self.env['mrp.production']
+        if res.get('production_id'):
+            production = production.browse(res['production_id'])
+        elif self._context and self._context.get('default_production_id'):
+            production = self.env['mrp.production'].browse(self._context['default_production_id'])
+        elif self._context and self._context.get('active_model', '') == 'mrp.production' and self._context.get('active_id'):
             production = self.env['mrp.production'].browse(self._context['active_id'])
-            main_product_moves = production.move_finished_ids.filtered(lambda x: x.product_id.id == production.product_id.id)
-            serial_finished = (production.product_id.tracking == 'serial')
-            serial = bool(serial_finished)
-            if serial_finished:
-                quantity = 1.0
-            else:
-                quantity = production.product_qty - sum(main_product_moves.mapped('quantity_done'))
-                quantity = quantity if (quantity > 0) else 0
-            lines = []
-            existing_lines = []
-            for move in production.move_raw_ids.filtered(lambda x: (x.product_id.tracking != 'none') and x.state not in ('done', 'cancel')):
-                if not move.move_lot_ids.filtered(lambda x: not x.lot_produced_id):
-                    qty = quantity / move.bom_line_id.bom_id.product_qty * move.bom_line_id.product_qty
-                    if move.product_id.tracking == 'serial':
-                        while float_compare(qty, 0.0, precision_rounding=move.product_uom.rounding) > 0:
-                            lines.append({
-                                'move_id': move.id,
-                                'quantity': min(1,qty),
-                                'quantity_done': 0.0,
-                                'plus_visible': True,
-                                'product_id': move.product_id.id,
-                                'production_id': production.id,
-                                'done_wo': True,
-                            })
-                            qty -= 1
-                    else:
+        else:
+            raise UserError("Change Quantity Wizard called without reference to a Manufacturing Order")
+
+        main_product_moves = production.move_finished_ids.filtered(lambda x: x.product_id.id == production.product_id.id)
+        serial_finished = (production.product_id.tracking == 'serial')
+        serial = bool(serial_finished)
+        if serial_finished:
+            quantity = 1.0
+        else:
+            quantity = production.product_qty - sum(main_product_moves.mapped('quantity_done'))
+            quantity = quantity if (quantity > 0) else 0
+
+        lines = []
+        existing_lines = []
+        for move in production.move_raw_ids.filtered(lambda x: (x.product_id.tracking != 'none') and x.state not in ('done', 'cancel')):
+            if not move.move_lot_ids.filtered(lambda x: not x.lot_produced_id):
+                qty = quantity / move.bom_line_id.bom_id.product_qty * move.bom_line_id.product_qty
+                if move.product_id.tracking == 'serial':
+                    while float_compare(qty, 0.0, precision_rounding=move.product_uom.rounding) > 0:
                         lines.append({
                             'move_id': move.id,
-                            'quantity': qty,
+                            'quantity': min(1,qty),
                             'quantity_done': 0.0,
                             'plus_visible': True,
                             'product_id': move.product_id.id,
                             'production_id': production.id,
                             'done_wo': True,
                         })
+                        qty -= 1
                 else:
-                    # don't include lines associated with a work order (x.done_wo)
-                    existing_lines += move.move_lot_ids.filtered(lambda x: x.done_wo and not x.lot_produced_id).ids
-            res['serial'] = serial
-            res['production_id'] = production.id
-            res['product_qty'] = quantity
-            res['product_id'] = production.product_id.id
-            res['product_uom_id'] = production.product_uom_id.id
-            res['consume_line_ids'] = map(lambda x: (0,0,x), lines) + map(lambda x:(4, x), existing_lines)
+                    lines.append({
+                        'move_id': move.id,
+                        'quantity': qty,
+                        'quantity_done': 0.0,
+                        'plus_visible': True,
+                        'product_id': move.product_id.id,
+                        'production_id': production.id,
+                        'done_wo': True,
+                    })
+            else:
+                # don't include lines associated with a work order (x.done_wo)
+                existing_lines += move.move_lot_ids.filtered(lambda x: x.done_wo and not x.lot_produced_id).ids
+
+        res['serial'] = serial
+        res['production_id'] = production.id
+        res['product_qty'] = quantity
+        res['product_id'] = production.product_id.id
+        res['product_uom_id'] = production.product_uom_id.id
+        res['consume_line_ids'] = map(lambda x: (0,0,x), lines) + map(lambda x:(4, x), existing_lines)
         return res
 
     @api.multi

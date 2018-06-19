@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="mfg_work_header_tree_view" model="ir.ui.view">
+        <field name="name">mfg.work.header.tree.view</field>
+        <field name="model">mfg.work.header</field>
+        <field name="arch" type="xml">
+            <tree string="MFG Work Import">
+                <field name="work_date"/>
+                <field name="work_user_id"/>
+                <field name="total_hours"/>
+                <field name="misc_hours"/>
+                <field name="detail_time"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="mfg_work_header_form_view" model="ir.ui.view">
+        <field name="name">mfg.work.header.form.view</field>
+        <field name="model">mfg.work.header</field>
+        <field name="arch" type="xml">
+            <form string="MFG Work Import">
+                <header>
+                    <button name="%(mfg_integration.action_mfg_work_import)d" string="Import Work" states="draft" type="action" class="oe_highlight"/>
+                    <button name="button_clear_import" string="Clear Details" states="imported" type="object" class="oe_highlight"/>
+                    <button name="button_distribute_time" string="Distribute Time" states="draft,imported" type="object" class="oe_highlight"/>
+                    <button name="button_apply_work" string="Apply Work" states="imported" type="object" class="oe_highlight"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="work_date"/>
+                            <field name="work_user_id"/>
+                        </group>
+                        <group>
+                            <field name="total_hours"/>
+                            <field name="misc_hours"/>
+                            <field name="detail_time"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="detail_ids">
+                            <tree>
+                                <field name="import_mfg_code"/>
+                                <field name="production_id"/>
+                                <field name="product_id"/>
+                                <field name="import_quantity"/>
+                                <field name="actual_quantity"/>
+                                <field name="minutes_assigned"/>
+                            </tree>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_mfg_work_header" model="ir.actions.act_window">
+        <field name="name">MFG Work Batch</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">mfg.work.header</field>
+        <field name="view_type">form</field>
+        <field name="view_id" ref="mfg_integration.mfg_work_header_tree_view"/>
+    </record>
+
+    <menuitem id="menu_mrp_mfg_work_header"
+            name="MFG Work Imports"
+            action="action_mfg_work_header"
+            parent="mrp.menu_mrp_manufacturing"
+            groups="mrp.group_mrp_routings"/>
+
+</odoo>
