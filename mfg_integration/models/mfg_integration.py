@@ -124,7 +124,7 @@ class MfgWorkHeader(models.Model):
             if detail.product_id:
                 detail.minutes_assigned = (self.total_hours-self.misc_hours) * 60 * detail_factors[detail.id] / (factor_sum or 1.0)
             else:
-                detail.minutes_assigned = self.misc_hours/misc_count
+                detail.minutes_assigned = self.misc_hours/misc_count * 60
 
     def button_clear_import(self):
         self.ensure_one()
