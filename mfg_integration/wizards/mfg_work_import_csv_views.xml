@@ -6,23 +6,29 @@
         <field name="model">mfg.work.import</field>
         <field name="type">form</field>
         <field name="arch" type="xml">
-            <form string="Import Inventory">
-                <label string="Must be CSV format (delimiter=','), with no header row.
-                         Columns:
-                          - Product Mfg Code
-                          - Manufacturing Order Name/Number
-                          - Completed Quantity"
-                       colspan="4"/>
-                <group colspan="4" col="4">
+            <form>
+                <div>
+                    <p>
+                        Must be CSV format (delimiter= ' , ' ), with NO HEADER ROW.<br/>
+                        Columns:
+                    </p>
+                    <ol>
+                        <li>Product Mfg Code</li>
+                        <li>Manufacturing Order Name/Number</li>
+                        <li>Completed Quantity</li>
+                    </ol>
+                </div>
+                <separator string="" colspan="4"/>
+                <group>
                     <field name="header_id" invisible="1"/>
                     <field name="filename"/>
-                    <field name="data_file" filename="filename" colspan="4"/>
+                    <field name="data_file" filename="filename" string="MFG Work Data File"/>
                 </group>
-               <separator string="" colspan="4"/>
-               <footer>
-                    <button class="oe_highlight" special="cancel" string="Cancel"/>
-                    <button name="action_import" string="Import" type="object"/>
-               </footer>
+                <separator string="" colspan="4"/>
+                <footer>
+                    <button name="action_import" class="oe_highlight" string="Import" type="object"/>
+                    <button special="cancel" string="Cancel"/>
+                </footer>
            </form>
         </field>
     </record>

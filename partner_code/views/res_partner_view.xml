@@ -52,4 +52,17 @@
             </xpath>
         </field>
     </record>
+    <record model="ir.ui.view" id="display_name_sales_order">
+        <field name="name">display.name.sales.order</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_shipping_id']" position="attributes">
+                <attributes name="context">{'default_type':'delivery', override_display_name}</>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/form//field[@name='price_unit']" position="before">
+                <field name="discount_reason_id" attrs="{'required': [('product_id', '!=', False)]}"/>
+            </xpath>
+        </field>
+    </record>
 </openerp>

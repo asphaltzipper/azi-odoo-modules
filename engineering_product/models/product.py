@@ -157,7 +157,7 @@ class ProductProduct(models.Model):
                 )
 
     def _parse_default_code(self, default_code, def_code_regex):
-        code_match = re.match(def_code_regex, default_code)
+        code_match = re.match(def_code_regex, default_code or '')
         res = code_match and (code_match.group(1), code_match.group(2)) or (False, False)
         return res
 

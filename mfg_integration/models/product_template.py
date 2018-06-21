@@ -27,6 +27,7 @@ class ProductTemplate(models.Model):
     mfg_code = fields.Char(
         string='Mfg Code',
         compute='_compute_mfg_code',
+        store=True,
         readonly=True)
     mfg_routing_id = fields.Many2one(
         comodel_name='mrp.routing',
@@ -86,13 +87,15 @@ class ProductTemplate(models.Model):
         string='Laser Thickness Code',
         compute='_compute_mfg_properties')
 
-    # @api.depends('product_variant_ids', 'product_variant_ids.eng_code', 'product_variant_ids.eng_rev')
+    @api.depends('product_variant_ids', 'product_variant_ids.default_code')
     def _compute_mfg_code(self):
-            unique_variants = self.filtered(lambda template: len(template.product_variant_ids) == 1)
-            for template in unique_variants:
-                template.mfg_code = template.product_variant_ids.eng_code + template.product_variant_ids.eng_rev
-            for template in (self - unique_variants):
-                template.mfg_code = ''
+        unique_variants = self.filtered(lambda t: len(t.product_variant_ids) == 1 and t.categ_id.eng_management)
+        for template in unique_variants:
+            eng_code, eng_rev = template.product_variant_ids._parse_default_code(
+                template.product_variant_ids.default_code,
+                template.categ_id.def_code_regex
+            )
+            template.mfg_code = eng_code and eng_code + eng_rev or False
 
     @api.depends('bom_ids')
     def _compute_mfg_properties(self):

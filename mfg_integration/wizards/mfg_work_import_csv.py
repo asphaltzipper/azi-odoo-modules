@@ -63,8 +63,7 @@ class MfgWorkImport(models.TransientModel):
                 raise UserError("Bad row in file")
                 # continue
             values = dict(zip(keys, row))
-            default_code = len(values['import_mfg_code'])>2 and values['import_mfg_code'][:-2] + '.' + values['import_mfg_code'][-2:] or False
-            product = product_obj.search([('default_code', '=', default_code)])
+            product = product_obj.search([('mfg_code', '=', values['import_mfg_code'])])
             if len(product) > 1:
                 continue
             production = production_obj.search([('name', '=', values['import_production_code'])])

@@ -2,7 +2,7 @@
 
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
-from odoo.tools import float_compare
+from odoo.tools import float_compare, float_round
 
 
 class MfgGauge(models.Model):
@@ -51,16 +51,21 @@ class MfgWorkHeader(models.Model):
 
     work_date = fields.Datetime(
         string="Import Date",
-        default=fields.Datetime.now())
+        default=fields.Datetime.now(),
+        required=True)
 
     work_user_id = fields.Many2one(
-        comodel_name='res.users')
+        comodel_name='res.users',
+        string="Work User",
+        required=True)
 
     total_hours = fields.Float(
-        string="Total Hours")
+        string="Total Hours",
+        required=True)
 
     misc_hours = fields.Float(
-        string="Misc Hours")
+        string="Misc Hours",
+        required=True)
 
     detail_ids = fields.One2many(
         comodel_name='mfg.work.detail',
@@ -72,15 +77,27 @@ class MfgWorkHeader(models.Model):
         readonly=True,
         help="Time assigned to detail lines, in hours")
 
+    time_match = fields.Boolean(
+        compute='_compute_time_match',
+        readonly=True)
+
     @api.depends('work_date', 'work_user_id')
     def _compute_name(self):
         for rec in self:
             rec.name = rec.work_user_id.name + ', ' + self.work_date[:10]
 
+    @api.depends('detail_ids', 'total_hours', 'misc_hours')
+    def _compute_time_match(self):
+        for rec in self:
+            detail_time = sum(rec.detail_ids.mapped('minutes_assigned')) / 60 or 0.0
+            rounded_detail_time = float_round(detail_time, precision_digits=3)
+            rounded_total_time = float_round(rec.total_hours, precision_digits=3)
+            rec.time_match = rounded_detail_time == rounded_total_time
+
     @api.depends('detail_ids')
     def _compute_detail_time(self):
         for rec in self:
-            rec.detail_time = sum(rec.detail_ids.mapped('minutes_assigned')) / 60
+            rec.detail_time = sum(rec.detail_ids.mapped('minutes_assigned')) / 60 or 0.0
 
     def button_distribute_time(self):
         self.ensure_one()
@@ -117,8 +134,10 @@ class MfgWorkHeader(models.Model):
     def button_apply_work(self):
         self.ensure_one()
 
-        precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
-        if float_compare(self.detail_time, self.total_hours, precision_rounding=precision) > 0:
+        detail_time = sum(self.detail_ids.mapped('minutes_assigned')) / 60 or 0.0
+        rounded_detail_time = float_round(detail_time, precision_digits=3)
+        rounded_total_time = float_round(self.total_hours, precision_digits=3)
+        if rounded_detail_time != rounded_total_time:
             raise UserError("Time assigned on detail lines ({} hours) doesn't sum to the total time on the batch ({} hours)".format(self.detail_time, self.total_hours))
 
         for detail in self.detail_ids.filtered(lambda r: r.production_id):
