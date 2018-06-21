@@ -19,6 +19,7 @@ Integrate with Manufacturing Machine Software
         'product',
         'mrp',
         'stock',
+        'engineering_product',
     ],
     'data': [
         'wizards/mfg_work_import_csv_views.xml',

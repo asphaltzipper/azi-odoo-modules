@@ -14,10 +14,11 @@
             </xpath>
             <xpath expr="//form/sheet/group/group/field[@name='partner_invoice_id']" position="attributes">
                 <attribute name="domain">['|', ('parent_id', '=', partner_id), ('id', '=', partner_id)]</attribute>
+                <attribute name="context">{'default_type': 'invoice', 'override_display_name': 1}</attribute>
             </xpath>
             <xpath expr="//form/sheet/group/group/field[@name='partner_shipping_id']" position="attributes">
                 <attribute name="domain">['|', ('parent_id', '=', partner_id), ('id', '=', partner_id)]</attribute>
-                <attribute name="context">{'default_type':'delivery', 'show_address': 1}</attribute>
+                <attribute name="context">{'default_type':'delivery', 'show_address': 1, 'override_display_name': 1}</attribute>
                 <attribute name="options">{&quot;always_reload&quot;: True}</attribute>
             </xpath>
             <xpath expr="//sheet/group" position="after">
