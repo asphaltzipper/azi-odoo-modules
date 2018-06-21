@@ -58,7 +58,7 @@
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='partner_shipping_id']" position="attributes">
-                <attributes name="context">{'default_type':'delivery', override_display_name}</>
+                <attributes name="context">{'default_type': 'delivery', 'override_display_name': 1}</>
             </xpath>
             <xpath expr="//field[@name='order_line']/form//field[@name='price_unit']" position="before">
                 <field name="discount_reason_id" attrs="{'required': [('product_id', '!=', False)]}"/>
