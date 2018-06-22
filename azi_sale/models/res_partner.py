@@ -1,10 +1,27 @@
 # -*- coding: utf-8 -*-
 
-from odoo import api, models
+from odoo import api, models, fields
 
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
+    _order = 'priority desc, name'
+
+    priority = fields.Selection(
+        selection=[('0', 'Normal'),
+                   ('1', 'Low'),
+                   ('2', 'High'),
+                   ('3', 'Very High')],
+        string="Priority",
+        default="0",
+        required=True,
+        help="Gives the sequence order when displaying a list of tasks.")
+
+    state_code = fields.Char(
+        string='State Code',
+        help='The state code.',
+        related='state_id.code',
+        required=True)
 
     @api.multi
     def _flat_address(self):

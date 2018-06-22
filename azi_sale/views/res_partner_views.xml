@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 
 <odoo>
-
     <!-- hide contacts and addresses for child partners -->
     <record id="res_partner_view_azi" model="ir.ui.view">
         <field name="name">res.partner.view.azi</field>
@@ -15,7 +14,64 @@
             <xpath expr="//notebook/page[1]" position="attributes">
                 <attribute name="attrs">{'invisible': [('parent_id', '!=', False)]}</attribute>
             </xpath>
+            <xpath expr="//notebook/page/field/kanban/templates" position="before">
+                <field name="priority"/>
+            </xpath>
+            <xpath expr="//notebook/page/field/kanban" position="attributes">
+                <attribute name="default_order">priority desc, name</attribute>
+            </xpath>
+            <xpath expr="//notebook/page/field/kanban/templates" position="replace">
+                <templates>
+                    <t t-name="kanban-box">
+                        <t t-set="color" t-value="kanban_color(record.color.raw_value)"/>
+                        <div t-att-class="color + (record.title.raw_value == 1 ? ' oe_kanban_color_alert' : '') + ' oe_kanban_global_click'">
+                            <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right"/>
+                            <div class="o_kanban_image">
+                                <img t-if="record.type.raw_value === 'delivery'" t-att-src='_s + "/base/static/src/img/truck.png"'/>
+                                <img t-if="record.type.raw_value === 'invoice'" t-att-src='_s + "/base/static/src/img/money.png"'/>
+                                <img t-if="record.type.raw_value === 'other'" t-att-src='_s + "/base/static/img/public_user-image.png"'/>
+                                <t t-if="record.type.raw_value !== 'invoice' &amp;&amp; record.type.raw_value !== 'delivery' &amp;&amp; record.type.raw_value !== 'other'">
+                                    <img t-if="record.is_company.raw_value === true" t-att-src='_s + "/base/static/src/img/company_image.png"'/>
+                                    <img t-if="record.is_company.raw_value === false" t-att-src='_s + "/base/static/src/img/avatar.png"'/>
+                                </t>
+                                <div>
+                                    <field name="priority" widget="priority"/>
+                                </div>
+                            </div>
+                            <br/>
+                            <div class="oe_kanban_details">
+                                <strong><field name="name"/></strong>
+                                <div t-if="record.function.raw_value"><field name="function"/></div>
+                                <div t-if="record.email.raw_value"><field name="email"/></div>
+                                <div t-if="record.type.raw_value != 'contact'">
+                                    <field name="street"/>
+                                    <div>
+                                        <field name="city"/>,
+                                        <field name="state_code"/>
+                                        <field name="zip"/>
+                                    </div>
+                                    <field name="country_id"/>
+                                </div>
+                                <div t-if="record.phone.raw_value">Phone: <field name="phone"/></div>
+                                <div t-if="record.mobile.raw_value">Mobile: <field name="mobile"/></div>
+                                <div t-if="record.fax.raw_value">Fax: <field name="fax"/></div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </xpath>
         </field>
     </record>
 
+    <record id="view_partner_tree_inherited" model="ir.ui.view">
+        <field name="name">view.res.partner.tree.inherited</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree" />
+        <field name="arch" type="xml">
+            <xpath expr="//tree/field[@name='email']" position="after">
+                <field name="city"/>
+                <field name="state_id"/>
+            </xpath>
+        </field>
+    </record>
 </odoo>
