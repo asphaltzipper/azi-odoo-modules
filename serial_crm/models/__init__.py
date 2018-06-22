@@ -7,3 +7,4 @@ import res_partner
 import stock_lot_partner
 import mrp_repair
 import sale_order
+import ir_attachment

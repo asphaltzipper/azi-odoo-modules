@@ -83,7 +83,7 @@
                 <page name="documents" string="Documents">
                     <!--<button type="object" name="action_see_attachments" string="All Documents"/>-->
                     <field name="document_ids" mode="kanban" options="{'no_create_edit': True}" context="{'default_res_model': 'stock.production.lot', 'default_res_id': active_id}">
-                        <kanban limit="10" default_order="priority, name" quick_create="false" create="true" delete="true">
+                        <kanban limit="10" default_order="priority desc, name" quick_create="false" create="true" delete="true">
                             <field name="id"/>
                             <field name="res_model" invisible="1"/>
                             <field name="res_id" invisible="1"/>
