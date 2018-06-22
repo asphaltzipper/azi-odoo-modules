@@ -46,6 +46,18 @@
                         </tree>
                     </field>
                 </page>
+                <page name="revaluations" string="Revaluations">
+                    <field name="reval_ids">
+                        <tree create="0">
+                            <field name="revaluation_id"/>
+                            <field name="old_cost"/>
+                            <field name="new_cost"/>
+                            <field name="state"/>
+                            <field name="post_date" widget="date"/>
+                            <field name="remarks"/>
+                        </tree>
+                    </field>
+                </page>
                 <page name="sales" string="Sales">
                     <field name="sale_order_ids" context="{'default_partner_id': partner_id}">
                         <tree>

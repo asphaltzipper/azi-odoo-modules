@@ -15,6 +15,7 @@
         "base",
         "stock",
         "mrp",
+        "stock_inventory_revaluation",
     ],
     "data": [
         'security/ir.model.access.csv',

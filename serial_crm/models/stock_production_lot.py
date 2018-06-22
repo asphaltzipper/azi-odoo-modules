@@ -43,6 +43,11 @@ class ProductionLot(models.Model):
         inverse_name='lot_id',
         string='Repairs')
 
+    reval_ids = fields.One2many(
+        comodel_name='stock.lot.revaluations',
+        inverse_name='lot_id',
+        string='Revaluation line quants')
+
     state = fields.Selection(
         selection=[
             ('assigned', 'Assigned'),
