@@ -50,7 +50,7 @@ class MfgWorkHeader(models.Model):
         required=True)
 
     work_date = fields.Datetime(
-        string="Import Date",
+        string="Work Date",
         default=fields.Datetime.now(),
         required=True)
 
