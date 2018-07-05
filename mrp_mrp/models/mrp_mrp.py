@@ -299,9 +299,11 @@ class MrpMaterialPlan(models.Model):
             date_start -= timedelta(days=1)
 
         # get name
-        name = move_type + "/" + \
-            datetime.strftime(date_finish, DEFAULT_SERVER_DATE_FORMAT) + "/" + \
-            product.default_code
+        name = "{}/{}/{}".format(
+            move_type,
+            datetime.strftime(date_finish, DEFAULT_SERVER_DATE_FORMAT),
+            product.default_code or 'FALSE'
+        )
 
         res = {
             'name': name,
