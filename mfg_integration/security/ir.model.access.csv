@@ -7,7 +7,3 @@ access_mfg_work_header,access_mfg_work_header,model_mfg_work_header,mrp.group_mr
 access_mfg_work_header_manager,access_mfg_work_header_manager,model_mfg_work_header,mrp.group_mrp_manager,1,1,1,1
 access_mfg_work_detail,access_mfg_work_detail,model_mfg_work_detail,mrp.group_mrp_user,1,0,0,0
 access_mfg_work_detail_manager,access_mfg_work_detail_manager,model_mfg_work_detail,mrp.group_mrp_manager,1,1,1,1
-access_mfg_create_bom,access_mfg_create_bom,model_mfg_create_bom,mrp.group_mrp_user,1,0,0,0
-access_mfg_create_bom_manager,access_mfg_create_bom_manager,model_mfg_create_bom,mrp.group_mrp_manager,1,1,1,1
-access_mfg_work_import,access_mfg_work_import,model_mfg_work_import,mrp.group_mrp_user,1,0,0,0
-access_mfg_work_import_manager,access_mfg_work_import_manager,model_mfg_work_import,mrp.group_mrp_manager,1,1,1,1
