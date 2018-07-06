@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<template id="report_financial_line_azi" inherit_id="account_reports.report_financial_line">
+    <xpath expr="//t[@t-set='domainClass']" position="before">
+        <t t-if="a.get('level') == 3 and a['type'] in ['line', 'total']"><t t-set="trclass" t-value="'o_account_reports_level3'"/></t>
+        <t t-if="a.get('level') == 4 and a['type'] in ['line', 'total']"><t t-set="trclass" t-value="'o_account_reports_level4'"/></t>
+        <t t-if="a.get('level') == 5 and a['type'] in ['line', 'total']"><t t-set="trclass" t-value="'o_account_reports_level5'"/></t>
+        <t t-if="a.get('level') == 6 and a['type'] in ['line', 'total']"><t t-set="trclass" t-value="'o_account_reports_level6'"/></t>
+    </xpath>
+    <xpath expr="//t/t/t[contains(@t-if, '] == 1')]" position="before">
+        <t t-if="a['level'] == 4">
+            <t t-set="domainClass" t-value="'o_account_reports_domain_line_4'"/>
+        </t>
+        <t t-if="a['level'] == 5">
+            <t t-set="domainClass" t-value="'o_account_reports_domain_line_5'"/>
+        </t>
+        <t t-if="a['level'] == 6">
+            <t t-set="domainClass" t-value="'o_account_reports_domain_line_6'"/>
+        </t>
+    </xpath>
+</template>
+
+</data>
+</odoo>

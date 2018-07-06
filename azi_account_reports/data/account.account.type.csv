@@ -1,0 +1,31 @@
+id,name,type,include_initial_balance
+account_type_inside_advance,Inside Advances,other,TRUE
+account_type_outside_advance,Outside Advances,other,TRUE
+account_type_inventory,Inventory,other,TRUE
+account_type_accrued_liabilities,Accrued Liabilities,other,TRUE
+account_type_accrued_payroll,Accrued Payroll,other,TRUE
+account_type_sales_tax_payable,Sales Tax Payable,other,TRUE
+account_type_taxes_payable,Taxes Payable,other,TRUE
+account_type_cogs_material,Cost of Sales Materials,other,FALSE
+account_type_cogs_overhead,Cost of Sales Overhead,other,FALSE
+account_type_cogs_salary_wages,Cost of Sales Salary and Wages,other,FALSE
+account_type_cogs_freight,Cost of Sales Freight,other,FALSE
+account_type_expense_sales_fixed,Sales and Marketing Fixed,other,FALSE
+account_type_expense_sales_salary_wages,Sales and Marketing Salary and Wages,other,FALSE
+account_type_expense_sales_variable,Sales and Marketing Variable,other,FALSE
+account_type_expense_sales_travel,Sales and Marketing Travel,other,FALSE
+account_type_expense_sales_occupancy,Sales and Marketing Occupancy,other,FALSE
+account_type_expense_sales_marketing,Sales and Marketing Marketing,other,FALSE
+account_type_expense_sales_other,Sales and Marketing Other,other,FALSE
+account_type_expense_admin_fixed,General and Administrative Fixed,other,FALSE
+account_type_expense_admin_salary_wages,General and Administrative Salary and Wages,other,FALSE
+account_type_expense_admin_variable,General and Administrative Variable,other,FALSE
+account_type_expense_admin_travel,General and Administrative Travel,other,FALSE
+account_type_expense_admin_occupancy,General and Administrative Occupancy,other,FALSE
+account_type_expense_interest,Interest Expense,other,FALSE
+account_type_expense_taxes,Taxes Expense,other,FALSE
+account_type_income_interest,Interest Income,other,FALSE
+account_type_other_income_expense,Other Income or Expense,other,FALSE
+account_type_taxes,Income Taxes,other,FALSE
+account.data_account_type_expenses,General and Administrative Other,other,FALSE
+account_type_gain_loss_sale_assets,Gain or Loss on Sale of Assets,other,FALSE
