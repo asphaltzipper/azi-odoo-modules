@@ -14,19 +14,25 @@
 AZI Enterprise Custom Accounting Reports
 ========================================
 
-* Report Profit and Loss, grouped by product/category details
+* AZI Specific Financial Statements
+    * Depends on a change to the chart of accounts
+        * /azi-odoo-install/upgrades/upgrade_chart_of_accounts_2018-06.py
+        * /azi-odoo-install/upgrades/upgrade_chart_of_accounts_2018-06.py.xlsx
     """,
     'depends': [
         'account',
         'account_reports',
     ],
     'data': [
+        'data/account.account.type.csv',
         'data/account_tags.xml',
         'data/azi_account_reports.xml',
         'views/account_views.xml',
         'views/report_views.xml',
-        # 'views/turnover_view.xml',
+        'views/report_financial.xml',
     ],
     'installable': True,
     'auto_install': False,
+    # 'pre_init_hook': '_set_update',
+    'post_init_hook': '_set_noupdate',
 }
