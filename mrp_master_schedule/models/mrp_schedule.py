@@ -82,7 +82,13 @@ class MrpSchedule(models.Model):
         default['schedule_id'] = record.id
         for line in self.line_ids:
             if line.check_production_state_not_done():
-                line.copy(default)
+                line.copy({
+                    'schedule_id': record.id,
+                    'name': line.name,
+                    'production_id': line.production_id.state != 'cancel' and line.production_id.id or False,
+                    'sale_id': line.sale_id.state != 'cancel' and line.sale_id.id or False,
+                    'lot_id': line.lot_id.id,
+                })
         return record
 
 
@@ -155,13 +161,15 @@ class MrpScheduleLine(models.Model):
         comodel_name='stock.production.lot',
         string='SerialNum',
         index=True,
-        ondelete="restrict")
+        ondelete="restrict",
+        copy=False)
 
     production_id = fields.Many2one(
         comodel_name='mrp.production',
         string='MfgOrder',
         index=True,
-        ondelete='set null')
+        ondelete='set null',
+        copy=False)
 
     production_state = fields.Selection(
         string='MfgOrderState',
@@ -188,7 +196,8 @@ class MrpScheduleLine(models.Model):
         comodel_name='sale.order',
         string='Sales Order',
         index=True,
-        ondelete='set null')
+        ondelete='set null',
+        copy=False)
 
     def write(self, vals):
         if vals.get('date_finish:week'):
@@ -214,19 +223,6 @@ class MrpScheduleLine(models.Model):
             return False
         else:
             return True
-
-    @api.multi
-    def copy(self, default=None):
-        # schedule_id is set by MrpSchedule copy() so skip double check of
-        # production state
-        if (default.get('schedule_id') or
-                self.check_production_state_not_done()):
-            if self.production_id and self.production_state == 'cancel':
-                default['production_id'] = False
-            return super(MrpScheduleLine, self).copy(default)
-        else:
-            raise UserError(_("Duplicating a Schedule Line linked to a"
-                              " Completed MfgOrder is not allowed."))
 
     def get_next_serial(self):
         if self.lot_id:
