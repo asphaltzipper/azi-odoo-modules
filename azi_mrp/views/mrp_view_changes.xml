@@ -33,6 +33,24 @@
             <xpath expr="//sheet/div[@name='button_box']/button[2]" position="before">
                 <button name="%(action_production_move_analysis)d" type="action" string="Moves Analysis" class="oe_stat_button" icon="fa-arrows-v"/>
             </xpath>
+            <xpath expr="//sheet/group/group/field[@name='date_planned_finished']" position="attributes">
+                <attribute name="invisible">0</attribute>
+                <attribute name="string">Finish Date</attribute>
+            </xpath>
+            <xpath expr="//sheet/group/group/field[@name='date_planned_start']" position="attributes">
+                <attribute name="string">Start Date</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="azi_mrp_production_view_form_inherit_planning" model="ir.ui.view">
+        <field name="name">azi_mrp.production.form.view.inherit.planning</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp_workorder.mrp_production_view_form_inherit_planning"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/group/group/label[@for='date_planned_start_wo']" position="attributes">
+                <attribute name="string">Work Dates</attribute>
+            </xpath>
         </field>
     </record>
 
