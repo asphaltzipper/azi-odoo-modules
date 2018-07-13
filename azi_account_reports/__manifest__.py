@@ -24,6 +24,7 @@ AZI Enterprise Custom Accounting Reports
         'data/account_tags.xml',
         'data/azi_account_reports.xml',
         'views/account_views.xml',
+        'views/report_views.xml',
         # 'views/turnover_view.xml',
     ],
     'installable': True,
