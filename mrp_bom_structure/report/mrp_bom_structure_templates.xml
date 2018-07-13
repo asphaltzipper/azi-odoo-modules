@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data>
+        <report
+            string="BOM Structure"
+            id="action_report_linked_bom_structure"
+            model="mrp.bom"
+            name="mrp_bom_linked_structure_report"
+            file="mrp_bom_linked_structure_report"
+            report_type="qweb-pdf"
+        />
+
+        <record id="linked_bom_structure_report" model="ir.ui.view">
+            <field name="name">linked.bom.structure.report</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="groups_id" eval="[(4, ref('mrp.group_mrp_user'))]"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/sheet/div[@name='button_box']" position="inside">
+                    <button class="oe_stat_button" name="forward_bom_action" type="object" string="Forward BOM"
+                        attrs="{'invisible':[('type', 'not in', ['product', 'consu'])]}" icon="fa-sitemap" >
+                    </button>
+                    <button class="oe_stat_button" name="reverse_bom_action" type="object" string="Reverse BOM"
+                        attrs="{'invisible':[('type', 'not in', ['product', 'consu'])]}" icon="fa-sitemap fa-flip-vertical" >
+                    </button>
+                </xpath>
+            </field>
+        </record>
+
+        <template id="mrp_bom_linked_structure_report">
+            <t t-call="report.html_container">
+                <t t-call="report.internal_layout">
+                    <div class="page">
+                        <h2>BOM Structure</h2>
+                        <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>BOM Name</th>
+                                    <th>Quantity</th>
+                                    <th>BOM Ref</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="docs" t-as="o">
+                                    <tr style="font-weight: bold;">
+                                        <td>
+                                            <span t-field="o.product_id.default_code"/>
+                                            <span t-field="o.display_name"/>
+                                        </td>
+                                        <td>
+                                            <span t-field="o.product_qty"/>
+                                            <span groups="product.group_uom" t-field="o.product_uom_id.name"/>
+                                        </td>
+                                        <td>
+                                            <span t-field="o.code"/>
+                                        </td>
+                                    </tr>
+                                    <tr t-foreach="get_children(o.id)" t-as="l">
+                                        <td style="padding-left: 20px;">
+                                            <span style="color: white;" t-esc="'... '*(l['level'])"/>
+                                            <span t-att-res-id="l['pid']" res-model="product.product" view-type="form" t-esc="l['pname']"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="l['pqty']"/>
+                                            <span t-esc="l['uname']" groups="product.group_uom"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="l['code']"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
+
+
+                <!--<span t-att-res-id="o.product_id" res-model="product.product" view-type="form" t-esc="o.product_id.name"/>-->
