@@ -7,6 +7,7 @@ from odoo.addons import decimal_precision as dp
 class StockLotRevaluations(models.Model):
     _name = 'stock.lot.revaluations'
     _auto = False
+    _order = 'post_date'
 
     # fields selected from the database view
 
@@ -27,6 +28,10 @@ class StockLotRevaluations(models.Model):
     new_cost = fields.Float(
         string='New Cost',
         digits=dp.get_precision('Product Price'),
+        readonly=True)
+
+    post_date = fields.Datetime(
+        string='Posting Date',
         readonly=True)
 
     # fields related through the orm
@@ -50,11 +55,6 @@ class StockLotRevaluations(models.Model):
         related='quant_id.lot_id',
         readonly=True)
 
-    post_date = fields.Datetime(
-        string='Posting Date',
-        related='revaluation_id.post_date',
-        readonly=True)
-
     @api.model_cr
     def init(self):
         tools.drop_view_if_exists(self._cr, 'stock_lot_revaluations')
@@ -65,10 +65,9 @@ class StockLotRevaluations(models.Model):
                     r.id as revaluation_id,
                     l.quant_id,
                     l.old_cost,
-                    l.new_cost
+                    l.new_cost,
+                    r.post_date
                 from stock_inventory_revaluation as r
                 left join stock_inventory_revaluation_quant as l on l.revaluation_id=r.id
-                order by r.post_date
-
             )
         """)
