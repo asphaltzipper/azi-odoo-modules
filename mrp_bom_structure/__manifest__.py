@@ -19,6 +19,6 @@ Bom Structure Viewer
     'data': [
         'report/mrp_bom_structure_templates.xml',
     ],
-    "installable": True,
+    "installable": False,
     "auto_install": False,
 }
