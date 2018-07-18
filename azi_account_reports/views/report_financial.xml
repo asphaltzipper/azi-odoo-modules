@@ -9,6 +9,9 @@
         <t t-if="a.get('level') == 5 and a['type'] in ['line', 'total']"><t t-set="trclass" t-value="'o_account_reports_level5'"/></t>
         <t t-if="a.get('level') == 6 and a['type'] in ['line', 'total']"><t t-set="trclass" t-value="'o_account_reports_level6'"/></t>
     </xpath>
+    <!--<xpath expr="//t[contains(@t-value, 'o_account_reports_domain_line_2')]" position="replace">-->
+        <!--<t t-set="domainClass" t-value="'o_account_reports_domain_line_6'"/>-->
+    <!--</xpath>-->
     <xpath expr="//t/t/t[contains(@t-if, '] == 1')]" position="before">
         <t t-if="a['level'] == 4">
             <t t-set="domainClass" t-value="'o_account_reports_domain_line_4'"/>
@@ -20,6 +23,9 @@
             <t t-set="domainClass" t-value="'o_account_reports_domain_line_6'"/>
         </t>
     </xpath>
+    <!--<xpath expr="//tr/td[1]" position="inside">-->
+        <!--<t t-esc="a.get('level')"/>-->
+    <!--</xpath>-->
 </template>
 
 </data>
