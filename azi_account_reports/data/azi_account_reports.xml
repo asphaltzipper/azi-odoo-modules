@@ -39,7 +39,7 @@
         <field name="groupby">product_categ_id</field>
         <field name="formulas">balance = sum.balance</field>
         <field name="sequence" eval="1"/>
-        <field name="level" eval="1" />
+        <field name="level" eval="2" />
     </record>
     <record id="account_financial_report_rm_group" model="account.financial.html.report.line">
         <field name="name">Raw Materials Inventory</field>
@@ -49,7 +49,7 @@
         <field name="groupby">product_categ_id</field>
         <field name="formulas">balance = sum.balance</field>
         <field name="sequence" eval="2"/>
-        <field name="level" eval="1" />
+        <field name="level" eval="2" />
     </record>
     <record id="account_financial_report_other_group" model="account.financial.html.report.line">
         <field name="name">Other Inventory</field>
@@ -59,7 +59,7 @@
         <field name="groupby">account_id</field>
         <field name="formulas">balance = sum.balance</field>
         <field name="sequence" eval="3"/>
-        <field name="level" eval="1" />
+        <field name="level" eval="2" />
     </record>
 
 
