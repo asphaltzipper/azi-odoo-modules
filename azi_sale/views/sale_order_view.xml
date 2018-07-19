@@ -53,4 +53,51 @@
         </field>
     </record>
 
+    <record id="azi_view_order_line_tree" model="ir.ui.view">
+        <field name="name">azi.sale.order.line.tree</field>
+        <field name="model">sale.order.line</field>
+        <field name="inherit_id" ref="sale.view_order_line_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="attributes">
+                <attribute name="default_order">order_id</attribute>
+            </xpath>
+            <field name="price_subtotal" position="before">
+                <field name="state"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="azi_view_sales_order_line_filter" model="ir.ui.view">
+        <field name="name">azi.sale.order.line.select</field>
+        <field name="model">sale.order.line</field>
+        <field name="inherit_id" ref="sale.view_sales_order_line_filter"/>
+        <field name="arch" type="xml">
+            <search position="inside">
+                <filter name="filter_to_deliver" string="To Deliver" domain="[('delivery_remaining_qty','&gt;', 0)]"  help="Sales Order Lines to be delivered"/>
+                <separator/>
+                <filter name="filter_is_not_delivery" string="Not Shipping" domain="[('is_delivery','=', False)]"  help="Non-Delivery Lines"/>
+                <separator/>
+                <filter name="filter_is_not_canceled" string="Not Canceled" domain="[('state','!=', 'cancel')]"  help="Non-Canceled Lines"/>
+            </search>
+            <group position="inside">
+                <filter name="filter_group_state" string="State" domain="[]" context="{'group_by':'state'}"/>
+                <filter name="filter_group_partner" string="Customer" domain="[]" context="{'group_by':'order_partner_id'}"/>
+            </group>
+            <xpath expr="//group/filter[2]" position="attributes">
+                <attribute name="name">filter_group_order</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_azi_sale_line" model="ir.actions.act_window">
+        <field name="name">Sale Order Lines</field>
+        <field name="res_model">sale.order.line</field>
+        <field name="context">{'search_default_filter_to_deliver': True, 'search_default_filter_is_not_delivery': True, 'search_default_filter_is_not_canceled': True}</field>
+        <field name="search_view_id" ref="sale.view_sales_order_line_filter"/>
+    </record>
+
+    <menuitem id="menu_azi_sale_line"
+            action="action_azi_sale_line" parent="sales_team.menu_sale_report"
+            sequence="50"/>
+
 </odoo>

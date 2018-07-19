@@ -4,7 +4,6 @@ from odoo import models, fields, api, exceptions
 
 
 class SaleOrder(models.Model):
-
     _inherit = "sale.order"
 
     bypass_warning = fields.Boolean(string='Bypass Warning')
@@ -52,3 +51,18 @@ class SaleOrder(models.Model):
                 'title': title,
                 'message': partner.sale_warn_msg,
             }}
+
+
+class SaleOrderLine(models.Model):
+    _inherit = 'sale.order.line'
+
+    delivery_remaining_qty = fields.Float(
+        string="Remaining Qty",
+        readonly=True,
+        compute='_compute_delivery_remaining_qty',
+        store=True)
+
+    @api.depends('product_uom_qty', 'qty_delivered')
+    def _compute_delivery_remaining_qty(self):
+        for line in self:
+            line.delivery_remaining_qty = line.product_uom_qty - line.qty_delivered
