@@ -157,10 +157,13 @@ class MfgWorkHeader(models.Model):
             produce_wiz.load_work()
             wo_count = len(produce_wiz.work_ids)
             for work in produce_wiz.work_ids:
+                labor_time = (detail.minutes_assigned/60)/wo_count
+                if labor_time <= 0.017:
+                    raise UserError("Work time cannot be less than 1 minute per manufacturing order")
                 work.update({
                     'user_id': self.work_user_id.id,
                     'labor_date': self.work_date,
-                    'labor_time': (detail.minutes_assigned/60)/wo_count,
+                    'labor_time': labor_time,
                 })
             produce_wiz.do_produce()
             mo.button_mark_done()
