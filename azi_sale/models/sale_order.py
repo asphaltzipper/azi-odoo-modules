@@ -52,6 +52,13 @@ class SaleOrder(models.Model):
                 'message': partner.sale_warn_msg,
             }}
 
+    @api.multi
+    def action_cancel(self):
+        for order in self:
+            if order.order_lines.filtered(lambda x: x.delivered_qty):
+                raise exceptions.UserError("Can't cancel orders with lines that have been delivered")
+        return self.write({'state': 'cancel'})
+
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
