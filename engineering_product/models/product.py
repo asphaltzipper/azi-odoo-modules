@@ -78,7 +78,7 @@ class ProductTemplate(models.Model):
                 raise ValidationError("Engineering Category is required for this Product Category")
         return True
 
-    @api.depends('product_variant_ids', 'product_variant_ids.default_code')
+    @api.depends('categ_id', 'product_variant_ids', 'product_variant_ids.default_code')
     def _compute_eng_code(self):
         unique_variants = self.filtered(lambda template: len(template.product_variant_ids) == 1 and template.categ_id.eng_management)
         for template in unique_variants:
@@ -147,7 +147,7 @@ class ProductProduct(models.Model):
     # re_code = re.compile(r'^([_A-Z0-9-]+)\.([A-Z-][0-9])$')
     # re_code_copy = re.compile(r'^((COPY\.)?[_A-Z0-9-]+\.[A-Z-][0-9])$')
 
-    @api.depends('default_code')
+    @api.depends('categ_id', 'default_code')
     def _compute_eng_code(self):
         for prod in self:
             if prod.product_tmpl_id.categ_id.eng_management:
