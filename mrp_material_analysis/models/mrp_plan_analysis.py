@@ -236,7 +236,12 @@ class MrpPlanAnalysis(models.Model):
                         from mrp_routing_workcenter as rw
                         left join mrp_workcenter as w on w.id=rw.workcenter_id
                         left join resource_resource as r on r.id=w.resource_id
-                        left join mrp_bom as b on b.routing_id=rw.routing_id
+                        left join (
+                            select distinct on (product_id) *
+                            from mrp_bom
+                            where active=true
+                            order by product_id, version desc, sequence
+                        ) as b on b.routing_id=rw.routing_id
                         order by b.product_id, r.code
                     ) as t
                     group by product_id
