@@ -190,7 +190,7 @@ class MrpMaterialPlan(models.Model):
                 _logger.info(message)
                 self.env['mrp.material_plan.log'].create({'type': 'warning', 'message': message})
                 self.env.user.notify_warning(message=message, title="Procurement Failed", sticky=True)
-                proc_order.unlink()
+                proc_order and proc_order.unlink()
             else:
                 plan_move.unlink()
 
