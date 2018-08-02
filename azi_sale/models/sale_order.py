@@ -55,9 +55,9 @@ class SaleOrder(models.Model):
     @api.multi
     def action_cancel(self):
         for order in self:
-            if order.order_lines.filtered(lambda x: x.delivered_qty):
+            if order.order_line.filtered(lambda x: x.qty_delivered):
                 raise exceptions.UserError("Can't cancel orders with lines that have been delivered")
-        return self.write({'state': 'cancel'})
+        return super(SaleOrder, self).action_cancel()
 
 
 class SaleOrderLine(models.Model):
