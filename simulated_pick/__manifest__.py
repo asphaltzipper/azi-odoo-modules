@@ -38,6 +38,7 @@ View material requirements for a given product and related bill of materials.
         "mrp_mrp",
         "mrp_master_schedule",
         "mrp_material_analysis",
+        "mfg_integration",
     ],
     "data": [
         'wizard/simulated_pick_view.xml',

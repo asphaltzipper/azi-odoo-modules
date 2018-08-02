@@ -29,6 +29,7 @@
             <field name="product_uom" />
             <field name="default_supplier_id" />
             <field name="proc_action" />
+            <field name="routing_detail" />
             <button name="action_material_analysis" type="object" icon="fa-bar-chart" help="Show Planning Report" />
         </tree>
     </field>
@@ -56,6 +57,7 @@
                         <field name="on_hand_after" />
                         <field name="short" />
                         <field name="proc_action" />
+                        <field name="routing_detail" />
                     </group>
                 </group>
             </sheet>

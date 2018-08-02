@@ -45,6 +45,8 @@ class SimulatedPickProduct(models.TransientModel):
 
     proc_action = fields.Char(string='Action')
 
+    routing_detail = fields.Char(string="Routing Detail")
+
     categ_id = fields.Many2one(
         comodel_name='product.category',
         related='product_id.categ_id',

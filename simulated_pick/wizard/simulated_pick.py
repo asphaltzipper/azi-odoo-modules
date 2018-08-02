@@ -97,6 +97,9 @@ class SimulatedPick(models.TransientModel):
             current_demand = detail['qty']
             previous_demand = pick_results.get(line_prod.id) and pick_results[line_prod.id]['product_qty'] or 0
             total_demand = current_demand + previous_demand
+            if bom_line.product_id.default_code == 'X010318.-0':
+                import pdb
+                pdb.set_trace()
             if pick_results.get(line_prod.id):
                 # product previously collected in pick_results, update qty
                 on_hand_after = pick_results[line_prod.id]['on_hand_before'] - total_demand
@@ -121,8 +124,9 @@ class SimulatedPick(models.TransientModel):
                 }
                 pick_results[line_prod.id] = new_pick
 
-            if pick_results[line_prod.id]['proc_action'] == 'manufacture':
+            if 'manufacture' in pick_results[line_prod.id]['proc_action']:
                 line_bom = bom._bom_find(product=line_prod)
+                pick_results[line_prod.id]['routing_detail'] = line_bom.routing_detail
                 if line_bom and short:
                     # we only simulate demand for components when the parent comes up short
                     self._action_compute_lines(line_prod, current_demand, pick_results=pick_results, bom=line_bom)
