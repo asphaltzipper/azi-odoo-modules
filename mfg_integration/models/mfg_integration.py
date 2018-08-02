@@ -90,8 +90,8 @@ class MfgWorkHeader(models.Model):
     def _compute_time_match(self):
         for rec in self:
             detail_time = sum(rec.detail_ids.mapped('minutes_assigned')) / 60 or 0.0
-            rounded_detail_time = float_round(detail_time, precision_digits=3)
-            rounded_total_time = float_round(rec.total_hours, precision_digits=3)
+            rounded_detail_time = float_round(detail_time, precision_digits=2)
+            rounded_total_time = float_round(rec.total_hours, precision_digits=2)
             rec.time_match = rounded_detail_time == rounded_total_time
 
     @api.depends('detail_ids')
@@ -135,10 +135,10 @@ class MfgWorkHeader(models.Model):
         self.ensure_one()
 
         detail_time = sum(self.detail_ids.mapped('minutes_assigned')) / 60 or 0.0
-        rounded_detail_time = float_round(detail_time, precision_digits=3)
-        rounded_total_time = float_round(self.total_hours, precision_digits=3)
+        rounded_detail_time = float_round(detail_time, precision_digits=2)
+        rounded_total_time = float_round(self.total_hours, precision_digits=2)
         if rounded_detail_time != rounded_total_time:
-            raise UserError("Time assigned on detail lines ({} hours) doesn't sum to the total time on the batch ({} hours)".format(self.detail_time, self.total_hours))
+            raise UserError("Time assigned on detail lines ({} hours) doesn't sum to the total time on the batch ({} hours)".format(rounded_detail_time, rounded_total_time))
 
         for detail in self.detail_ids.filtered(lambda r: r.production_id):
             mo = detail.production_id
@@ -157,9 +157,9 @@ class MfgWorkHeader(models.Model):
             produce_wiz.load_work()
             wo_count = len(produce_wiz.work_ids)
             for work in produce_wiz.work_ids:
-                labor_time = (detail.minutes_assigned/60)/wo_count
-                if labor_time <= 0.017:
+                if detail.minutes_assigned <= 1.0:
                     raise UserError("Work time cannot be less than 1 minute per manufacturing order")
+                labor_time = (detail.minutes_assigned/60)/wo_count
                 work.update({
                     'user_id': self.work_user_id.id,
                     'labor_date': self.work_date,
@@ -177,7 +177,9 @@ class MfgWorkDetail(models.Model):
     header_id = fields.Many2one(
         comodel_name='mfg.work.header',
         string="Work Header",
-        required=True)
+        required=True,
+        ondelete='cascade',
+        readonly=True)
 
     import_mfg_code = fields.Char(
         string="Imported Mfg Code",
@@ -201,11 +203,13 @@ class MfgWorkDetail(models.Model):
 
     production_id = fields.Many2one(
         comodel_name='mrp.production',
-        string='Mfg Order')
+        string='Mfg Order',
+        ondelete='set null')
 
     product_id = fields.Many2one(
         comodel_name='product.product',
-        string='Product')
+        string='Product',
+        ondelete='set null')
 
     minutes_assigned = fields.Float(
         string="Assigned Minutes",

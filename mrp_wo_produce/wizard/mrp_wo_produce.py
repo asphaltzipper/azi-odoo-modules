@@ -250,11 +250,12 @@ class MrpWoProduce(models.TransientModel):
             domain=[('produce_id', '=', self.id)],
             fields=['workorder_id', 'labor_time'],
             groupby=['workorder_id'])
+        tolerance = 0.0001
         zero_work_ids = [
-            x['workorder_id'][0] for x in work_summary if x['labor_time'] < 0.01
+            x['workorder_id'][0] for x in work_summary if x['labor_time'] < tolerance
         ]
         error_domain = ['|', ('id', 'in', unreported_workorder_ids),
-                        '&', ('duration_expected', '>', 0.0), ('id', 'in', zero_work_ids)]
+                        '&', ('duration_expected', '>', tolerance), ('id', 'in', zero_work_ids)]
         unreported_workorders = self.env['mrp.workorder'].search(error_domain)
         if len(unreported_workorders):
             raise UserError(

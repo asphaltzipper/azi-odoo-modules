@@ -28,7 +28,8 @@ class MfgWorkImport(models.TransientModel):
         comodel_name='mfg.work.header',
         string="MFG Work Import Header",
         readonly=True,
-        required=True)
+        required=True,
+        ondelete='cascade')
 
     @api.model
     def default_get(self, fields):

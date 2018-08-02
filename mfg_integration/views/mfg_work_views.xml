@@ -40,12 +40,12 @@
                             <field name="total_hours" attrs="{'readonly': [('state', '=', 'closed')]}"/>
                             <field name="misc_hours" attrs="{'readonly': [('state', '=', 'closed')]}"/>
                             <field name="detail_time"/>
-                            <field name="time_match" invisible="1"/>
+                            <field name="time_match"/>
                         </group>
                     </group>
                     <group>
                         <field name="detail_ids" nolabel="1" attrs="{'readonly': [('state', '=', 'closed')]}">
-                            <tree create="0" delete="0" editable="0">
+                            <tree editable="0">
                                 <field name="import_mfg_code"/>
                                 <field name="production_id"/>
                                 <field name="product_id"/>
