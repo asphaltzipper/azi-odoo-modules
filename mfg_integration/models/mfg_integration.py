@@ -3,6 +3,8 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 from odoo.tools import float_compare, float_round
+import logging
+_logger = logging.getLogger(__name__)
 
 
 class MfgGauge(models.Model):
@@ -142,6 +144,7 @@ class MfgWorkHeader(models.Model):
 
         for detail in self.detail_ids.filtered(lambda r: r.production_id):
             mo = detail.production_id
+            _logger.info(mo.name)
             if not mo.product_id.id == detail.product_id.id:
                 raise UserError("{} does not match the product on {} ({})".format(detail.product_id.default_code, mo.name, mo.product_id.default_code))
             if not mo.state == 'planned':
