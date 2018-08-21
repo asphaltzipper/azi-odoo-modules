@@ -139,7 +139,7 @@
                                 <tr>
                                     <td colspan="5"><strong>Products to Consume</strong></td>
                                 </tr>
-                                <tr t-foreach="o.moves_plus.sorted(key=lambda x: (x.e_kanban, x.product_id.shelf_ids))" t-as="line">
+                                <tr t-foreach="o.moves_plus.sorted(key=lambda x: (x.e_kanban, x.product_id.shelf_ids, x.product_id.default_code))" t-as="line">
                                     <td style="width:18cm;">
                                         <span t-field="line.product_id.code"/>
                                         <span t-field="line.product_id.name"/>
