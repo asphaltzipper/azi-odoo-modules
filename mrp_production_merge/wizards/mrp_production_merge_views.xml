@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_mrp_production_merge_form" model="ir.ui.view">
+            <field name="name">mrp.production.merge.form</field>
+            <field name="model">mrp.production.merge</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group string="Merge Selected Manufacturing Orders">
+                        <field name="order_count"/>
+                        <field name="product_count"/>
+                        <field name="is_error" invisible="1"/>
+                        <field name="error_message" attrs="{'invisible': [('is_error', '=', False)]}"/>
+                    </group>
+                    <footer>
+                        <button name="do_merge" string="Apply" type="object" class="oe_highlight" attrs="{'invisible': [('is_error', '!=', False)]}"/>
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <act_window
+            id="action_mrp_production_merge"
+            name="Merge Mfg Orders"
+            res_model="mrp.production.merge"
+            src_model="mrp.production"
+            view_mode="form"
+            multi="False"
+            target="new"
+            key2="client_action_multi"
+        />
+
+    </data>
+</odoo>
