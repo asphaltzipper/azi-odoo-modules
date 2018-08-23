@@ -124,9 +124,11 @@ class MfgWorkHeader(models.Model):
 
         for detail in self.detail_ids:
             if detail.product_id:
-                detail.minutes_assigned = (self.total_hours-self.misc_hours) * 60 * detail_factors[detail.id] / (factor_sum or 1.0)
+                minutes = (self.total_hours-self.misc_hours) * 60 * detail_factors[detail.id] / (factor_sum or 1.0)
+                detail.minutes_assigned = minutes >= 1.1 and minutes or 1.1
             else:
-                detail.minutes_assigned = self.misc_hours/misc_count * 60
+                minutes = self.misc_hours/misc_count * 60
+                detail.minutes_assigned = minutes
 
     def button_clear_import(self):
         self.ensure_one()
@@ -186,17 +188,16 @@ class MfgWorkDetail(models.Model):
 
     import_mfg_code = fields.Char(
         string="Imported Mfg Code",
-        required=True,
         readonly=True)
 
     import_production_code = fields.Char(
         string="Imported Mfg Code",
-        required=True,
         readonly=True)
 
     import_quantity = fields.Float(
         string="Completed Quantity",
         required=True,
+        default=0.0,
         readonly=True)
 
     actual_quantity = fields.Float(
@@ -208,6 +209,16 @@ class MfgWorkDetail(models.Model):
         comodel_name='mrp.production',
         string='Mfg Order',
         ondelete='set null')
+
+    production_state = fields.Selection([
+        ('confirmed', 'Confirmed'),
+        ('planned', 'Planned'),
+        ('progress', 'In Progress'),
+        ('done', 'Done'),
+        ('cancel', 'Cancelled')],
+        string='State',
+        related='production_id.state',
+        store=True)
 
     product_id = fields.Many2one(
         comodel_name='product.product',

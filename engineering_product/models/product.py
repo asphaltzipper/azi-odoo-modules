@@ -54,6 +54,8 @@ class ProductTemplate(models.Model):
         string='Engineering Category',
         domain="[('type','=','normal')]",
         help="Select category for the current product")
+    eng_mod_flag = fields.Boolean(
+        related='product_variant_ids.eng_mod_flag')
     deprecated = fields.Boolean(
         string='Deprecated',
         compute='_compute_deprecated',
@@ -136,6 +138,9 @@ class ProductProduct(models.Model):
         string="Engineering Change Order",
         nocopy=True,
         help="External ECO number")
+    eng_mod_flag = fields.Boolean(
+        string="No-ECO Modification",
+        help="Part changed with no ECO or revision")
     product_manager = fields.Many2one(
         comodel_name='res.users',
         related='product_tmpl_id.product_manager')

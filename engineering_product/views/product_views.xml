@@ -14,6 +14,7 @@
                             <field name="eng_management" string="Manage"/>
                             <field name="deprecated"/>
                             <field name="eco_ref" string="ECO" attrs="{'readonly': [('eng_management', '=', False)]}"/>
+                            <field name="eng_mod_flag"/>
                             <button string="Create Revision"
                                     class="oe_link"
                                     type="object"

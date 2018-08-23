@@ -48,6 +48,7 @@
                             <tree editable="0">
                                 <field name="import_mfg_code"/>
                                 <field name="production_id"/>
+                                <field name="production_state"/>
                                 <field name="product_id"/>
                                 <field name="import_quantity"/>
                                 <field name="actual_quantity"/>

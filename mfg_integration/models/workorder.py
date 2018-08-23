@@ -13,9 +13,9 @@ class MrpWorkorder(models.Model):
 
     def _compute_priority(self):
         """
-        priority code must be between 2 and 10
-        we want to scale 2 weeks worth of orders into the 2-10 range
-        anything more than 2 weeks into the future gets a priority of 10
+        priority code must be between 2 and 9
+        we want to scale 2 weeks worth of orders into the 2-9 range
+        anything more than 2 weeks into the future gets a priority of 9
         """
         d0 = date.today()
         for rec in self:
@@ -24,7 +24,7 @@ class MrpWorkorder(models.Model):
             if diff_days < 2:
                 rec.priority_code = 2
             elif diff_days > 14:
-                rec.priority_code = 10
+                rec.priority_code = 9
             else:
                 # the order is scheduled to complete between 3 and 14 days in the future
                 # example 1:

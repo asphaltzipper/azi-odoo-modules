@@ -10,6 +10,8 @@
             <xpath expr="//field[@name='type']" position="after">
                 <field name="e_kanban" attrs="{'invisible': [('type','not in',['product','consu'])]}"/>
                 <field name="default_proc_qty" attrs="{'invisible': [('e_kanban','=',False)]}"/>
+                <field name="e_kanban_verified" attrs="{'invisible': [('e_kanban','=',False)]}"/>
+                <field name="e_kanban_count" attrs="{'invisible': [('e_kanban','=',False)]}"/>
             </xpath>
         </field>
     </record>
