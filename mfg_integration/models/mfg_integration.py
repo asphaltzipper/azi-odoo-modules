@@ -51,9 +51,9 @@ class MfgWorkHeader(models.Model):
         default='draft',
         required=True)
 
-    work_date = fields.Datetime(
+    work_date = fields.Date(
         string="Work Date",
-        default=fields.Datetime.now(),
+        default=fields.Date.today(),
         required=True)
 
     work_user_id = fields.Many2one(
@@ -86,7 +86,7 @@ class MfgWorkHeader(models.Model):
     @api.depends('work_date', 'work_user_id')
     def _compute_name(self):
         for rec in self:
-            rec.name = rec.work_user_id.name + ', ' + self.work_date[:10]
+            rec.name = self.work_date + ', ' + rec.work_user_id.name
 
     @api.depends('detail_ids', 'total_hours', 'misc_hours')
     def _compute_time_match(self):
@@ -195,7 +195,7 @@ class MfgWorkDetail(models.Model):
         readonly=True)
 
     import_quantity = fields.Float(
-        string="Completed Quantity",
+        string="Import Quantity",
         required=True,
         default=0.0,
         readonly=True)
@@ -219,6 +219,10 @@ class MfgWorkDetail(models.Model):
         string='State',
         related='production_id.state',
         store=True)
+
+    order_qty = fields.Float(
+        string='Order Qty',
+        related='production_id.product_qty')
 
     product_id = fields.Many2one(
         comodel_name='product.product',

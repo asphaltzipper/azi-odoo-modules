@@ -50,6 +50,7 @@
                                 <field name="production_id"/>
                                 <field name="production_state"/>
                                 <field name="product_id"/>
+                                <field name="order_qty"/>
                                 <field name="import_quantity"/>
                                 <field name="actual_quantity"/>
                                 <field name="minutes_assigned"/>
