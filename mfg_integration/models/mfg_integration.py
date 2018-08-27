@@ -36,6 +36,7 @@ class MfgMaterial(models.Model):
 
 class MfgWorkHeader(models.Model):
     _name = 'mfg.work.header'
+    _order = 'work_date desc'
 
     name = fields.Char(
         string="Name",
