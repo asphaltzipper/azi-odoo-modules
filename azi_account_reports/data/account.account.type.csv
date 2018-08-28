@@ -6,6 +6,7 @@ account_type_accrued_liabilities,Accrued Liabilities,other,TRUE
 account_type_accrued_payroll,Accrued Payroll,other,TRUE
 account_type_sales_tax_payable,Sales Tax Payable,other,TRUE
 account_type_taxes_payable,Taxes Payable,other,TRUE
+account_type_other_receivable,Other Receivables,other,TRUE
 account_type_cogs_material,Cost of Sales Materials,other,FALSE
 account_type_cogs_overhead,Cost of Sales Overhead,other,FALSE
 account_type_cogs_salary_wages,Cost of Sales Salary and Wages,other,FALSE

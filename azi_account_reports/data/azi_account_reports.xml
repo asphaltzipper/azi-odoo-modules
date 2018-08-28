@@ -502,7 +502,7 @@ Equity
             <field name="name">Current Assets</field>
             <field name="code">AZBS_CA</field>
             <field name="parent_id" ref='account_financial_report_total_assets1'/>
-            <field name="formulas">balance = AZBS_BA.balance + AZBS_REC.balance + AZBS_INV.balance + AZBS_IA.balance + AZBS_OA.balance + AZBS_OCA.balance + AZBS_PRE.balance</field>
+            <field name="formulas">balance = AZBS_BA.balance + AZBS_REC.balance + AZBS_OREC.balance + AZBS_INV.balance + AZBS_IA.balance + AZBS_OA.balance + AZBS_OCA.balance + AZBS_PRE.balance</field>
             <field name="sequence" eval="1"/>
             <field name="level" eval="2" />
         </record>
@@ -521,6 +521,16 @@ Equity
                 <field name="code">AZBS_REC</field>
                 <field name="parent_id" ref='account_financial_report_current_assets_view1'/>
                 <field name="domain" eval="[('account_id.user_type_id.type', '=', 'receivable')]" />
+                <field name="groupby">account_id</field>
+                <field name="formulas">balance = sum.balance</field>
+                <field name="sequence" eval="2"/>
+                <field name="level" eval="3" />
+            </record>
+            <record id="account_financial_report_other_receivable1" model="account.financial.html.report.line">
+                <field name="name">Other Receivables</field>
+                <field name="code">AZBS_OREC</field>
+                <field name="parent_id" ref='account_financial_report_current_assets_view1'/>
+                <field name="domain" eval="[('account_id.user_type_id', '=', ref('azi_account_reports.account_type_other_receivable'))]" />
                 <field name="groupby">account_id</field>
                 <field name="formulas">balance = sum.balance</field>
                 <field name="sequence" eval="2"/>
