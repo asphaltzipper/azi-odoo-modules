@@ -25,9 +25,11 @@
                     <button name="%(mfg_integration.action_mfg_work_import)d" string="Import Work" states="draft" type="action" class="oe_highlight"/>
                     <button name="%(mfg_integration.action_mfg_work_import)d" string="Import Work" states="imported" type="action"/>
                     <button name="button_clear_import" string="Clear Details" states="imported" type="object"/>
-                    <button name="button_distribute_time" string="Distribute Time" type="object" class="oe_highlight" attrs="{'invisible': ['|', ('state', '!=', 'imported'), ('time_match', '=', True)]}"/>
-                    <button name="button_distribute_time" string="Distribute Time" type="object" attrs="{'invisible': ['|', ('state', '!=', 'imported'), ('time_match', '!=', True)]}"/>
-                    <button name="button_apply_work" string="Apply Work" type="object" class="oe_highlight" attrs="{'invisible': ['|', ('state', '!=', 'imported'), '|', ('time_match', '=', False), ('detail_time', '=', 0.00)]}"/>
+                    <button name="button_reassign_orders" string="Reassign Orders" type="object" class="oe_highlight" attrs="{'invisible': ['|', ('state', '!=', 'imported')]}"/>
+                    <button name="button_reassign_orders" string="Reassign Orders" type="object" attrs="{'invisible': ['|', ('state', '!=', 'assigned')]}"/>
+                    <button name="button_distribute_time" string="Distribute Time" type="object" class="oe_highlight" attrs="{'invisible': ['|', ('state', '!=', 'assigned'), ('time_match', '=', True)]}"/>
+                    <button name="button_distribute_time" string="Distribute Time" type="object" attrs="{'invisible': ['|', ('state', '!=', 'assigned'), ('time_match', '=', False)]}"/>
+                    <button name="button_apply_work" string="Apply Work" type="object" class="oe_highlight" attrs="{'invisible': ['|', ('state', '!=', 'assigned'), '|', ('time_match', '=', False), ('detail_time', '=', 0.00)]}"/>
                     <field name="state" widget="statusbar"/>
                 </header>
                 <sheet>

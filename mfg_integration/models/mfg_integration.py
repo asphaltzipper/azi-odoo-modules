@@ -36,7 +36,7 @@ class MfgMaterial(models.Model):
 
 class MfgWorkHeader(models.Model):
     _name = 'mfg.work.header'
-    _order = 'work_date desc'
+    _order = 'work_date desc, work_user_id'
 
     name = fields.Char(
         string="Name",
@@ -46,6 +46,7 @@ class MfgWorkHeader(models.Model):
     state = fields.Selection(
         selection=[('draft', 'New'),
                    ('imported', 'Imported'),
+                   ('assigned', 'Assigned'),
                    ('closed', 'Done'),
                    ('cancel', 'Canceled')],
         string="Closed",
@@ -101,6 +102,11 @@ class MfgWorkHeader(models.Model):
     def _compute_detail_time(self):
         for rec in self:
             rec.detail_time = sum(rec.detail_ids.mapped('minutes_assigned')) / 60 or 0.0
+
+    def button_reassign_orders(self):
+        self.ensure_one()
+        self.detail_ids.reassign_orders()
+        self.write({'state': 'assigned'})
 
     def button_distribute_time(self):
         self.ensure_one()
@@ -179,6 +185,7 @@ class MfgWorkHeader(models.Model):
 
 class MfgWorkDetail(models.Model):
     _name = 'mfg.work.detail'
+    _order = 'product_id, production_id, import_mfg_code'
 
     header_id = fields.Many2one(
         comodel_name='mfg.work.header',
@@ -234,3 +241,63 @@ class MfgWorkDetail(models.Model):
         string="Assigned Minutes",
         default=0.0,
         help="Minutes of total time distributed to this production order")
+
+    @api.multi
+    def reassign_orders(self):
+        # check for canceled or completed orders
+        comp_lines = self.filtered(lambda x: x.production_state in ('done', 'cancel'))
+        if comp_lines:
+            message = "The following orders have already been completed (or " \
+                      "canceled).  Fix them before reassigning orders.\n"
+            message += ", ".join(comp_lines.mapped('production_id.name'))
+            raise UserError(message)
+
+        products = self.mapped('product_id')
+        for product in products:
+
+            # check for open MOs
+            mos = self.env['mrp.production'].search(
+                [('product_id', '=', product.id), ('state', '=', 'planned')],
+                order='date_planned_start')
+            if not mos:
+                continue
+
+            # merge duplicate product lines
+            line = self.filtered(lambda x: x.product_id == product)
+            qty_to_assign = sum(line.mapped('actual_quantity'))
+            qty_imported = sum(line.mapped('import_quantity'))
+            production_codes = ",".join(line.mapped('import_production_code'))
+            if len(line) > 1:
+                line[1:].unlink()
+            line.import_quantity = qty_imported
+            line.import_production_code = production_codes
+
+            # get the over production quantity...
+            # whether we produced more (+) product than we have orders for
+            qty_remaining = max(0.0, qty_to_assign - sum(mos.mapped('product_qty')))
+
+            # first assign quantity to the highest priority MO
+            # including any over production
+            line.production_id = mos[0].id
+            line.actual_quantity = min(qty_to_assign, mos[0].product_qty + qty_remaining)
+            qty_to_assign -= line.actual_quantity
+
+            if qty_to_assign <= 0.0:
+                # no more quantity to assign for this product
+                continue
+
+            # we should only get here if there are more open MOs and more quantity to assign
+            # add new lines for assigning quantity to other open MOs
+            for mo in mos[1:]:
+                if qty_to_assign <= 0.0:
+                    break
+                line.create({
+                    'header_id': line.header_id.id,
+                    'product_id': product.id,
+                    'production_id': mo.id,
+                    'actual_quantity': min(qty_to_assign, mo.product_qty),
+                })
+                qty_to_assign -= min(qty_to_assign, mo.product_qty)
+
+            if qty_to_assign:
+                raise UserError("Failed to assign the full production quantity for product {}".format(product.display_name))
