@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="mrp_stock_balance_tree_view" model="ir.ui.view">
+        <field name="name">mrp.stock.balance.tree.view</field>
+        <field name="model">mrp.stock.balance</field>
+        <field name="arch" type="xml">
+            <tree string="Stock Balance">
+                <field name="product_id"/>
+                <field name="categ_id"/>
+                <field name="e_kanban"/>
+                <field name="product_type"/>
+                <field name="uom_id"/>
+                <field name="supply_names"/>
+                <field name="wc_codes"/>
+                <field name="min_qty"/>
+                <field name="onhand_qty"/>
+                <field name="move_in_qty"/>
+                <field name="move_out_qty"/>
+                <field name="planned_qty"/>
+                <field name="delivered_qty"/>
+                <field name="ending_qty"/>
+                <field name="over_qty"/>
+                <field name="over_value"/>
+                <button name="action_material_analysis_pop" type="object" icon="fa-bar-chart" help="Show Analysis Graph"/>
+                <button name="action_material_analysis" type="object" icon="fa-table" help="Show Analysis List"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="mrp_stock_balance_search_view" model="ir.ui.view">
+        <field name="name">mrp.stock.balance.search</field>
+        <field name="model">mrp.stock.balance</field>
+        <field name="arch" type="xml">
+            <search string="MRP Stock Balance">
+                <field name="product_id" string="Product" filter_domain="['|','|',('product_id.default_code','ilike',self),('product_id.name','ilike',self),('product_id.barcode','ilike',self)]"/>
+                <field name="categ_id" filter_domain="[('categ_id', 'child_of', raw_value)]"/>
+                <filter string="Stockable" name="services" domain="[('product_type','=','product')]"/>
+                <separator/>
+                <filter string="Has Excess" name="has_excess" domain="[('over_qty','>',0)]"/>
+                <separator/>
+                <filter string="Non-FG" name="non_fg" domain="[('categ_id','not like','FG -')]"/>
+                <separator/>
+                <filter string="Bin" name="bin" domain="[('e_kanban','!=',False)]"/>
+                <filter string="Non-Bin" name="non_bin" domain="[('e_kanban','=',False)]"/>
+                <separator/>
+                <filter string="Manufactured" name="manufactured" domain="['|', ('supply_names','=','Manufacture'), '|', ('supply_names','=','Buy, Manufacture'), ('supply_names','=','Manufacture, Buy')]"/>
+                <filter string="Purchased" name="purchased" domain="['|', ('supply_names','=','Buy'), '|', ('supply_names','=','Buy, Manufacture'), ('supply_names','=','Manufacture, Buy')]"/>
+                <separator/>
+                <filter string="Impending Increase" name="impending_increase" domain="[('move_in_qty','>',0)]"/>
+                <separator/>
+                <filter string="Planned Increase" name="planned_increase" domain="[('planned_qty','>',0)]"/>
+                <separator/>
+                <filter string="Not Sold" name="not_sold" domain="[('delivered_qty','=',0)]"/>
+                <group expand='0' string='Group by...'>
+                    <filter string='Routing' domain="[]" context="{'group_by' : 'wc_codes'}"/>
+                    <filter string='Supply Method' domain="[]" context="{'group_by' : 'supply_names'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="mrp_stock_balance_inv_action" model="ir.actions.act_window">
+        <field name="name">MRP Stock Balance</field>
+        <field name="res_model">mrp.stock.balance</field>
+        <field name="context">{'search_default_has_excess':1, 'search_default_non_fg':1}</field>
+        <field name="view_id" ref="mrp_stock_balance_tree_view"/>
+        <field name="search_view_id" ref="mrp_stock_balance_search_view"/>
+    </record>
+
+    <menuitem id="mrp_stock_balance_inv_menu"
+        name="MRP Stock Balance"
+        parent="stock.menu_warehouse_report"
+        action="mrp_stock_balance_inv_action"
+        sequence="1"/>
+
+    <record id="mrp_stock_balance_mfg_action" model="ir.actions.act_window">
+        <field name="name">MRP Stock Balance</field>
+        <field name="res_model">mrp.stock.balance</field>
+        <field name="context">{'search_default_has_excess':1, 'search_default_non_fg':1, 'search_default_manufactured':1}</field>
+        <field name="view_id" ref="mrp_stock_balance_tree_view"/>
+        <field name="search_view_id" ref="mrp_stock_balance_search_view"/>
+    </record>
+
+    <menuitem id="mrp_stock_balance_mfg_menu"
+        name="MRP Stock Balance"
+        parent="mrp.menu_mrp_reporting"
+        action="mrp_stock_balance_mfg_action"
+        sequence="1"/>
+
+    <record id="mrp_stock_balance_purch_action" model="ir.actions.act_window">
+        <field name="name">MRP Stock Balance</field>
+        <field name="res_model">mrp.stock.balance</field>
+        <field name="context">{'search_default_has_excess':1, 'search_default_non_fg':1, 'search_default_purchased':1}</field>
+        <field name="view_id" ref="mrp_stock_balance_tree_view"/>
+        <field name="search_view_id" ref="mrp_stock_balance_search_view"/>
+    </record>
+
+    <!-- we need to replace the purchase reports menu with our own because theirs is tied to a particular action -->
+    <record id="purchase.purchase_report" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+    <menuitem id="purchase_reports"
+        name="Reports"
+        parent="purchase.menu_purchase_root"
+        sequence="99"
+        groups="purchase.group_purchase_manager"/>
+    <menuitem id="all_purchases_report"
+        name="All Purchases"
+        parent="azi_mrp.purchase_reports"
+        sequence="99"
+        action="purchase.action_purchase_order_report_all"/>
+    <menuitem id="mrp_stock_balance_purch_menu"
+        name="MRP Stock Balance"
+        parent="azi_mrp.purchase_reports"
+        action="mrp_stock_balance_purch_action"
+        sequence="1"/>
+
+</odoo>
