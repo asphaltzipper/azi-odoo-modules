@@ -74,7 +74,7 @@ class MrpMaterialPlan(models.Model):
             vals = self._prepare_planned_order(
                 product=build.product_id,
                 qty=1,
-                bocket_date=self._get_bucket_from_date(build.date_finish),
+                bucket_date=self._get_bucket_from_date(build.date_finish),
                 location=location,
                 origin=build.name
             )
