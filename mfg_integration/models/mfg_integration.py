@@ -226,11 +226,13 @@ class MfgWorkDetail(models.Model):
         ('cancel', 'Cancelled')],
         string='State',
         related='production_id.state',
+        readonly=True,
         store=True)
 
     order_qty = fields.Float(
         string='Order Qty',
-        related='production_id.product_qty')
+        related='production_id.product_qty',
+        readonly=True)
 
     product_id = fields.Many2one(
         comodel_name='product.product',
