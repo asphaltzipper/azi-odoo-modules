@@ -70,11 +70,12 @@ class MrpMaterialPlan(models.Model):
 
         for build in scheduled_builds:
             # create independent demand
+            # product, qty, bucket_date, location, op=None, origin=None, demand=False
             vals = self._prepare_planned_order(
-                build.product_id,
-                1,
-                self._get_bucket_from_date(build.date_finish),
-                location,
+                product=build.product_id,
+                qty=1,
+                bocket_date=self._get_bucket_from_date(build.date_finish),
+                location=location,
                 origin=build.name
             )
             vals['build_id'] = build.id

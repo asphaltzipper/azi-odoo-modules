@@ -195,21 +195,21 @@ class MfgWorkDetail(models.Model):
         readonly=True)
 
     import_mfg_code = fields.Char(
-        string="Imported Mfg Code",
+        string="Import P/N",
         readonly=True)
 
     import_production_code = fields.Char(
-        string="Imported Mfg Code",
+        string="Import MO",
         readonly=True)
 
     import_quantity = fields.Float(
-        string="Import Quantity",
+        string="Import Qty",
         required=True,
         default=0.0,
         readonly=True)
 
     actual_quantity = fields.Float(
-        string="Actual Quantity",
+        string="Actual Qty",
         required=True,
         default=0.0)
 
@@ -244,6 +244,7 @@ class MfgWorkDetail(models.Model):
 
     @api.multi
     def reassign_orders(self):
+        header = self[0].header_id
         # check for canceled or completed orders
         comp_lines = self.filtered(lambda x: x.production_state in ('done', 'cancel'))
         if comp_lines:
@@ -263,12 +264,13 @@ class MfgWorkDetail(models.Model):
                 continue
 
             # merge duplicate product lines
-            line = self.filtered(lambda x: x.product_id == product)
-            qty_to_assign = sum(line.mapped('actual_quantity'))
-            qty_imported = sum(line.mapped('import_quantity'))
-            production_codes = ",".join(line.mapped('import_production_code'))
-            if len(line) > 1:
-                line[1:].unlink()
+            lines = self.search([('header_id', '=', header.id), ('product_id', '=', product.id)])
+            line = lines[0]
+            qty_to_assign = sum(lines.mapped('actual_quantity'))
+            qty_imported = sum(lines.mapped('import_quantity'))
+            production_codes = ",".join(set(lines.filtered(lambda x: x.import_production_code).mapped('import_production_code')))
+            if len(lines) > 1:
+                lines[1:].unlink()
             line.import_quantity = qty_imported
             line.import_production_code = production_codes
 
@@ -301,3 +303,4 @@ class MfgWorkDetail(models.Model):
 
             if qty_to_assign:
                 raise UserError("Failed to assign the full production quantity for product {}".format(product.display_name))
+            # self._cr.commit()
