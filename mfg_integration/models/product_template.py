@@ -77,10 +77,10 @@ class ProductTemplate(models.Model):
         selection=[('1', '0° only'),
                    ('2', '90° only'),
                    ('3', '0° or 90°'),
-                   ('4', '0° or 180°'),
-                   ('5', '90° or 270°'),
-                   ('6', '0°, 90°, 180° or 270°'),
-                   ('7', 'any orientation')],
+                   ('4', 'any orientation'),
+                   ('5', '0° or 180°'),
+                   ('6', '90° or 270°'),
+                   ('7', '0°, 90°, 180° or 270°')],
         string='Orientation',
         default='7')
     laser_code = fields.Char(
