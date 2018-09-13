@@ -82,7 +82,7 @@ class ProductTemplate(models.Model):
                    ('6', '90° or 270°'),
                    ('7', '0°, 90°, 180° or 270°')],
         string='Orientation',
-        default='7')
+        default='4')
     laser_code = fields.Char(
         readonly=True,
         string='Laser Thickness Code',
