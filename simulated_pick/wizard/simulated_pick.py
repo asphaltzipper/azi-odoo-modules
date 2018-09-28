@@ -18,8 +18,7 @@ class SimulatedPick(models.TransientModel):
         required=True,
         domain=[
             ('type', '!=', 'service'),
-            ('bom_ids', '!=', False),
-            ('bom_ids.type', '!=', 'phantom')
+            ('bom_ids', '!=', False)
         ],
         help="Product to be produced in simulation")
 

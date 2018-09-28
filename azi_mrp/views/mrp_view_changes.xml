@@ -54,5 +54,20 @@
         </field>
     </record>
 
+    <record id="production_order_cancel_server_action" model="ir.actions.server">
+        <field name="name">Cancel Orders</field>
+        <field name="model_id" ref="mrp.model_mrp_production"/>
+        <field name="state">code</field>
+        <field name="code">records.action_cancel()</field>
+    </record>
+
+    <record id="run_procurement_order_cancel_action" model="ir.values">
+        <field name="model_id" ref="mrp.model_mrp_production" />
+        <field name="name">Cancel Orders</field>
+        <field name="key2">client_action_multi</field>
+        <field name="key">action</field>
+        <field name="model">mrp.production</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('production_order_cancel_server_action'))" />
+    </record>
 
 </odoo>
