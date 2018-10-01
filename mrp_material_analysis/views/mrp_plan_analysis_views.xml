@@ -15,6 +15,7 @@
             <field name="product_qty"/>
             <field name="uom_id"/>
             <field name="make" string="Make"/>
+            <field name="mto"/>
             <field name="date_start"/>
             <field name="date_finish"/>
             <field name="lead_days" invisible="1"/>
@@ -48,6 +49,9 @@
         <field name="product_id" string="Product" filter_domain="['|','|',('product_id.default_code','ilike',self),('product_id.name','ilike',self),('product_id.barcode','ilike',self)]"/>
         <filter string='Purchasing' name="purchase_only" icon="terp-accessories-achiver" domain="[('make', '=', False)]" />
         <filter string='Manufacturing' name="make_only" icon="terp-accessories-achiver" domain="[('make', '=', True)]" />
+        <separator/>
+        <filter string='Make To Order' name="make_to_order" icon="terp-accessories-achiver" domain="[('mto', '=', True)]" />
+        <filter string='Not MTO' name="non_make_to_order" icon="terp-accessories-achiver" domain="[('mto', '=', False)]" />
         <separator/>
         <filter string='Due to Start' name="due_to_start" icon="terp-accessories-achiver" domain="[('date_start', '&lt;', (context_today() + relativedelta(days=1)).strftime('%Y-%m-%d'))]" />
         <filter string='Start This Week' name="due_to_start" icon="terp-accessories-achiver" domain="[('date_start', '&lt;', (context_today() + relativedelta(days=(7 - context_today().weekday()))).strftime('%Y-%m-%d'))]" />
@@ -111,6 +115,7 @@ if env.context.get('active_ids'):
             <field name="product_qty"/>
             <field name="uom_id"/>
             <field name="make" string="Make"/>
+            <field name="mto"/>
             <field name="date_start"/>
             <field name="date_finish"/>
             <field name="lead_days" invisible="1"/>
@@ -140,7 +145,7 @@ if env.context.get('active_ids'):
     <field name="res_model">mrp.plan.analysis</field>
     <field name="view_id" ref="mrp_plan_analysis_mfg_tree_view"/>
     <field name="search_view_id" ref="mrp_plan_analysis_search_view"/>
-    <field name="context">{'search_default_make_only':1}</field>
+    <field name="context">{'search_default_make_only':1, 'search_default_non_make_to_order':1}</field>
 </record>
 
 <menuitem id="mrp_plan_analysis_mfg_menu"
@@ -167,6 +172,7 @@ if env.context.get('active_ids'):
             <field name="product_qty"/>
             <field name="uom_id"/>
             <field name="make" string="Make"/>
+            <field name="mto"/>
             <field name="date_start"/>
             <field name="date_finish"/>
             <field name="lead_days" invisible="1"/>
@@ -196,7 +202,7 @@ if env.context.get('active_ids'):
     <field name="res_model">mrp.plan.analysis</field>
     <field name="view_id" ref="mrp_plan_analysis_purch_tree_view"/>
     <field name="search_view_id" ref="mrp_plan_analysis_search_view"/>
-    <field name="context">{'search_default_purchase_only':1}</field>
+    <field name="context">{'search_default_purchase_only':1, 'search_default_non_make_to_order':1}</field>
 </record>
 
 <menuitem id="mrp_plan_analysis_purch_menu"

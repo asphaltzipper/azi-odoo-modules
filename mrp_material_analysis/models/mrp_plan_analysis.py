@@ -51,6 +51,10 @@ class MrpPlanAnalysis(models.Model):
         string="UOM",
         related='product_id.uom_id')
 
+    mto = fields.Boolean(
+        string="MTO",
+        required=True)
+
     make = fields.Boolean(
         string='Manufactured',
         required=True)
@@ -169,7 +173,8 @@ class MrpPlanAnalysis(models.Model):
                     i.group_id as incr_group_id,
                     i.increase_window,
                     b.blanket_id,
-                    r.wc_codes
+                    r.wc_codes,
+                    case when s.supply_names like '%Make To Order%' then true else false end as mto
                 from mrp_material_plan as mp
                 left join product_product as p on p.id=mp.product_id
                 left join product_template as t on t.id=p.product_tmpl_id
@@ -246,6 +251,15 @@ class MrpPlanAnalysis(models.Model):
                     ) as t
                     group by product_id
                 ) as r on r.product_id=mp.product_id
+                left join (
+                    -- supply methods
+                    select
+                        product_id as product_tmpl_id,
+                        string_agg(name, ', ') as supply_names
+                    from stock_route_product as sr
+                    left join stock_location_route as r on r.id=sr.route_id
+                    group by product_id
+                ) as s on s.product_tmpl_id=t.id
                 where mp.move_type='supply'
                 order by mp.date_start
             )
