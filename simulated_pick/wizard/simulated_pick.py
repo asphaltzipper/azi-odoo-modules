@@ -96,9 +96,9 @@ class SimulatedPick(models.TransientModel):
             current_demand = detail['qty']
             previous_demand = pick_results.get(line_prod.id) and pick_results[line_prod.id]['product_qty'] or 0
             total_demand = current_demand + previous_demand
-            if bom_line.product_id.default_code == 'X010318.-0':
-                import pdb
-                pdb.set_trace()
+            # if bom_line.product_id.default_code == 'X010318.-0':
+            #     import pdb
+            #     pdb.set_trace()
             if pick_results.get(line_prod.id):
                 # product previously collected in pick_results, update qty
                 on_hand_after = pick_results[line_prod.id]['on_hand_before'] - total_demand

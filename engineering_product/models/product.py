@@ -56,6 +56,8 @@ class ProductTemplate(models.Model):
         help="Select category for the current product")
     eng_mod_flag = fields.Boolean(
         related='product_variant_ids.eng_mod_flag')
+    eng_hold_flag = fields.Boolean(
+        related='product_variant_ids.eng_hold_flag')
     deprecated = fields.Boolean(
         string='Deprecated',
         compute='_compute_deprecated',
@@ -141,6 +143,9 @@ class ProductProduct(models.Model):
     eng_mod_flag = fields.Boolean(
         string="No-ECO Modification",
         help="Part changed with no ECO or revision")
+    eng_hold_flag = fields.Boolean(
+        string="Hold Production",
+        help="A revision is impending, stop producing/purchasing this part")
     product_manager = fields.Many2one(
         comodel_name='res.users',
         related='product_tmpl_id.product_manager')

@@ -89,6 +89,7 @@ class MrpSchedule(models.Model):
                     'sale_id': line.sale_id.state != 'cancel' and line.sale_id.id or False,
                     'lot_id': line.lot_id.id,
                 })
+            # TODO: handle completed delivery orders
         return record
 
 
@@ -198,6 +199,12 @@ class MrpScheduleLine(models.Model):
         index=True,
         ondelete='set null',
         copy=False)
+
+    sale_state = fields.Selection(
+        string='SaleState',
+        readonly=True,
+        related='sale_id.state',
+        help='State of the associated Sale Order.')
 
     def write(self, vals):
         if vals.get('date_finish:week'):
