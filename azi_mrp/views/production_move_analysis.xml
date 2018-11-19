@@ -22,6 +22,7 @@
                 <field name="avail_qty"/>
                 <field name="res_qty"/>
                 <field name="res_names"/>
+                <field name="mto_names"/>
             </tree>
         </field>
     </record>

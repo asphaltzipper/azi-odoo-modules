@@ -58,6 +58,8 @@ class ProductionMoveAnalysis(models.Model):
              "* Waiting Availability: This state is reached when the procurement resolution is not straight forward. It may need the scheduler to run, a component to be manufactured...\n"
              "* Available: When products are reserved, it is set to \'Available\'.\n"
              "* Done: When the shipment is processed, the state is \'Done\'.")
+    mto_names = fields.Char(
+        string='MTO')
     tracking = fields.Char(
         string="Tracking",
         default='none',
@@ -120,6 +122,7 @@ class ProductionMoveAnalysis(models.Model):
                     m.location_dest_id,
                     m.create_date,
                     m.state,
+                    mto.mto_names,
                     p.e_kanban,
                     p.default_proc_qty,
                     t.tracking,
@@ -193,6 +196,15 @@ class ProductionMoveAnalysis(models.Model):
                     where reservation_id is not null
                     group by q.product_id, q.reservation_id
                 ) as a on a.product_id=m.product_id and a.reservation_id=m.id
+                left join (
+                    select
+                        move_dest_id,
+                        sum(product_qty) as product_qty,
+                        string_agg(origin, ', ') as mto_names
+                        from stock_move
+                        where state not in ('cancel', 'done')
+                        group by move_dest_id
+                ) as mto on mto.move_dest_id=m.id
                 order by m.sequence
             )
         """)
