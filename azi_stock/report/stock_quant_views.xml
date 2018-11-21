@@ -22,7 +22,7 @@
                     <filter name="positive" string="Positive" domain="[('qty', '&gt;', 0.0)]"/>
                     <separator/>
                     <filter name="lot" string="Has Serial" domain="[('lot_id', '!=', False)]"/>
-                    <filter name="fg" string="Finished Goods" domain="[('product_id.product_tmpl_id.categ_id.name', 'ilike', 'FG ')]"/>
+                    <filter name="fg" string="Finished Goods" domain="[('product_id.product_tmpl_id.categ_id.name', 'ilike', 'FG - ')]"/>
                 </group>
                 <group expand='0' string='Group by...'>
                     <filter string='Location' name="locationgroup" domain="[]" context="{'group_by': 'location_id'}"/>
