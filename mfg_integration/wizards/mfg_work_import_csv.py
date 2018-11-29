@@ -42,7 +42,6 @@ class MfgWorkImport(models.TransientModel):
         """Load manufacturing work data from the CSV file."""
 
         product_obj = self.env['product.product']
-        production_obj = self.env['mrp.production']
         work_detail_obj = self.env['mfg.work.detail']
 
         # Decode the file data
@@ -67,14 +66,14 @@ class MfgWorkImport(models.TransientModel):
             product = product_obj.search([('mfg_code', '=', values['import_mfg_code'])])
             if len(product) > 1:
                 continue
-            production = production_obj.search([('name', '=', values['import_production_code'])])
             values.update({
                 'header_id': self.header_id.id,
                 'product_id': product.id or False,
-                'production_id': production.id or False,
                 'actual_quantity': values['import_quantity'],
             })
             work_detail_obj.create(values)
 
+        self.header_id.file_name = self.filename
+        self.header_id.name = self.filename
         self.header_id.state = 'imported'
         return {}

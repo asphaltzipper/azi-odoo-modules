@@ -6,6 +6,7 @@
         <field name="model">mfg.work.header</field>
         <field name="arch" type="xml">
             <tree string="MFG Work Import">
+                <field name="name"/>
                 <field name="work_date"/>
                 <field name="work_user_id"/>
                 <field name="total_hours"/>
@@ -35,8 +36,10 @@
                 <sheet>
                     <group>
                         <group>
+                            <field name="name" attrs="{'readonly': [('state', '=', 'closed')]}"/>
                             <field name="work_date" attrs="{'readonly': [('state', '=', 'closed')]}"/>
                             <field name="work_user_id" attrs="{'readonly': [('state', '=', 'closed')]}"/>
+                            <field name="file_name" string="Filename"/>
                         </group>
                         <group>
                             <field name="total_hours" attrs="{'readonly': [('state', '=', 'closed')]}"/>
@@ -52,6 +55,7 @@
                                 <field name="import_production_code"/>
                                 <field name="production_id"/>
                                 <field name="production_state"/>
+                                <field name="product_error"/>
                                 <field name="product_id"/>
                                 <field name="order_qty"/>
                                 <field name="import_quantity"/>
