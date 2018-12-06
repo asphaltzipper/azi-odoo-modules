@@ -551,6 +551,38 @@ class MrpMaterialPlan(models.Model):
         debug_mrp = self.env.context.get('debug_mrp')
         debug_mrp_product_id = self.env.context.get('debug_mrp_product_id')
 
+        # we check for products with real demand (stock moves) but no reordering rule
+        # we will detect products with only planned demand later
+        # some products may be logged from both checks
+        _logger.info("Checking for products with demand but no Reordering Rule")
+        plan_log.create({'type': 'info', 'message': "Checking for products with demand but no Reordering Rule"})
+        eng_manage_cats = self.env['product.category'].search([('eng_management', '=', True), ('name', 'not like', 'Obsolete')])
+        domain = [
+            ('state', 'not in', ['done', 'cancel']),
+            ('product_id.type', '=', 'product'),
+            # ('product_id.config_ok', '=', False),
+            ('product_id.categ_id', 'in', eng_manage_cats.ids),
+            ('product_id.orderpoint_ids', '=', False),
+        ]
+        no_op_products = self.env['stock.move'].search(domain).mapped('product_id')
+        for prod in no_op_products:
+            message = "No orderpoint for product {}".format(prod.display_name)
+            _logger.warning(message)
+            self.env['mrp.material_plan.log'].create({
+                'type': 'warning',
+                'message': message})
+
+        _logger.info("Checking for BOM loops")
+        plan_log.create({'type': 'info', 'message': "Checking for BOM loops"})
+        loops = self.env['mrp.bom.llc'].bom_loop_check()
+        if loops:
+            for loop in loops:
+                plan_log.create({'type': 'info', 'message': "Found loop in BOM: " + loop})
+            self.env.user.notify_warning(message="Found loops in BOMs. Check the log.", title="MRP Error", sticky=True)
+            _logger.info("Found loops in BOMs. Check the log.")
+            cr.commit()
+            return False
+
         # this algorithm assumes the mrp_llc module updates and sorts on low-level-code
         # we only retrieve orderpoints for stockable type products
         _logger.info("Updating LLC and retrieving orderpoints")
