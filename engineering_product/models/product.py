@@ -82,6 +82,14 @@ class ProductTemplate(models.Model):
                 raise ValidationError("Engineering Category is required for this Product Category")
         return True
 
+    @api.constrains('name')
+    def _validate_name_chars(self):
+        if self.name:
+            invalid_chars = [" ", ".", "\t"]
+            if self.name[-1] in invalid_chars or self.name[0] in invalid_chars:
+                raise ValidationError("Product names can't begin or end with dots, spaces, or tabs")
+        return True
+
     @api.depends('categ_id', 'product_variant_ids', 'product_variant_ids.default_code')
     def _compute_eng_code(self):
         unique_variants = self.filtered(lambda template: len(template.product_variant_ids) == 1 and template.categ_id.eng_management)

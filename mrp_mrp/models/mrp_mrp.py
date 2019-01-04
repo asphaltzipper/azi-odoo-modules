@@ -551,8 +551,8 @@ class MrpMaterialPlan(models.Model):
         debug_mrp = self.env.context.get('debug_mrp')
         debug_mrp_product_id = self.env.context.get('debug_mrp_product_id')
 
-        # we check for products with real demand (stock moves) but no reordering rule
-        # we will detect products with only planned demand later
+        # here, we will check for products with real demand (stock moves) but no reordering rule
+        # we detect products with only planned demand elsewhere
         # some products may be logged from both checks
         _logger.info("Checking for products with demand but no Reordering Rule")
         plan_log.create({'type': 'info', 'message': "Checking for products with demand but no Reordering Rule"})
