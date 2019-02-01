@@ -9,9 +9,9 @@ class StockShelf(models.Model):
     _order = 'name'
     _inherit = ['barcodes.barcode_events_mixin']
 
-
     name = fields.Char(
-        string='Shelf Name')
+        string='Shelf Name',
+        required=True)
 
     product_count = fields.Integer(
         string='Product Count',
