@@ -39,7 +39,7 @@
                         <group string="Sheet Metal Attributes" class="col-xs-2 pull-right" attrs="{'invisible': [('is_continuous', '=', False)]}">
                             <field name="is_continuous" invisible="1"/>
                             <field name="material_id"/>
-                            <field name="gauge_id" domain="[('material_id', '=', material_id)]"/>
+                            <field name="gauge_id"/>
                         </group>
                     </group>
                     <group string="Bill of Materials">

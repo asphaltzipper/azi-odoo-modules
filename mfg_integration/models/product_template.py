@@ -121,3 +121,16 @@ class ProductTemplate(models.Model):
          "CHECK ( common_cutting_qty > 1 )",
          "The number of common cuts must be greater than 1."),
     ]
+
+    @api.multi
+    @api.onchange('material_id')
+    def onchange_material_id(self):
+        """
+        Clear the gauge field when the material field is changed
+        """
+        self.update({
+            'gauge_id': False,
+        })
+        if not self.material_id:
+            return {'domain': {'gauge_id': [('id', 'in', [])]}}
+        return {'domain': {'gauge_id': [('id', 'in', self.material_id.gauge_ids.ids)]}}
