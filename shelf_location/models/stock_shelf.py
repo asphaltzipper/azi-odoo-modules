@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api, _
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 
 
 class StockShelf(models.Model):
     _name = 'stock.shelf'
     _order = 'name'
     _inherit = ['barcodes.barcode_events_mixin']
+
+    _sql_constraints = [('name_uniq', 'unique (name)', "Name must be unique")]
 
     name = fields.Char(
         string='Shelf Name',
@@ -30,6 +32,14 @@ class StockShelf(models.Model):
         string="Barcode Scanned",
         help="Value of the last barcode scanned.",
         store=False)
+
+    @api.constrains('name')
+    def _validate_name_chars(self):
+        if self.name:
+            invalid_chars = [" ", "\t", "\n", "\r", "\f"]
+            if any(char in self.name for char in invalid_chars):
+                raise ValidationError("Shelf names can't white space (spaces, tabs, etc)")
+        return True
 
     def _count(self):
         for shelf in self:
