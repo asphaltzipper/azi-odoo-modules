@@ -10,6 +10,8 @@ class SaleOrder(models.Model):
     partner_warn = fields.Selection(related='partner_id.sale_warn')
     partner_warn_msg = fields.Text(string='Partner Warning', related='partner_id.sale_warn_msg', readonly=True)
     partner_comment = fields.Text(string='Partner Comment', related='partner_id.comment', readonly=True)
+    user_id = fields.Many2one(
+        domain=['|', ('active', '=', True), ('active', '=', False)])
 
     def confirm_warning(self):
         partner = self.partner_id
