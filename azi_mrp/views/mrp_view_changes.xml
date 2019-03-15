@@ -36,10 +36,25 @@
             <xpath expr="//sheet/group/group/field[@name='date_planned_finished']" position="attributes">
                 <attribute name="invisible">0</attribute>
                 <attribute name="string">Finish Date</attribute>
+                <attribute name="widget">date</attribute>
             </xpath>
             <xpath expr="//sheet/group/group/field[@name='date_planned_start']" position="attributes">
                 <attribute name="string">Start Date</attribute>
+                <attribute name="widget">date</attribute>
             </xpath>
+        </field>
+    </record>
+
+    <!-- format start date as date (vs datetime) in MO tree view -->
+    <record id="mrp_production_tree_azi_view" model="ir.ui.view">
+        <field name="name">mrp.production.tree.azi</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_tree_view"/>
+        <field name="arch" type="xml">
+            <field name="date_planned_start" position="attributes">
+                <attribute name="string">Start Date</attribute>
+                <attribute name="widget">date</attribute>
+            </field>
         </field>
     </record>
 

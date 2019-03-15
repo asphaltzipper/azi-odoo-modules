@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="mfg_work_reservation_form_view" model="ir.ui.view">
+        <field name="name">mfg.work.reservation.form.view</field>
+        <field name="model">mfg.work.header</field>
+        <field name="inherit_id" ref="mfg_integration.mfg_work_header_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree/field[@name='minutes_assigned']" position="after">
+                <button
+                    type="object"
+                    name="action_mrp_reservation_form"
+                    string="Mfg Reservations"
+                    icon="fa-shopping-cart"
+                    attrs="{'invisible':[('product_id', '=', False)]}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -34,12 +34,17 @@
                     <field name="state" widget="statusbar"/>
                 </header>
                 <sheet>
-                    <group>
+                    <group col="5">
                         <group>
                             <field name="name" attrs="{'readonly': [('state', '=', 'closed')]}"/>
-                            <field name="work_date" attrs="{'readonly': [('state', '=', 'closed')]}"/>
-                            <field name="work_user_id" attrs="{'readonly': [('state', '=', 'closed')]}"/>
                             <field name="file_name" string="Filename"/>
+                            <field name="work_user_id" attrs="{'readonly': [('state', '=', 'closed')]}"/>
+                            <field name="work_date" attrs="{'readonly': [('state', '=', 'closed')]}"/>
+                            <label for="number_sheets"/>
+                            <div class="o_row">
+                                <field name="number_sheets" attrs="{'readonly': [('state', '=', 'closed')]}"/>
+                                <button name="%(mfg_integration.action_work_multiply_sheets)d" string="Change" states="imported" type="action" class="oe_link"/>
+                            </div>
                         </group>
                         <group>
                             <field name="total_hours" attrs="{'readonly': [('state', '=', 'closed')]}"/>
@@ -47,12 +52,28 @@
                             <field name="detail_time"/>
                             <field name="time_match"/>
                         </group>
+                        <group>
+                            <field name="thumbnail" widget="image" nolabel="1" style="max-height:90px"/>
+                        </group>
+                    </group>
+                    <group col="5">
+                        <group>
+                            <field name="material"/>
+                            <field name="thickness"/>
+                            <field name="runtime_s"/>
+                        </group>
+                        <group>
+                            <field name="sheet_x"/>
+                            <field name="sheet_y"/>
+                            <field name="utilization"/>
+                        </group>
+                        <group></group>
                     </group>
                     <group>
                         <field name="detail_ids" nolabel="1" attrs="{'readonly': [('state', '=', 'closed')]}">
                             <tree editable="0">
+                                <field name="part_num"/>
                                 <field name="import_mfg_code"/>
-                                <field name="import_production_code"/>
                                 <field name="production_id"/>
                                 <field name="production_state"/>
                                 <field name="product_error"/>

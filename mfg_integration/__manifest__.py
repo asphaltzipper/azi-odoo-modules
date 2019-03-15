@@ -24,6 +24,8 @@ Integrate with Manufacturing Machine Software
     'data': [
         'wizards/mfg_work_import_csv_views.xml',
         'wizards/mfg_create_bom_views.xml',
+        'wizards/mfg_radan_drg_import_views.xml',
+        'wizards/mfg_work_multiply_sheets_views.xml',
         'views/product_views.xml',
         'views/product_uom_views.xml',
         'views/workorder_views.xml',

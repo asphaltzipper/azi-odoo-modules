@@ -95,6 +95,36 @@ class MfgWorkHeader(models.Model):
         compute='_compute_time_match',
         readonly=True)
 
+    material = fields.Char(
+        string='Material',
+        readonly=True)
+    thickness = fields.Char(
+        string='Thickness',
+        readonly=True)
+    sheet_x = fields.Float(
+        string='SheetX',
+        readonly=True)
+    sheet_y = fields.Float(
+        string='SheetY',
+        readonly=True)
+    utilization = fields.Float(
+        string='Utilization',
+        readonly=True)
+    runtime_s = fields.Float(
+        string='Runtime',
+        readonly=True,
+        help="Processing time in seconds")
+    number_sheets = fields.Integer(
+        string='Sheets',
+        required=True,
+        default=1,
+        readonly=True,
+        help="Adding to the number of sheets will multiply the number parts produced")
+    thumbnail = fields.Binary(
+        string="Thumbnail",
+        attachment=True,
+        readonly=True)
+
     @api.depends('detail_ids', 'total_hours', 'misc_hours')
     def _compute_time_match(self):
         for rec in self:
@@ -207,6 +237,15 @@ class MfgWorkHeader(models.Model):
 
         self.state = 'closed'
 
+    @api.model
+    def change_sheets(self, new_count):
+        """Multiply quantity produced by the number of sheets."""
+        self.ensure_one()
+
+        for detail in self.detail_ids:
+            detail.actual_quantity = detail.import_quantity * new_count
+        self.number_sheets = new_count
+
 
 class MfgWorkDetail(models.Model):
     _name = 'mfg.work.detail'
@@ -277,6 +316,18 @@ class MfgWorkDetail(models.Model):
         default=False,
         help="Product parameters are missing/incomplete/invalid. "
              "Check the BOM, Routing, and Fabrication Info.")
+
+    bbox_x = fields.Float(
+        string="X",
+        required=True,
+        default=0.0)
+    bbox_y = fields.Float(
+        string="Y",
+        required=True,
+        default=0.0)
+    part_num = fields.Integer(
+        string="Part Num",
+        readonly=True)
 
     @api.depends('product_id')
     def _compute_error(self):

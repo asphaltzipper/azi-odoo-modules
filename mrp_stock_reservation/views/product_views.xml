@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="mrp_stock_reservation_form_view" model="ir.ui.view">
+        <field name="name">mrp.stock.reservation.form.view</field>
+        <field name="model">product.product</field>
+        <field name="priority">1000</field>
+        <field name="arch" type="xml">
+            <form string="MFG Work Import">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="display_name"/></h1>
+                        <div>
+                            <h3><span class="fa fa-barcode"/> Scan a manufacturing order to reserve material</h3>
+                            <h3><span class="fa fa-barcode"/> Scan a part number to switch products</h3>
+                        </div>
+                    </div>
+                    <group>
+                        <field name="_mrp_reservation_barcode_scanned" widget="product_mrp_reservation_barcode_handler" invisible="1"/>
+                        <field name="qty_available"/>
+                        <field name="qty_reserved"/>
+                    </group>
+                    <group>
+                        <field name="mfg_demand_ids" nolabel="1">
+                            <tree>
+                                <field name="raw_material_production_id" string="MO"/>
+                                <field name="state"/>
+                                <field name="product_uom_qty" string="To Consume"/>
+                                <field name="quantity_available" string="Reserved"/>
+                                <button type="object" name="do_unreserve" string="UnReserve" icon="fa-undo" attrs="{'invisible':[('quantity_available', '=', 0.0)]}"/>
+                                <button type="object" name="action_assign" string="Reserve" icon="fa-check" attrs="{'invisible':[('state', '=', 'assigned')]}"/>
+                            </tree>
+                            <form>
+                                <sheet>
+                                    <group>
+                                        <group>
+                                            <field name="raw_material_production_id" string="MO"/>
+                                            <field name="state"/>
+                                        </group>
+                                        <group>
+                                            <field name="product_uom_qty" string="To Consume"/>
+                                            <field name="quantity_available" string="Reserved"/>
+                                        </group>
+                                    </group>
+                                </sheet>
+                            </form>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="product_template_form_view_mrp_reservation_button" model="ir.ui.view">
+        <field name="name">product.template.mrp.reservation.button</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button string="Mfg Reservation" type="object"
+                    name="action_mrp_reservation_form"
+                    attrs="{'invisible':[('type', '!=', 'product')]}"
+                    class="oe_stat_button"
+                    icon="fa-shopping-cart"
+                    groups="stock.group_stock_user"/>
+            </div>
+        </field>
+    </record>
+
+    <record id="product_variant_form_view_mrp_reservation_button" model="ir.ui.view">
+        <field name="name">product.variant.mrp.reservation.button</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button string="Mfg Reservation" type="object"
+                    name="action_mrp_reservation_form"
+                    attrs="{'invisible':[('type', '!=', 'product')]}"
+                    class="oe_stat_button"
+                    icon="fa-shopping-cart"
+                    groups="stock.group_stock_user"/>
+            </div>
+        </field>
+    </record>
+
+    <record id="action_mrp_stock_reservation" model="ir.actions.act_window">
+        <field name="name">Mfg Reservation</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">product.product</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="mrp_stock_reservation.mrp_stock_reservation_form_view"/>
+    </record>
+
+</odoo>

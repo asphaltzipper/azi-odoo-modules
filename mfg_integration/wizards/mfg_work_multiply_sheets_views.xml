@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<odoo>
+
+    <record id="mfg_work_multiply_sheets_view" model="ir.ui.view">
+        <field name="name">Multiply Sheets</field>
+        <field name="model">mfg.work.multiply.sheets</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="header_id" invisible="1"/>
+                    <field name="sheet_count"/>
+                </group>
+                <footer>
+                    <button name="action_multiply" class="oe_highlight" string="Apply" type="object"/>
+                    <button special="cancel" string="Cancel"/>
+                </footer>
+           </form>
+        </field>
+    </record>
+
+    <record id="action_work_multiply_sheets" model="ir.actions.act_window">
+        <field name="name">Multiply Sheets</field>
+        <field name="res_model">mfg.work.multiply.sheets</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+       <field name="view_id" ref="mfg_work_multiply_sheets_view"/>
+       <field name="target">new</field>
+    </record>
+
+</odoo>

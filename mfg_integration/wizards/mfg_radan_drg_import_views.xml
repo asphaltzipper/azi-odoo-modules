@@ -1,0 +1,57 @@
+<?xml version="1.0" ?>
+<odoo>
+
+    <record id="mfg_radan_drg_import_view" model="ir.ui.view">
+        <field name="name">Import Radan Work DRG</field>
+        <field name="model">mfg.radan.drg.import</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form>
+                <div>
+                    <p>
+                        File must be Radan DRG format
+                    </p>
+                </div>
+                <separator string="" colspan="4"/>
+                <group>
+                    <field name="drg_file_ids" context="{'default_import_id': active_id}" nolabel="1">
+                        <tree>
+                            <field name="import_id" invisible="1"/>
+                            <field name="filename"/>
+                            <field name="data_file"/>
+                        </tree>
+                        <form>
+                            <group>
+                                <field name="import_id" invisible="1"/>
+                                <field name="filename"/>
+                                <field name="data_file" filename="filename" string="Radan DRG File"/>
+                            </group>
+                        </form>
+                    </field>
+                </group>
+                <separator string="" colspan="4"/>
+                <footer>
+                    <button name="action_import" class="oe_highlight" string="Import" type="object"/>
+                    <button special="cancel" string="Cancel"/>
+                </footer>
+           </form>
+        </field>
+    </record>
+
+    <record id="action_radan_drg_import" model="ir.actions.act_window">
+        <field name="name">Import Radan DRG</field>
+        <field name="res_model">mfg.radan.drg.import</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+       <field name="view_id" ref="mfg_radan_drg_import_view"/>
+       <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_mrp_mfg_radan_drg_import"
+        name="Import Radan DRG"
+        action="action_radan_drg_import"
+        parent="mrp.menu_mrp_manufacturing"
+        groups="mrp.group_mrp_routings"
+        sequence="1001"/>
+
+</odoo>
