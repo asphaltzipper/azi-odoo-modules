@@ -31,4 +31,4 @@ class MrpProduction(models.Model):
                 required_qty = sum(order.move_raw_ids.filtered(lambda r: r.state != 'cancel').mapped('product_qty'))
                 avail_qty = sum([sum(move.reserved_quant_ids.mapped('qty')) for move in order.move_raw_ids])
                 avail_qty += sum(order.move_raw_ids.filtered(lambda r: r.state != 'cancel' and r.product_id.type == 'consu').mapped('product_qty'))
-                order.percent_available = avail_qty/required_qty
+                order.percent_available = required_qty and avail_qty/required_qty or 0.0
