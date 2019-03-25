@@ -1,6 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <!-- hide the produce_delay field -->
+    <record id="view_mrp_product_template_form_inherited_hide" model="ir.ui.view">
+        <field name="name">product.form.mrp.inherited.hide</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="mrp.view_mrp_product_template_form_inherited"/>
+        <field name="arch" type="xml">
+            <!--
+                <group name="sale_condition" position="inside">
+                    <label for="produce_delay" attrs="{'invisible':[('type','=','service')]}"/>
+                    <div attrs="{'invisible':[('type','=','service')]}">
+                        <field name="produce_delay" class="oe_inline"/> days
+                    </div>
+                </group>
+            -->
+            <xpath expr="//group[@name='sale_condition']/label[@for='produce_delay']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//group[@name='sale_condition']//field[@name='produce_delay']/ancestor::div" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
     <!-- add product_manager to product template form view -->
     <record id="product_template_form_mfg_product" model="ir.ui.view">
         <field name="name">product.template.mfg_product.inherit</field>
