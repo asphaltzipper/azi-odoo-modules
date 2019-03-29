@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+
+<odoo>
+
+    <record id="production_lot_crm_integration_form" model="ir.ui.view">
+        <field name="name">lot.production.sn_integrate</field>
+        <field name="model">stock.production.lot</field>
+        <field name="inherit_id" ref="stock.view_production_lot_form"/>
+        <field name="arch" type="xml">
+            <notebook position="inside">
+                <page name="images" string="Build Books">
+                    <field name="serial_images_ids" nolabel="1" context="{'default_lot_id': active_id}">
+                        <tree editable="bottom">
+                            <field name="name"/>
+                            <field name="note"/>
+                            <field name="create_date" widget="date"/>
+                            <button name="action_open_line" type="object" string="Open Full" class="oe_link"/>
+                        </tree>
+                    </field>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+</odoo>

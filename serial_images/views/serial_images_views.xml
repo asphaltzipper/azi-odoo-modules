@@ -1,0 +1,129 @@
+<odoo>
+
+    <record model="ir.actions.act_window" id="action_tree_stock_lot_images">
+        <field name="name">Serial Image Book</field>
+        <field name="res_model">stock.lot.images</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_form_stock_lot_images">
+        <field name="name">Serial Image Book</field>
+        <field name="res_model">stock.lot.images</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+    </record>
+
+    <menuitem
+            id="menu_stock_lot_images"
+            parent="stock.menu_stock_inventory_control"
+            name="Serial Images"
+            sequence="1000"
+            action="action_tree_stock_lot_images"/>
+
+    <record model="ir.ui.view" id="stock_lot_images_form_view">
+        <field name="name">stock.lot.images.form</field>
+        <field name="model">stock.lot.images</field>
+        <field name="arch" type="xml">
+            <form string="Serial Images">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="note"/>
+                        <field name="create_date" readonly="1" widget="date"/>
+                    </group>
+                    <group colspan="4">
+                        <field name="lot_ids" nolabel="1">
+                            <tree>
+                                <field name="name"/>
+                                <field name="create_date" widget="date"/>
+                                <field name="product_id"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <group colspan="4">
+                        <!-- <button name="" type="object" class="oe_edit_only"/> -->
+                        <!-- <field name="attachment_ids" mode="kanban" nolabel="1" options="{'no_create_edit': True}" context="{'default_res_model': 'stock.lot.images', 'default_res_id': active_id}"> -->
+                        <field name="attachment_ids" mode="kanban" nolabel="1">
+                            <kanban limit="10" default_order="priority desc, name" quick_create="false" create="false" delete="true">
+                                <field name="id"/>
+                                <field name="res_model" invisible="1"/>
+                                <field name="res_id" invisible="1"/>
+                                <field name="mimetype"/>
+                                <field name="type"/>
+                                <field name="datas_fname"/>
+                                <field name="name"/>
+                                <field name="priority"/>
+                                <templates>
+                                    <t t-name="kanban-box">
+                                        <div class="oe_kanban_global_click">
+                                            <div class="oe_kanban_vignette">
+                                                <div class="oe_attachment">
+                                                    <div class="row">
+                                                        <div class="col-xs-4 o_kanban_primary_left" t-if="record.type.raw_value == 'binary'">
+                                                            <a t-attf-href="/web/content/#{record.id.value}?download=1">
+                                                                <t t-set="webimage" t-value="new RegExp('image.*(gif|jpeg|jpg|png)').test(record.mimetype.value)"/>
+                                                                <div t-if="!webimage" class="o_image" t-att-data-mimetype="record.mimetype.value"/>
+                                                                <div t-if="webimage" class="o_kanban_attachment_image">
+                                                                    <img t-attf-src="/web/image/#{record.id.value}?download=1"/>
+                                                                </div>
+                                                            </a>
+                                                        </div>
+                                                        <div class="col-xs-8">
+                                                            <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right"/>
+                                                            <strong><field name="name"/></strong><br/>
+                                                            <div class="mt8">
+                                                                <field name="priority" widget="priority"/><br/>
+                                                            </div>
+                                                            <field name="description"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </templates>
+                            </kanban>
+                            <form string="Documents">
+                               <sheet>
+                                <label for="name" class="oe_edit_only"/>
+                                <h1>
+                                    <field name="name"/>
+                                </h1>
+                                <group>
+                                    <group>
+                                        <field name="type"/>
+                                        <field name="datas" filename="datas_fname" attrs="{'invisible':[('type','=','url')]}"/>
+                                        <field name="url" widget="url" attrs="{'invisible':[('type','=','binary')]}"/>
+                                        <field name="mimetype" groups="base.group_no_one"/>
+                                        <field name="priority"/>
+                                        <field name="res_model" invisible="1"/>
+                                        <field name="res_id" invisible="1"/>
+                                        <field name="datas_fname" invisible="1" attrs="{'invisible':[('type','=','url')]}" class="oe_inline oe_right"/>
+                                    </group>
+                                    <group name="description_group" string="Description" groups="base.group_user"  colspan="4">
+                                        <field name="description" nolabel="1"/>
+                                    </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="stock_lot_images_tree_view">
+        <field name="name">stock.lot.images.tree</field>
+        <field name="model">stock.lot.images</field>
+        <field name="arch" type="xml">
+            <tree string="Serial Images">
+                <field name="name"/>
+                <field name="lot_ids" widget="many2many_tags"/>
+                <field name="create_date" readonly="1" widget="date"/>
+            </tree>
+        </field>
+    </record>
+
+</odoo>
