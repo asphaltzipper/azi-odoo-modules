@@ -38,7 +38,7 @@ class ProductProduct(models.Model):
     def _compute_qty_reserved(self):
         for product in self:
             product.qty_reserved = sum(
-                self.stock_quant_ids.filtered(
+                product.stock_quant_ids.filtered(
                     lambda r: r.reservation_id and r.reservation_id.state not in ['done', 'cancel']
                 ).mapped('qty')
             )
