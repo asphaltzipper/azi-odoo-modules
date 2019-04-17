@@ -11,4 +11,14 @@
         report_type="qweb-pdf"
     />
 
+    <report
+        string="Production Picking"
+        id="action_report_production_order_pick"
+        model="mrp.production"
+        name="azi_mrp.report_mrporder_pick"
+        file="azi_mrp.report.mrp_production_templates"
+        paperformat="report.paperformat_us"
+        report_type="qweb-pdf"
+    />
+
 </odoo>

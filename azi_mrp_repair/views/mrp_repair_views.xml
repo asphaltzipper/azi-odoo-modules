@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- show serial number -->
+    <!-- hide partner and address -->
+    <record id="view_repair_order_tree_azi" model="ir.ui.view">
+        <field name="name">mrp.repair.tree.azi</field>
+        <field name="model">mrp.repair</field>
+        <field name="inherit_id" ref="mrp_repair.view_repair_order_tree"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="before">
+                <field name="lot_id" string="Serial"/>
+            </field>
+            <field name="partner_id" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+            <field name="address_id" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+        </field>
+    </record>
+
+</odoo>

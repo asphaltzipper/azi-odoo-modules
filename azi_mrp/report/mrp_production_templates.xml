@@ -8,7 +8,7 @@
                     <div class="oe_structure"/>
                     <div class="row">
                         <div class="col-xs-7">
-                            <h2>Production Order # : <span t-field="o.name"/></h2>
+                            <h1>Production Order # : <span t-field="o.name"/></h1>
                         </div>
                         <div class="col-xs-5">
                             <span class="text-right">
@@ -183,4 +183,82 @@
         </t>
     </t>
 </template>
+
+<template id="report_mrporder_pick">
+    <t t-call="report.html_container">
+        <t t-foreach="docs" t-as="o">
+            <t t-call="report.internal_layout">
+                <div class="page">
+                    <div class="oe_structure"/>
+                    <div class="row">
+                        <div class="col-xs-7">
+                            <span style="font-size:30px">Production Order # : <span t-field="o.name"/></span>
+                        </div>
+                        <div class="col-xs-5">
+                            <span class="text-right">
+                                <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('Code128', o.name, 600, 100)" style="width:350px;height:60px"/>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <strong>Product:</strong>
+                        <span t-field="o.product_id"/>
+                    </div>
+                    <div>
+                        <strong>Quantity:</strong>
+                        <span t-field="o.product_qty"/>
+                        <span t-field="o.product_uom_id.name" groups="product.group_uom"/>
+                    </div>
+
+                    <table class="table table-condensed" t-if="o.move_raw_ids">
+                        <thead style="display:table-header-group;">
+                            <tr>
+                                <th><strong>Product</strong></th>
+                                <th class="text-right"><strong>Quantity</strong></th>
+                                <th><strong>Image</strong></th>
+                                <th class="text-center"><strong>Barcode</strong></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-if="o.move_raw_ids">
+                                <tr t-foreach="o.move_raw_ids.sorted(key=lambda x: x.product_id.default_code)" t-as="line">
+                                    <td>
+                                        <span t-field="line.product_id"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="line.product_uom_qty"/>
+                                        <span t-field="line.product_uom.name" groups="product.group_uom"/>
+                                    </td>
+                                    <td class="oe_avatar">
+                                        <img style="height:90px" t-attf-src="/web/image/product.product/#{line.product_id.id}/image"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <span t-if="line.product_id.barcode">
+                                            <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('Code128', line.product_id.barcode, 600, 100)" style="width:300px;height:50px"/>
+                                        </span>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                    <div class="oe_structure"/>
+                </div>
+                <div class="footer">
+                    <div class="row">
+                        <div class="pull-right">
+                            <small>
+                                <span><span t-field="o.name"/> Page</span>
+                                <span class="page" />
+                                of
+                                <span class="topage" />
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </t>
+</template>
+
 </odoo>
