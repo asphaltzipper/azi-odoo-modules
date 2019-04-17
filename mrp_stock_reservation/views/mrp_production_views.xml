@@ -2,6 +2,7 @@
 <odoo>
 
     <!-- add kit_done field -->
+    <!-- add raw move (un)reserve buttons -->
     <record id="view_picking_form_name" model="ir.ui.view">
         <field name="name">mrp.production.azi.form</field>
         <field name="model">mrp.production</field>
@@ -9,10 +10,15 @@
         <field name="arch" type="xml">
             <field name="routing_id" position="after">
                 <field name="kit_done" groups="mrp.group_mrp_routings"/>
+                <field name="_move_reservation_barcode_scanned" widget="mrp_product_reservation_barcode_handler" invisible="1"/>
             </field>
             <field name="origin" position="after">
                 <field name="percent_available" widget="percentage" groups="mrp.group_mrp_routings"/>
             </field>
+            <xpath expr="//page/field[@name='move_raw_ids']/tree/field[@name='quantity_done']" position="after">
+                <button type="object" name="do_unreserve" string="UnReserve" icon="fa-undo" attrs="{'invisible':[('quantity_available', '=', 0.0)]}"/>
+                <button type="object" name="action_assign" string="Reserve" icon="fa-check" attrs="{'invisible':[('state', '=', 'assigned')]}"/>
+            </xpath>
         </field>
     </record>
 
@@ -41,6 +47,15 @@
                     <filter string="Kit Not Done" domain="[('kit_done','=', False)]" name="kit_not_done" groups="mrp.group_mrp_routings"/>
             </xpath>
         </field>
+    </record>
+
+    <record id="action_production_from_barcode" model="ir.actions.act_window">
+        <field name="name">Manufacturing Order</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">mrp.production</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" eval="False"/>
     </record>
 
 </odoo>
