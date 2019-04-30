@@ -7,10 +7,10 @@
                 <div class="page">
                     <div class="oe_structure"/>
                     <div class="row">
-                        <div class="col-xs-7">
-                            <h1>Production Order # : <span t-field="o.name"/></h1>
+                        <div class="col-xs-8">
+                            <span style="font-size:75px;font-weight:bold;" t-field="o.name"/>
                         </div>
-                        <div class="col-xs-5">
+                        <div class="col-xs-4">
                             <span class="text-right">
                                 <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('Code128', o.name, 600, 100)" style="width:350px;height:60px"/>
                             </span>
@@ -139,9 +139,9 @@
                                 <tr>
                                     <td colspan="5"><strong>Products to Consume</strong></td>
                                 </tr>
-                                <tr t-foreach="o.moves_plus.sorted(key=lambda x: (x.e_kanban, x.product_id.shelf_ids, x.product_id.default_code))" t-as="line">
+                                <tr t-foreach="o.moves_plus.sorted(key=lambda x: (x.e_kanban, ' | '.join(x.product_id.shelf_ids.sorted(key=lambda x: name).mapped('name')), x.product_id.default_code))" t-as="line">
                                     <td style="width:18cm;">
-                                        <span t-field="line.product_id.code"/>
+                                        [<span t-field="line.product_id.default_code"/>]
                                         <span t-field="line.product_id.name"/>
                                     </td>
                                     <td class="text-right">
@@ -158,8 +158,7 @@
                                         <span t-field="line.product_uom.name" groups="product.group_uom"/>
                                     </td>
                                     <td class="text-center">
-                                        <span t-foreach="line.product_id.shelf_ids" t-as="loc">
-                                            <span t-field="loc.name" style="font-size:68%"/><t t-if="not loc_last">, </t></span>
+                                        <span style="font-size:68%" t-esc="' | '.join(line.product_id.shelf_ids.sorted(key=lambda x: name).mapped('name'))"/>
                                     </td>
                                 </tr>
                             </t>
@@ -224,7 +223,9 @@
                             <t t-if="o.move_raw_ids">
                                 <tr t-foreach="o.move_raw_ids.sorted(key=lambda x: x.product_id.default_code)" t-as="line">
                                     <td>
-                                        <span t-field="line.product_id"/>
+                                        <div t-field="line.product_id"/>
+                                        <br/>
+                                        <div style="font-size:68%" t-esc="' | '.join(line.product_id.shelf_ids.sorted(key=lambda x: name).mapped('name'))"/>
                                     </td>
                                     <td class="text-right">
                                         <span t-field="line.product_uom_qty"/>
