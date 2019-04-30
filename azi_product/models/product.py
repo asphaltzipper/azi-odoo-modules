@@ -48,7 +48,7 @@ class ProductProduct(models.Model):
         if self._context.get('bin_size'):
             self.image_medium_big = self.image_variant
         else:
-            resized_image = tools.image_resize_image(self.image_variant, size=(360, 360))
+            resized_image = tools.image_resize_image(self.image_variant, size=(360, 216), avoid_if_small=True)
             self.image_medium_big = resized_image
         if not self.image_medium_big:
             self.image_medium_big = self.product_tmpl_id.image_medium_big
