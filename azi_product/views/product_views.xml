@@ -11,7 +11,7 @@
                 <field name="product_manager"/>
             </xpath>
             <xpath expr="//field[@name='image_medium']" position="replace">
-                <field name="image_medium_big" widget="image" class="pull-right" style="max-height:360px"/>
+                <field name="image_medium_big" widget="image" class="pull-right" style="max-height:320px"/>
             </xpath>
         </field>
     </record>

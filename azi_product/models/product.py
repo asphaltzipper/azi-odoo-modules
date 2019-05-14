@@ -20,7 +20,7 @@ class ProductTemplate(models.Model):
         if image:
             if not vals.get('image'):
                 vals['image'] = image
-            vals['image_medium_big'] = tools.image_resize_image(image, size=(360, 216), avoid_if_small=True)
+            vals['image_medium_big'] = tools.image_resize_image(image, size=(320, 320), avoid_if_small=True)
         template = super(ProductTemplate, self).create(vals)
         return template
 
@@ -30,7 +30,7 @@ class ProductTemplate(models.Model):
         if image:
             if not vals.get('image'):
                 vals['image'] = image
-            vals['image_medium_big'] = tools.image_resize_image(image, size=(360, 216), avoid_if_small=True)
+            vals['image_medium_big'] = tools.image_resize_image(image, size=(320, 320), avoid_if_small=True)
         res = super(ProductTemplate, self).write(vals)
         return res
 
@@ -48,7 +48,7 @@ class ProductProduct(models.Model):
         if self._context.get('bin_size'):
             self.image_medium_big = self.image_variant
         else:
-            resized_image = tools.image_resize_image(self.image_variant, size=(360, 216), avoid_if_small=True)
+            resized_image = tools.image_resize_image(self.image_variant, size=(320, 320), avoid_if_small=True)
             self.image_medium_big = resized_image
         if not self.image_medium_big:
             self.image_medium_big = self.product_tmpl_id.image_medium_big
