@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="ecm_eco_number" model="ir.sequence">
+            <field name="name">ECO Sequence</field>
+            <field name="code">ecm.eco.sequence</field>
+            <field name="padding">5</field>
+            <field name="number_next">12000</field>
+            <field name="number_increment">1</field>
+        </record>
+
+        <record id="eco_stage_planning" model="ecm.eco.stage">
+            <field name="name">Planning</field>
+            <field name="sequence" eval="1"/>
+            <field name="final" eval="False"/>
+            <field name="create_revs" eval="False"/>
+            <field name="is_default" eval="True"/>
+            <field name="is_reject" eval="False"/>
+        </record>
+        <record id="eco_stage_review" model="ecm.eco.stage">
+            <field name="name">Eng Review</field>
+            <field name="sequence" eval="2"/>
+            <field name="final" eval="False"/>
+            <field name="create_revs" eval="False"/>
+            <field name="is_default" eval="False"/>
+            <field name="is_reject" eval="False"/>
+        </record>
+        <record id="eco_stage_update" model="ecm.eco.stage">
+            <field name="name">Update</field>
+            <field name="sequence" eval="3"/>
+            <field name="final" eval="False"/>
+            <field name="create_revs" eval="True"/>
+            <field name="is_default" eval="False"/>
+            <field name="is_reject" eval="False"/>
+        </record>
+        <record id="eco_stage_inventory" model="ecm.eco.stage">
+            <field name="name">Inventory</field>
+            <field name="sequence" eval="4"/>
+            <field name="final" eval="False"/>
+            <field name="create_revs" eval="True"/>
+            <field name="is_default" eval="False"/>
+            <field name="is_reject" eval="False"/>
+        </record>
+        <record id="eco_stage_refused" model="ecm.eco.stage">
+            <field name="name">Refused</field>
+            <field name="sequence" eval="5"/>
+            <field name="final" eval="True"/>
+            <field name="create_revs" eval="False"/>
+            <field name="is_default" eval="False"/>
+            <field name="is_reject" eval="True"/>
+        </record>
+        <record id="eco_stage_effective" model="ecm.eco.stage">
+            <field name="name">Effective</field>
+            <field name="sequence" eval="6"/>
+            <field name="final" eval="True"/>
+            <field name="create_revs" eval="False"/>
+            <field name="is_default" eval="False"/>
+            <field name="is_reject" eval="False"/>
+        </record>
+
+        <record id="eco_type_std" model="ecm.eco.type">
+            <field name="name">Standard</field>
+            <field name="default_stage" ref="ecm.eco_stage_planning"/>
+            <field name="stage_ids" eval="[(6, 0, [
+                ref('ecm.eco_stage_planning'),
+                ref('ecm.eco_stage_review'),
+                ref('ecm.eco_stage_update'),
+                ref('ecm.eco_stage_inventory'),
+                ref('ecm.eco_stage_effective'),
+                ref('ecm.eco_stage_refused')])]"/>
+        </record>
+
+        <record id="eco_type_exp" model="ecm.eco.type">
+            <field name="name">Express</field>
+            <field name="default_stage" ref="ecm.eco_stage_planning"/>
+            <field name="stage_ids" eval="[(6, 0, [
+                ref('ecm.eco_stage_planning'),
+                ref('ecm.eco_stage_update'),
+                ref('ecm.eco_stage_effective'),
+                ref('ecm.eco_stage_refused')])]"/>
+        </record>
+
+        <record id="eco_compat_full" model="ecm.eco.compatibility">
+            <field name="name">Full</field>
+            <field name="note">Fully compatible with other versions of this product</field>
+        </record>
+        <record id="eco_compat_previous" model="ecm.eco.compatibility">
+            <field name="name">Previous</field>
+            <field name="note">Only compatible with the previous version of this product</field>
+        </record>
+        <record id="eco_compat_upgrade" model="ecm.eco.compatibility">
+            <field name="name">Upgrade</field>
+            <field name="note">Requires upgrade in parent assemblies when installing this version of this product</field>
+        </record>
+        <record id="eco_compat_none" model="ecm.eco.compatibility">
+            <field name="name">None</field>
+            <field name="note">Not compatible with other versions of this product (use the previous version in older parent assemblies)</field>
+        </record>
+
+    </data>
+</odoo>

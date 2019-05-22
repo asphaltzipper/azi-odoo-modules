@@ -11,7 +11,7 @@ class ProductTemplate(models.Model):
     image_medium_big = fields.Binary(
         "Medium-big-sized image", attachment=True,
         help="Medium-big-sized image of the product. It is automatically "
-             "resized as a 360x360px image, with aspect ratio preserved, "
+             "resized as a 320x320px image, with aspect ratio preserved, "
              "only when the image exceeds one of those sizes. Use this field in form views or some kanban views.")
 
     @api.model
@@ -40,7 +40,7 @@ class ProductProduct(models.Model):
 
     image_medium_big = fields.Binary(
         "Medium-big-sized image", compute='_compute_med_big_image', inverse='_set_image_medium_big',
-        help="Image of the product variant at 360px (Image of product template if false).")
+        help="Image of the product variant at 320px (Image of product template if false).")
 
     @api.one
     @api.depends('image_variant', 'product_tmpl_id.image')

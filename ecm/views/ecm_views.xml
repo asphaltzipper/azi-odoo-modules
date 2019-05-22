@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ECO -->
+    <record id="view_ecm_eco_form" model="ir.ui.view">
+        <field name="name">ecm.eco.form</field>
+        <field name="model">ecm.eco</field>
+        <field name="arch" type="xml">
+            <form string="ECO">
+                <header>
+                    <button string="Create Revs" name="action_create_revisions" type="object" attrs="{'invisible':[('final', '=', True)]}"/>
+                    <!-- <button name="button_reassign_orders" string="Reassign Orders" type="object" class="oe_highlight" attrs="{'invisible': ['|', ('state', '!=', 'imported')]}"/> -->
+                    <field name="stage_id" widget="statusbar" clickable="True" confirm="Are you sure you want to change the stage?"/>
+                </header>
+                <sheet string="ECO">
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="description"/>
+                            <field name="notes"/>
+                            <field name="owner_id"/>
+                            <field name="final" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="type_id"/>
+                            <field name="target_date"/>
+                            <field name="can_advance"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="products" string="Products">
+                            <field name="line_ids" context="{'default_eco_id': active_id}">
+                                <tree>
+                                    <field name="eco_id"/>
+                                    <field name="product_id"/>
+                                    <field name="new_rev"/>
+                                    <field name="new_product_id"/>
+                                    <field name="zone"/>
+                                    <field name="description"/>
+                                    <field name="reason"/>
+                                    <field name="compatibility"/>
+                                </tree>
+                                <form>
+                                    <sheet>
+                                        <group>
+                                            <group>
+                                                <field name="eco_id"/>
+                                                <field name="product_id"/>
+                                                <field name="new_rev"/>
+                                                <field name="compatibility"/>
+                                                <field name="new_product_id"/>
+                                            </group>
+                                            <group>
+                                                <field name="description"/>
+                                                <field name="reason"/>
+                                                <field name="zone"/>
+                                            </group>
+                                            <field name="notes"/>
+                                        </group>
+                                    </sheet>
+                                </form>
+                            </field>
+                        </page>
+                        <page name="approvals" string="Approvals">
+                            <field name="approval_ids" context="{'default_eco_id': active_id}">
+                                <tree decoration-muted="not this_stage" decoration-bf="this_stage">
+                                    <field name="this_stage" invisible="1"/>
+                                    <field name="name"/>
+                                    <field name="stage_id"/>
+                                    <field name="approval_type"/>
+                                    <field name="allowed_user_ids" widget="many2many_tags"/>
+                                    <field name="state"/>
+                                    <field name="signed_user_id"/>
+                                    <field name="signed_date"/>
+                                    <button name="button_approval_sign" type="object" string="Sign" icon="fa-user" attrs="{'invisible': [('this_stage', '=', False)]}"/>
+                                    <field name="eco_id" invisible="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ecm_eco_tree" model="ir.ui.view">
+        <field name="name">ecm.eco.tree</field>
+        <field name="model">ecm.eco</field>
+        <field name="arch" type="xml">
+            <tree string="ECO">
+                <field name="name"/>
+                <field name="description"/>
+                <field name="owner_id"/>
+                <field name="type_id"/>
+                <field name="target_date"/>
+                <field name="can_advance"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_ecm_eco_tree" model="ir.actions.act_window">
+        <field name="name">Engineering Change Orders</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">ecm.eco</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <!-- <field name="search_view_id" ref="view_ecm_eco_filter"/> -->
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Click to create an Engineering Change Order.
+          </p><p>
+            In a change order, you can detail the products you want
+            to change, and get approval.
+          </p>
+        </field>
+    </record>
+
+    <!-- ECO Types -->
+    <record id="view_ecm_eco_type_tree" model="ir.ui.view">
+        <field name="name">ecm.eco.type.tree</field>
+        <field name="model">ecm.eco.type</field>
+        <field name="arch" type="xml">
+            <tree string="ECO Types">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_ecm_eco_type_form" model="ir.ui.view">
+        <field name="name">ecm.eco.type.form</field>
+        <field name="model">ecm.eco.type</field>
+        <field name="arch" type="xml">
+            <form string="ECO Type">
+                <sheet string="ECO">
+                    <group>
+                        <field name="name"/>
+                        <field name="default_stage"/>
+                    </group>
+                    <field name="stage_ids">
+                        <tree>
+                            <field name="name"/>
+                            <field name="create_revs"/>
+                            <field name="final"/>
+                        </tree>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ecm_eco_type" model="ir.actions.act_window">
+        <field name="name">ECO Types</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">ecm.eco.type</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- ECO Stages -->
+    <record id="view_ecm_eco_stage_tree" model="ir.ui.view">
+        <field name="name">ecm.eco.stage.tree</field>
+        <field name="model">ecm.eco.stage</field>
+        <field name="arch" type="xml">
+            <tree string="ECO Stages">
+                <field name="name"/>
+                <field name="sequence"/>
+                <field name="final"/>
+                <field name="create_revs"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_ecm_eco_stage_form" model="ir.ui.view">
+        <field name="name">ecm.eco.stage.form</field>
+        <field name="model">ecm.eco.stage</field>
+        <field name="arch" type="xml">
+            <form string="ECO Stage">
+                <sheet string="ECO Stage">
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="sequence"/>
+                            <field name="final"/>
+                        </group>
+                        <group>
+                            <field name="create_revs"/>
+                            <field name="is_default"/>
+                            <field name="is_reject"/>
+                        </group>
+                    </group>
+                    <field name="approval_tmpl_ids" context="{'default_stage_id': active_id}">
+                        <tree editable="top">
+                            <field name="name"/>
+                            <field name="stage_id" invisible="1"/>
+                            <field name="user_ids" widget="many2many_tags"/>
+                            <field name="approval_type"/>
+                        </tree>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ecm_eco_stage" model="ir.actions.act_window">
+        <field name="name">ECO Stages</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">ecm.eco.stage</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem
+        action="action_ecm_eco_tree"
+        id="ecm_menu"
+        groups="stock.group_stock_user"
+        name="ECM"
+        sequence="36"
+        web_icon="ecm,static/description/icon.png"/>
+
+    <menuitem id="ecm_eco_menu"
+        name="ECOs"
+        parent="ecm.ecm_menu"
+        action="action_ecm_eco_tree"
+        sequence="1"/>
+
+    <menuitem id="ecm_config_menu"
+        name="Configuration"
+        parent="ecm.ecm_menu"
+        sequence="100"/>
+
+    <menuitem id="ecm_eco_type_menu"
+        name="ECO Types"
+        parent="ecm_config_menu"
+        action="action_ecm_eco_type"
+        sequence="1"/>
+
+    <menuitem id="ecm_eco_stage_menu"
+        name="ECO Stages"
+        parent="ecm_config_menu"
+        action="action_ecm_eco_stage"
+        sequence="2"/>
+
+</odoo>

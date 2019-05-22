@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <record id="view_ecm_approval_sign_wizard" model="ir.ui.view">
+            <field name="name">view.ecm.approval.sign.wizard</field>
+            <field name="model">ecm.eco.approval.sign</field>
+            <field name="arch" type="xml">
+                <form string="Approve/Reject ECO">
+                    <group>
+                        <group>
+                            <field name="approval_id"/>
+                            <field name="stage_id"/>
+                            <field name="approval_type"/>
+                        </group>
+                        <group>
+                            <field name="state"/>
+                            <field name="signed_user_id"/>
+                            <field name="signed_date"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="button_execute" string="Execute"
+                            colspan="1" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_ecm_approval_sign" model="ir.actions.act_window">
+            <field name="name">Approve/Reject ECO</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ecm.eco.approval.sign</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+       
+    </data>
+</odoo>    
