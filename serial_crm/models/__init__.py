@@ -9,3 +9,4 @@ import mrp_repair
 import sale_order
 import ir_attachment
 import stock_lot_revaluations
+import stock_lot_hour_log

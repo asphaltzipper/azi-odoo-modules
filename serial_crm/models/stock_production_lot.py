@@ -75,11 +75,26 @@ class ProductionLot(models.Model):
         comodel_name='sale.order',
         string="Sale Orders")
 
+    current_hours = fields.Float(
+        compute='_compute_current_hours',
+        string='Total Hours')
+
+    hour_ids = fields.One2many(
+         comodel_name='stock.lot.hour.log',
+         inverse_name='lot_id',
+         string='Hours')
+
     @api.depends('owner_ids')
     def _compute_current_owner(self):
         for lot in self:
             owners = lot.owner_ids.sorted(key=lambda r: r.owner_date, reverse=True)
             lot.partner_id = owners and owners[0].partner_id or False
+
+    @api.depends('hour_ids')
+    def _compute_current_hours(self):
+        for lot in self:
+            if len(lot.hour_ids):
+                lot.current_hours = lot.hour_ids.sorted(lambda x: x.date, reverse=True)[0].hours
 
     def get_next_serial(self):
         if not self.product_id:
