@@ -6,3 +6,4 @@ access_stock_lot_change,access_stock_lot_change,model_stock_lot_change,stock.gro
 access_stock_lot_partner,access_stock_lot_partner,model_stock_lot_partner,stock.group_stock_user,1,1,1,1
 access_stock_lot_note,access_stock_lot_note,model_stock_lot_note,stock.group_stock_user,1,1,1,1
 access_stock_lot_revaluations_everyone,access_stock_lot_revaluations_everyone,model_stock_lot_revaluations,,1,0,0,0
+access_stock_lot_hour_log,access_stock_lot_hour_log,model_stock_lot_hour_log,stock.group_stock_user,1,1,1,1

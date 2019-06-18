@@ -88,7 +88,7 @@ class ProductTemplate(models.Model):
         string='Laser Thickness Code',
         compute='_compute_mfg_properties')
 
-    @api.depends('product_variant_ids', 'product_variant_ids.default_code')
+    @api.depends('categ_id', 'product_variant_ids', 'product_variant_ids.default_code')
     def _compute_mfg_code(self):
         unique_variants = self.filtered(lambda t: len(t.product_variant_ids) == 1 and t.categ_id.eng_management)
         for template in unique_variants:

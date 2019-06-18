@@ -26,11 +26,20 @@ class ProductTemplate(models.Model):
 
     @api.multi
     def write(self, vals):
-        image = vals.get('image', vals.get('image_medium_big', vals.get('image_medium', vals.get('image_small'))))
+        image = vals.get(
+            'image', vals.get(
+                'image_medium_big', vals.get(
+                    'image_medium', vals.get(
+                        'image_small', None)
+                )
+            )
+        )
         if image:
             if not vals.get('image'):
                 vals['image'] = image
             vals['image_medium_big'] = tools.image_resize_image(image, size=(320, 320), avoid_if_small=True)
+        if image == False:
+            vals['image'] = False
         res = super(ProductTemplate, self).write(vals)
         return res
 
