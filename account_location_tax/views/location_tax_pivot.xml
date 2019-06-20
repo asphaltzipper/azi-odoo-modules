@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+     <record model="ir.actions.act_window" id="sales_tax_by_location_pivot">
+        <field name="name">Location Sales Tax</field>
+        <field name="res_model">sales.tax.by.location</field>
+        <field name="view_mode">tree,pivot</field>
+        <field name="view_type">form</field>
+    </record>
+
+    <record id="location_sales_tax_pivot" model="ir.ui.view">
+        <field name="name">location.sales.tax.pivot</field>
+        <field name="model">sales.tax.by.location</field>
+        <field name="arch" type="xml">
+            <pivot string="Location Sales Tax" type="line" >
+                <field name="invoice_date" type="row" />
+                <field name="city" type="column" />
+                <field name="state_id" type="column" />
+                <field name="zip" type="column" />
+                <field name="amount_untaxed" type="measure" />
+                <field name="inv_tax_amt" type="measure" />
+                <field name="amount_total" type="measure" />
+            </pivot>
+        </field>
+    </record>
+
+    <record id="location_sales_tax_tree_view" model="ir.ui.view">
+        <field name="name">location.sales.tax.tree.view</field>
+        <field name="model">sales.tax.by.location</field>
+        <field name="arch" type="xml">
+            <tree string="Location Sales Tax" create="false" edit="false">
+                <field name="partner_id"/>
+                <field name="state_id"/>
+                <field name="city"/>
+                <field name="zip"/>
+                <field name="invoice_id" invisible="True"/>
+                <field name="invoice_date"/>
+                <field name="invoice_number"/>
+                <field name="account_id"/>
+                <field name="amount_untaxed"/>
+                <field name="inv_tax_amt"/>
+                <field name="amount_total"/>
+            </tree>
+        </field>
+    </record>
+
+    <menuitem id="menu_action_account_sales_tax_by_location" name="Location Sales Tax" action="sales_tax_by_location_pivot" parent="account_reports.account_reports_business_statements_menu"/>
+
+</data>
+</odoo>
