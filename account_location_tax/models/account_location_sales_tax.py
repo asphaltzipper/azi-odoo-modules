@@ -2,12 +2,12 @@
 
 from odoo import api, fields, models, tools
 
-class SalesTaxByLocation(models.Model):
-    _name = 'sales.tax.by.location'
+
+class AccountLocationSalesTax(models.Model):
+    _name = 'account.location.sales.tax'
     _auto = False
 
-
-    # # these fields selected from the database view
+    # these fields are selected from the database view
     partner_id = fields.Many2one(comodel_name='res.partner', string='Partner')
     state_id = fields.Many2one(comodel_name='res.country.state', string='State')
     city = fields.Char(string='City')
@@ -19,12 +19,12 @@ class SalesTaxByLocation(models.Model):
     amount_untaxed = fields.Float(string='Untaxed')
     inv_tax_amt = fields.Float(string='Tax')
     amount_total = fields.Float(string="Total Amount")
-    #
+
     @api.model_cr
     def init(self):
-        tools.drop_view_if_exists(self._cr, 'sales_tax_by_location')
+        tools.drop_view_if_exists(self._cr, 'account_location_sales_tax')
         self._cr.execute("""
-            CREATE VIEW sales_tax_by_location AS (
+            CREATE VIEW account_location_sales_tax AS (
             select
                 i.id,
                 i.id as invoice_id,
@@ -53,5 +53,3 @@ class SalesTaxByLocation(models.Model):
             where i.type in ('out_invoice', 'out_refund')
             )
         """)
-
-

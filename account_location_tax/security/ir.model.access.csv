@@ -1,2 +1,2 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_location_sales_tax_accountant,access_location_sales_tax_accountant,model_sales_tax_by_location,account.group_account_user,1,0,0,0
+access_location_sales_tax_accountant,access_location_sales_tax_accountant,model_account_location_sales_tax,account.group_account_user,1,0,0,0

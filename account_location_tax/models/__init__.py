@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import location_tax_report
+from . import account_location_sales_tax
 
 

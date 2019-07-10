@@ -9,11 +9,13 @@
     "author": "John Welch",
     "website": "http://www.github.com/asphaltzipper",
     'description': """
-        Breakdown sales revenue by zip + 4
+Sales Tax By Location
+=====================
+* Breakdown sales tax collection details by zip + 4
     """,
-    'depends' : ['account'],
+    'depends': ['account'],
     "data": [
-        'views/location_tax_pivot.xml',
+        'views/account_location_sales_tax_views.xml',
         'security/ir.model.access.csv',
     ],
     "installable": True,
