@@ -51,6 +51,7 @@
                             <field name="common_cutting_qty"/>
                             <field name="orientation"/>
                             <field name="laser_code"/>
+                            <field name="has_etching"/>
                         </group>
                         <group string="Fabrication Info" class="col-xs-2 pull-right">
                             <field name="cutting_length_outer"/>

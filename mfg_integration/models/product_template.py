@@ -34,6 +34,11 @@ class ProductTemplate(models.Model):
         string='Routing',
         compute='_compute_mfg_properties',
         readonly=True)
+    routing_tmpl_id = fields.Many2one(
+        comodel_name='mrp.routing',
+        string='Routing Template',
+        compute='_compute_mfg_properties',
+        readonly=True)
     # only here for backward compatibility
     # TODO: remove this field
     formed = fields.Boolean(
@@ -87,6 +92,11 @@ class ProductTemplate(models.Model):
         readonly=True,
         string='Laser Thickness Code',
         compute='_compute_mfg_properties')
+    has_etching = fields.Boolean(
+        string="Etch",
+        default=False,
+        required=True,
+        help="This part has laser etching")
 
     @api.depends('categ_id', 'product_variant_ids', 'product_variant_ids.default_code')
     def _compute_mfg_code(self):
@@ -110,6 +120,14 @@ class ProductTemplate(models.Model):
                 rec.rm_material_code = bom.one_comp_product_id.material_id.name
                 rec.rm_gauge_code = bom.one_comp_product_id.gauge_id.name
                 rec.laser_code = bom.one_comp_product_id.gauge_id.laser_code
+                rec.routing_tmpl_id = bom and rec.get_routing_template(bom) or False
+
+    def get_routing_template(self, bom_id):
+        op_ids = set(bom_id.routing_id.operation_ids.mapped('workcenter_id').ids)
+        for route in self.env['mrp.routing'].search([('name', 'like', '_template')]):
+            if set(route.operation_ids.mapped('workcenter_id').ids) == op_ids:
+                return route
+        return False
 
     @api.depends('bend_count')
     def _compute_formed(self):
