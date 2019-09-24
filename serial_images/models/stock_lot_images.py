@@ -20,7 +20,7 @@ class StockLotImages(models.Model):
     lot_ids = fields.Many2many(
         comodel_name='stock.production.lot',
         string='Serial',
-        required=True)
+        required=False)
 
     @api.multi
     def action_open_line(self):
