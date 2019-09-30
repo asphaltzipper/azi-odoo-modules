@@ -79,7 +79,7 @@
                 <field name="default_supplier_id"/>
                 <field name="procurement_id"/>
                 <field name="product_manager"/>
-                <field name="latest_rcv_date"/>
+                <field name="latest_rcv_date" widget="date"/>
             </tree>
         </field>
     </record>
