@@ -15,11 +15,6 @@ class MfgRadanDrgFile(models.TransientModel):
 
     _sql_constraints = [('filename_import_id_uniq', 'unique (filename, import_id)', """File name must be unique."""), ]
 
-    import_id = fields.Many2one(
-        comodel_name='mfg.radan.drg.import',
-        # required=True,
-        readonly=True)
-
     data_file = fields.Binary(
         string='Radan Drawing File',
         required=True,
@@ -33,9 +28,8 @@ class MfgRadanDrgImport(models.TransientModel):
     _name = 'mfg.radan.drg.import'
     _description = 'Import Multiple Radan Drawings'
 
-    drg_file_ids = fields.One2many(
-        comodel_name='mfg.radan.drg.file',
-        inverse_name='import_id')
+    drg_file_ids = fields.Many2many(comodel_name="ir.attachment", string="Documents")
+    import_files = fields.Char("Upload")
 
     def trim_image(self, image):
         data = base64.b64decode(image)
@@ -75,7 +69,7 @@ class MfgRadanDrgImport(models.TransientModel):
         for drg in self.drg_file_ids:
 
             # Decode the file data
-            data = base64.b64decode(drg.data_file)
+            data = base64.b64decode(drg.datas)
             file_input = cStringIO.StringIO(data)
 
             try:
@@ -96,8 +90,8 @@ class MfgRadanDrgImport(models.TransientModel):
             sheet_count = e_number_sheets is not None and int(e_number_sheets.text) or 1
 
             header = work_header_obj.create({
-                'name': drg.filename,
-                'file_name': drg.filename,
+                'name': drg.name,
+                'file_name': drg.name,
                 'state': 'imported',
                 'work_user_id': self.env.user.id,
                 'total_hours': 0.0,

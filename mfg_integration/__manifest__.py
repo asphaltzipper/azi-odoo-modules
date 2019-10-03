@@ -21,6 +21,9 @@ Integrate with Manufacturing Machine Software
         'stock',
         'engineering_product',
     ],
+    'qweb': [
+        "static/src/xml/template.xml",
+    ],
     'data': [
         'wizards/mfg_work_import_csv_views.xml',
         'wizards/mfg_create_bom_views.xml',
@@ -29,6 +32,7 @@ Integrate with Manufacturing Machine Software
         'views/product_views.xml',
         'views/product_uom_views.xml',
         'views/workorder_views.xml',
+        'views/webclient_templates.xml',
         'views/mfg_work_views.xml',
         'data/mfg_integration_data.xml',
         'security/ir.model.access.csv',

@@ -14,19 +14,11 @@
                 </div>
                 <separator string="" colspan="4"/>
                 <group>
-                    <field name="drg_file_ids" context="{'default_import_id': active_id}" nolabel="1">
-                        <tree>
-                            <field name="import_id" invisible="1"/>
-                            <field name="filename"/>
-                            <field name="data_file"/>
+                    <field name="import_files" widget="import_files_button"/>
+                    <field name="drg_file_ids" widget="one2many_list">
+                        <tree create="0">
+                            <field name="name" string="File name"/>
                         </tree>
-                        <form>
-                            <group>
-                                <field name="import_id" invisible="1"/>
-                                <field name="filename"/>
-                                <field name="data_file" filename="filename" string="Radan DRG File"/>
-                            </group>
-                        </form>
                     </field>
                 </group>
                 <separator string="" colspan="4"/>
