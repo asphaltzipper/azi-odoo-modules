@@ -5,7 +5,7 @@ odoo.define('mfg_integration', function(require)
     var Char = core.form_widget_registry.get('char');
 
     var import_files_button = Char.extend({
-       template : "import_files_button",
+        template : "import_files_button",
         events : {
            'change' : 'import_files',
         },
