@@ -15,4 +15,4 @@ class MrpBom(models.Model):
     def _compute_routing_detail(self):
         for mo in self:
             if mo.routing_id:
-                mo.routing_detail = ", " .join(mo.routing_id.operation_ids.mapped('workcenter_id.code'))
+                mo.routing_detail = ", ".join(mo.routing_id.operation_ids.mapped('workcenter_id.code'))
