@@ -38,7 +38,6 @@ class ProductTemplate(models.Model):
 
     eng_management = fields.Boolean(related='categ_id.eng_management', readonly="1")
     rev_delimiter = fields.Char(related='categ_id.rev_delimiter', readonly="1")
-    eco_ref = fields.Char(related='product_variant_ids.eco_ref')
     eng_code = fields.Char(
         string='Engineering Code',
         compute='_compute_eng_code',
@@ -54,6 +53,8 @@ class ProductTemplate(models.Model):
         string='Engineering Category',
         domain="[('type','=','normal')]",
         help="Select category for the current product")
+    eng_type_id = fields.Many2one(
+        related='product_variant_ids.eng_type_id')
     eng_mod_flag = fields.Boolean(
         related='product_variant_ids.eng_mod_flag')
     eng_hold_flag = fields.Boolean(
@@ -74,6 +75,42 @@ class ProductTemplate(models.Model):
     coating = fields.Many2one(
         comodel_name='engineering.coating',
         string='Coating')
+    doc_ids = fields.One2many(
+        comodel_name='ir.attachment',
+        inverse_name='res_id',
+        domain=[('res_model', '=', 'product.template'), ('type', '=', 'binary')],
+        readonly=True,
+        string='Documents')
+    version_ids = fields.One2many(
+        comodel_name='product.template',
+        string='Other Versions',
+        compute='_compute_version_ids')
+    version_doc_ids = fields.One2many(
+        comodel_name='ir.attachment',
+        string='Version Documents',
+        readonly=True,
+        compute='_compute_version_doc_ids')
+
+    @api.depends('categ_id', 'product_variant_ids', 'product_variant_ids.default_code')
+    def _compute_version_ids(self):
+        for prod in self:
+            domain = [
+                # ('id', '!=', prod.id),
+                ('eng_code', '=', prod.eng_code),
+                '|', ('active', '=', True), ('active', '=', False)]
+            versions = prod.search(domain, order='default_code')
+            prod.version_ids = versions.ids
+
+    @api.depends('categ_id', 'product_variant_ids', 'product_variant_ids.default_code')
+    def _compute_version_doc_ids(self):
+        for prod in self:
+            vers_domain = [
+                ('id', '!=', prod.id),
+                ('eng_code', '=', prod.eng_code),
+                '|', ('active', '=', True), ('active', '=', False)]
+            versions = prod.search(vers_domain)
+            doc_domain = [('res_model', '=', 'product.template'), ('res_id', 'in', versions.ids)]
+            prod.version_doc_ids = self.env['ir.attachment'].search(doc_domain)
 
     @api.constrains('eng_categ_id')
     def _validate_eng_cat(self):
@@ -128,6 +165,13 @@ class ProductTemplate(models.Model):
         if len(self.product_variant_ids) == 1:
             self.product_variant_ids.button_revise(values)
 
+    @api.multi
+    def action_open_product_version(self):
+        self.ensure_one()
+        action = self.env.ref('engineering_product.product_template_action_one').read()[0]
+        action['res_id'] = self.id
+        return action
+
 
 class ProductProduct(models.Model):
     _inherit = "product.product"
@@ -144,28 +188,29 @@ class ProductProduct(models.Model):
         compute='_compute_eng_code',
         readonly=True,
         store=True)
-    eco_ref = fields.Char(
-        string="Engineering Change Order",
-        nocopy=True,
-        help="External ECO number")
+    eng_type_id = fields.Many2one(
+        comodel_name='engineering.part.type',
+        string='Eng Type',
+        help="Engineering part type")
     eng_mod_flag = fields.Boolean(
         string="No-ECO Modification",
+        track_visibility='on_change',
         help="Part changed with no ECO or revision")
     eng_hold_flag = fields.Boolean(
         string="Hold Production",
+        track_visibility='on_change',
         help="A revision is impending, stop producing/purchasing this part")
     product_manager = fields.Many2one(
         comodel_name='res.users',
         related='product_tmpl_id.product_manager')
     deprecated = fields.Boolean(
         string='Deprecated',
+        default=False,
+        required=True,
         index=True)
     eng_notes = fields.Text('Engineering Notes')
 
-    # re_code = re.compile(r'^([_A-Z0-9-]+)\.([A-Z-][0-9])$')
-    # re_code_copy = re.compile(r'^((COPY\.)?[_A-Z0-9-]+\.[A-Z-][0-9])$')
-
-    @api.depends('categ_id', 'default_code')
+    @api.depends('product_tmpl_id.categ_id', 'default_code')
     def _compute_eng_code(self):
         for prod in self:
             if prod.product_tmpl_id.categ_id.eng_management:
@@ -245,6 +290,7 @@ class ProductProduct(models.Model):
             'default_code': self.eng_code + self.product_tmpl_id.rev_delimiter + 'Z9',
         }
         defaults.update(values)
+        defaults['barcode'] = defaults['default_code']
         new_prod = self.copy(default=defaults)
 
         # copy orderpoints

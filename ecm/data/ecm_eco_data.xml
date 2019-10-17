@@ -19,7 +19,7 @@
             <field name="is_reject" eval="False"/>
         </record>
         <record id="eco_stage_review" model="ecm.eco.stage">
-            <field name="name">Eng Review</field>
+            <field name="name">Review</field>
             <field name="sequence" eval="2"/>
             <field name="final" eval="False"/>
             <field name="create_revs" eval="False"/>

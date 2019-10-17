@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, api, _
+from odoo import models, api, fields, _
 
 
 class ProductUomCategory(models.Model):
@@ -26,6 +26,10 @@ class ProductUom(models.Model):
     _inherit = 'product.uom'
 
     _sql_constraints = [('name_uniq', 'unique (name)', """UOM Name must be unique."""), ]
+
+    code = fields.Char(
+        string='Code',
+        help="Short code to be used externally. e.g. for unit Inch, use code IN.")
 
     @api.multi
     def copy(self, default=None):

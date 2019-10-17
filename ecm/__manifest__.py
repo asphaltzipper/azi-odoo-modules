@@ -46,9 +46,12 @@ Manage Engineering Changes to Products
     ],
     'data': [
         'data/ecm_eco_data.xml',
+        'wizards/upload_line_doc_views.xml',
         'views/ecm_views.xml',
+        'views/product_views.xml',
         'wizards/approval_sign_views.xml',
-        # 'security/ir.model.access.csv',
+        'security/security_data.xml',
+        'security/ir.model.access.csv',
     ],
     "installable": True,
     "auto_install": False,

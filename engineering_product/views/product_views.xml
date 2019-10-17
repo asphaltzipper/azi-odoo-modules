@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
 
-    <!-- add product_manager to product template form view -->
+    <record id="product_template_action_one" model="ir.actions.act_window">
+        <field name="name">One Product</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">form,kanban,tree</field>
+        <field name="view_type">form</field>
+    </record>
+
     <record id="product_template_form_engineering_product" model="ir.ui.view">
         <field name="name">product.template.engineering_product.inherit</field>
         <field name="model">product.template</field>
@@ -13,7 +20,6 @@
                         <group>
                             <field name="eng_management" string="Manage"/>
                             <field name="deprecated"/>
-                            <field name="eco_ref" string="ECO" attrs="{'readonly': [('eng_management', '=', False)]}"/>
                             <field name="eng_mod_flag"/>
                             <field name="eng_hold_flag"/>
                             <button string="Create Revision"
@@ -29,12 +35,107 @@
                             <field name="eng_rev" string="Revision" attrs="{'readonly': [('eng_management', '=', False)]}"/>
                             <field name="preparation"/>
                             <field name="coating"/>
+                            <field name="eng_type_id"/>
                         </group>
                         <group colspan="4">
                             <field name="eng_categ_id" attrs="{'readonly': [('eng_management', '=', False)]}"/>
                             <field name="eng_notes" placeholder="Catalog Detail"/>
                         </group>
                     </group>
+                </page>
+                <page string="Versions" name="versions">
+                    <field name="version_ids">
+                        <tree>
+                            <field name="display_name"/>
+                            <field name="active"/>
+                            <field name="deprecated"/>
+                            <button type="object" name="action_open_product_version" string="Go" icon="fa-arrow-right" help="Go to this product"/>
+                        </tree>
+                    </field>
+                </page>
+                <page string="Docs" name="docs">
+                    <field name="doc_ids" mode="kanban" options="{'no_create_edit': True}" context="{'default_res_model': 'product.template', 'default_res_id': active_id}">
+                        <kanban limit="10" default_order="priority desc, name" quick_create="false" create="true" delete="true">
+                            <field name="id"/>
+                            <field name="res_model" invisible="1"/>
+                            <field name="res_id" invisible="1"/>
+                            <field name="mimetype"/>
+                            <field name="type"/>
+                            <field name="datas_fname"/>
+                            <field name="name"/>
+                            <field name="priority"/>
+                            <templates>
+                                <t t-name="kanban-box">
+                                    <div class="oe_kanban_global_click">
+                                        <div class="oe_kanban_vignette">
+                                            <div class="oe_attachment">
+                                                <div class="row">
+                                                    <div class="col-xs-4 o_kanban_primary_left" t-if="record.type.raw_value == 'binary'">
+                                                        <a t-attf-href="/web/content/#{record.id.value}?download=1">
+                                                            <t t-set="webimage" t-value="new RegExp('image.*(gif|jpeg|jpg|png)').test(record.mimetype.value)"/>
+                                                            <div t-if="!webimage" class="o_image" t-att-data-mimetype="record.mimetype.value"/>
+                                                            <div t-if="webimage" class="o_kanban_attachment_image">
+                                                                <img t-attf-src="/web/image/#{record.id.value}?download=1"/>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                    <div class="col-xs-8">
+                                                        <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right"/>
+                                                        <strong><field name="name"/></strong><br/>
+                                                        <field name="datas_fname"/><br/>
+                                                        <div class="mt8">
+                                                            <field name="priority" widget="priority"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </templates>
+                        </kanban>
+                    </field>
+                    <field name="version_doc_ids" mode="kanban" options="{'no_create_edit': True}" context="{'default_res_model': 'product.template', 'default_res_id': active_id}">
+                        <kanban limit="10" default_order="priority desc, name" quick_create="false" create="false" delete="false">
+                            <field name="id"/>
+                            <field name="res_model" invisible="1"/>
+                            <field name="res_id" invisible="1"/>
+                            <field name="mimetype"/>
+                            <field name="type"/>
+                            <field name="datas_fname"/>
+                            <field name="name"/>
+                            <field name="priority"/>
+                            <templates>
+                                <t t-name="kanban-box">
+                                    <div class="oe_kanban_global_click">
+                                        <div class="oe_kanban_vignette">
+                                            <div class="oe_attachment">
+                                                <div class="row">
+                                                    <div class="col-xs-4 o_kanban_primary_left" t-if="record.type.raw_value == 'binary'">
+                                                        <a t-attf-href="/web/content/#{record.id.value}?download=1">
+                                                            <t t-set="webimage" t-value="new RegExp('image.*(gif|jpeg|jpg|png)').test(record.mimetype.value)"/>
+                                                            <div t-if="!webimage" class="o_image" t-att-data-mimetype="record.mimetype.value"/>
+                                                            <div t-if="webimage" class="o_kanban_attachment_image">
+                                                                <img t-attf-src="/web/image/#{record.id.value}?download=1"/>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                    <div class="col-xs-8">
+                                                        <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right"/>
+                                                        <strong><field name="name"/></strong><br/>
+                                                        <field name="datas_fname"/><br/>
+                                                        <div class="mt8">
+                                                            <field name="priority" widget="priority"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </templates>
+                        </kanban>
+                    </field>
                 </page>
             </xpath>
         </field>

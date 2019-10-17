@@ -1,0 +1,7 @@
+id,name,code,description
+eng_type_part,Part,P,Products made from a single raw material
+eng_type_weld,Weldment,W,Products made by welding parts together
+eng_type_assm,Assembly,A,Products that require assembly
+eng_type_hard,Modified Hardware,H,Catalog hardware components that get modified
+eng_type_kit,Kit,K,Groups of products that get managed together
+eng_type_split,Package Split,S,Parts that are purchased in a package with other parts

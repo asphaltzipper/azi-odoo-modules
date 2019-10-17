@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+    <record id="engineering_category" model="ir.module.category">
+        <field name="name">Engineering</field>
+    </record>
+
+    <record id="group_engineering_user" model="res.groups">
+        <field name="name">Engineering User</field>
+        <field name="category_id" ref="ecm.engineering_category"/>
+        <field name="users" eval="[(4, ref('base.user_root'))]"/>
+    </record>
+
+    <record id="group_engineering_manager" model="res.groups">
+        <field name="name">Engineering Manager</field>
+        <field name="category_id" ref="ecm.engineering_category"/>
+        <field name="implied_ids" eval="[(4, ref('ecm.group_engineering_user'))]"/>
+        <field name="users" eval="[(4, ref('base.user_root'))]"/>
+    </record>
+
+</data>
+</openerp>

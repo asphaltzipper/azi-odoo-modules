@@ -53,6 +53,7 @@ Engineering Features for Products
         'views/e_kanban_views.xml',
         'views/eng_coating.xml',
         'security/ir.model.access.csv',
+        'data/engineering.part.type.csv',
     ],
     "installable": True,
     "auto_install": False,

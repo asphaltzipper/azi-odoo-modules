@@ -44,6 +44,7 @@ class EcmEcoApprovalTmpl(models.Model):
 class EcmEcoApproval(models.Model):
     _name = 'ecm.eco.approval'
     _description = 'ECO Approval'
+    _order = 'sequence, signed_date'
 
     name = fields.Char(
         string='Name',
@@ -51,11 +52,17 @@ class EcmEcoApproval(models.Model):
 
     eco_id = fields.Many2one(
         comodel_name='ecm.eco',
-        required=True)
+        required=True,
+        ondelete='cascade')
 
     stage_id = fields.Many2one(
         comodel_name='ecm.eco.stage',
         required=True)
+
+    sequence = fields.Integer(
+        related='stage_id.sequence',
+        store=True,
+        readonly=True)
 
     this_stage = fields.Boolean(
         compute='_compute_this_stage',
@@ -177,6 +184,8 @@ class EcmEco(models.Model):
     _description = 'Engineering Change Order'
     _order = 'name desc'
 
+    _sql_constraints = [('name_uniq', 'unique (name)', "ECO Number Already Used")]
+
     def _get_default_stage_id(self):
         """ Gives default stage_id """
         type_id = self.env.context.get('default_type_id')
@@ -196,8 +205,7 @@ class EcmEco(models.Model):
         required=True)
 
     notes = fields.Text(
-        string='Notes',
-        required=True)
+        string='Notes')
 
     owner_id = fields.Many2one(
         comodel_name='res.users',
@@ -244,14 +252,23 @@ class EcmEco(models.Model):
         required=True,
         default=fields.Date.today())
 
-    line_ids = fields.One2many(
-        comodel_name='ecm.eco.line',
+    rev_line_ids = fields.One2many(
+        comodel_name='ecm.eco.rev.line',
+        inverse_name='eco_id')
+
+    intro_line_ids = fields.One2many(
+        comodel_name='ecm.eco.intro.line',
+        inverse_name='eco_id')
+
+    obsolete_line_ids = fields.One2many(
+        comodel_name='ecm.eco.obsolete.line',
         inverse_name='eco_id')
 
     can_advance = fields.Boolean(
         string='Advance',
         compute='_compute_can_advance',
-        store=True)
+        store=False,
+        help="Can advance to the next stage")
 
     @api.model
     def _read_group_stage_ids(self, stages, domain, order):
@@ -259,22 +276,43 @@ class EcmEco(models.Model):
         stage_ids = stages._search(search_domain, order=order, access_rights_uid=SUPERUSER_ID)
         return stages.browse(stage_ids)
 
-    @api.depends('approval_ids', 'stage_id.create_revs')
+    @api.depends('stage_id', 'approval_ids.state', 'stage_id.create_revs')
     def _compute_can_advance(self):
         for eco in self:
             required_approvals = eco.approval_ids.filtered(lambda x: x.stage_id == x.eco_id.stage_id)
             require_new_revs = eco.stage_id.create_revs
+            final_stages = eco.stage_id.search([('final', '=', True)])
+            if eco.stage_id in final_stages:
+                eco.can_advance = False
+                return
             if not required_approvals and not require_new_revs:
-                self.can_advance = True
+                eco.can_advance = True
             else:
                 approved = all(x == 'approved' for x in required_approvals.mapped('state'))
-                new_revs_done = all(eco.line_ids.mapped('new_product_id'))
-                self.can_advance = approved and new_revs_done
+                new_revs_done = all(eco.rev_line_ids.mapped('new_product_id'))
+                eco.can_advance = approved and new_revs_done
+
+    @api.multi
+    def unlink(self):
+        for rec in self:
+            if rec.rev_line_ids.filtered(lambda x: x.new_product_id and x.new_product_id != x.product_id):
+                raise UserError("Can't delete because one or more product lines have already been revised")
+        return super(EcmEco, self).unlink()
 
     @api.model
     def validate_stage_advance(self, new_stage_id):
         self.ensure_one()
+
         new_stage = self.env['ecm.eco.stage'].browse(new_stage_id)
+
+        if self.stage_id.is_reject and new_stage.sequence < self.stage_id.sequence:
+            # allow backing down from rejected stage
+            return
+        elif self.stage_id.final:
+            raise UserError("This ECO is in a final stage.  It can't be changed.")
+
+        if new_stage.is_reject and any(self.rev_line_ids.mapped('new_product_id')):
+            raise UserError("ECOs can't be rejected after new revisions have been created")
 
         rejected_approvals = self.approval_ids.filtered(lambda x: x.state == 'rejected')
         if rejected_approvals and new_stage.is_reject:
@@ -282,15 +320,18 @@ class EcmEco(models.Model):
             return
 
         if new_stage.sequence < self.stage_id.sequence:
-            # always allow changing to an earlier stage
+            # allow changing to an earlier stage
             return
 
         required_approvals = self.approval_ids.filtered(lambda x: x.stage_id == x.eco_id.stage_id)
         if not all(x == 'approved' for x in required_approvals.mapped('state')):
             raise UserError("Some approvals have not been accepted")
 
-        if self.stage_id.create_revs and not all(self.line_ids.mapped('new_product_id')):
+        if self.stage_id.create_revs and not all(self.rev_line_ids.mapped('new_product_id')):
             raise UserError("Some new revisions have not been created")
+
+        if self.stage_id.create_revs and not all(self.obsolete_line_ids.mapped('product_id.deprecated')):
+            raise UserError("Some obsolete items have not been deprecated")
 
     @api.onchange('type_id')
     def _onchange_type(self):
@@ -301,31 +342,44 @@ class EcmEco(models.Model):
                 self.stage_id = self.type_id.default_stage
 
     @api.model
-    def update_type_approvals(self, values):
-        if self.type_id and values.get('type_id') and values['type_id'] != self.type_id.id:
-            # only operate with current and future stages
-            # delete unsigned future stage approvals
-            # keep approvals that have already been signed (approved or rejected) on past stages
-            self.approval_ids.filtered(lambda x: x.stage_id.sequence >= x.eco_id.stage_id.sequence and x.state == 'none').unlink()
-            type_stage_ids = self.env['ecm.eco.type'].search([('id', '=', values['type_id'])]).stage_ids.ids
-            # create new approvals
-            curr_stage_seq = self.stage_id.sequence
-            future_stage_ids = self.env['ecm.eco.stage'].search([('id', 'in', type_stage_ids), ('sequence', '>=', curr_stage_seq)])
-            new_tmpls = self.env['ecm.eco.approval.tmpl'].search([('stage_id', 'in', future_stage_ids)])
-            for tmpl in new_tmpls:
-                self.approval_ids.create({
-                    'eco_id': self.id,
-                    'name': tmpl.name,
-                    'stage_id': tmpl.stage_id,
-                    'approval_type': tmpl.approval_type,
-                    'allowed_user_ids': [(6, 0, tmpl.user_ids.ids)]
-                })
+    def _create_pending_approvals(self, type_id=None):
+        self.ensure_one()
+        type_id = type_id or self.type_id.id
+        type_stage_ids = self.env['ecm.eco.type'].search([('id', '=', type_id)]).stage_ids.ids
+        curr_stage_seq = self.stage_id.sequence
+        future_stage_ids = self.env['ecm.eco.stage'].search([
+            ('id', 'in', type_stage_ids),
+            ('sequence', '>=', curr_stage_seq)])
+        new_tmpls = self.env['ecm.eco.approval.tmpl'].search([('stage_id', 'in', future_stage_ids.ids)])
+        for tmpl in new_tmpls:
+            self.approval_ids.create({
+                'eco_id': self.id,
+                'name': tmpl.name,
+                'stage_id': tmpl.stage_id.id,
+                'approval_type': tmpl.approval_type,
+                'allowed_user_ids': [(6, 0, tmpl.user_ids.ids)]
+            })
+
+    @api.model
+    def update_pending_approvals(self, new_type_id=None):
+        self.ensure_one()
+        # only operate with current and future stages
+        # delete unsigned future stage approvals
+        # keep approvals that have already been signed (approved or rejected) on past stages
+        type_id = new_type_id or self.type_id.id
+        self.approval_ids.filtered(
+            lambda x: x.stage_id.sequence >= x.eco_id.stage_id.sequence and x.state == 'none'
+        ).unlink()
+
+        # create new approvals
+        self._create_pending_approvals(self, type_id)
 
     @api.multi
     def write(self, vals):
-        self.update_type_approvals(vals)
-        if self.stage_id.final:
-            raise UserError("This ECO is in a final stage.  It can't be changed.")
+        # if eco type is changing, update approvals list
+        if self.type_id and vals.get('type_id') and vals['type_id'] != self.type_id.id:
+            self.update_pending_approvals(vals['type_id'])
+        # if stage is changing, validate stage advance
         if self.stage_id and vals.get('stage_id') and vals['stage_id'] != self.stage_id.id:
             self.validate_stage_advance(vals['stage_id'])
         return super(EcmEco, self).write(vals)
@@ -334,34 +388,33 @@ class EcmEco(models.Model):
     def create(self, vals):
         new_eco = super(EcmEco, self).create(vals)
         # create approvals from type-stage-approval-templates
-        tmpls = new_eco.type_id.stage_ids.mapped('approval_tmpl_ids')
-        for tmpl in tmpls:
-            new_eco.approval_ids.create({
-                'eco_id': new_eco.id,
-                'name': tmpl.name,
-                'stage_id': tmpl.stage_id.id,
-                'approval_type': tmpl.approval_type,
-                'allowed_user_ids': [(6, 0, tmpl.user_ids.ids)]
-            })
+        new_eco._create_pending_approvals()
         return new_eco
 
-    @api.multi
     def action_create_revisions(self):
         self.ensure_one()
         if not self.stage_id.create_revs:
             raise UserError("Can't create new revisions while the ECO is in stage {}".format(self.stage_id.name))
-        for line in self.line_ids.filtered(lambda x: not x.new_product_id):
-            new_prod = line.new_product_id.search([('default_code', '=', line.new_code)])
+        for line in self.rev_line_ids.filtered(lambda x: not x.new_product_id):
+            new_code = line.new_code
+            new_prod = self.env['product.product'].search([('default_code', '=', line.new_code)])
             if new_prod:
                 line.new_product_id = new_prod
             else:
                 values = {'default_code': line.new_code}
-                line.new_product_id = line.product_id.browse(line.product_id.button_revise(values))
+                new_prod = line.product_id.button_revise(values)
+                line.new_product_id = new_prod
+        for obsolete in self.obsolete_line_ids:
+            obsolete.product_id.deprecated = True
+            obsolete.product_id.warning = True
+            obsolete.product_id.warning_message = obsolete.reason
 
 
-class EcmEcoLine(models.Model):
-    _name = 'ecm.eco.line'
+class EcmEcoRevLine(models.Model):
+    _name = 'ecm.eco.rev.line'
     _order = 'product_id'
+
+    _sql_constraints = [('product_uniq', 'unique (product_id)', "Product already revised on another ECO")]
 
     eco_id = fields.Many2one(
         comodel_name='ecm.eco',
@@ -375,11 +428,23 @@ class EcmEcoLine(models.Model):
         related='eco_id.state',
         readonly=True)
 
+    target_date = fields.Date(
+        string='Date',
+        related='eco_id.target_date',
+        readonly=True)
+
+    owner_id = fields.Many2one(
+        comodel_name='res.users',
+        string="Owner",
+        related='eco_id.owner_id',
+        readonly=True)
+
     product_id = fields.Many2one(
         comodel_name='product.product',
         string='Product',
         required=True,
-        ondelete='set null')
+        ondelete='set null',
+        domain=[('deprecated', '=', False)])
 
     new_rev = fields.Char(
         string='New Rev',
@@ -395,6 +460,38 @@ class EcmEcoLine(models.Model):
         string='New Product',
         ondelete='set null',
         readonly=True)
+
+    new_exists = fields.Boolean(
+        string='Rev',
+        readonly=True,
+        compute='_compute_new_exists')
+
+    old_onhand = fields.Float(
+        related='product_id.qty_available',
+        readonly=True,
+        string="Qty Old")
+
+    new_onhand = fields.Float(
+        related='new_product_id.qty_available',
+        readonly=True,
+        string="Qty New")
+
+    image_small = fields.Binary(
+        related='new_product_id.image_small',
+        string='Image',
+        readonly=True)
+
+    final_docs = fields.Boolean(
+        string='Final Docs',
+        compute='_compute_final_docs',
+        readonly=True,
+        help="New product has documents attached")
+
+    eco_docs = fields.Boolean(
+        string='ECO Docs',
+        compute='_compute_eco_docs',
+        readonly=True,
+        help="Line has documents attached in this ECO")
 
     zone = fields.Char(
         string="Zone")
@@ -415,6 +512,12 @@ class EcmEcoLine(models.Model):
         string="Compatibility",
         required=True)
 
+    doc_ids = fields.One2many(
+        comodel_name='ir.attachment',
+        string='Documents',
+        readonly=True,
+        compute='_compute_doc_ids')
+
     @api.constrains('product_id')
     def _validate_product_id(self):
         category = self.product_id.categ_id
@@ -429,15 +532,211 @@ class EcmEcoLine(models.Model):
             raise ValidationError("Only products marked for Engineering Management can be revised on an ECO")
         new_code = "{}{}{}".format(self.product_id.eng_code, category.rev_delimiter, self.new_rev)
         if not re.match(category.def_code_regex, self.new_code):
-            raise ValidationError("The new revision code {} is not valid for this product's Engineering Category".format(new_code))
-        if self.product_id.default_code == self.new_code:
-            raise ValidationError("The new revision code is the same as the old one: {}".format(new_code))
+            raise ValidationError("The new revision code {} is not valid for "
+                                  "this product's Engineering Category".format(new_code))
+        if self.new_rev != category.default_rev and self.new_rev <= self.product_id.eng_rev:
+            raise ValidationError("The new revision code must be greater than the old one: {}".format(new_code))
+        # throw an error if product_id is revised on another ECO
+        domain = [('eco_id', '!=', self.eco_id.id), ('product_id', '=', self.product_id.id)]
+        other_count = self.search_count(domain)
+        if other_count and not (
+            other_count == 1 and
+            self.product_id.eng_rev == category.default_rev and
+            self.new_rev != category.default_rev
+        ):
+            raise ValidationError("Product has already been revised on another ECO")
         return True
 
-    @api.multi
+    @api.depends('product_id', 'new_rev')
     def _compute_new_code(self):
         for line in self:
-            if self.product_id:
-                line.new_code = "{}{}{}".format(line.product_id.eng_code, line.product_id.categ_id.rev_delimiter, line.new_rev)
+            if line.product_id:
+                line.new_code = "{}{}{}".format(
+                    line.product_id.eng_code,
+                    line.product_id.categ_id.rev_delimiter,
+                    line.new_rev)
             else:
                 line.new_code = False
+
+    @api.depends('new_product_id')
+    def _compute_new_exists(self):
+        for line in self:
+            if line.new_product_id:
+                line.new_exists = True
+            else:
+                line.new_exists = False
+
+    @api.depends('new_product_id')
+    def _compute_final_docs(self):
+        for line in self:
+            domain = [
+                ('res_field', '=', False),
+                '|',
+                '&',
+                ('res_model', '=', 'product.product'),
+                ('res_id', '=', line.new_product_id.id),
+                '&',
+                ('res_model', '=', 'product.template'),
+                ('res_id', '=', line.new_product_id.product_tmpl_id.id),
+            ]
+            line.final_docs = self.env['ir.attachment'].search(domain, count=True)
+
+    @api.depends('product_id', 'new_rev')
+    def _compute_eco_docs(self):
+        for line in self:
+            domain = [
+                ('res_model', '=', 'ecm.eco.rev.line'),
+                ('res_id', '=', line.id),
+            ]
+            line.eco_docs = self.env['ir.attachment'].search(domain, count=True)
+
+    @api.depends('product_id', 'new_rev')
+    def _compute_doc_ids(self):
+        for line in self:
+            doc_domain = [
+                ('res_model', '=', 'ecm.eco.rev.line'),
+                ('res_id', '=', line.id),
+            ]
+            line.doc_ids = self.env['ir.attachment'].search(doc_domain)
+
+    @api.multi
+    def attach_document(self, file_name, file_data):
+        self.env['ir.attachment'].create({
+            'name': file_name,
+            'datas': file_data,
+            'datas_fname': file_name,
+            'res_model': 'ecm.eco.rev.line',
+            'res_id': self.id,
+        })
+
+
+class EcmEcoIntroLine(models.Model):
+    _name = 'ecm.eco.intro.line'
+    _order = 'product_id'
+
+    eco_id = fields.Many2one(
+        comodel_name='ecm.eco',
+        string="ECO",
+        required=True,
+        ondelete='cascade',
+        readonly=True)
+
+    eco_state = fields.Selection(
+        string='State',
+        related='eco_id.state',
+        readonly=True)
+
+    target_date = fields.Date(
+        string='Date',
+        related='eco_id.target_date',
+        readonly=True)
+
+    owner_id = fields.Many2one(
+        comodel_name='res.users',
+        string="Owner",
+        related='eco_id.owner_id',
+        readonly=True)
+
+    product_id = fields.Many2one(
+        comodel_name='product.product',
+        string='Product',
+        required=True,
+        ondelete='set null')
+
+    product_onhand = fields.Float(
+        related='product_id.qty_available',
+        readonly=True)
+
+    image_small = fields.Binary(
+        related='product_id.image_small',
+        string='Image',
+        readonly=True)
+
+    final_docs = fields.Boolean(
+        string='Final Docs',
+        compute='_compute_final_docs',
+        readonly=True,
+        help="New product has documents attached")
+
+    notes = fields.Text(
+        string="Notes")
+
+    @api.constrains('product_id')
+    def _validate_product_id(self):
+        category = self.product_id.categ_id
+        if not category.eng_management:
+            raise ValidationError("Only products marked for Engineering Management can be introduced on an ECO")
+        return True
+
+    @api.depends('product_id')
+    def _compute_final_docs(self):
+        for line in self:
+            domain = [
+                ('res_field', '=', False),
+                '|',
+                '&',
+                ('res_model', '=', 'product.product'),
+                ('res_id', '=', line.product_id.id),
+                '&',
+                ('res_model', '=', 'product.template'),
+                ('res_id', '=', line.product_id.product_tmpl_id.id),
+            ]
+            line.final_docs = self.env['ir.attachment'].search(domain, count=True)
+
+
+class EcmEcoObsoleteLine(models.Model):
+    _name = 'ecm.eco.obsolete.line'
+    _order = 'product_id'
+
+    eco_id = fields.Many2one(
+        comodel_name='ecm.eco',
+        string="ECO",
+        required=True,
+        ondelete='cascade',
+        readonly=True)
+
+    eco_state = fields.Selection(
+        string='State',
+        related='eco_id.state',
+        readonly=True)
+
+    target_date = fields.Date(
+        string='Date',
+        related='eco_id.target_date',
+        readonly=True)
+
+    owner_id = fields.Many2one(
+        comodel_name='res.users',
+        string="Owner",
+        related='eco_id.owner_id',
+        readonly=True)
+
+    product_id = fields.Many2one(
+        comodel_name='product.product',
+        string='Product',
+        required=True,
+        ondelete='set null')
+
+    product_onhand = fields.Float(
+        related='product_id.qty_available',
+        readonly=True)
+
+    deprecated = fields.Boolean(
+        related='product_id.deprecated',
+        readonly=True,
+        string='Obsolete',
+        help="Showing current obsolete status of the part.  If the product is "
+             "on this list, it will get set to obsolete automatically as the "
+             "ECO is advanced.")
+
+    reason = fields.Text(
+        string="Reason",
+        required=True,
+        help="Explanation or reason that this product will be obsolete")
+
+    @api.constrains('product_id')
+    def _validate_product_id(self):
+        category = self.product_id.categ_id
+        if not category.eng_management:
+            raise ValidationError("Only products marked for Engineering Management can be deprecated on an ECO")
+        return True

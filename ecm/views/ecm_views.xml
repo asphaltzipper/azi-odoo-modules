@@ -28,17 +28,22 @@
                         </group>
                     </group>
                     <notebook>
-                        <page name="products" string="Products">
-                            <field name="line_ids" context="{'default_eco_id': active_id}">
+                        <page name="revisions" string="Revised">
+                            <field name="rev_line_ids" context="{'default_eco_id': active_id}">
                                 <tree>
-                                    <field name="eco_id"/>
+                                    <field name="eco_id" invisible="1"/>
                                     <field name="product_id"/>
                                     <field name="new_rev"/>
-                                    <field name="new_product_id"/>
+                                    <field name="new_exists"/>
                                     <field name="zone"/>
                                     <field name="description"/>
                                     <field name="reason"/>
                                     <field name="compatibility"/>
+                                    <field name="image_small" string="Image" widget="image" height="32"/>
+                                    <field name="eco_docs"/>
+                                    <field name="final_docs"/>
+                                    <field name="old_onhand"/>
+                                    <field name="new_onhand"/>
                                 </tree>
                                 <form>
                                     <sheet>
@@ -56,9 +61,85 @@
                                                 <field name="zone"/>
                                             </group>
                                             <field name="notes"/>
+                                            <button name="%(ecm.action_upload_rev_line_doc)d" string="Upload Doc" type="action" class="oe_highlight"/>
+                                            <field name="doc_ids" mode="kanban" context="{'default_res_model': 'ecm.eco.rev.line', 'default_res_id': active_id}">
+                                                <kanban limit="10" default_order="priority desc, name" quick_create="false" delete="true">
+                                                    <field name="id"/>
+                                                    <field name="res_model" invisible="1"/>
+                                                    <field name="res_id" invisible="1"/>
+                                                    <field name="mimetype"/>
+                                                    <field name="type"/>
+                                                    <field name="datas_fname"/>
+                                                    <field name="name"/>
+                                                    <field name="priority"/>
+                                                    <templates>
+                                                        <t t-name="kanban-box">
+                                                            <div class="oe_kanban_global_click">
+                                                                <div class="oe_kanban_vignette">
+                                                                    <div class="oe_attachment">
+                                                                        <div class="row">
+                                                                            <div class="col-xs-4 o_kanban_primary_left" t-if="record.type.raw_value == 'binary'">
+                                                                                <a t-attf-href="/web/content/#{record.id.value}?download=1">
+                                                                                    <t t-set="webimage" t-value="new RegExp('image.*(gif|jpeg|jpg|png)').test(record.mimetype.value)"/>
+                                                                                    <div t-if="!webimage" class="o_image" t-att-data-mimetype="record.mimetype.value"/>
+                                                                                    <div t-if="webimage" class="o_kanban_attachment_image">
+                                                                                        <img t-attf-src="/web/image/#{record.id.value}?download=1"/>
+                                                                                    </div>
+                                                                                </a>
+                                                                            </div>
+                                                                            <div class="col-xs-8">
+                                                                                <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right"/>
+                                                                                <strong><field name="name"/></strong><br/>
+                                                                                <field name="datas_fname"/><br/>
+                                                                                <div class="mt8">
+                                                                                    <field name="priority" widget="priority"/>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </t>
+                                                    </templates>
+                                                </kanban>
+                                            </field>
                                         </group>
                                     </sheet>
                                 </form>
+                            </field>
+                        </page>
+                        <page name="introductions" string="Introduced">
+                            <field name="intro_line_ids" context="{'default_eco_id': active_id}">
+                                <tree>
+                                    <field name="eco_id" invisible="1"/>
+                                    <field name="product_id"/>
+                                    <field name="image_small" string="Image" widget="image" height="32"/>
+                                    <field name="final_docs"/>
+                                    <field name="product_onhand"/>
+                                </tree>
+                                <form>
+                                    <sheet>
+                                        <group>
+                                            <group>
+                                                <field name="eco_id"/>
+                                                <field name="product_id"/>
+                                                <field name="product_onhand"/>
+                                            </group>
+                                            <field name="notes"/>
+                                        </group>
+                                    </sheet>
+                                </form>
+                            </field>
+                        </page>
+                        <page name="obsolete" string="Obsolete">
+                            <field name="obsolete_line_ids" context="{'default_eco_id': active_id}">
+                                <tree editable="top">
+                                    <field name="eco_id" invisible="1"/>
+                                    <field name="product_id"/>
+                                    <field name="reason"/>
+                                    <field name="deprecated"/>
+                                    <field name="product_onhand"/>
+                                </tree>
                             </field>
                         </page>
                         <page name="approvals" string="Approvals">
@@ -94,11 +175,31 @@
             <tree string="ECO">
                 <field name="name"/>
                 <field name="description"/>
+                <field name="stage_id"/>
                 <field name="owner_id"/>
                 <field name="type_id"/>
                 <field name="target_date"/>
                 <field name="can_advance"/>
             </tree>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="ecm_eco_search_view">
+        <field name="name">ecm.eco.search.view</field>
+        <field name="model">ecm.eco</field>
+        <field name="arch" type="xml">
+            <search string="ECO Filter">
+                <field name="name" string="Name"/>
+                <field name="description" string="Description"/>
+                <group>
+                    <filter string='Open' name="open_filter" domain="[('stage_id.final', '=', False)]" />
+                    <filter string='Closed' name="closed_filter" domain="[('stage_id.final', '!=', False)]" />
+                </group>
+                <group expand='0' string='Group by...'>
+                    <filter name='group_stage' string='Stage' domain="[]" context="{'group_by' : 'stage_id'}"/>
+                    <filter name='group_owner' string='Owner' domain="[]" context="{'group_by' : 'owner_id'}"/>
+                </group>
+            </search>
         </field>
     </record>
 
@@ -108,7 +209,8 @@
         <field name="res_model">ecm.eco</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <!-- <field name="search_view_id" ref="view_ecm_eco_filter"/> -->
+        <field name="search_view_id" ref="ecm_eco_search_view"/>
+        <field name="context">{'search_default_open_filter':1}</field>
         <field name="help" type="html">
           <p class="oe_view_nocontent_create">
             Click to create an Engineering Change Order.
@@ -213,17 +315,21 @@
         <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem
-        action="action_ecm_eco_tree"
-        id="ecm_menu"
-        groups="stock.group_stock_user"
+    <menuitem id="ecm_menu"
         name="ECM"
+        action="action_ecm_eco_tree"
+        groups="stock.group_stock_user"
         sequence="36"
         web_icon="ecm,static/description/icon.png"/>
 
+    <menuitem id="ecm_operations_menu"
+        name="Operations"
+        parent="ecm.ecm_menu"
+        sequence="100"/>
+
     <menuitem id="ecm_eco_menu"
         name="ECOs"
-        parent="ecm.ecm_menu"
+        parent="ecm.ecm_operations_menu"
         action="action_ecm_eco_tree"
         sequence="1"/>
 
