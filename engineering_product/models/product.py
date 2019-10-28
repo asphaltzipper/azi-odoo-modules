@@ -69,10 +69,10 @@ class ProductTemplate(models.Model):
         string='Engineering Notes',
         compute='_compute_eng_notes',
         inverse='_set_eng_notes')
-    preparation = fields.Many2one(
+    preparation_id = fields.Many2one(
         comodel_name='engineering.preparation',
         string='Prep')
-    coating = fields.Many2one(
+    coating_id = fields.Many2one(
         comodel_name='engineering.coating',
         string='Coating')
     doc_ids = fields.One2many(

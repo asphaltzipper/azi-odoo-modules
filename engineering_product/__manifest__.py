@@ -51,7 +51,7 @@ Engineering Features for Products
         'views/shelf_location_views.xml',
         'views/engineering_category_views.xml',
         'views/e_kanban_views.xml',
-        'views/eng_coating.xml',
+        'views/engineering_attribute_views.xml',
         'security/ir.model.access.csv',
         'data/engineering.part.type.csv',
     ],

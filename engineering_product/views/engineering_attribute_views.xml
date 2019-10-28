@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <record id="engineering_part_type_tree_view" model="ir.ui.view">
+        <field name="name">engineering.part.type.tree.view</field>
+        <field name="model">engineering.part.type</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <tree string="Part Type" editable="bottom">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="description"/>
+            </tree>
+        </field>
+    </record>
+
     <record id="prep_list_view" model="ir.ui.view">
         <field name="name">prep.list</field>
         <field name="model">engineering.preparation</field>
@@ -23,6 +36,15 @@
         </field>
     </record>
 
+
+    <record id="eng_type_view_action" model="ir.actions.act_window">
+        <field name="name">Part Type</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">engineering.part.type</field>
+        <field name="view_type">form</field>
+        <field name="view_id" ref="engineering_part_type_tree_view"/>
+    </record>
+
     <record id="prep_action_form" model="ir.actions.act_window">
         <field name="name">Preparation</field>
         <field name="type">ir.actions.act_window</field>
@@ -41,10 +63,13 @@
 
 
     <menuitem
+        action="engineering_product.eng_type_view_action" id="menu_eng_part_type_list"
+        parent="stock.menu_product_in_config_stock" sequence="30"/>
+    <menuitem
         action="engineering_product.prep_action_form" id="menu_prep_config_stock"
-        parent="stock.menu_product_in_config_stock" sequence="3"/>
+        parent="stock.menu_product_in_config_stock" sequence="40"/>
     <menuitem
         action="engineering_product.coat_action_form" id="menu_coat_config_stock"
-        parent="stock.menu_product_in_config_stock" sequence="3"/>
+        parent="stock.menu_product_in_config_stock" sequence="50"/>
 
 </odoo>
