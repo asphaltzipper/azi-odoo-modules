@@ -229,7 +229,7 @@
                 <record id="account_financial_report_expenses_sm1" model="account.financial.html.report.line">
                     <field name="name">Sales and Marketing Expenses</field>
                     <field name="code">AZPL_EXPSM</field>
-                    <field name="formulas">balance = AZPL_SFEXP.balance + AZPL_SVEXP.balance + AZPL_SWEXP.balance + AZPL_SOEXP.balance + AZPL_STEXP.balance + AZPL_SMEXP.balance</field>
+                    <field name="formulas">balance = AZPL_SFEXP.balance + AZPL_SVEXP.balance + AZPL_SWEXP.balance + AZPL_SOEXP.balance + AZPL_STEXP.balance + AZPL_SMEXP.balance + AZPL_SMOTHER.balance</field>
                     <field name="parent_id" ref='account_financial_report_net_operating_income1'/>
                     <field name="sequence" eval="2"/>
                     <field name="green_on_positive" eval="False"/>
@@ -296,6 +296,17 @@
                         <field name="formulas">balance = sum.balance</field>
                         <field name="parent_id" ref='account_financial_report_expenses_sm1'/>
                         <field name="domain" eval="[('account_id.user_type_id', '=', ref('azi_account_reports.account_type_expense_sales_marketing'))]" />
+                        <field name="groupby">account_id</field>
+                        <field name="sequence" eval="6"/>
+                        <field name="green_on_positive" eval="False"/>
+                        <field name="level" eval="5" />
+                    </record>
+                    <record id="account_financial_report_sm_other1" model="account.financial.html.report.line">
+                        <field name="name">Other Expenses</field>
+                        <field name="code">AZPL_SMOTHER</field>
+                        <field name="formulas">balance = sum.balance</field>
+                        <field name="parent_id" ref='account_financial_report_expenses_sm1'/>
+                        <field name="domain" eval="[('account_id.user_type_id', '=', ref('azi_account_reports.account_type_expense_sales_other'))]" />
                         <field name="groupby">account_id</field>
                         <field name="sequence" eval="6"/>
                         <field name="green_on_positive" eval="False"/>
