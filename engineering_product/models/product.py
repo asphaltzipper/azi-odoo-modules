@@ -75,6 +75,10 @@ class ProductTemplate(models.Model):
     coating_id = fields.Many2one(
         comodel_name='engineering.coating',
         string='Coating')
+    make_flag = fields.Boolean(
+        string='Make',
+        compute='_compute_make_flag',
+        help="Selected production routes include manufacturing")
     doc_ids = fields.One2many(
         comodel_name='ir.attachment',
         inverse_name='res_id',
@@ -90,6 +94,13 @@ class ProductTemplate(models.Model):
         string='Version Documents',
         readonly=True,
         compute='_compute_version_doc_ids')
+
+    @api.depends('route_ids')
+    def _compute_make_flag(self):
+        for prod in self:
+            rules = self.route_ids.mapped('pull_ids')
+            actions = rules and rules.mapped('action') or []
+            prod.make_flag = 'manufacture' in actions
 
     @api.depends('categ_id', 'product_variant_ids', 'product_variant_ids.default_code')
     def _compute_version_ids(self):
