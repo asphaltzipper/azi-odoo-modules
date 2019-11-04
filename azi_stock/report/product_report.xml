@@ -24,8 +24,8 @@
             model="product.template"
             paperformat="azi_stock.paperformat_barcode"
             report_type="qweb-pdf"
-            name="azi_stock.azi_report_productlabel"
-            file="azi_stock.report.azi_report_productlabel"/>
+            name="azi_stock.azi_report_product_template_label"
+            file="azi_stock.report.product_labels"/>
 
         <report
             id="action_report_azi_product_product_label"
@@ -33,8 +33,8 @@
             model="product.product"
             paperformat="azi_stock.paperformat_barcode"
             report_type="qweb-pdf"
-            name="azi_stock.azi_report_productlabel"
-            file="azi_stock.report.azi_report_productlabel"/>
+            name="azi_stock.azi_report_product_product_label"
+            file="azi_stock.report.product_labels"/>
 
     </data>
 </odoo>
