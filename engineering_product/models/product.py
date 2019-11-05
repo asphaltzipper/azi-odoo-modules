@@ -98,7 +98,7 @@ class ProductTemplate(models.Model):
     @api.depends('route_ids')
     def _compute_make_flag(self):
         for prod in self:
-            rules = self.route_ids.mapped('pull_ids')
+            rules = prod.route_ids.mapped('pull_ids')
             actions = rules and rules.mapped('action') or []
             prod.make_flag = 'manufacture' in actions
 
@@ -116,7 +116,7 @@ class ProductTemplate(models.Model):
     def _compute_version_doc_ids(self):
         for prod in self:
             vers_domain = [
-                ('id', '!=', prod.id),
+                # ('id', '!=', prod.id),
                 ('eng_code', '=', prod.eng_code),
                 '|', ('active', '=', True), ('active', '=', False)]
             versions = prod.search(vers_domain)

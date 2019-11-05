@@ -476,6 +476,16 @@ class EcmEcoRevLine(models.Model):
         readonly=True,
         string="Qty New")
 
+    obsolete_move_ids = fields.One2many(
+        comodel_name='stock.move',
+        inverse_name='product_id',
+        string='Old Orders',
+        compute='_compute_obsolete_move_ids')
+
+    has_obsolete_moves = fields.Boolean(
+        string='Orders',
+        compute='_compute_obsolete_move_ids')
+
     image_small = fields.Binary(
         related='new_product_id.image_small',
         string='Image',
@@ -598,6 +608,12 @@ class EcmEcoRevLine(models.Model):
                 ('res_id', '=', line.id),
             ]
             line.doc_ids = self.env['ir.attachment'].search(doc_domain)
+
+    @api.depends('product_id')
+    def _compute_obsolete_move_ids(self):
+        for line in self:
+            line.obsolete_move_ids = line.product_id.stock_move_ids.filtered(lambda x: x.state not in ('done', 'cancel'))
+            line.has_obsolete_moves = bool(len(line.obsolete_move_ids))
 
     @api.multi
     def attach_document(self, file_name, file_data):

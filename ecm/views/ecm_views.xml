@@ -1,6 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <record id="view_ecm_eco_rev_line_form" model="ir.ui.view">
+        <field name="name">ecm.eco.rev.line.form</field>
+        <field name="model">ecm.eco.rev.line</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="eco_id"/>
+                            <field name="product_id"/>
+                            <field name="new_rev"/>
+                            <field name="compatibility"/>
+                            <field name="new_product_id"/>
+                        </group>
+                        <group>
+                            <field name="description"/>
+                            <field name="reason"/>
+                            <field name="zone"/>
+                        </group>
+                        <field name="notes"/>
+                    </group>
+                    <notebook>
+                        <page name="docs" string="Documents">
+                            <button name="%(ecm.action_upload_rev_line_doc)d" string="Upload Doc" type="action" class="oe_highlight"/>
+                            <field name="doc_ids" mode="kanban" context="{'default_res_model': 'ecm.eco.rev.line', 'default_res_id': active_id}">
+                                <kanban limit="10" default_order="priority desc, name" quick_create="false" delete="true">
+                                    <field name="id"/>
+                                    <field name="res_model" invisible="1"/>
+                                    <field name="res_id" invisible="1"/>
+                                    <field name="mimetype"/>
+                                    <field name="type"/>
+                                    <field name="datas_fname"/>
+                                    <field name="name"/>
+                                    <field name="priority"/>
+                                    <templates>
+                                        <t t-name="kanban-box">
+                                            <div class="oe_kanban_global_click">
+                                                <div class="oe_kanban_vignette">
+                                                    <div class="oe_attachment">
+                                                        <div class="row">
+                                                            <div class="col-xs-4 o_kanban_primary_left" t-if="record.type.raw_value == 'binary'">
+                                                                <a t-attf-href="/web/content/#{record.id.value}?download=1">
+                                                                    <t t-set="webimage" t-value="new RegExp('image.*(gif|jpeg|jpg|png)').test(record.mimetype.value)"/>
+                                                                    <div t-if="!webimage" class="o_image" t-att-data-mimetype="record.mimetype.value"/>
+                                                                    <div t-if="webimage" class="o_kanban_attachment_image">
+                                                                        <img t-attf-src="/web/image/#{record.id.value}?download=1"/>
+                                                                    </div>
+                                                                </a>
+                                                            </div>
+                                                            <div class="col-xs-8">
+                                                                <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right"/>
+                                                                <strong><field name="name"/></strong><br/>
+                                                                <field name="datas_fname"/><br/>
+                                                                <div class="mt8">
+                                                                    <field name="priority" widget="priority"/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </templates>
+                                </kanban>
+                            </field>
+                        </page>
+                        <page name="orders" string="Obsolete Orders">
+                            <field name="obsolete_move_ids">
+                                <tree>
+                                    <field name="origin"/>
+                                    <field name="location_dest_id" string="Destination"/>
+                                    <field name="product_qty" string="Quantity"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
     <!-- ECO -->
     <record id="view_ecm_eco_form" model="ir.ui.view">
         <field name="name">ecm.eco.form</field>
@@ -35,7 +117,6 @@
                                     <field name="product_id"/>
                                     <field name="new_rev"/>
                                     <field name="new_exists"/>
-                                    <field name="zone"/>
                                     <field name="description"/>
                                     <field name="reason"/>
                                     <field name="compatibility"/>
@@ -44,68 +125,8 @@
                                     <field name="final_docs"/>
                                     <field name="old_onhand"/>
                                     <field name="new_onhand"/>
+                                    <field name="has_obsolete_moves"/>
                                 </tree>
-                                <form>
-                                    <sheet>
-                                        <group>
-                                            <group>
-                                                <field name="eco_id"/>
-                                                <field name="product_id"/>
-                                                <field name="new_rev"/>
-                                                <field name="compatibility"/>
-                                                <field name="new_product_id"/>
-                                            </group>
-                                            <group>
-                                                <field name="description"/>
-                                                <field name="reason"/>
-                                                <field name="zone"/>
-                                            </group>
-                                            <field name="notes"/>
-                                            <button name="%(ecm.action_upload_rev_line_doc)d" string="Upload Doc" type="action" class="oe_highlight"/>
-                                            <field name="doc_ids" mode="kanban" context="{'default_res_model': 'ecm.eco.rev.line', 'default_res_id': active_id}">
-                                                <kanban limit="10" default_order="priority desc, name" quick_create="false" delete="true">
-                                                    <field name="id"/>
-                                                    <field name="res_model" invisible="1"/>
-                                                    <field name="res_id" invisible="1"/>
-                                                    <field name="mimetype"/>
-                                                    <field name="type"/>
-                                                    <field name="datas_fname"/>
-                                                    <field name="name"/>
-                                                    <field name="priority"/>
-                                                    <templates>
-                                                        <t t-name="kanban-box">
-                                                            <div class="oe_kanban_global_click">
-                                                                <div class="oe_kanban_vignette">
-                                                                    <div class="oe_attachment">
-                                                                        <div class="row">
-                                                                            <div class="col-xs-4 o_kanban_primary_left" t-if="record.type.raw_value == 'binary'">
-                                                                                <a t-attf-href="/web/content/#{record.id.value}?download=1">
-                                                                                    <t t-set="webimage" t-value="new RegExp('image.*(gif|jpeg|jpg|png)').test(record.mimetype.value)"/>
-                                                                                    <div t-if="!webimage" class="o_image" t-att-data-mimetype="record.mimetype.value"/>
-                                                                                    <div t-if="webimage" class="o_kanban_attachment_image">
-                                                                                        <img t-attf-src="/web/image/#{record.id.value}?download=1"/>
-                                                                                    </div>
-                                                                                </a>
-                                                                            </div>
-                                                                            <div class="col-xs-8">
-                                                                                <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right"/>
-                                                                                <strong><field name="name"/></strong><br/>
-                                                                                <field name="datas_fname"/><br/>
-                                                                                <div class="mt8">
-                                                                                    <field name="priority" widget="priority"/>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </t>
-                                                    </templates>
-                                                </kanban>
-                                            </field>
-                                        </group>
-                                    </sheet>
-                                </form>
                             </field>
                         </page>
                         <page name="introductions" string="Introduced">
