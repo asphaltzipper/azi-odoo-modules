@@ -34,6 +34,8 @@ Integrate with Manufacturing Machine Software
         'views/workorder_views.xml',
         'views/webclient_templates.xml',
         'views/mfg_work_views.xml',
+        'views/mrp_bom_views.xml',
+        'views/mrp_routing_views.xml',
         'data/mfg_integration_data.xml',
         'security/ir.model.access.csv',
     ],

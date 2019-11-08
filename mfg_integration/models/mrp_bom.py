@@ -27,8 +27,8 @@ class MrpBom(models.Model):
         compute='_compute_one_component')
 
     routing_detail = fields.Char(
-        string="Routing Detail",
-        compute='_compute_routing_detail')
+        related='routing_id.operations_detail',
+        string='Routing Detail')
 
     def _compute_one_component(self):
         for bom in self:
@@ -36,9 +36,3 @@ class MrpBom(models.Model):
                 bom.one_comp_product_id = bom.bom_line_ids[0].product_id
                 bom.one_comp_product_qty = bom.bom_line_ids[0].product_qty
                 bom.one_comp_product_uom_id = bom.bom_line_ids[0].product_uom_id
-
-    @api.depends('routing_id')
-    def _compute_routing_detail(self):
-        for bom in self:
-            if bom.routing_id:
-                bom.routing_detail = ", " .join(bom.routing_id.operation_ids.mapped('workcenter_id.code'))

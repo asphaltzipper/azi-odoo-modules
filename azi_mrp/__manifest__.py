@@ -24,6 +24,7 @@ AZI Specialized Customizations to MRP
         'report/mrp_production_templates.xml',
         'views/production_move_analysis.xml',
         'views/mrp_stock_balance_views.xml',
+        'views/mrp_bom_views.xml',
         'security/ir.model.access.csv',
     ],
     "installable": True,

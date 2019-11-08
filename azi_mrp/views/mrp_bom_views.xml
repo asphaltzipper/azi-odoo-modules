@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="azi_view_mrp_bom_filter" model="ir.ui.view">
+        <field name="name">azi.mrp.bom.select</field>
+        <field name="model">mrp.bom</field>
+        <field name="inherit_id" ref="mrp.view_mrp_bom_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='product_tmpl_id']" position="attributes">
+                <attribute name="string">Template Name</attribute>
+            </xpath>
+            <field name="code" position="before">
+                <field name="product_id" string="Product" filter_domain="['|',('product_id.default_code','ilike',self),('product_id.name','ilike',self)]"/>
+            </field>
+        </field>
+    </record>
+</odoo>
