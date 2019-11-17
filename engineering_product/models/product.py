@@ -75,10 +75,14 @@ class ProductTemplate(models.Model):
     coating_id = fields.Many2one(
         comodel_name='engineering.coating',
         string='Coating')
-    make_flag = fields.Boolean(
+    make = fields.Selection(
+        selection=[
+            ('P', 'Purchase'),
+            ('M', 'Manufacture'),
+        ],
         string='Make',
-        compute='_compute_make_flag',
-        help="Selected production routes include manufacturing")
+        compute='_compute_make',
+        help="Selected production routes include manufacturing (M) or not (P)")
     doc_ids = fields.One2many(
         comodel_name='ir.attachment',
         inverse_name='res_id',
@@ -96,11 +100,11 @@ class ProductTemplate(models.Model):
         compute='_compute_version_doc_ids')
 
     @api.depends('route_ids')
-    def _compute_make_flag(self):
+    def _compute_make(self):
         for prod in self:
             rules = prod.route_ids.mapped('pull_ids')
             actions = rules and rules.mapped('action') or []
-            prod.make_flag = 'manufacture' in actions
+            prod.make = 'manufacture' in actions and 'M' or 'P'
 
     @api.depends('categ_id', 'product_variant_ids', 'product_variant_ids.default_code')
     def _compute_version_ids(self):
@@ -140,19 +144,19 @@ class ProductTemplate(models.Model):
 
     @api.depends('categ_id', 'product_variant_ids', 'product_variant_ids.default_code')
     def _compute_eng_code(self):
-        unique_variants = self.filtered(lambda template: len(template.product_variant_ids) == 1 and template.categ_id.eng_management)
-        for template in unique_variants:
-            template.eng_code, template.eng_rev = template.product_variant_ids._parse_default_code(
-                template.product_variant_ids.default_code,
-                template.categ_id.def_code_regex
+        unique_variants = self.filtered(lambda x: len(x.product_variant_ids) == 1 and x.categ_id.eng_management)
+        for tmpl in unique_variants:
+            tmpl.eng_code, tmpl.eng_rev = tmpl.product_variant_ids._parse_default_code(
+                tmpl.product_variant_ids.default_code,
+                tmpl.categ_id.def_code_regex
             )
-        for template in (self - unique_variants):
-            template.eng_code, template.eng_rev = ('', '')
+        for tmpl in (self - unique_variants):
+            tmpl.eng_code, tmpl.eng_rev = ('', '')
 
     @api.depends('product_variant_ids', 'product_variant_ids.deprecated')
     def _compute_deprecated(self):
-        for template in self:
-            template.deprecated = all([x.deprecated for x in template.product_variant_ids])
+        for tmpl in self:
+            tmpl.deprecated = all([x.deprecated for x in tmpl.product_variant_ids])
 
     @api.one
     def _set_deprecated(self):
@@ -161,11 +165,11 @@ class ProductTemplate(models.Model):
 
     @api.depends('product_variant_ids', 'product_variant_ids.eng_notes')
     def _compute_eng_notes(self):
-        unique_variants = self.filtered(lambda template: len(template.product_variant_ids) == 1)
-        for template in unique_variants:
-            template.eng_notes = template.product_variant_ids.eng_notes
-        for template in (self - unique_variants):
-            template.eng_notes = ''
+        unique_variants = self.filtered(lambda x: len(x.product_variant_ids) == 1)
+        for tmpl in unique_variants:
+            tmpl.eng_notes = tmpl.product_variant_ids.eng_notes
+        for tmpl in (self - unique_variants):
+            tmpl.eng_notes = ''
 
     @api.one
     def _set_eng_notes(self):

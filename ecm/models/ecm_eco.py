@@ -462,7 +462,7 @@ class EcmEcoRevLine(models.Model):
         readonly=True)
 
     new_exists = fields.Boolean(
-        string='Rev',
+        string='Exists',
         readonly=True,
         compute='_compute_new_exists')
 

@@ -7,6 +7,21 @@ class ProductTemplate(models.Model):
     _inherit = "product.template"
 
     eco_line_revision_ids = fields.One2many(
+        related='product_variant_ids.eco_line_revision_ids')
+    eco_line_release_ids = fields.One2many(
+        related='product_variant_ids.eco_line_release_ids')
+    eco_line_intro_ids = fields.One2many(
+        related='product_variant_ids.eco_line_intro_ids')
+    release_eco_id = fields.Many2one(
+        related='product_variant_ids.release_eco_id')
+    revision_eco_id = fields.Many2one(
+        related='product_variant_ids.revision_eco_id')
+
+
+class ProductProduct(models.Model):
+    _inherit = "product.product"
+
+    eco_line_revision_ids = fields.One2many(
         comodel_name='ecm.eco.rev.line',
         inverse_name='product_id',
         help="ECO Line that revised this product to a later version")
