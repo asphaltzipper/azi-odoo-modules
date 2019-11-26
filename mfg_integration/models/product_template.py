@@ -111,8 +111,9 @@ class ProductTemplate(models.Model):
     @api.depends('bom_ids')
     def _compute_mfg_properties(self):
         for rec in self:
+            bom = rec.bom_ids and rec.bom_ids[0] or False
+            rec.routing_tmpl_id = bom and rec.get_routing_template(bom[0]) or False
             if rec.bom_ids and rec.bom_ids[0].one_comp_product_id:
-                bom = rec.bom_ids[0]
                 rec.rm_product_id = bom.one_comp_product_id
                 rec.mfg_routing_id = bom.routing_id
                 rec.raw_material_qty = bom.one_comp_product_qty
@@ -120,7 +121,6 @@ class ProductTemplate(models.Model):
                 rec.rm_material_code = bom.one_comp_product_id.material_id.name
                 rec.rm_gauge_code = bom.one_comp_product_id.gauge_id.name
                 rec.laser_code = bom.one_comp_product_id.gauge_id.laser_code
-                rec.routing_tmpl_id = bom and rec.get_routing_template(bom) or False
 
     def get_routing_template(self, bom_id):
         op_ids = set(bom_id.routing_id.operation_ids.mapped('workcenter_id').ids)
