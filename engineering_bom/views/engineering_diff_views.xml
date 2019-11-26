@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- part diff views -->
+    <record id="engineering_part_diff_form_view" model="ir.ui.view">
+        <field name="name">engineering.part.diff.form</field>
+        <field name="model">engineering.part.diff</field>
+        <field name="arch" type="xml">
+            <form string="Part Diff">
+                <sheet>
+                    <group>
+                        <field name="batch_id" invisible="1"/>
+                        <h2 colspan="2"><field name="product_id" nolabel="1"/></h2>
+                        <h3 colspan="2">Important <field name="important"/></h3>
+                        <group>
+                            <h3 colspan="2">Current</h3>
+                            <field name="description" string="Name"/>
+                            <field name="eng_type_id" string="Type"/>
+                            <field name="make" string="Make"/>
+                            <field name="preparation_id" string="Prep"/>
+                            <field name="coating_id" string="Coating"/>
+                            <field name="uom_id" string="UOM"/>
+                            <field name="cutting_length_outer" string="Outer Cutting"/>
+                            <field name="cutting_length_inner" string="Inner Cutting"/>
+                            <field name="cut_out_count" string="Cut-Outs"/>
+                            <field name="bend_count" string="Bend Count"/>
+                            <field name="image" string="Image"/>
+                        </group>
+                        <group>
+                            <h3 colspan="2">New</h3>
+                            <field name="description_new" string="Name"/>
+                            <field name="eng_type_new_id" string="Type"/>
+                            <field name="make_new" string="Make"/>
+                            <field name="preparation_new_id" string="Prep"/>
+                            <field name="coating_new_id" string="Coating"/>
+                            <field name="uom_new_id" string="UOM"/>
+                            <field name="cutting_length_outer_new" string="Outer Cutting"/>
+                            <field name="cutting_length_inner_new" string="Inner Cutting"/>
+                            <field name="cut_out_count_new" string="Cut-Outs"/>
+                            <field name="bend_count_new" string="Bend Count"/>
+                            <field name="image_new" string="Image"/>
+                        </group>
+                    </group>
+                    <field name="comp_ids" nolabel="1">
+                        <tree>
+                            <field name="product_id" string="Component"/>
+                        </tree>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="engineering_part_diff_tree_view" model="ir.ui.view">
+        <field name="name">engineering.part.diff.tree</field>
+        <field name="model">engineering.part.diff</field>
+        <field name="arch" type="xml">
+            <tree string="Part Diffs">
+                <field name="batch_id" invisible="1"/>
+                <field name="product_id"/>
+                <field name="important"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="engineering_part_diff_search_view" model="ir.ui.view">
+        <field name="name">engineering.part.diff.search</field>
+        <field name="model">engineering.part.diff</field>
+        <field name="arch" type="xml">
+            <search string="Part Diffs Filter">
+                <field name="batch_id" string="Batch"/>
+                <filter string='Important' name="important" domain="[('important', '!=', False)]" />
+            </search>
+        </field>
+    </record>
+
+    <record id="eng_part_diff_tree_action" model="ir.actions.act_window">
+        <field name="name">Part Diffs</field>
+        <field name="res_model">engineering.part.diff</field>
+        <field name="view_id" ref="engineering_part_diff_tree_view"/>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_batch_id': active_id}</field>
+    </record>
+
+
+    <!-- bom diff views -->
+    <record id="engineering_bom_diff_form_view" model="ir.ui.view">
+        <field name="name">engineering.bom.diff.form</field>
+        <field name="model">engineering.bom.diff</field>
+        <field name="arch" type="xml">
+            <form string="Bom Diff">
+                <sheet>
+                    <group>
+                        <field name="batch_id" invisible="1"/>
+                        <field name="bom_id"/>
+                        <field name="eng_bom_id"/>
+                        <field name="product_id"/>
+                        <field name="rm_part"/>
+                        <field name="action_type"/>
+                    </group>
+                    <group>
+                        <group>
+                            <h2 colspan="2">Old</h2>
+                            <field name="qty" string="Batch Qty"/>
+                            <field name="route_template_id" string="Route Name"/>
+                            <field name="route_detail" string="Route"/>
+                            <field name="type" string="Type"/>
+                        </group>
+                        <group>
+                            <h2 colspan="2">New</h2>
+                            <field name="qty_new" string="Batch Qty"/>
+                            <field name="route_template_new_id" string="Route Name"/>
+                            <field name="route_detail_new" string="Route"/>
+                            <field name="type_new" string="Type"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="engineering_bom_diff_tree_view" model="ir.ui.view">
+        <field name="name">engineering.bom.diff.tree</field>
+        <field name="model">engineering.bom.diff</field>
+        <field name="arch" type="xml">
+            <tree string="BOM Diffs">
+                <field name="batch_id" invisible="1"/>
+                <field name="product_id"/>
+                <field name="action_type"/>
+                <field name="route_detail"/>
+                <field name="route_detail_new"/>
+                <field name="rm_part"/>
+                <field name="type"/>
+                <field name="type_new"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="engineering_bom_diff_search_view" model="ir.ui.view">
+        <field name="name">engineering.bom.diff.search</field>
+        <field name="model">engineering.bom.diff</field>
+        <field name="arch" type="xml">
+            <search string="BOM Diffs Filter">
+                <field name="batch_id" string="Batch"/>
+                <filter string="Raw Material Parts" name="is_rm_part" domain="[('rm_part', '=', True)]"/>
+                <group expand='0' string='Group by...'>
+                    <filter name="group_action_type" string="Action" domain="[]" context="{'group_by' : 'action_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="eng_bom_diff_tree_action" model="ir.actions.act_window">
+        <field name="name">BOM Diffs</field>
+        <field name="res_model">engineering.bom.diff</field>
+        <field name="view_id" ref="engineering_bom_diff_tree_view"/>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_batch_id': active_id}</field>
+    </record>
+
+    <!-- bom line diff views -->
+    <record id="engineering_bom_line_diff_form_view" model="ir.ui.view">
+        <field name="name">engineering.bom.line.diff.form</field>
+        <field name="model">engineering.bom.line.diff</field>
+        <field name="arch" type="xml">
+            <form string="BOM Line Diff">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="batch_id" invisible="1"/>
+                            <field name="action_type"/>
+                            <field name="parent_id"/>
+                            <field name="name"/>
+                            <field name="qty"/>
+                            <field name="qty_new"/>
+                            <field name="uom_id"/>
+                            <field name="uom_new_id"/>
+                        </group>
+                        <group>
+                            <field name="eng_bom_id"/>
+                            <field name="mrp_bom_id"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="engineering_bom_line_diff_tree_view" model="ir.ui.view">
+        <field name="name">engineering.bom.line.diff.tree</field>
+        <field name="model">engineering.bom.line.diff</field>
+        <field name="arch" type="xml">
+            <tree string="BOM Line Diffs">
+                <field name="batch_id" invisible="1"/>
+                <field name="parent_id"/>
+                <field name="name"/>
+                <field name="rm_part"/>
+                <field name="action_type"/>
+                <field name="qty"/>
+                <field name="qty_new"/>
+                <field name="uom_id"/>
+                <field name="uom_new_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="engineering_bom_line_diff_search_view" model="ir.ui.view">
+        <field name="name">engineering.bom.line.diff.search</field>
+        <field name="model">engineering.bom.line.diff</field>
+        <field name="arch" type="xml">
+            <search string="BOM Line Diffs Filter">
+                <field name="batch_id" string="Batch"/>
+                <filter string="Raw Material Parts" name="is_rm_part" domain="[('rm_part', '=', True)]"/>
+                <group expand='0' string='Group by...'>
+                    <filter name="group_action_type" string="Action" domain="[]" context="{'group_by' : 'action_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="eng_bom_line_diff_tree_action" model="ir.actions.act_window">
+        <field name="name">BOM Line Diffs</field>
+        <field name="res_model">engineering.bom.line.diff</field>
+        <field name="view_id" ref="engineering_bom_line_diff_tree_view"/>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_batch_id': active_id}</field>
+    </record>
+
+</odoo>

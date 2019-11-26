@@ -1,0 +1,17 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_engineering_bom_batch_manager,access.engineering.bom.batch.manager,model_engineering_bom_batch,ecm.group_engineering_manager,1,1,1,1
+access_engineering_bom_manager,access.engineering.bom.manager,model_engineering_bom,ecm.group_engineering_manager,1,1,1,1
+access_engineering_bom_line_manager,access.engineering.bom.line.manager,model_engineering_bom_line,ecm.group_engineering_manager,1,1,1,1
+access_engineering_part_diff_manager,access.engineering.part.diff.manager,model_engineering_part_diff,ecm.group_engineering_manager,1,1,1,1
+access_engineering_bom_diff_manager,access.engineering.bom.diff.manager,model_engineering_bom_diff,ecm.group_engineering_manager,1,1,1,1
+access_engineering_bom_line_diff_manager,access.engineering.bom.line.diff.manager,model_engineering_bom_line_diff,ecm.group_engineering_manager,1,1,1,1
+access_engineering_bom_component_manager,access.engineering.bom.component.manager,model_engineering_bom_component,ecm.group_engineering_manager,1,1,1,1
+access_engineering_bom_adjacency_manager,access.engineering.bom.adjacency.manager,model_engineering_bom_adjacency,ecm.group_engineering_manager,1,1,1,1
+access_engineering_bom_batch_user,access.engineering.bom.batch.user,model_engineering_bom_batch,ecm.group_engineering_user,1,0,0,0
+access_engineering_bom_user,access.engineering.bom.user,model_engineering_bom,ecm.group_engineering_user,1,0,0,0
+access_engineering_bom_line_user,access.engineering.bom.line.user,model_engineering_bom_line,ecm.group_engineering_user,1,0,0,0
+access_engineering_part_diff_user,access.engineering.part.diff.user,model_engineering_part_diff,ecm.group_engineering_user,1,0,0,0
+access_engineering_bom_diff_user,access.engineering.bom.diff.user,model_engineering_bom_diff,ecm.group_engineering_user,1,0,0,0
+access_engineering_bom_line_diff_user,access.engineering.bom.line.diff.user,model_engineering_bom_line_diff,ecm.group_engineering_user,1,0,0,0
+access_engineering_bom_component_user,access.engineering.bom.component.user,model_engineering_bom_component,ecm.group_engineering_user,1,0,0,0
+access_engineering_bom_adjacency_user,access.engineering.bom.adjacency.user,model_engineering_bom_adjacency,ecm.group_engineering_user,1,0,0,0

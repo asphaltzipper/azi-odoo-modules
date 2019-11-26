@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="engineering_bom_form_view" model="ir.ui.view">
+        <field name="name">engineering.bom.form</field>
+        <field name="model">engineering.bom</field>
+        <field name="arch" type="xml">
+            <form string="Engineering BOM">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="batch_id"/>
+                            <field name="name"/>
+                            <field name="bom_id"/>
+                            <field name="rm_part"/>
+                        </group>
+                        <group>
+                            <field name="route_template_id"/>
+                            <field name="type"/>
+                            <field name="quantity"/>
+                        </group>
+                    </group>
+                    <field name="bom_line_ids" context="{'default_eng_bom_id': active_id}">
+                        <tree>
+                            <field name="eng_bom_id" invisible="1"/>
+                            <field name="name"/>
+                            <field name="quantity"/>
+                        </tree>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="engineering_bom_tree_view" model="ir.ui.view">
+        <field name="name">engineering.bom.tree</field>
+        <field name="model">engineering.bom</field>
+        <field name="arch" type="xml">
+            <tree string="Engineering BOM">
+                <field name="batch_id"/>
+                <field name="name"/>
+                <field name="route_template_id"/>
+                <field name="rm_part"/>
+                <field name="type"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="engineering_bom_search_view">
+        <field name="name">engineering.bom.search</field>
+        <field name="model">engineering.bom</field>
+        <field name="arch" type="xml">
+            <search string="BOM Filter">
+                <field name="batch_id" string="Batch"/>
+                <field name="name" string="Product"/>
+                <filter string="Raw Material Parts" name="is_rm_part" domain="[('rm_part', '=', True)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="eng_bom_tree_action" model="ir.actions.act_window">
+        <field name="name">BOMs</field>
+        <field name="res_model">engineering.bom</field>
+        <field name="view_id" ref="engineering_bom_tree_view"/>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_batch_id': active_id}</field>
+    </record>
+
+</odoo>

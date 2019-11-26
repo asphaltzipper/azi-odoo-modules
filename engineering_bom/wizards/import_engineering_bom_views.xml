@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<odoo>
+
+    <record id="engineering_bom_import_form" model="ir.ui.view">
+        <field name="name">engineering.bom.import.form</field>
+        <field name="model">engineering.bom.import</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="batch_id" invisible="1"/>
+                    <field name="filename"/>
+                    <field name="data_file" filename="filename" string="Attached Document"/>
+                </group>
+                <separator string="" colspan="4"/>
+                <footer>
+                    <button name="action_import" class="oe_highlight" string="Upload" type="object"/>
+                    <button special="cancel" string="Cancel"/>
+                </footer>
+           </form>
+        </field>
+    </record>
+
+    <record id="action_engineering_bom_import" model="ir.actions.act_window">
+        <field name="name">Import BOM</field>
+        <field name="res_model">engineering.bom.import</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="engineering_bom_import_form"/>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- imported components (products/parts/cad files) -->
+    <record id="engineering_bom_comp_tree_view" model="ir.ui.view">
+        <field name="name">engineering.bom.comp.tree</field>
+        <field name="model">engineering.bom.component</field>
+        <field name="arch" type="xml">
+            <tree string="Imported Components">
+                <field name="batch_id"/>
+                <field name="name"/>
+                <field name="product_id"/>
+                <field name="product_active"/>
+                <field name="product_deprecated"/>
+                <field name="suggested_product_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="engineering_bom_comp_form_view" model="ir.ui.view">
+        <field name="name">engineering.bom.comp.form</field>
+        <field name="model">engineering.bom.component</field>
+        <field name="arch" type="xml">
+            <form string="Imported Component">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="batch_id" invisible="1"/>
+                            <field name="filename"/>
+                            <field name="config_name"/>
+                            <field name="part_num"/>
+                            <field name="part_rev"/>
+                            <field name="name"/>
+                            <field name="description"/>
+                            <field name="suggested_product_id"/>
+                            <field name="product_id"/>
+                            <field name="product_active"/>
+                            <field name="product_deprecated"/>
+                            <field name="uom_id"/>
+                            <field name="uom"/>
+                            <field name="alt_qty"/>
+                            <field name="part_type"/>
+                            <field name="eng_type_id"/>
+                            <field name="make"/>
+                        </group>
+                        <group>
+                            <field name="material_spec"/>
+                            <field name="material_pn"/>
+                            <field name="rm_product_id"/>
+                            <field name="rm_qty"/>
+                            <field name="route_template_name"/>
+                            <field name="route_template_id"/>
+                            <field name="cutting_length_outer"/>
+                            <field name="cutting_length_inner"/>
+                            <field name="cut_out_count"/>
+                            <field name="bend_count"/>
+                            <field name="finish"/>
+                            <field name="preparation_id"/>
+                            <field name="coating"/>
+                            <field name="coating_id"/>
+                        </group>
+                    </group>
+                    <field name="image"/>
+                    <field name="adjacency_parent_ids" context="{'default_batch_id': batch_id, 'parent_comp_id': active_id}">
+                        <tree>
+                            <field name="batch_id" invisible="1"/>
+                            <field name="parent_comp_id"/>
+                            <field name="child_comp_id"/>
+                            <field name="count"/>
+                        </tree>
+                    </field>
+                    <field name="adjacency_child_ids" context="{'default_batch_id': batch_id, 'child_comp_id': active_id}">
+                        <tree>
+                            <field name="batch_id" invisible="1"/>
+                            <field name="parent_comp_id"/>
+                            <field name="child_comp_id"/>
+                            <field name="count"/>
+                        </tree>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="engineering_bom_comp_search_view">
+        <field name="name">engineering.bom.comp.search</field>
+        <field name="model">engineering.bom.component</field>
+        <field name="arch" type="xml">
+            <search string="BOM Component Filter">
+                <filter string='Obsolete Products' name="obsolete_products" domain="[('product_id', '!=', False), '|', ('product_active', '=', False), ('product_deprecated', '=', True)]" />
+                <filter string='Unknown Products' name="unknown_products" domain="[('product_id', '=', False), ('suggested_product_id', '=', False)]" />
+                <filter string='Unknown Revisions' name="unknown_revisions" domain="[('product_id', '=', False), ('suggested_product_id', '!=', False)]" />
+                <filter string='Bad Raw Material' name="bad_raw_material" domain="[('rm_qty', '>', 0.0), ('rm_product_id', '=', False)]" />
+                <filter string='Bad Raw Routing' name="bad_routing" domain="[('route_template_id', '=', False), '|', ('rm_qty', '>', 0.0), ('route_template_name', '!=', False)]" />
+                <field name="batch_id" string="Batch"/>
+                <field name="product_id" string="Product"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- imported adjacency (bom/hierarchy)-->
+    <record id="engineering_bom_adjacency_tree_view" model="ir.ui.view">
+        <field name="name">engineering.bom.adjacency.tree</field>
+        <field name="model">engineering.bom.adjacency</field>
+        <field name="arch" type="xml">
+            <tree string="Imported Adjacencies">
+                <field name="batch_id"/>
+                <field name="parent_comp_id"/>
+                <field name="child_comp_id"/>
+                <field name="count"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="engineering_bom_adjacency_search_view">
+        <field name="name">engineering.bom.adjacency.search</field>
+        <field name="model">engineering.bom.adjacency</field>
+        <field name="arch" type="xml">
+            <search string="BOM Adjacency Filter">
+                <field name="batch_id" string="Batch"/>
+                <group expand='0' string='Group by...'>
+                    <filter name="group_parent_comp_id" string="Parent" domain="[]" context="{'group_by' : 'parent_comp_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+
+    <!-- bom import batch views -->
+    <record id="engineering_bom_batch_tree_view" model="ir.ui.view">
+        <field name="name">engineering.bom.batch.tree</field>
+        <field name="model">engineering.bom.batch</field>
+        <field name="arch" type="xml">
+            <tree string="Engineering BOM Batch">
+                <field name="name"/>
+                <field name="owner_id"/>
+                <field name="create_date"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="eng_bom_comp_tree_action" model="ir.actions.act_window">
+        <field name="name">Components</field>
+        <field name="res_model">engineering.bom.component</field>
+        <field name="view_id" ref="engineering_bom_comp_tree_view"/>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_batch_id': active_id}</field>
+    </record>
+    <record id="eng_bom_adj_tree_action" model="ir.actions.act_window">
+        <field name="name">Adjacency</field>
+        <field name="res_model">engineering.bom.adjacency</field>
+        <field name="view_id" ref="engineering_bom_adjacency_tree_view"/>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_batch_id': active_id}</field>
+    </record>
+
+    <record id="engineering_bom_batch_form_view" model="ir.ui.view">
+        <field name="name">engineering.bom.batch.form</field>
+        <field name="model">engineering.bom.batch</field>
+        <field name="arch" type="xml">
+            <form string="BOM Batch">
+                <header>
+                    <button name="%(engineering_bom.action_engineering_bom_import)d" string="Import BOM" states="draft" type="action" class="oe_highlight"/>
+                    <button string="Match Products" name="action_match_component_products" type="object" states="imported"/>
+                    <button string="Convert BOMs" name="action_convert_boms" type="object" states="imported"/>
+                    <button string="Get Diffs" name="action_get_diffs" type="object" states="converted"/>
+                    <button string="Apply BOM Diffs" name="action_apply_bom_diffs" type="object" states="comparing"/>
+                    <field name="state" widget="statusbar" clickable="True" confirm="Are you sure you want to change the state?"/>
+                </header>
+                <sheet string="Eng BOM">
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="action" name="%(engineering_bom.eng_bom_adj_tree_action)d" icon="fa-bars">
+                            <field string="Adjacencies" name="adjacency_count" widget="statinfo"/>
+                        </button>
+                        <button class="oe_stat_button" type="action" name="%(engineering_bom.eng_bom_comp_tree_action)d" icon="fa-bars">
+                            <field string="Components" name="comp_count" widget="statinfo"/>
+                        </button>
+                        <button class="oe_stat_button" type="action" name="%(engineering_bom.eng_bom_tree_action)d" icon="fa-bars">
+                            <field string="BOMs" name="bom_count" widget="statinfo"/>
+                        </button>
+                        <button class="oe_stat_button" type="action" name="%(engineering_bom.eng_part_diff_tree_action)d" icon="fa-bars">
+                            <field string="Part Diffs" name="part_diff_count" widget="statinfo"/>
+                        </button>
+                        <button class="oe_stat_button" type="action" name="%(engineering_bom.eng_bom_diff_tree_action)d" icon="fa-bars">
+                            <field string="BOM Diffs" name="bom_diff_count" widget="statinfo"/>
+                        </button>
+                        <button class="oe_stat_button" type="action" name="%(engineering_bom.eng_bom_line_diff_tree_action)d" icon="fa-bars">
+                            <field string="BOM Line Diffs" name="bom_line_diff_count" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="notes"/>
+                            <field name="owner_id"/>
+                        </group>
+                        <group>
+                            <div colspan="2">
+                                <field name="configurator_ids" nolabel="1">
+                                    <tree>
+                                        <field name="name" string="Configurator"/>
+                                    </tree>
+                                </field>
+                            </div>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="part_diff" string="Part Diff">
+                            <button string="Refresh" name="make_part_diffs" type="object" states="converted"/>
+                            <field name="part_diff_ids">
+                                <tree>
+                                    <field name="batch_id" invisible="1"/>
+                                    <field name="product_id"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page name="bom_diff" string="BOM Diff">
+                            <button string="Refresh" name="make_bom_diffs" type="object" states="converted"/>
+                            <field name="bom_diff_ids">
+                                <tree>
+                                    <field name="batch_id" invisible="1"/>
+                                    <field name="product_id"/>
+                                    <field name="rm_part"/>
+                                    <field name="action_type"/>
+                                    <field name="route_detail" string="Old Route"/>
+                                    <field name="route_detail_new" string="New Route"/>
+                                    <field name="type" string="Old Type"/>
+                                    <field name="type_new" string="New Type"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page name="bom_line_diff" string="BOM Line Diff">
+                            <button string="Refresh" name="make_bom_line_diffs" type="object" states="converted"/>
+                            <field name="bom_line_diff_ids">
+                                <tree>
+                                    <field name="batch_id" invisible="1"/>
+                                    <field name="parent_id"/>
+                                    <field name="name"/>
+                                    <field name="rm_part"/>
+                                    <field name="action_type"/>
+                                    <field name="qty"/>
+                                    <field name="qty_new"/>
+                                    <field name="uom_id"/>
+                                    <field name="uom_new_id"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page name="option_components" string="Option Components">
+                            <field name="option_component_ids">
+                                <tree>
+                                    <field name="display_name"/>
+                                    <field name="deprecated"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_eng_bom_batch_tree" model="ir.actions.act_window">
+        <field name="name">Engineering BOM Batch</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">engineering.bom.batch</field>
+        <field name="view_id" ref="engineering_bom_batch_tree_view"/>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Click to create an Engineering BOM Batch.
+          </p><p>
+            In an Engineering BOM Batch, you can specify changes to multiple
+            bills of materials.  You can get reports that details the changes.
+            Then, you can apply the changes.  These batch changes will
+            typically be imported from an external system.
+          </p>
+        </field>
+    </record>
+
+    <menuitem id="engineering_bom_batch_menu"
+        name="BOM Batches"
+        parent="ecm.ecm_operations_menu"
+        action="action_eng_bom_batch_tree"
+        sequence="2"/>
+
+</odoo>
