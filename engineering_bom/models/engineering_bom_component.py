@@ -281,7 +281,7 @@ class EngBomComp(models.Model):
                 [('name', '=', comp.route_template_name)],
                 limit=1)
             comp.eng_type_id = comp.part_type and type_obj.search(
-                [('name', '=', comp.part_type)],
+                [('code', '=', comp.part_type)],
                 limit=1)
             comp.preparation_id = comp.finish and prep_obj.search(
                 [('name', '=', finish_name_map.get(comp.finish, comp.finish))],
