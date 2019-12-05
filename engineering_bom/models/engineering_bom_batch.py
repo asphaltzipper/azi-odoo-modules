@@ -7,6 +7,7 @@ from odoo.exceptions import ValidationError, UserError
 
 class EngBomBatch(models.Model):
     _name = 'engineering.bom.batch'
+    _inherit = ['mail.thread']
     _description = 'Engineering BOM Batch'
     _order = 'create_date desc'
 
@@ -27,7 +28,8 @@ class EngBomBatch(models.Model):
         ],
         string='State',
         default='draft',
-        required=True)
+        required=True,
+        track_visibility='onchange')
     owner_id = fields.Many2one(
         comodel_name='res.users',
         string="Owner",
@@ -155,7 +157,7 @@ class EngBomBatch(models.Model):
                 'bom_id': bom.id,
                 'quantity': 1.0,
                 'route_template_id': route_template.id,
-                'type': bom and bom.type,
+                'type': bom and bom.type or 'normal',
             }
             eng_bom = eng_bom_obj.create(bom_values)
             product_boms[parent.product_id] = eng_bom
@@ -217,7 +219,7 @@ class EngBomBatch(models.Model):
                 'bom_id': bom.id,
                 'quantity': 1.0,
                 'route_template_id': route_template.id,
-                'type': bom and bom.type,
+                'type': bom and bom.type or 'normal',
                 'rm_part': True,
             }
             eng_bom = eng_bom_obj.create(bom_values)
@@ -324,6 +326,8 @@ class EngBomBatch(models.Model):
                 to_delete |= diff
         to_delete.unlink()
 
+        self.message_post(body="Generated part diffs")
+
     def make_bom_diffs(self):
         self.ensure_one()
         self.bom_diff_ids.unlink()
@@ -378,6 +382,8 @@ class EngBomBatch(models.Model):
                     'action_type': 'remove',
                     'rm_part': bom.one_comp_product_id and bom.one_comp_product_id.product_tmpl_id.is_continuous,
                 })
+
+        self.message_post(body="Generated BOM diffs")
 
     def make_bom_line_diffs(self):
         self.ensure_one()
@@ -508,6 +514,8 @@ class EngBomBatch(models.Model):
                         'action_type': 'remove',
                     })
 
+        self.message_post(body="Generated BOM line diffs")
+
     def action_apply_part_diffs(self):
 
         # self.make_part_diffs()
@@ -541,6 +549,8 @@ class EngBomBatch(models.Model):
                 part.product_id.cut_out_count = part.cut_out_count
             if part.bend_count != part.product_id.bend_count:
                 part.product_id.bend_count = part.bend_count
+
+        self.message_post(body="Applied important part diffs")
 
     def action_apply_bom_diffs(self):
 
