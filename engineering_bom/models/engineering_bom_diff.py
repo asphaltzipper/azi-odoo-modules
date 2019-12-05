@@ -54,7 +54,8 @@ class EngBomDiff(models.Model):
         string='Old Route Name')
     route_detail = fields.Char(
         related='route_template_id.operations_detail',
-        string='Old Route')
+        string='Old Route',
+        store=True)
     type = fields.Selection(
         selection=[
             ('normal', 'Normal'),
@@ -74,7 +75,8 @@ class EngBomDiff(models.Model):
         string='New Route Name')
     route_detail_new = fields.Char(
         related='route_template_new_id.operations_detail',
-        string='New Route')
+        string='New Route',
+        store=True)
     type_new = fields.Selection(
         selection=[
             ('normal', 'Normal'),

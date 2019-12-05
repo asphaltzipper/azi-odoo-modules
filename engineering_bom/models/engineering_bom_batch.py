@@ -508,16 +508,10 @@ class EngBomBatch(models.Model):
                         'action_type': 'remove',
                     })
 
-    def action_apply_bom_diffs(self):
+    def action_apply_part_diffs(self):
 
         # self.make_part_diffs()
-        self.make_bom_diffs()
-        self.make_bom_line_diffs()
-
         make_route = self.env.ref('mrp.route_warehouse0_manufacture')
-        bom_obj = self.env['mrp.bom']
-        bom_line_obj = self.env['mrp.bom.line']
-        qty_precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
 
         # update important product differences
         for part in self.comp_ids.filtered(lambda x: x.product_id and x.part_diff_id.important):
@@ -547,6 +541,15 @@ class EngBomBatch(models.Model):
                 part.product_id.cut_out_count = part.cut_out_count
             if part.bend_count != part.product_id.bend_count:
                 part.product_id.bend_count = part.bend_count
+
+    def action_apply_bom_diffs(self):
+
+        self.make_bom_diffs()
+        self.make_bom_line_diffs()
+
+        bom_obj = self.env['mrp.bom']
+        bom_line_obj = self.env['mrp.bom.line']
+        qty_precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
 
         # change boms
         for eng_bom in self.eng_bom_ids.filtered(lambda x: x.bom_id):

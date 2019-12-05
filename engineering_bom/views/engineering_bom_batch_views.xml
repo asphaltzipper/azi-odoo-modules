@@ -167,7 +167,8 @@
                     <button string="Match Products" name="action_match_component_products" type="object" states="imported"/>
                     <button string="Convert BOMs" name="action_convert_boms" type="object" states="imported"/>
                     <button string="Get Diffs" name="action_get_diffs" type="object" states="converted"/>
-                    <button string="Apply BOM Diffs" name="action_apply_bom_diffs" type="object" states="comparing"/>
+                    <button string="Apply Important Part Diffs" name="action_apply_part_diffs" type="object" states="comparing"/>
+                    <button string="Apply All BOM Diffs" name="action_apply_bom_diffs" type="object" states="comparing"/>
                     <field name="state" widget="statusbar" clickable="True" confirm="Are you sure you want to change the state?"/>
                 </header>
                 <sheet string="Eng BOM">
