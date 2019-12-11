@@ -20,7 +20,6 @@ class EngBom(models.Model):
         required=True)
     bom_id = fields.Many2one(
         comodel_name='mrp.bom',
-        readonly=True,
         ondelete='set null')
     uom_id = fields.Many2one(
         related='bom_id.product_uom_id',

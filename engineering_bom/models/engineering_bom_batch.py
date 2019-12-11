@@ -145,9 +145,13 @@ class EngBomBatch(models.Model):
 
         # get unique parent products and create boms
         product_boms = {}
+        duplicate_parents = []
         parents = self.comp_ids.filtered(lambda x: len(x.adjacency_parent_ids))
         for parent in parents:
-            if not parent.product_id or parent.product_id in product_boms.keys():
+            if not parent.product_id:
+                continue
+            if parent.product_id in product_boms.keys():
+                duplicate_parents.append(parent.id)
                 continue
             bom = bom_obj._bom_find(product=parent.product_id)
             route_template = routing_obj.search([('name', '=', parent.route_template_name)])
@@ -176,7 +180,7 @@ class EngBomBatch(models.Model):
 
         # create bom lines
         product_bom_lines = {}
-        adjacencies = self.adjacency_ids
+        adjacencies = self.adjacency_ids.filtered(lambda x: x.child_comp_id.eng_type_id.code != 'S')
         for adjacency in adjacencies:
             if not adjacency.parent_comp_id.product_id or not adjacency.child_comp_id.product_id:
                 continue
@@ -189,7 +193,8 @@ class EngBomBatch(models.Model):
             quantity = alt_qty and adjacency.count * alt_qty or adjacency.count
             existing_line = product_bom_lines.get((parent, child))
             if existing_line:
-                existing_line.quantity += quantity
+                if adjacency.parent_comp_id.id not in duplicate_parents:
+                    existing_line.quantity += quantity
                 continue
             line_values = {
                 'eng_bom_id': product_boms[parent].id,
