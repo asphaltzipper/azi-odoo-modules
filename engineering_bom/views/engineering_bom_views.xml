@@ -54,6 +54,8 @@
                 <field name="batch_id" string="Batch"/>
                 <field name="name" string="Product"/>
                 <filter string="Raw Material Parts" name="is_rm_part" domain="[('rm_part', '=', True)]"/>
+                <filter string="Not Raw Material Parts" name="is_rm_part" domain="[('rm_part', '=', False)]"/>
+                <filter string="Missing Routing" name="is_rm_part" domain="[('route_template_id', '=', False), ('type', '=', 'normal')]"/>
             </search>
         </field>
     </record>

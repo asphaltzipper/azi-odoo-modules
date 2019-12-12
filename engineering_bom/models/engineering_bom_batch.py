@@ -341,6 +341,7 @@ class EngBomBatch(models.Model):
         bom_obj = self.env['mrp.bom']
 
         # create add/change diffs for this batch
+        to_delete = self.env['engineering.bom.diff']
         for eng_bom in self.eng_bom_ids:
             diff = bom_diff_obj.create({
                 'batch_id': self.id,
@@ -371,7 +372,8 @@ class EngBomBatch(models.Model):
                 diff.type_new = eng_bom.type
 
             if not has_change:
-                diff.unlink()
+                to_delete |= diff
+        to_delete.unlink()
 
         # create remove diffs for this batch
         for part in self.comp_ids.filtered(
