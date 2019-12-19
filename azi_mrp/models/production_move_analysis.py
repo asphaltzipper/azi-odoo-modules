@@ -152,7 +152,7 @@ class ProductionMoveAnalysis(models.Model):
                     from stock_route_product as sr
                     left join stock_location_route as r on r.id=sr.route_id
                     group by product_id
-                ) as r on r.product_id=m.product_id
+                ) as r on r.product_id=p.product_tmpl_id
                 left join (
                     -- Input quantity
                     select
