@@ -213,8 +213,8 @@ class EngBomBatch(models.Model):
                     or not parent.rm_product_id
                     or parent.product_id in product_boms.keys()):
                 continue
-            rm_product = product_obj.search([('default_code', '=', parent.material_pn)])
-            route_template = routing_obj.search([('name', '=', parent.route_template_name)])
+            rm_product = parent.rm_product_id
+            route_template = parent.route_template_id
             if not rm_product or not route_template:
                 continue
             bom = bom_obj._bom_find(product=parent.product_id)
