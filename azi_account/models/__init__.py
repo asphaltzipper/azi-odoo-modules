@@ -1,4 +1,4 @@
 # -*- coding: utf-8 -*-
 
-import account
-import account_payment
+from . import account
+from . import account_payment

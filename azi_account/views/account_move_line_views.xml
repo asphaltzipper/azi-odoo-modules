@@ -13,48 +13,16 @@
         </field>
     </record>
 
-    <record id="view_counterpart_txns_tree" model="ir.ui.view">
-        <field name="name">counter.txns.tree</field>
+    <record id="view_move_line_tree" model="ir.ui.view">
+        <field name="name">account.move.line.tree</field>
         <field name="model">account.move.line</field>
+        <field name="inherit_id" ref="account.view_move_line_tree"/>
         <field name="arch" type="xml">
-            <tree string="Counterpart Txns" create="false" editable="top">
-                <field name="journal_id" options='{"no_open":True}' readonly="1"/>
-                <field name="date" readonly="1"/>
-                <field name="partner_id" readonly="1"/>
-                <field name="name" readonly="1"/>
+            <field name="name" position="after">
                 <field name="receipt_status"/>
-                <field name="product_id" readonly="1"/>
-                <field name="account_id" options='{"no_open":True}' readonly="1"/>
-                <field name="analytic_account_id" groups="analytic.group_analytic_accounting" readonly="1"/>
-                <field name="analytic_tag_ids" widget="many2many_tags" groups="analytic.group_analytic_accounting" readonly="1"/>
-                <field name="debit" sum="Total Debit" readonly="1"/>
-                <field name="credit" sum="Total Credit" readonly="1"/>
-            </tree>
+            </field>
         </field>
     </record>
 
-    <record id="action_move_lines_counterpart" model="ir.actions.act_window">
-        <field name="name">Counterpart Txns</field>
-        <field name="res_model">account.move.line</field>
-        <field name="view_id" ref="view_counterpart_txns_tree"/>
-        <field name="view_mode">tree</field>
-    </record>
-
-    <!-- Adding Journal Items to dashboard-->
-    <record id="account_journal_dashboard_kanban_azi_view" model="ir.ui.view">
-        <field name="name">account.journal.dashboard.azi.kanban</field>
-        <field name="model">account.journal</field>
-        <field name="inherit_id" ref="account.account_journal_dashboard_kanban_view"/>
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='show_on_dashboard']" position="before">
-                <field name="default_credit_account_id"/>
-            </xpath>
-            <xpath expr="//div[@t-if=&quot;journal_type == 'bank' || journal_type == 'cash'&quot;]/div[@class='col-xs-4 o_kanban_card_manage_section o_kanban_manage_view']" position="inside">
-                <div>
-                    <a type="object" name="action_counterpart_lines" context="{'default_search_journal_id': active_id}">Counterpart Txns</a>
-                </div>
-            </xpath>
-        </field>
-    </record>
 
 </odoo>

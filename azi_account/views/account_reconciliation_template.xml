@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates xml:space="preserve">
+
+<t t-extend="reconciliation.line.create">
+    <t t-jquery=".float-right tbody" t-operation="append">
+        <tr class="create_product_id" >
+            <td class="o_td_label">Products</td>
+            <td class="o_td_field"></td>
+        </tr>
+    </t>
+</t>
+
+</templates>

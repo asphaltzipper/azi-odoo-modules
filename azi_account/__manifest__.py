@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 {
     "name": "azi_account",
-    "version": "10.0.1.1.0",
+    "version": "12.0.1.1.0",
     "summary": "AZI account Customizations",
     "category": "Accounting",
     "author": "Matt Taylor",
@@ -28,6 +28,9 @@ AZI Specialized Customizations to account
         'views/account_view_changes.xml',
         'views/account_move_line_views.xml',
         'report/report_invoice.xml',
+    ],
+    'qweb': [
+        'views/account_reconciliation_template.xml',
     ],
     "installable": True,
     "auto_install": False,

@@ -1,73 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-<data>
+    <data>
 
-    <!--<record model="ir.ui.view" id="report_invoice_document_inherit_sale">-->
+        <!--<record model="ir.ui.view" id="report_invoice_document_inherit_sale">-->
         <!--<field name="active">False</field>-->
-    <!--</record>-->
+        <!--</record>-->
 
-    <template id="azi_invoice_address_alignment" inherit_id="account.report_invoice_document">
-        <xpath expr="//div[@t-if='o.partner_id.ref']" position="replace">
-        </xpath>
-        <xpath expr="//div[@name='invoice_address']" position="attributes">
-            <attribute name="groups">!sale.group_delivery_invoice_address</attribute>
-        </xpath>
-        <xpath expr="//div[@class='page']/table/thead/tr/th[6]" position="replace">
-            <th class="text-right"></th>
-        </xpath>
-        <xpath expr="//div[@class='page']/table/thead/tr/th[7]" position="replace">
-            <th class="text-right">Price</th>
-        </xpath>
-        <xpath expr="//div[@class='page']/table/tbody/tr/td[6]" position="replace">
-            <td class="text-right"></td>
-        </xpath>
-        <xpath expr="//t[@t-as='amount_by_group']/tr/td[1]" position="replace">
-            <td><span>Tax</span></td>
-        </xpath>
-        <xpath expr="//div[@class='page']/div[@t-if='len(o.tax_line_ids) > 0']" position="replace"/>
-        <xpath expr="//div[@name='invoice_address']" position="before">
-            <div style="position: relative; top: 60; padding-bottom: 1.875in;" groups="sale.group_delivery_invoice_address">
-                <div class="mt8 col-xs-5" style="position: absolute; top: 0; left: .3125in">
-                    <strong>Invoicing address:</strong>
-                    <div t-field="o.partner_id"
-                        t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
-                    <span t-if="o.partner_id.vat">TIN: <span t-field="o.partner_id.vat"/></span>
+        <template id="azi_invoice_address_alignment" inherit_id="account.report_invoice_document">
+            <xpath expr="//div[@t-if='o.partner_id.ref']" position="replace">
+            </xpath>
+            <xpath expr="//t[@t-set='address']" position="attributes">
+                <attribute name="groups">!sale.group_delivery_invoice_address</attribute>
+            </xpath>
+            <xpath expr="//div[@class='page']/table/thead/tr/th[6]" position="replace">
+                <th class="text-right"></th>
+            </xpath>
+            <xpath expr="//div[@class='page']/table/thead/tr/th[7]" position="replace">
+                <th class="text-right">Price</th>
+            </xpath>
+            <xpath expr="//div[@class='page']/table/tbody/t/tr/t/td[6]" position="replace">
+                <td class="text-right"></td>
+            </xpath>
+            <xpath expr="//t[@t-as='amount_by_group']/tr/t/td[1]" position="replace">
+                <td>
+                    <span>Tax</span>
+                </td>
+            </xpath>
+            <!-- it doesn't exists anymore-->
+            <!--<xpath expr="//div[@class='page']/div[@t-if='len(o.tax_line_ids) > 0']" position="replace"/>-->
+            <xpath expr="//t[@t-set='address']" position="before">
+                <div style="position: relative; top: 60; padding-bottom: 1.875in;"
+                     groups="sale.group_delivery_invoice_address">
+                    <div class="mt8 col-xs-5" style="position: absolute; top: 0; left: .3125in">
+                        <strong>Invoicing address:</strong>
+                        <div t-field="o.partner_id"
+                             t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
+                        <span t-if="o.partner_id.vat">TIN:
+                            <span t-field="o.partner_id.vat"/>
+                        </span>
+                    </div>
+                    <div class="mt8 col-xs-5" style="position: absolute; top: 0;  left: 4.9375in">
+                        <strong>Shipping address:</strong>
+                        <div t-field="o.partner_shipping_id"
+                             t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
+                        <span t-if="o.partner_shipping_id.vat">TIN:
+                            <span t-field="o.partner_shipping_id.vat"/>
+                        </span>
+                    </div>
                 </div>
-                <div class="mt8 col-xs-5" style="position: absolute; top: 0;  left: 4.9375in">
-                    <strong>Shipping address:</strong>
-                    <div t-field="o.partner_shipping_id"
-                        t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
-                    <span t-if="o.partner_shipping_id.vat">TIN: <span t-field="o.partner_shipping_id.vat"/></span>
-                </div>
-            </div>
-        </xpath>
-    </template>
+            </xpath>
+        </template>
 
-    <report
-        id="account_azi_invoice_no_header_footer"
-        model="account.invoice"
-        string="Invoices no Header/Footer"
-        report_type="qweb-pdf"
-        name="azi_account.azi_invoice_no_header_footer_main"
-        file="account.report_invoice_duplicate"
-        attachment_use="True"
-        attachment="(object.state in ('open','paid')) and
+        <report
+                id="account_azi_invoice_no_header_footer"
+                model="account.invoice"
+                string="Invoices no Header/Footer"
+                report_type="qweb-pdf"
+                name="azi_account.azi_invoice_no_header_footer_main"
+                file="account.report_invoice_document"
+                attachment_use="True"
+                attachment="(object.state in ('open','paid')) and
         ('letterhead-'+(object.number or '').replace('/','')+'.pdf')"
-    />
+        />
 
-    <template id="azi_invoice_no_header_footer" inherit_id="account.report_invoice_document" primary="True">
-        <xpath expr="//t[@t-call='report.external_layout']" position="attributes">
-            <attribute name="t-call"></attribute>
-        </xpath>
-    </template>
+        <template id="azi_invoice_no_header_footer" inherit_id="account.report_invoice_document" primary="True">
+            <xpath expr="//t[@t-call='web.external_layout']" position="attributes">
+                <attribute name="t-call"></attribute>
+            </xpath>
+        </template>
 
-    <template id="azi_invoice_no_header_footer_main">
-        <t t-call="report.html_container">
-            <t t-foreach="docs" t-as="o">
-                <t t-call="azi_account.azi_invoice_no_header_footer" t-lang="o.partner_id.lang"/>
+        <template id="azi_invoice_no_header_footer_main">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <div class="article o_report_layout_standard" t-att-data-oe-model="o and o._name"
+                         t-att-data-oe-id="o and o.id">
+                        <t t-call="azi_account.azi_invoice_no_header_footer" t-lang="o.partner_id.lang"/>
+                    </div>
+                </t>
             </t>
-        </t>
-    </template>
+        </template>
 
-</data>
+    </data>
 </odoo>
