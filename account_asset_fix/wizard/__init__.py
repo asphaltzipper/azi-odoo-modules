@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 
-import asset_depreciation_confirmation_wizard
+from . import asset_depreciation_confirmation_wizard

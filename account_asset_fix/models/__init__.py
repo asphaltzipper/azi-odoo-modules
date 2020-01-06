@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 
-import account_asset
+from . import account_asset

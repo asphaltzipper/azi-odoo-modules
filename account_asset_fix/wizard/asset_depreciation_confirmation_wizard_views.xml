@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-
     <record id="view_asset_depreciation_confirmation_wizard_posting" model="ir.ui.view">
         <field name="name">asset.depreciation.confirmation.wizard.posting</field>
         <field name="model">asset.depreciation.confirmation.wizard</field>
@@ -13,7 +12,7 @@
     </record>
 
     <menuitem name="Generate Assets Entries" action="account_asset.action_asset_depreciation_confirmation_wizard"
-        id="menu_asset_depreciation_confirmation_wizard_adviser"
-        parent="account.menu_finance_entries" sequence="112" groups="account.group_account_manager"/>
+        id="account_asset.menu_asset_depreciation_confirmation_wizard"
+        parent="account.menu_finance_entries_generate_entries" sequence="112" groups="account.group_account_manager"/>
 
 </odoo>
