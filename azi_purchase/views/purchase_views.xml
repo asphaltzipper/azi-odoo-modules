@@ -2,7 +2,7 @@
 <odoo>
 
     <!-- hide state, untaxed and show send_date -->
-    <record model="ir.ui.view" id="purchase_order_send_date">
+    <record id="purchase_order_send_date" model="ir.ui.view">
         <field name="name">purchase.order.send.date</field>
         <field name="model">purchase.order</field>
         <field name="inherit_id" ref="purchase.purchase_order_tree"/>
@@ -51,13 +51,31 @@
         </field>
     </record>
 
-    <!-- show RFQs in purchase order line tree -->
-    <record model="ir.actions.act_window" id="purchase.action_purchase_line_product_tree">
+    <record id="action_purchase_line_product_tree" model="ir.actions.act_window">
         <field name="domain">[('product_id.product_tmpl_id','in',active_ids)]</field>
+        <field name="name">Purchases</field>
+        <field name="res_model">purchase.order.line</field>
+        <field name="view_id" ref="purchase.purchase_order_line_tree"/>
     </record>
 
+    <record id="product_template_only_form_view" model="ir.ui.view">
+        <field name="name">product.template.product.form</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+            <button name="toggle_active" position="before">
+                <button class="oe_stat_button" name="%(azi_purchase.action_purchase_line_product_tree)d"
+                       type="action" icon="fa-shopping-cart">
+                   <field string="Purchase Orders" name="purchase_count" widget="statinfo"/>
+               </button>
+            </button>
+        </field>
+    </record>
+
+
+    <!-- No need for this part because purchase button already exists in product variants -->
     <!-- load purchase order line tree from product variant button -->
-    <record model="ir.actions.act_window" id="action_purchase_line_product_variant_tree">
+    <record id="action_purchase_line_product_variant_tree" model="ir.actions.act_window" >
         <field name="context">{}</field>
         <field name="domain">[('product_id','in',active_ids)]</field>
         <field name="name">Purchases</field>
@@ -75,7 +93,7 @@
             <div name="button_box" position="inside">
                <button class="oe_stat_button" name="%(azi_purchase.action_purchase_line_product_variant_tree)d"
                    type="action" icon="fa-shopping-cart">
-                   <field string="Purchases" name="purchase_count" widget="statinfo"/>
+                   <field string="Purchase Orders" name="purchase_count" widget="statinfo"/>
                </button>
             </div>
         </field>
