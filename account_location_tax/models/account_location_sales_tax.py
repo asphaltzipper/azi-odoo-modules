@@ -24,7 +24,7 @@ class AccountLocationSalesTax(models.Model):
     def init(self):
         tools.drop_view_if_exists(self._cr, 'account_location_sales_tax')
         self._cr.execute("""
-            CREATE VIEW account_location_sales_tax AS (
+            CREATE OR REPLACE VIEW account_location_sales_tax AS (
             select
                 i.id,
                 i.id as invoice_id,

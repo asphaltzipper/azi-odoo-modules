@@ -12,7 +12,7 @@
         <field name="name">location.sales.tax.pivot</field>
         <field name="model">account.location.sales.tax</field>
         <field name="arch" type="xml">
-            <pivot string="Location Sales Tax" type="line" >
+            <pivot>
                 <field name="invoice_date" type="row" />
                 <field name="city" type="column" />
                 <field name="state_id" type="column" />
@@ -28,7 +28,7 @@
         <field name="name">location.sales.tax.tree.view</field>
         <field name="model">account.location.sales.tax</field>
         <field name="arch" type="xml">
-            <tree string="Location Sales Tax" create="false" edit="false">
+            <tree create="false" edit="false">
                 <field name="partner_id"/>
                 <field name="state_id"/>
                 <field name="city"/>
@@ -44,10 +44,7 @@
         </field>
     </record>
 
-    <menuitem
-        id="menu_account_location_sales_tax"
-        name="Location Sales Tax"
-        action="action_location_sales_tax_pivot"
-        parent="account_reports.account_reports_business_statements_menu"/>
+    <menuitem id="menu_account_location_sales_tax" name="Location Sales Tax" action="action_location_sales_tax_pivot"
+              parent="account_reports.account_reports_audit_reports_menu"/>
 
 </odoo>
