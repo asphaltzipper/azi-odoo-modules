@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 
-import mrp_repair
+from . import mrp_repair

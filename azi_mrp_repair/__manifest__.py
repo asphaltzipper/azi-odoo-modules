@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 {
     "name": "azi_mrp_repair",
-    "version": "10.0.0.1",
+    "version": "12.0.0.1.0",
     "summary": "AZI MRP Repair Customizations",
     "category": "Manufacturing",
     "author": "Matt Taylor",
@@ -16,7 +16,7 @@ AZI Specialized Customizations to MRP Repair
 * Change repair order account move names to the name of the repair order
 * Show repaired serial number in list view
     """,
-    "depends": ['mrp_repair'],
+    "depends": ['repair'],
     'data': [
         'views/mrp_repair_views.xml',
     ],
