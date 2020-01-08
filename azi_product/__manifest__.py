@@ -23,7 +23,7 @@
 
 {
     "name": "azi_product",
-    "version": "0.1",
+    "version": "12.0.1.1.0",
     "summary": "AZI Product Customizations",
     "category": "Inventory Control",
     "author": "Matt Taylor",
@@ -37,7 +37,6 @@ AZI Customizations to Product
 * Require Unique UOM Name
     """,
     "depends": [
-        'product',
         'stock',
         'purchase',
     ],

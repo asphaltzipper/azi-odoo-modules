@@ -51,7 +51,6 @@ class ProductProduct(models.Model):
         "Medium-big-sized image", compute='_compute_med_big_image', inverse='_set_image_medium_big',
         help="Image of the product variant at 320px (Image of product template if false).")
 
-    @api.one
     @api.depends('image_variant', 'product_tmpl_id.image')
     def _compute_med_big_image(self):
         if self._context.get('bin_size'):
@@ -62,7 +61,6 @@ class ProductProduct(models.Model):
         if not self.image_medium_big:
             self.image_medium_big = self.product_tmpl_id.image_medium_big
 
-    @api.one
     def _set_image_medium_big(self):
         self._set_image_value(self.image_medium_big)
 

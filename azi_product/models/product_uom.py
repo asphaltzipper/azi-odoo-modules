@@ -6,7 +6,7 @@ from odoo import models, api, fields, _
 class ProductUomCategory(models.Model):
     """Enforce unique UOM category name"""
 
-    _inherit = 'product.uom.categ'
+    _inherit = 'uom.category'
 
     _sql_constraints = [('name_uniq', 'unique (name)', """Category name must be unique."""), ]
 
@@ -23,7 +23,7 @@ class ProductUomCategory(models.Model):
 class ProductUom(models.Model):
     """Enforce unique UOM name"""
 
-    _inherit = 'product.uom'
+    _inherit = 'uom.uom'
 
     _sql_constraints = [('name_uniq', 'unique (name)', """UOM Name must be unique."""), ]
 
