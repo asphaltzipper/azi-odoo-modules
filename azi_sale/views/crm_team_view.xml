@@ -2,20 +2,22 @@
 <!-- Copyright 2014-2016 Scott Saunders
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 
-<openerp>
-<data>
+<odoo>
+    <data>
 
-<record id="crm_team_view_search" model="ir.ui.view">
-    <field name="name">crm.team.search</field>
-    <field name="model">crm.team</field>
-    <field name="inherit_id" ref="sales_team_industry.crm_team_view_search"/>
-    <field name="arch" type="xml">
-        <xpath expr="//search/field[@name='region_id']" position="after">
-            <filter string='Contractors' name="cont" icon="terp-accessories-achiver" domain="['|', ('partner_industries.name', 'ilike', 'mining'), ('partner_industries.name', 'ilike', 'paving'), ('partner_industries.name', 'ilike', 'utility')]" />
-            <filter string='Municipalities' name="muni" icon="terp-accessories-achiver" domain="['|', ('partner_industries.name', 'ilike', 'airport'), ('partner_industries.name', 'ilike', 'bia'), ('partner_industries.name', 'ilike', 'city'), ('partner_industries.name', 'ilike', 'county'), ('partner_industries.name', 'ilike', 'dot'), ('partner_industries.name', 'ilike', 'federal'), ('partner_industries.name', 'ilike', 'military')]" />
-        </xpath>
-    </field>
-</record>
+        <record id="crm_team_view_search" model="ir.ui.view">
+            <field name="name">crm.team.search</field>
+            <field name="model">crm.team</field>
+            <field name="inherit_id" ref="sales_team_industry.crm_team_view_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search/field[@name='region_id']" position="after">
+                    <filter string='Contractors' name="cont" icon="terp-accessories-achiver"
+                            domain="['|', ('partner_industries.name', 'ilike', 'mining'), ('partner_industries.name', 'ilike', 'paving'), ('partner_industries.name', 'ilike', 'utility')]"/>
+                    <filter string='Municipalities' name="muni" icon="terp-accessories-achiver"
+                            domain="['|', ('partner_industries.name', 'ilike', 'airport'), ('partner_industries.name', 'ilike', 'bia'), ('partner_industries.name', 'ilike', 'city'), ('partner_industries.name', 'ilike', 'county'), ('partner_industries.name', 'ilike', 'dot'), ('partner_industries.name', 'ilike', 'federal'), ('partner_industries.name', 'ilike', 'military')]"/>
+                </xpath>
+            </field>
+        </record>
 
-</data>
-</openerp>
+    </data>
+</odoo>

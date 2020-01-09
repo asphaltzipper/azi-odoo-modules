@@ -19,7 +19,6 @@
             <xpath expr="//form/sheet/group/group/field[@name='partner_shipping_id']" position="attributes">
                 <attribute name="domain">['|', ('parent_id', '=', partner_id), ('id', '=', partner_id)]</attribute>
                 <attribute name="context">{'default_type':'delivery', 'show_address': 1, 'override_display_name': 1}</attribute>
-                <attribute name="options">{&quot;always_reload&quot;: True}</attribute>
             </xpath>
             <xpath expr="//sheet/group" position="after">
                 <group name="warning" style="background-color:#99ddff;" attrs="{'invisible': ['|',('partner_warn', '=', 'no-message'),('partner_warn', '=', False)]}">
@@ -48,7 +47,7 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='partner_shipping_id']" position="attributes">
                 <attribute name="context">{'show_address': 1}</attribute>
-                <attribute name="options">{&quot;always_reload&quot;: True}</attribute>
+                <attribute name="options">{'always_reload': True}</attribute>
             </xpath>
         </field>
     </record>
@@ -97,7 +96,7 @@
     </record>
 
     <menuitem id="menu_azi_sale_line"
-            action="action_azi_sale_line" parent="sales_team.menu_sale_report"
+            action="action_azi_sale_line" parent="sale.menu_sale_report"
             sequence="50"/>
 
 </odoo>

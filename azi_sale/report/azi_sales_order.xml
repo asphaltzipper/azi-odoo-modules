@@ -5,11 +5,17 @@
         <xpath expr="//div[@t-if='doc.client_order_ref']" position="attributes">
             <attribute name="class">col-xs-2</attribute>
         </xpath>
-        <xpath expr="//div[@t-if='doc.date_order']" position="attributes">
-            <attribute name="class">col-xs-2</attribute>
+        <xpath expr="//div[@id='informations']/div[2]" position="replace">
+            <div t-if="doc.confirmation_date and doc.state not in ['draft','sent']" class="col-xs-2">
+                <strong>Date Ordered:</strong>
+                <p class="m-0" t-field="doc.confirmation_date" t-options="{'format': 'yyyy-MM-dd'}"/>
+            </div>
         </xpath>
-        <xpath expr="//div[@t-if='doc.date_order']/p" position="attributes">
-            <attribute name="t-field-options">{"format": "yyyy-MM-dd"}</attribute>
+        <xpath expr="//div[@id='informations']/div[3]" position="replace">
+            <div  t-if="doc.date_order and doc.state in ['draft','sent']" class="col-xs-2">
+                <strong>Quotation Date:</strong>
+                    <p class="m-0" t-field="doc.date_order" t-options="{'format': 'yyyy-MM-dd'}"/>
+            </div>
         </xpath>
         <xpath expr="//div[@t-if='doc.user_id.name']" position="attributes">
             <attribute name="class">col-xs-2</attribute>
@@ -23,16 +29,15 @@
                 <p t-field="doc.carrier_id"/>
             </div>
         </xpath>
-        <xpath expr="//t[@t-as='page']/table/thead/tr/th[5]" position="replace">
+        <xpath expr="//table/thead/tr/th[5]" position="replace">
             <th class="text-right"></th>
         </xpath>
-        <xpath expr="//t[@t-as='page']/table/tbody/t/t/tr/td[5]" position="replace">
+        <xpath expr="//table/tbody/t/tr/t/td[5]" position="replace">
             <th class="text-right"></th>
         </xpath>
     </template>
 
-    <record id="sale.report_sale_order" model="ir.actions.report.xml">
-        <field name="attachment_use" eval="False"/>
+    <record id="sale.action_report_saleorder" model="ir.actions.report">
         <field name="attachment">object.name+'.pdf'</field>
     </record>
 

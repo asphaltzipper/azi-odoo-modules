@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 {
     "name": "azi_sale",
-    "version": "0.1",
+    "version": "12.0.1.1.0",
     "summary": "AZI Sales Customizations",
     "category": "Sales",
     "author": "Scott Saunders",
@@ -19,7 +19,7 @@ AZI Specialized Customizations to Sales
 * Prevent Children of Children
 * Add priority to Contact Addresses
     """,
-    "depends": ['sale', 'crm', 'sales_team_industry'],
+    "depends": ['sale', 'crm', 'sales_team_industry', 'delivery'],
     'data': [
         'views/crm_team_view.xml',
         'views/res_partner_views.xml',
