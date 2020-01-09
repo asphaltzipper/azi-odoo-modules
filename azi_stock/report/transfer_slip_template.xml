@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 <template id="transfer_slip">
-    <t t-call="report.html_container">
+    <t t-call="web.html_container">
         <t t-foreach="docs" t-as="o">
-            <t t-call="report.internal_layout">
+            <t t-call="web.internal_layout">
                 <div class="page">
                     <h2>Transfer Slip</h2>
                     <h3><span t-field="o.product_id"/></h3>
@@ -21,10 +21,12 @@
                         <div><strong>Supply Method: </strong><span t-field="o.procure_method" attrs="{'readonly': [('state', '!=', 'draft')]}" groups="stock.group_adv_location"/></div>
                         <div><strong>Procurement Group: </strong><span t-field="o.group_id"/></div>
                         <div><strong>Source Location: </strong><span t-field="o.location_id" groups="stock.group_stock_multi_locations"/></div>
-                        <div><strong>Destination Location: </strong><span t-field="o.location_dest_id"/></div>
-                        <div><strong>Prep: </strong><span t-field="o.product_id.preparation_id"/></div>
-                        <div><strong>Coating: </strong><span t-field="o.product_id.coating_id"/></div>
-                        <div><strong>Shelf Location: </strong><span t-foreach="o.product_id.shelf_ids" t-as="loc"><span t-field="loc.name"/>, </span></div>
+                        <div name="destination"><strong>Destination Location: </strong><span t-field="o.location_dest_id"/></div>
+                        <!-- TODO these fields on engineering_product module -->
+                        <!--<div><strong>Prep: </strong><span t-field="o.product_id.preparation_id"/></div>-->
+                        <!--<div><strong>Coating: </strong><span t-field="o.product_id.coating_id"/></div>-->
+                        <!--TODO this field on shelf_location module -->
+                        <!--<div><strong>Shelf Location: </strong><span t-foreach="o.product_id.shelf_ids" t-as="loc"><span t-field="loc.name"/>, </span></div>-->
                         <img t-if="o.product_id.image_medium"  style="border: 3px solid black;" t-att-src="'data:image/png;base64,%s' % o.product_id.image"/>
                     </div>
                 </div>

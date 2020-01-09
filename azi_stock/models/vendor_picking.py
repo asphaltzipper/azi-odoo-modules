@@ -5,8 +5,8 @@
 from odoo import fields, models, api
 
 
-class PackingTransferLine(models.Model):
-    _inherit = 'stock.pack.operation'
+class StockMoveLine(models.Model):
+    _inherit = 'stock.move.line'
 
     supplier_codes = fields.Char(
         compute='_compute_supplier_codes')

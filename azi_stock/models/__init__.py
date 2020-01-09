@@ -1,4 +1,4 @@
 # -*- coding: utf-8 -*-
 
-import vendor_picking
-import stock_quant
+from . import vendor_picking
+from . import stock_quant

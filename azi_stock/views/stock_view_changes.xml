@@ -14,19 +14,35 @@
                 <attribute name="context">{'show_address': 1}</attribute>
                 <attribute name="options">{&quot;always_reload&quot;: True}</attribute>
             </xpath>
-            <xpath expr="//page/field[@name='move_lines']" position="inside">
-                <tree>
-                    <field name="product_id"/>
-                    <field name="name"/>
+            <xpath expr="//page/field[@name='move_ids_without_package']" position="inside">
+                <tree decoration-danger="not parent.immediate_transfer and state != 'done' and quantity_done > reserved_availability and show_reserved_availability" decoration-muted="scrapped == True or state == 'cancel' or (state == 'done' and is_locked == True)" string="Stock Moves" editable="bottom">
+                    <field name="date_expected" invisible="1"/>
+                    <field name="picking_type_id" invisible="1"/>
+                    <field name="location_id" invisible="1"/>
+                    <field name="picking_code" invisible="1"/>
+                    <field name="product_type" invisible="1"/>
+                    <field name="show_details_visible" invisible="1"/>
+                    <field name="show_reserved_availability" invisible="1"/>
+                    <field name="show_operations" invisible="1" readonly="1"/>
+                    <field name="additional" invisible="1"/>
+                    <field name="has_move_lines" invisible="1"/>
+                    <field name="is_locked" invisible="1"/>
+                    <field name="product_id" required="1" attrs="{'readonly': ['|', '&amp;', ('state', '!=', 'draft'), ('additional', '=', False), ('has_move_lines', '=', True)]}"/>
+                    <field name="name" readonly="1" force_save="1"/>
                     <field name="availability"/>
-                    <field name="product_uom_qty"/>
-                    <field name="product_uom" options="{'no_open': True, 'no_create': True}"/>
-                    <field name="location_dest_id"/>
+                    <field name="is_initial_demand_editable" invisible="1"/>
+                    <field name="is_quantity_done_editable" invisible="1"/>
+                    <field name="product_uom_qty" string="Initial Demand" attrs="{'column_invisible': ['&amp;',('parent.immediate_transfer', '=', True), ('parent.is_locked', '=', True)], 'readonly': [('is_initial_demand_editable', '=', False)]}"/>
+                    <field name="reserved_availability" string="Reserved" attrs="{'column_invisible': (['|','|', ('parent.state','=', 'done'), ('parent.picking_type_code', '=', 'incoming'),'&amp;',('parent.immediate_transfer', '=', True), ('parent.is_locked', '=', True)])}"/>
+                    <field name="quantity_done" string="Done" attrs="{'readonly': [('is_quantity_done_editable', '=', False)]}"/>
+                    <field name="product_uom" attrs="{'readonly': [('state', '!=', 'draft'), ('additional', '=', False)]}" options="{'no_open': True, 'no_create': True}" string="Unit of Measure" groups="uom.group_uom"/>
+                    <field name="location_dest_id" readonly="1" force_save="1"/>
                     <field name="scrapped"/>
-                    <field name="state"/>
+                    <field name="state" readonly="1" force_save="1"/>
+                    <button name="action_show_details" string="Register lots, packs, location" type="object" icon="fa-list" attrs="{'invisible': [('show_details_visible', '=', False)]}" options='{"warn": true}'/>
                 </tree>
             </xpath>
-            <xpath expr="//page/field[@name='pack_operation_product_ids']/tree/field[@name='product_id']" position="after">
+            <xpath expr="//page/field[@name='move_line_ids_without_package']/tree/field[@name='product_id']" position="after">
                     <field name="supplier_codes"/>
             </xpath>
         </field>
@@ -44,20 +60,21 @@
         </field>
     </record>
 
+    <!--No need for it test it with user inventory and can create and edit-->
     <!-- Allow creating serials on inventory adjustments -->
-    <record id="view_inventory_azi_form" model="ir.ui.view">
-        <field name="name">stock.inventory.azi.form</field>
-        <field name="model">stock.inventory</field>
-        <field name="inherit_id" ref="stock.view_inventory_form"/>
-        <field name="arch" type="xml">
-            <xpath expr="//sheet/group/group/field[@name='lot_id']" position="attributes">
-                <attribute name="options">{'create_edit': True}</attribute>
-            </xpath>
-            <xpath expr="//notebook/page/field/tree/field[@name='prod_lot_id']" position="attributes">
-                <attribute name="options">{'create_edit': True}</attribute>
-            </xpath>
-        </field>
-    </record>
+    <!--<record id="view_inventory_azi_form" model="ir.ui.view">-->
+        <!--<field name="name">stock.inventory.azi.form</field>-->
+        <!--<field name="model">stock.inventory</field>-->
+        <!--<field name="inherit_id" ref="stock.view_inventory_form"/>-->
+        <!--<field name="arch" type="xml">-->
+            <!--<xpath expr="//sheet/group/group/field[@name='lot_id']" position="attributes">-->
+                <!--<attribute name="options">{'create_edit': True}</attribute>-->
+            <!--</xpath>-->
+            <!--<xpath expr="//notebook/page/field/tree/field[@name='prod_lot_id']" position="attributes">-->
+                <!--<attribute name="options">{'create_edit': True}</attribute>-->
+            <!--</xpath>-->
+        <!--</field>-->
+    <!--</record>-->
 
     <!-- replace scheduled date with date on stock moves tree view -->
     <record id="view_move_tree_azi" model="ir.ui.view">
@@ -68,7 +85,6 @@
             <field name="date" position="attributes">
                 <attribute name="groups"/>
             </field>
-            <field name="date_expected" position="replace"/>
         </field>
     </record>
 

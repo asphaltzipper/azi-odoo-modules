@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import api, fields, models
-from odoo.exceptions import UserError
+from odoo.exceptions import ValidationError
 
 
 class StockQuant(models.Model):
@@ -13,28 +13,12 @@ class StockQuant(models.Model):
         readonly=True,
         store=True)
 
-    @api.model
-    def _quant_create_from_move(
-            self, qty, move, lot_id=False, owner_id=False,
-            src_package_id=False, dest_package_id=False,
-            force_location_from=False, force_location_to=False):
-
-        # prevent negative quants for serial tracked products
-        if move.location_id.usage == 'internal'\
-                and move.product_id.tracking == 'serial':
-            if lot_id:
-                raise UserError(
-                    'Serial number %s is not available in stock location %s' %
-                    (self.env['stock.production.lot'].browse(lot_id).name,
-                     force_location_from and force_location_from.display_name or move.location_id.name)
-                )
+    @api.constrains('location_id', 'product_id', 'lot_id')
+    def _check_internal_location_with_serial_product(self):
+        if self.location_id.usage == 'internal'and self.product_id.tracking == 'serial':
+            if self.lot_id:
+                raise ValidationError('Serial number %s is not available in stock location %s' %
+                                      (self.lot_id.name, self.location_id.display_name))
             else:
-                raise UserError(
-                    'Serial tracked item %s is not available in stock location %s' %
-                    (move.product_id.display_name,
-                     force_location_from and force_location_from.display_name or move.location_id.name)
-                )
-
-        return super(StockQuant, self)._quant_create_from_move(
-            qty, move, lot_id, owner_id, src_package_id, dest_package_id,
-            force_location_from, force_location_to)
+                raise ValidationError('Serial tracked item %s is not available in stock location %s' %
+                                      (self.product_id.display_name, self.location_id.display_name))

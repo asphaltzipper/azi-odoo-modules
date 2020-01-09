@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-
         <template id="azi_picking_operation" inherit_id="stock.report_picking">
-            <xpath expr="//th[3]" position="replace">
-                <th><strong></strong></th>
-            </xpath>
-            <xpath expr="//td/span[@t-field='o.date']" position="replace"/>
             <xpath expr="//th[@name='td_sched_date_h']" position="after">
                 <th><strong>Completed Date</strong></th>
             </xpath>
@@ -16,6 +11,5 @@
                 </td>
             </xpath>
         </template>
-
     </data>
 </odoo>
