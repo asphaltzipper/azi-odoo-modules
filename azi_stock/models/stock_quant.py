@@ -38,3 +38,8 @@ class StockQuant(models.Model):
         return super(StockQuant, self)._quant_create_from_move(
             qty, move, lot_id, owner_id, src_package_id, dest_package_id,
             force_location_from, force_location_to)
+
+    @api.multi
+    def reconcile_negative_quant(self):
+        self.ensure_one()
+        self._quant_reconcile_negative(None)
