@@ -42,4 +42,4 @@ class StockQuant(models.Model):
     @api.multi
     def reconcile_negative_quant(self):
         self.ensure_one()
-        self._quant_reconcile_negative(None)
+        self.sudo()._quant_reconcile_negative(None)
