@@ -209,11 +209,11 @@ class ProductProduct(models.Model):
         help="Engineering part type")
     eng_mod_flag = fields.Boolean(
         string="No-ECO Modification",
-        track_visibility='on_change',
+        track_visibility='onchange',
         help="Part changed with no ECO or revision")
     eng_hold_flag = fields.Boolean(
         string="Hold Production",
-        track_visibility='on_change',
+        track_visibility='onchange',
         help="A revision is impending, stop producing/purchasing this part")
     product_manager = fields.Many2one(
         comodel_name='res.users',
