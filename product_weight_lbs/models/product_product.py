@@ -3,8 +3,7 @@
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
 from odoo import api, fields, models
-
-import odoo.addons.decimal_precision as dp
+from odoo.addons import decimal_precision as dp
 
 
 class ProductProduct(models.Model):
@@ -31,7 +30,7 @@ class ProductProduct(models.Model):
 
     @api.depends('weight_in_lbs')
     def _compute_weight(self):
-        weight_in_lbs_uom_id = self.env.ref('product.product_uom_lb')
-        weight_uom_id = self.env.ref('product.product_uom_kgm')
+        weight_in_lbs_uom_id = self.env.ref('uom.product_uom_lb')
+        weight_uom_id = self.env.ref('uom.product_uom_kgm')
         for p in self:
             p.weight = weight_in_lbs_uom_id._compute_quantity(p.weight_in_lbs, weight_uom_id)

@@ -29,14 +29,14 @@ class StockQuantPackage(models.Model):
 
     @api.depends('weight')
     def _compute_weight_in_lbs(self):
-        weight_uom_id = self.env.ref('product.product_uom_kgm')
-        weight_in_lbs_uom_id = self.env.ref('product.product_uom_lb')
+        weight_uom_id = self.env.ref('uom.product_uom_kgm')
+        weight_in_lbs_uom_id = self.env.ref('uom.product_uom_lb')
         for p in self:
             p.weight_in_lbs = weight_uom_id._compute_quantity(p.weight, weight_in_lbs_uom_id)
 
     @api.depends('shipping_weight_in_lbs')
     def _compute_shipping_weight(self):
-        weight_in_lbs_uom_id = self.env.ref('product.product_uom_lb')
-        weight_uom_id = self.env.ref('product.product_uom_kgm')
+        weight_in_lbs_uom_id = self.env.ref('uom.product_uom_lb')
+        weight_uom_id = self.env.ref('uom.product_uom_kgm')
         for p in self:
             p.shipping_weight = weight_in_lbs_uom_id._compute_quantity(p.shipping_weight_in_lbs, weight_uom_id)

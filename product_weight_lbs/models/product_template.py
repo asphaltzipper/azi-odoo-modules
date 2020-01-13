@@ -29,8 +29,8 @@ class ProductTemplate(models.Model):
 
     @api.depends('weight_in_lbs')
     def _compute_weight(self):
-        weight_in_lbs_uom_id = self.env.ref('product.product_uom_lb')
-        weight_uom_id = self.env.ref('product.product_uom_kgm')
+        weight_in_lbs_uom_id = self.env.ref('uom.product_uom_lb')
+        weight_uom_id = self.env.ref('uom.product_uom_kgm')
         for p in self:
             p.weight = weight_in_lbs_uom_id._compute_quantity(p.weight_in_lbs, weight_uom_id)
 
@@ -53,7 +53,6 @@ class ProductTemplate(models.Model):
         for template in (self - unique_variants):
             template.weight_in_lbs = 0.0
 
-    @api.one
     def _set_weight_in_lbs(self):
-        if 1 == len(self.product_variant_ids):
+        if len(self.product_variant_ids) == 1:
             self.product_variant_ids.weight_in_lbs = self.weight_in_lbs

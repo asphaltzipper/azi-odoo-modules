@@ -3,8 +3,7 @@
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
 from odoo import api, fields, models
-
-import odoo.addons.decimal_precision as dp
+from odoo.addons import decimal_precision as dp
 
 
 class StockPicking(models.Model):
@@ -24,14 +23,14 @@ class StockPicking(models.Model):
 
     @api.depends('weight')
     def _compute_weight_in_lbs(self):
-        weight_uom_id = self.env.ref('product.product_uom_kgm')
-        weight_in_lbs_uom_id = self.env.ref('product.product_uom_lb')
+        weight_uom_id = self.env.ref('uom.product_uom_kgm')
+        weight_in_lbs_uom_id = self.env.ref('uom.product_uom_lb')
         for p in self:
             p.weight_in_lbs = weight_uom_id._compute_quantity(p.weight, weight_in_lbs_uom_id)
 
     @api.depends('shipping_weight')
     def _compute_shipping_weight_in_lbs(self):
-        weight_uom_id = self.env.ref('product.product_uom_kgm')
-        weight_in_lbs_uom_id = self.env.ref('product.product_uom_lb')
+        weight_uom_id = self.env.ref('uom.product_uom_kgm')
+        weight_in_lbs_uom_id = self.env.ref('uom.product_uom_lb')
         for p in self:
             p.shipping_weight_in_lbs = weight_uom_id._compute_quantity(p.shipping_weight, weight_in_lbs_uom_id)

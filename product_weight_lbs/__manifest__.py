@@ -4,7 +4,7 @@
 {
     "name": "product_weight_lbs",
     "summary": "Product weight in lbs",
-    "version": "10.0.1.0.0",
+    "version": "12.0.1.0.0",
     "category": "Sales",
     "website": "http://www.github.com/asphaltzipper/azi-odoo-modules",
     "author": "scosist",
