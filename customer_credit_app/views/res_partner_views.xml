@@ -8,7 +8,7 @@
     <field name="inherit_id" ref="account.view_partner_property_form" />
     <field name="priority" eval="20"/>
     <field name="arch" type="xml">
-        <field name="trust" position="after">
+        <field name="property_payment_term_id" position="after">
             <field name="credit_app_date"/>
         </field>
     </field>

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import res_partner
-import sale_order
-import account_invoice
+from . import res_partner
+from . import sale_order
+from . import account_invoice
