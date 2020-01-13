@@ -40,7 +40,6 @@ class AddRawMove(models.TransientModel):
         return res
 
     def _generate_component_moves(self, exploded_lines):
-        self.ensure_one()
         moves = self.env['stock.move']
         for bom_line, line_data in exploded_lines:
             moves += self._generate_component_move(bom_line, line_data)
@@ -149,6 +148,6 @@ class AddRawMove(models.TransientModel):
 
         # Check for all draft moves whether they are mto or not
         self.production_id._adjust_procure_method()
-        moves.action_confirm()
-        moves.action_assign()
+        moves._action_confirm()
+        moves._action_assign()
         return {}

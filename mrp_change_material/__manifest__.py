@@ -4,7 +4,7 @@
 
 {
     "name": "mrp_change_material",
-    "version": "10.0.0.1",
+    "version": "12.0.1.0.1",
     "summary": "MRP Change Material",
     "category": "Manufacturing",
     "author": "Chris Emigh",

@@ -1,4 +1,4 @@
 # -*- coding: utf-8 -*-
 
-import add_raw_move
+from . import add_raw_move
 
