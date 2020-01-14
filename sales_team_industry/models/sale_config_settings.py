@@ -5,8 +5,8 @@
 from odoo import api, fields, models
 
 
-class SaleConfiguration(models.TransientModel):
-    _inherit = 'sale.config.settings'
+class ResConfigSettings(models.TransientModel):
+    _inherit = 'res.config.settings'
 
     require_industry = fields.Selection(
         [(0, "Don't require industry"),
@@ -15,7 +15,14 @@ class SaleConfiguration(models.TransientModel):
         help='Partner must reference an industry, sales team must reference'
         ' one or more')
 
+    @api.model
+    def get_values(self):
+        res = super(ResConfigSettings, self).get_values()
+        res.update(require_industry=int(
+            self.env['ir.config_parameter'].sudo().get_param('sales_team_industry.require_industry', default=0)))
+        return res
+
     @api.multi
-    def set_require_industry(self):
-        self.env['ir.values'].sudo().set_default(
-            'sale.config.settings', "require_industry", self.require_industry)
+    def set_values(self):
+        super(ResConfigSettings, self).set_values()
+        self.env['ir.config_parameter'].set_param('sales_team_industry.require_industry', self.require_industry)

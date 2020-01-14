@@ -24,20 +24,18 @@ class CrmTeam(models.Model):
 
     @api.multi
     def write(self, vals):
-        if self.env['ir.values'].get_default('sale.config.settings',
-                                             'require_industry'):
-            if not ((vals.get('partner_industries') or
+        if self.env['ir.config_parameter'].sudo().get_param('sales_team_industry.require_industry'):
+            if (not ((vals.get('partner_industries') or
                     vals.get('all_industries')) or
                     (self.partner_industries and 'partner_industries' not in
                      vals or self.all_industries and 'all_industries' not in
-                     vals)):
+                     vals))) or (vals.get('partner_industries') and not vals['partner_industries'][0][2] and not vals.get('all_industries')):
                 raise ValidationError(_("Teams require a valid Industry."))
         return super(CrmTeam, self).write(vals)
 
     @api.model
     def create(self, vals):
-        if self.env['ir.values'].get_default('sale.config.settings',
-                                             'require_industry'):
+        if self.env['ir.config_parameter'].sudo().get_param('sales_team_industry.require_industry'):
             if not (vals.get('partner_industries') or
                     vals.get('all_industries')):
                 raise ValidationError(_("Teams require a valid Industry."))

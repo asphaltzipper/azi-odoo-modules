@@ -4,7 +4,7 @@
 {
     "name": "Sales Team Industry",
     "summary": "Add industries to sales teams and customers.",
-    "version": "10.0.1.0.0",
+    "version": "12.0.1.1.0",
     "category": "Sales",
     "website": "http://www.github.com/asphaltzipper/azi-odoo-modules",
     'description': "Specify industry tags on customers.  Use them as criteria for auto-assigning teams.",

@@ -10,34 +10,25 @@ from odoo.tools.translate import _
 class Partner(models.Model):
     _inherit = 'res.partner'
 
-    industry_id = fields.Many2one('res.partner.industry', 'Industry')
-
     @api.multi
     def write(self, vals):
-        if (self.env['ir.values'].get_default(
-            'sale.config.settings', 'require_industry') and not (
-                vals.get('parent_id') or self.parent_id and 'parent_id' not in
-                vals)):
-            if ((vals.get('customer') and not vals.get('industry_id')) or
-                (self.customer and 'customer' not in vals and not
-                 self.industry_id and 'industry_id' not in vals)):
-                raise ValidationError(_("Customers require a valid Industry."))
+        for record in self:
+            require_industry = self.env['ir.config_parameter'].sudo().get_param('sales_team_industry.require_industry')
+            if (require_industry and not (
+                    vals.get('parent_id') or record.parent_id and 'parent_id' not in
+                    vals)):
+                current_customer = 'customer' not in vals and record.customer or vals.get('customer')
+                if ((vals.get('customer') and not vals.get('industry_id')) or
+                    (record.customer and 'customer' not in vals and not
+                     record.industry_id and 'industry_id' not in vals))or \
+                        ('industry_id' in vals and not vals['industry_id'] and current_customer):
+                    raise ValidationError(_("Customers require a valid Industry."))
         return super(Partner, self).write(vals)
 
     @api.model
     def create(self, vals):
-        if (self.env['ir.values'].get_default(
-            'sale.config.settings', 'require_industry') and not
+        if (self.env['ir.config_parameter'].sudo().get_param('sales_team_industry.require_industry') and not
                 vals.get('parent_id')):
             if vals.get('customer') and not vals.get('industry_id'):
                 raise ValidationError(_("Customers require a valid Industry."))
         return super(Partner, self).create(vals)
-
-
-class Users(models.Model):
-    _inherit = 'res.users'
-
-    @api.model
-    def create(self, vals):
-        vals['customer'] = False
-        return super(Users, self).create(vals)
