@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 
-import sale_discount_reason
+from . import sale_discount_reason

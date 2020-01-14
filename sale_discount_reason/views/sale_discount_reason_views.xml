@@ -28,7 +28,7 @@
         groups="sales_team.group_sale_manager,account.group_account_user"
     />
 
-    <record model="ir.ui.view" id="invoice_discount_reason">
+    <record id="invoice_discount_reason" model="ir.ui.view" >
         <field name="name">account.invoice.discount.reason.form</field>
         <field name="model">account.invoice</field>
         <field name="inherit_id" ref="account.invoice_form"/>
@@ -39,7 +39,7 @@
         </field>
     </record>
 
-    <record model="ir.ui.view" id="sale_line_discount_reason">
+    <record id="sale_line_discount_reason" model="ir.ui.view" >
         <field name="name">sale.order.line.discount.reason.form</field>
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>

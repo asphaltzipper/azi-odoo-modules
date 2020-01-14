@@ -2,7 +2,7 @@
 
 <odoo>
     <data>
-        <record model="ir.ui.view" id="discount_reason_pivot">
+        <record  id="discount_reason_pivot" model="ir.ui.view" >
             <field name="name">discount.reason.pivot</field>
             <field name="model">sale.report</field>
             <field name="inherit_id" ref="sale.view_order_product_pivot"/>
