@@ -3,88 +3,91 @@
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 
 <odoo>
-<data>
+    <data>
 
-<record id="crm_team_region_view_form" model="ir.ui.view">
-    <field name="name">crm.team.region.form</field>
-    <field name="model">crm.team.region</field>
-    <field name="arch" type="xml">
-        <form string="Sales Region" name="sales_region">
-            <sheet>
-                <div class="oe_title">
-                    <label for="name" class="oe_edit_only" />
-                    <h1>
-                        <field name="name" />
-                    </h1>
-                </div>
-                <label for="region_types" class="oe_edit_only" />
-                <field name="region_types" widget="many2many_tags" placeholder="Tags..." options="{'no_quick_create': True}" />
-                <notebook>
-                    <page string="Country Groups" name="country_groups">
-                        <field name="cg_dom" invisible="1" />
-                        <field name="country_groups" domain="[('id', 'not in', cg_dom[0][2])]" />
-                    </page>
-                    <page string="Countries" name="countries">
-                        <field name="c_dom" invisible="1" />
-                        <field name="countries" domain="[('id', 'not in', c_dom[0][2])]" />
-                    </page>
-                    <page string="States" name="states">
-                        <field name="s_dom" invisible="1" />
-                        <field name="states" domain="[('id', 'not in', s_dom[0][2])]">
-                            <tree>
-                                <field name="name" />
-                                <field name="code" />
-                                <field name="country_id" />
-                            </tree>
-                        </field>
-                    </page>
-                </notebook>
-            </sheet>
-        </form>
-    </field>
-</record>
+        <record id="crm_team_region_view_form" model="ir.ui.view">
+            <field name="name">crm.team.region.form</field>
+            <field name="model">crm.team.region</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name"/>
+                            </h1>
+                        </div>
+                        <label for="region_types" class="oe_edit_only"/>
+                        <field name="region_types" widget="many2many_tags" placeholder="Tags..."
+                               options="{'no_quick_create': True}"/>
+                        <notebook>
+                            <page string="Country Groups" name="country_groups">
+                                <field name="cg_dom" invisible="1" widget="many2many_tags"/>
+                                <field name="country_groups" domain="[('id', 'not in', cg_dom)]"/>
+                            </page>
+                            <page string="Countries" name="countries">
+                                <field name="c_dom" invisible="1" widget="many2many_tags"/>
+                                <field name="countries" domain="[('id', 'not in', c_dom)]"/>
+                            </page>
+                            <page string="States" name="states">
+                                <field name="s_dom" invisible="1" widget="many2many_tags"/>
+                                <field name="states" domain="[('id', 'not in', s_dom)]">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="code"/>
+                                        <field name="country_id"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
 
-<record id="crm_team_region_view_search" model="ir.ui.view">
-    <field name="name">crm.team.region.search</field>
-    <field name="model">crm.team.region</field>
-    <field name="arch" type="xml">
-        <search string="Region">
-            <field name="name" string="Sales Region" filter_domain="[('name','ilike',self)]"/>
-            <field name="name" string="Region Team Type(s)" filter_domain="[('region_types.name','ilike',self)]"/>
-            <field name="name" string="States" filter_domain="[('states.name','ilike',self)]"/>
-            <field name="name" string="Countries" filter_domain="[('countries.name','ilike',self)]"/>
-            <field name="name" string="Country Groups" filter_domain="[('country_groups.name','ilike',self)]"/>
-            <filter string='State in US' name="us-state" icon="terp-accessories-achiver" domain="[('states.country_id', '=', 235)]" />
-            <filter string='Province in CA' name="ca-province" icon="terp-accessories-achiver" domain="[('states.country_id', '=', 39)]" />
-        </search>
-    </field>
-</record>
+        <record id="crm_team_region_view_search" model="ir.ui.view">
+            <field name="name">crm.team.region.search</field>
+            <field name="model">crm.team.region</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name" string="Sales Region" filter_domain="[('name','ilike',self)]"/>
+                    <field name="name" string="Region Team Type(s)"
+                           filter_domain="[('region_types.name','ilike',self)]"/>
+                    <field name="name" string="States" filter_domain="[('states.name','ilike',self)]"/>
+                    <field name="name" string="Countries" filter_domain="[('countries.name','ilike',self)]"/>
+                    <field name="name" string="Country Groups" filter_domain="[('country_groups.name','ilike',self)]"/>
+                    <filter string='State in US' name="us-state" icon="terp-accessories-achiver"
+                            domain="[('states.country_id', '=', %(base.us)d)]"/>
+                    <filter string='Province in CA' name="ca-province" icon="terp-accessories-achiver"
+                            domain="[('states.country_id', '=', %(base.ca)d)]"/>
+                </search>
+            </field>
+        </record>
 
-<record id="crm_team_region_view_tree" model="ir.ui.view">
-    <field name="name">crm.team.region.tree</field>
-    <field name="model">crm.team.region</field>
-    <field name="arch" type="xml">
-        <tree string="Sales Team Regions" name="crm_team_regions">
-            <field name="name" />
-            <field name="region_types" />
-            <field name="states" />
-            <field name="countries" />
-            <field name="country_groups" />
-        </tree>
-    </field>
-</record>
+        <record id="crm_team_region_view_tree" model="ir.ui.view">
+            <field name="name">crm.team.region.tree</field>
+            <field name="model">crm.team.region</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="region_types"/>
+                    <field name="states"/>
+                    <field name="countries"/>
+                    <field name="country_groups"/>
+                </tree>
+            </field>
+        </record>
+        <act_window name="Sales Regions"
+                    res_model="crm.team.region"
+                    view_mode="tree,form"
+                    target="current"
+                    id="crm_team_region_act_window"/>
 
-<act_window name="Sales Regions"
-    res_model="crm.team.region"
-    view_mode="tree,form"
-    target="current"
-    id="crm_team_region_act_window"/>
+        <menuitem action="crm_team_region_act_window"
+                  id="menu_crm_team_region_act"
+                  parent="menu_crm_team_region_config"
+                  sequence="2"
+                  groups="sales_team.group_sale_manager"/>
 
-<menuitem action="crm_team_region_act_window"
-    id="menu_crm_team_region_act"
-    parent="menu_crm_team_region_config"
-    sequence="2"
-    groups="sales_team.group_sale_manager" />
-
-</data>
+    </data>
 </odoo>

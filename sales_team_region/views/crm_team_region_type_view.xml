@@ -3,19 +3,19 @@
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 
 <odoo>
-<data>
+    <data>
 
-<act_window name="Sales Region Types"
-    res_model="crm.team.region.type"
-    view_mode="tree,form"
-    target="current"
-    id="crm_team_type_act_window"/>
+        <act_window name="Sales Region Types"
+                    res_model="crm.team.region.type"
+                    view_mode="tree,form"
+                    target="current"
+                    id="crm_team_type_act_window"/>
 
-<menuitem action="crm_team_type_act_window"
-    id="menu_crm_team_type_act"
-    parent="menu_crm_team_region_config"
-    sequence="1"
-    groups="sales_team.group_sale_manager" />
+        <menuitem action="crm_team_type_act_window"
+                  id="menu_crm_team_type_act"
+                  parent="menu_crm_team_region_config"
+                  sequence="1"
+                  groups="sales_team.group_sale_manager"/>
 
-</data>
+    </data>
 </odoo>

@@ -33,13 +33,14 @@
                 ref('base.la'),ref('base.my'),ref('base.mv'),ref('base.mn'),
                 ref('base.mm'),ref('base.np'),ref('base.pk'),ref('base.ph'),
                 ref('base.ru'),ref('base.sg'),ref('base.lk'),ref('base.tj'),
-                ref('base.th'),ref('base.tp'),ref('base.tm'),ref('base.uz'),
+                ref('base.th'),ref('base.tl'),ref('base.tm'),ref('base.uz'),
                 ref('base.vn'),ref('base.tw'),ref('base.io'),ref('base.cx'),
                 ref('base.cc'),ref('base.hk'),ref('base.mo')
                 ])]"/>
         </record>
         <record id="caribbean" model="res.country.group">
             <field name="name">Caribbean</field>
+            <!--Removed because it doesn't exist anymore ref('base.an')-->
             <field name="country_ids" eval="[(6,0,[
                 ref('base.bs'),ref('base.tc'),ref('base.cu'),ref('base.ht'),
                 ref('base.do'),ref('base.jm'),ref('base.ky'),ref('base.pr'),
@@ -47,7 +48,7 @@
                 ref('base.mf'),ref('base.sx'),ref('base.bq'),ref('base.bl'),
                 ref('base.kn'),ref('base.ms'),ref('base.gp'),ref('base.dm'),
                 ref('base.mq'),ref('base.lc'),ref('base.vc'),ref('base.gd'),
-                ref('base.bb'),ref('base.tt'),ref('base.an'),ref('base.aw'),
+                ref('base.bb'),ref('base.tt'),ref('base.aw'),
                 ref('base.cw')
                 ])]"/>
         </record>

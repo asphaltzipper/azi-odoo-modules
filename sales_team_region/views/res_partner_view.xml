@@ -10,9 +10,9 @@
     <field name="model">res.partner</field>
     <field name="inherit_id" ref="base.view_partner_form" />
     <field name="arch" type="xml">
-        <field name="user_id" position="after">
+        <xpath expr="//group[@name='sale']/field[@name='user_id']" position="after">
             <field name="team_ids" widget="many2many_tags" placeholder="Tags..." options="{'no_create': True}" />
-        </field>
+        </xpath>
     </field>
 </record>
 

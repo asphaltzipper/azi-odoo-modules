@@ -18,6 +18,7 @@ class CrmTeamRegion(models.Model):
     states = fields.Many2many('res.country.state',
                               'crm_team_region_state_rel', 'region_id',
                               'state_id')
+
     countries = fields.Many2many('res.country',
                                  'crm_team_region_country_rel', 'region_id',
                                  'country_id')
@@ -38,9 +39,10 @@ class CrmTeamRegion(models.Model):
     # note: domain fields parameter must not be defined for this to work
     @api.multi
     def _compute_dom(self):
-        self.s_dom = self._region_domain(1)
-        self.c_dom = self._region_domain(2)
-        self.cg_dom = self._region_domain(3)
+        for record in self:
+            record.s_dom = self._region_domain(1)
+            record.c_dom = self._region_domain(2)
+            record.cg_dom = self._region_domain(3)
 
     # https://gist.github.com/dreispt/a4c30fe671db2b2fce34
     s_dom = fields.Many2many('res.country.state', compute=_compute_dom)
@@ -54,7 +56,6 @@ class CrmTeamRegion(models.Model):
     # http://stackoverflow.com/questions/35840533/odoo-8-api-onchange-function-not-let-update-created-one2many-value/35841753#35841753
     # http://stackoverflow.com/questions/32326212/one2many-field-on-change-function-cant-change-its-own-value
 
-    @api.model
     @api.constrains('states', 'countries', 'country_groups')
     def _require_region_definition(self):
         for record in self:
@@ -65,8 +66,6 @@ class CrmTeamRegion(models.Model):
                                         " one state, country, or country"
                                         " group."))
 
-    @api.multi
-    @api.depends('region_types')
     def _region_domain(self, geoslice=False):
         state_ids = set()
         state_country_ids = set()
@@ -102,7 +101,12 @@ class CrmTeamRegion(models.Model):
         region_domain = {1: list(state_ids), 2: list(country_ids),
                          3: list(country_group_ids)}
         if geoslice:
-            return region_domain.get(geoslice, list())
+            geoslice_value = region_domain.get(geoslice, [])
+            if geoslice == 1:
+                return self.env['res.country.state'].browse(geoslice_value)
+            elif geoslice == 2:
+                return self.env['res.country'].browse(geoslice_value)
+            return self.env['res.country.group'].browse(geoslice_value)
         else:
             return set(state_ids), set(country_ids), set(country_group_ids)
 

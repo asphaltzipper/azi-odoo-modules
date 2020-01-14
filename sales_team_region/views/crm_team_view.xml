@@ -3,56 +3,56 @@
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 
 <odoo>
-<data>
+    <data>
 
-<!-- update sales team kanban view here -->
+        <!-- update sales team kanban view here -->
 
-<!-- update sales team search view here -->
+        <!-- update sales team search view here -->
 
-<record id="crm_team_view_tree" model="ir.ui.view">
-    <field name="name">crm.team.tree.inherited</field>
-    <field name="model">crm.team</field>
-    <field name="inherit_id" ref="sales_team.crm_team_view_tree" />
-    <field name="arch" type="xml">
-        <xpath expr="//tree/field[@name='user_id']" position="after">
-            <field name="region_id" />
-        </xpath>
-    </field>
-</record>
+        <record id="crm_team_view_tree" model="ir.ui.view">
+            <field name="name">crm.team.tree.inherited</field>
+            <field name="model">crm.team</field>
+            <field name="inherit_id" ref="sales_team.crm_team_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree/field[@name='user_id']" position="after">
+                    <field name="region_id"/>
+                </xpath>
+            </field>
+        </record>
 
-<record id="crm_team_view_form" model="ir.ui.view">
-    <field name="name">crm.team.form.inherited</field>
-    <field name="model">crm.team</field>
-    <field name="inherit_id" ref="sales_team.crm_team_view_form" />
-    <field name="arch" type="xml">
-        <field name="user_id" position="after">
-            <field name="region_id" />
-        </field>
-    </field>
-</record>
+        <record id="crm_team_view_form" model="ir.ui.view">
+            <field name="name">crm.team.form.inherited</field>
+            <field name="model">crm.team</field>
+            <field name="inherit_id" ref="sales_team.crm_team_view_form"/>
+            <field name="arch" type="xml">
+                <field name="user_id" position="after">
+                    <field name="region_id"/>
+                </field>
+            </field>
+        </record>
 
-<record id="crm_team_view_search" model="ir.ui.view">
-    <field name="name">crm.team.search</field>
-    <field name="model">crm.team</field>
-    <field name="inherit_id" ref="sales_team.crm_team_salesteams_search"/>
-    <field name="arch" type="xml">
-        <xpath expr="//search/field[@name='user_id']" position="after">
-            <field name="region_id"/>
-        </xpath>
-    </field>
-</record>
+        <record id="crm_team_view_search" model="ir.ui.view">
+            <field name="name">crm.team.search</field>
+            <field name="model">crm.team</field>
+            <field name="inherit_id" ref="sales_team.crm_team_salesteams_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search/field[@name='user_id']" position="after">
+                    <field name="region_id"/>
+                </xpath>
+            </field>
+        </record>
 
-<menuitem name="Teams &amp; Regions"
-    id="menu_crm_team_region_config"
-    parent="sales_team.menu_sale_config"
-    sequence="7"
-    groups="sales_team.group_sale_manager" />
+        <menuitem name="Teams &amp; Regions"
+                  id="menu_crm_team_region_config"
+                  parent="crm.crm_menu_config"
+                  sequence="7"
+                  groups="sales_team.group_sale_manager"/>
 
-<menuitem action="sales_team.sales_team_config_action"
-    id="sales_team.sales_team_config"
-    parent="menu_crm_team_region_config"
-    sequence="4"
-    groups="sales_team.group_sale_manager" />
+        <menuitem action="sales_team.sales_team_config_action"
+                  id="crm.crm_team_config"
+                  parent="menu_crm_team_region_config"
+                  sequence="4"
+                  groups="sales_team.group_sale_manager"/>
 
-</data>
+    </data>
 </odoo>
