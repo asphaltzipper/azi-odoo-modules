@@ -3,13 +3,13 @@
 
     <!-- inherit request for quotation -->
     <template id="report_purchasequotation_carrier" inherit_id="purchase.report_purchasequotation_document">
-        <xpath expr="//table[@class='table table-condensed']/thead/tr/th[1]" position="after">
+        <xpath expr="//table/thead/tr/th[1]" position="after">
             <th><strong>Shipping</strong></th>
         </xpath>
-        <xpath expr="//table[@class='table table-condensed']/tbody/tr/td[2]/span[@t-field='order_line.date_planned']" position="attributes">
-            <attribute name="t-field-options">{"format": "yyyy-MM-dd"}</attribute>
+        <xpath expr="//table/tbody/tr/td[2]/span[@t-field='order_line.date_planned']" position="attributes">
+            <attribute name="t-options">{"format": "yyyy-MM-dd"}</attribute>
         </xpath>
-        <xpath expr="//table[@class='table table-condensed']/tbody/tr/td[1]" position="after">
+        <xpath expr="//table/tbody/tr/td[1]" position="after">
             <td>
                 <span t-field="order_line.carrier_id"/>
             </td>
@@ -19,15 +19,15 @@
     <!-- inherit purchase order confirmation -->
     <template id="report_purchaseorder_carrier" inherit_id="purchase.report_purchaseorder_document">
         <xpath expr="//div[@t-if='o.date_order']/p[@t-field='o.date_order']" position="attributes">
-            <attribute name="t-field-options">{"format": "yyyy-MM-dd"}</attribute>
+            <attribute name="t-options">{"format": "yyyy-MM-dd"}</attribute>
         </xpath>
-        <xpath expr="//table[@class='table table-condensed']/thead/tr/th[2]" position="after">
+        <xpath expr="//table/thead/tr/th[2]" position="after">
             <th><strong>Shipping</strong></th>
         </xpath>
-        <xpath expr="//table[@class='table table-condensed']/tbody/tr/td[3]/span[@t-field='line.date_planned']" position="attributes">
-            <attribute name="t-field-options">{"format": "yyyy-MM-dd"}</attribute>
+        <xpath expr="//table/tbody/tr/td[3]/span[@t-field='line.date_planned']" position="attributes">
+            <attribute name="t-options">{"format": "yyyy-MM-dd"}</attribute>
         </xpath>
-        <xpath expr="//table[@class='table table-condensed']/tbody/tr/td[2]" position="after">
+        <xpath expr="//table/tbody/tr/td[2]" position="after">
             <td>
                 <span t-field="line.carrier_id"/>
             </td>

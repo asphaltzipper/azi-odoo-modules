@@ -23,7 +23,7 @@
 
 {
     "name": "Purchase Line Delivery",
-    "version": "10.0.0",
+    "version": "12.0.1.1.0",
     "summary": "Purchase Order Line delivery method",
     "category": "Purchases",
     "author": "mtaylor",
@@ -31,7 +31,7 @@
     'description': """
         Add a field on purchase order line for specifying a delivery method.
     """,
-    "depends": ["purchase"],
+    "depends": ["purchase_stock", "delivery"],
     "data": [
         'views/purchase_views.xml',
         'report/templates.xml',

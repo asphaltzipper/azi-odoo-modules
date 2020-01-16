@@ -11,9 +11,15 @@ class PurchaseOrder(models.Model):
     def _get_default_carrier(self):
         if self.partner_id.property_delivery_carrier_id:
             return self.partner_id.property_delivery_carrier_id.id
-        if self.env['ir.values'].get_default('purchase.config.settings', 'po_carrier_id'):
-            return self.env['ir.values'].get_default('purchase.config.settings', 'po_carrier_id')
+        if self.env['ir.config_parameter'].sudo().get_param('purchase_line_delivery.po_carrier_id'):
+            return int(self.env['ir.config_parameter'].sudo().get_param('purchase_line_delivery.po_carrier_id'))
         return self.env['delivery.carrier'].search([], limit=1, order='sequence').id
+
+    default_carrier_id = fields.Many2one(
+        comodel_name='delivery.carrier',
+        string='Shipping',
+        required=True,
+        default=_get_default_carrier)
 
     @api.onchange('partner_id', 'company_id')
     def onchange_partner_id(self):
@@ -22,12 +28,6 @@ class PurchaseOrder(models.Model):
             self.default_carrier_id = False
         else:
             self.default_carrier_id = self._get_default_carrier()
-
-    default_carrier_id = fields.Many2one(
-        comodel_name='delivery.carrier',
-        string='Shipping',
-        required=True,
-        default=_get_default_carrier)
 
     @api.multi
     def action_set_shipping(self):
@@ -44,8 +44,8 @@ class PurchaseOrderLine(models.Model):
             return self.env.context['default_carrier_id']
         if self.order_id.partner_id:
             return self.order_id.partner_id.property_delivery_carrier_id.id
-        if self.env['ir.values'].get_default('purchase.config.settings', 'po_carrier_id'):
-            return self.env['ir.values'].get_default('purchase.config.settings', 'po_carrier_id')
+        if self.env['ir.config_parameter'].sudo().get_param('purchase_line_delivery.po_carrier_id'):
+            return int(self.env['ir.config_parameter'].sudo().get_param('purchase_line_delivery.po_carrier_id'))
         return self.env['delivery.carrier'].search([], limit=1, order='sequence').id
 
     carrier_id = fields.Many2one(
