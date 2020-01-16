@@ -72,7 +72,7 @@
                                 <tree>
                                     <field name="origin"/>
                                     <field name="location_dest_id" string="Destination"/>
-                                    <field name="product_qty" string="Quantity"/>
+                                    <field name="product_uom_qty" string="Quantity"/>
                                     <field name="state"/>
                                 </tree>
                             </field>
