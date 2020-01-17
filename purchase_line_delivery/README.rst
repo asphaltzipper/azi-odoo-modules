@@ -1,5 +1,5 @@
-Sale Discount Reason
-====================
+Purchase Line Delivery
+======================
 * Add `po_carrier_id` in `res.config.settings` to be displayed in settings of purchase
 * Add `carrier_id` in `purchase.order.line`
 * Add `default_carrier_id` in `purchase.order` and create a new method which set `carrier_id` in `purchase.order.line` to have same value of `default_carrier_id`
