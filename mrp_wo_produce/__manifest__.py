@@ -25,8 +25,8 @@ Wizard for completing Manufacturing Orders with Work Orders
         "mrp",
     ],
     "data": [
-        'views/mrp_production_views.xml',
         'wizard/mrp_wo_produce_views.xml',
+        'views/mrp_production_views.xml',
     ],
     "installable": True,
     "auto_install": False,

@@ -22,7 +22,7 @@ class MrpProduction(models.Model):
             # actually have the component, then do an inventory adjustment or something.
             serial_moves = order.move_raw_ids\
                 .filtered(lambda x: x.state not in ('done', 'cancel') and x.product_id.tracking == 'serial')
-            for move_lot in serial_moves.mapped('move_lot_ids'):
-                if not move_lot.lot_id or not move_lot.quantity_done:
+            for move_lot in serial_moves.mapped('active_move_line_ids'):
+                if not move_lot.lot_id or not move_lot.qty_done:
                     raise UserError(_('You should provide a lot for a component'))
         return super(MrpProduction, self).post_inventory()
