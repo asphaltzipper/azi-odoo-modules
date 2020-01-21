@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 <data>
-
+<!--In version 12, it checks level value and set value and domain for any number of level-->
 <template id="report_financial_line_azi" inherit_id="account_reports.report_financial_line">
     <xpath expr="//t[@t-set='domainClass']" position="before">
         <t t-if="a.get('level') == 3 and a['type'] in ['line', 'total']"><t t-set="trclass" t-value="'o_account_reports_level3'"/></t>

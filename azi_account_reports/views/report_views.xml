@@ -4,11 +4,11 @@
 
     <record id="action_account_report_bbc_ar" model="ir.actions.client">
         <field name="name">BBC Aged Receivable</field>
-        <field name="tag">account_report_generic</field>
-        <field name="context" eval="{'url': '/account_reports/output_format/bbc_aged_receivable/1', 'model': 'account.bbc.aged.receivable'}" />
+        <field name="tag">account_report</field>
+        <field name="context" eval="{'model': 'account.bbc.aged.receivable'}" />
     </record>
 
-    <menuitem id="menu_action_account_report_bbc_aged_receivable" name="BBC Aged Receivable" action="action_account_report_bbc_ar" parent="account_reports.account_reports_business_statements_menu"/>
+    <menuitem id="menu_action_account_report_bbc_aged_receivable" name="BBC Aged Receivable" action="action_account_report_bbc_ar" parent="account_reports.account_reports_partners_reports_menu"/>
 
 </data>
 </odoo>

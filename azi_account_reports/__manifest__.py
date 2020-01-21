@@ -5,7 +5,7 @@
 
 {
     'name': 'AZI Enterprise Accounting Reports',
-    'version': '10.0.0.0.0',
+    'version': '12.0.1.0.0',
     'summary': 'AZI Enterprise Custom Accounting Reports',
     'category': 'Accounting',
     'author': 'matt454357',
@@ -29,10 +29,10 @@ AZI Enterprise Custom Accounting Reports
         'data/azi_account_reports.xml',
         'views/account_views.xml',
         'views/report_views.xml',
-        'views/report_financial.xml',
+        # 'views/report_financial.xml',
     ],
     'installable': True,
     'auto_install': False,
-    # 'pre_init_hook': '_set_update',
+    # 'pre_init_hook': '_set_update', #already commented
     'post_init_hook': '_set_noupdate',
 }
