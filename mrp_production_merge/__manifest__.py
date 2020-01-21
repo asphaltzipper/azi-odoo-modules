@@ -4,7 +4,7 @@
 
 {
     "name": "Merge Manufacturing Orders",
-    "version": "1.0",
+    "version": "12.0.1.0.0",
     "description": "Merge Manufacturing Orders",
     "summary": "Merge Manufacturing Orders",
     "category": "Manufacturing",
