@@ -23,7 +23,7 @@
 
 {
     "name": "stock_internal_transport",
-    "version": "10.0.0.1",
+    "version": "12.0.1.1.0",
     "summary": "Stock Internal Transport",
     "category": "Inventory Control",
     "author": "Matt Taylor",
@@ -44,8 +44,8 @@ Modifies Stock Picking to better manage transportation of product transfers betw
         'data/picking_data.xml',
         'views/stock_picking_views.xml',
         'views/res_company_views.xml',
-        'report/picking_reports.xml',
         'report/report_transportdoc.xml',
+        'report/picking_reports.xml',
     ],
     "installable": True,
     "auto_install": False,
