@@ -23,7 +23,7 @@
 
 {
     "name": "stock_batch_transfer",
-    "version": "10.0.0.1",
+    "version": "12.0.1.1.0",
     "summary": "Stock Batch Transfer",
     "category": "Inventory Control",
     "author": "Matt Taylor",
@@ -39,7 +39,7 @@ Validate a batch of internal transfers
 * Skip transfers requiring serial numbers.
 * Skip transfers requiring quality checks.
     """,
-    "depends": ['product', 'stock'],
+    "depends": ['quality_control'],
     'data': [
         'views/stock_picking_views.xml',
     ],

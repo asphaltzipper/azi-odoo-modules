@@ -3,26 +3,24 @@
     <record model="ir.actions.server" id="action_stock_picking_do_batch_transfer">
         <field name="name">Validate Transfers</field>
         <field name="model_id" ref="stock.model_stock_picking"/>
-        <field name="code">records.do_batch_transfer()</field>
+        <field name="state">code</field>
+        <field name="code">
+        for rec in records:
+            rec.do_batch_transfer()
+        </field>
+        <field name="binding_model_id" ref="stock.model_stock_picking"/>
     </record>
-    <record model="ir.values" id="stock_picking_validate_transfers_multi">
-        <field name="model_id" ref="stock.model_stock_picking" />
-        <field name="name">Validate Transfers</field>
-        <field name="key2">client_action_multi</field>
-        <field name="value" eval="'ir.actions.server,' +str(ref('action_stock_picking_do_batch_transfer'))" />
-        <field name="key">action</field>
-        <field name="model">stock.picking</field>
-    </record>
+
     <record id="complete_quantity_stock_picking" model="ir.ui.view">
         <field name="name">complete.quantity.stock.picking</field>
         <field name="model">stock.picking</field>
         <field name="inherit_id" ref="stock.view_picking_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//header/button[@name='do_new_transfer']" position="after">
+            <xpath expr="//header/button[@name='do_print_picking']" position="before">
                 <button name="do_complete_qty" type="object" string="Fill Qty" states="draft,partially_available,assigned"/>
                 <button name="do_empty_qty" type="object" string="Empty Qty" states="draft,partially_available,assigned"/>
             </xpath>
-            <xpath expr="//notebook/page/field/tree/button[@name='show_details']" position="after">
+            <xpath expr="//notebook/page/field/tree/field[@name='qty_done']" position="after">
                 <button
                         name="do_complete_qty_line"
                         type="object"

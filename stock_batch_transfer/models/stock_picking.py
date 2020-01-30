@@ -5,7 +5,6 @@ from odoo.exceptions import UserError, ValidationError
 from odoo.tools.float_utils import float_round
 
 
-
 class StockPicking(models.Model):
     _inherit = "stock.picking"
 
@@ -24,20 +23,20 @@ class StockPicking(models.Model):
                 raise UserError(_('Transfers must be type "Internal Transfers". (%s)' % pick))
             if not pick.state == 'assigned':
                 raise UserError(_('Transfer must be in the "Available" state. (%s)' % pick))
-            if not all([x.qty_done == 0.0 for x in pick.pack_operation_ids]):
+            if not all([x.qty_done == 0.0 for x in pick.move_line_ids_without_package]):
                 raise UserError(_('We can only validate batches with NO completed lines. (%s)' % pick))
-            if not pick.move_lines and not pick.pack_operation_ids:
+            if not pick.move_ids_without_package and not pick.move_line_ids_without_package:
                 raise UserError(_('Create some Initial Demand or Mark as Todo and create some Operations. (%s)' % pick))
             picking_type = pick.picking_type_id
             serials_required = False
             if picking_type.use_create_lots or picking_type.use_existing_lots:
-                for pack in pick.pack_operation_ids:
+                for pack in pick.move_line_ids_without_package:
                     if pack.product_id and pack.product_id.tracking != 'none':
                         serials_required = True
                         # raise UserError(_('Lots/serials required, specify those first! (%s)' % pick))
-            if pick.check_todo or serials_required:
+            if pick.quality_check_todo or serials_required:
                 continue
-            for pack in pick.pack_operation_ids:
+            for pack in pick.move_line_ids_without_package:
                 if pack.product_qty > 0:
                     this_qty = float_round(
                         pack.product_qty,
@@ -45,7 +44,7 @@ class StockPicking(models.Model):
                     pack.write({'qty_done': this_qty})
                 else:
                     pack.unlink()
-            pick.do_transfer()
+            pick.action_done()
 
     @api.multi
     def do_complete_qty(self):
@@ -54,7 +53,7 @@ class StockPicking(models.Model):
         Skip moves requiring serial numbers.
         """
         for pick in self:
-            for pack in pick.pack_operation_ids:
+            for pack in pick.move_line_ids_without_package:
                 if pack.qty_done == 0 and not pack.product_id.tracking != 'none':
                     this_qty = pack.product_qty
                     pack.write({'qty_done': this_qty})
@@ -62,13 +61,13 @@ class StockPicking(models.Model):
     @api.multi
     def do_empty_qty(self):
         for pick in self:
-            for pack in pick.pack_operation_ids:
+            for pack in pick.move_line_ids_without_package:
                 if pack.product_id.tracking == 'none':
                     pack.write({'qty_done': 0})
 
 
 class StockPackOp(models.Model):
-    _inherit = "stock.pack.operation"
+    _inherit = "stock.move.line"
 
     @api.multi
     def do_complete_qty_line(self):
