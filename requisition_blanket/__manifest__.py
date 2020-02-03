@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 {
     "name": "requisition_blanket",
-    "version": "10.0.0.1",
+    "version": "12.0.1.1.1",
     "summary": "Improve Blanket PO Behavior",
     "category": "Purchases",
     "author": "Chris Emigh",
@@ -20,7 +20,7 @@ Improve Blanket PO Behavior
     """,
     "depends": ['purchase_requisition'],
     'data': [
-        'data/purchase_requisition_data.yml',
+        'data/purchase_requisition_data.xml',
         'report/purchase_agreement_layout.xml',
         'report/blanket_order.xml',
         'views/purchase_requisition_views.xml',

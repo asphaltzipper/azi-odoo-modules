@@ -6,7 +6,7 @@
         <field name="model">purchase.requisition</field>
         <field name="inherit_id" ref="purchase_requisition.view_purchase_requisition_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='account_analytic_id']" position="after">
+            <xpath expr="//field[@name='vendor_id']" position="after">
                 <field name="lead_time" string="Lead Time (days)"/>
             </xpath>
         </field>

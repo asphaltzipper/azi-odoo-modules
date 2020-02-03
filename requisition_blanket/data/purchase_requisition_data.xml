@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <function name="write" model="ir.model.data">
+            <function name="search" model="ir.model.data">
+                <value
+                  eval="[('module', '=', 'purchase_requisition'), ('name', '=', 'seq_purchase_tender')]"
+                  />
+            </function>
+            <value eval="{'noupdate': False}" />
+        </function>
+        <record id="purchase_requisition.seq_purchase_tender" model="ir.sequence">
+            <field name="name">Call for Tender</field>
+            <field name="prefix">PA</field>
+        </record>
+        <function name="write" model="ir.model.data">
+            <function name="search" model="ir.model.data">
+                <value
+                  eval="[('module', '=', 'purchase_requisition'), ('name', '=', 'seq_purchase_tender')]"
+                  />
+            </function>
+            <value eval="{'noupdate': True}" />
+        </function>
+    </data>
+</odoo>
