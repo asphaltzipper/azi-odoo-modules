@@ -22,7 +22,7 @@ AZI Specialized Customizations to account
 * Add menu item for account types
 * Reformat check
     """,
-    "depends": ['account'],
+    "depends": ['account_check_printing'],
     'data': [
         'views/account.xml',
         'views/account_view_changes.xml',
