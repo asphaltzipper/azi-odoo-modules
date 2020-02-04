@@ -206,14 +206,17 @@ class ProductProduct(models.Model):
     eng_type_id = fields.Many2one(
         comodel_name='engineering.part.type',
         string='Eng Type',
+        copy=True,
         help="Engineering part type")
     eng_mod_flag = fields.Boolean(
         string="No-ECO Modification",
         track_visibility='onchange',
+        copy=False,
         help="Part changed with no ECO or revision")
     eng_hold_flag = fields.Boolean(
         string="Hold Production",
         track_visibility='onchange',
+        copy=False,
         help="A revision is impending, stop producing/purchasing this part")
     product_manager = fields.Many2one(
         comodel_name='res.users',
@@ -222,6 +225,7 @@ class ProductProduct(models.Model):
         string='Deprecated',
         default=False,
         required=True,
+        copy=False,
         index=True)
     eng_notes = fields.Text('Engineering Notes')
 
