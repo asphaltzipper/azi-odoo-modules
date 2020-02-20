@@ -109,23 +109,27 @@ class ProductTemplate(models.Model):
     @api.depends('categ_id', 'product_variant_ids', 'product_variant_ids.default_code')
     def _compute_version_ids(self):
         for prod in self:
-            domain = [
-                # ('id', '!=', prod.id),
-                ('eng_code', '=', prod.eng_code),
-                '|', ('active', '=', True), ('active', '=', False)]
-            versions = prod.search(domain, order='default_code')
-            prod.version_ids = versions.ids
+            if prod.eng_management:
+                domain = [
+                    # ('id', '!=', prod.id),
+                    ('eng_management', '=', True),
+                    ('eng_code', '=', prod.eng_code),
+                    '|', ('active', '=', True), ('active', '=', False)]
+                versions = prod.search(domain, order='default_code')
+                prod.version_ids = versions.ids
 
     @api.depends('categ_id', 'product_variant_ids', 'product_variant_ids.default_code')
     def _compute_version_doc_ids(self):
         for prod in self:
-            vers_domain = [
-                # ('id', '!=', prod.id),
-                ('eng_code', '=', prod.eng_code),
-                '|', ('active', '=', True), ('active', '=', False)]
-            versions = prod.search(vers_domain)
-            doc_domain = [('res_model', '=', 'product.template'), ('res_id', 'in', versions.ids)]
-            prod.version_doc_ids = self.env['ir.attachment'].search(doc_domain)
+            if prod.eng_management:
+                vers_domain = [
+                    # ('id', '!=', prod.id),
+                    ('eng_management', '=', True),
+                    ('eng_code', '=', prod.eng_code),
+                    '|', ('active', '=', True), ('active', '=', False)]
+                versions = prod.search(vers_domain)
+                doc_domain = [('res_model', '=', 'product.template'), ('res_id', 'in', versions.ids)]
+                prod.version_doc_ids = self.env['ir.attachment'].search(doc_domain)
 
     @api.constrains('eng_categ_id')
     def _validate_eng_cat(self):
@@ -206,14 +210,17 @@ class ProductProduct(models.Model):
     eng_type_id = fields.Many2one(
         comodel_name='engineering.part.type',
         string='Eng Type',
+        copy=True,
         help="Engineering part type")
     eng_mod_flag = fields.Boolean(
         string="No-ECO Modification",
-        track_visibility='on_change',
+        track_visibility='onchange',
+        copy=False,
         help="Part changed with no ECO or revision")
     eng_hold_flag = fields.Boolean(
         string="Hold Production",
-        track_visibility='on_change',
+        track_visibility='onchange',
+        copy=False,
         help="A revision is impending, stop producing/purchasing this part")
     product_manager = fields.Many2one(
         comodel_name='res.users',
@@ -222,6 +229,7 @@ class ProductProduct(models.Model):
         string='Deprecated',
         default=False,
         required=True,
+        copy=False,
         index=True)
     eng_notes = fields.Text('Engineering Notes')
 

@@ -353,7 +353,7 @@ class MrpMaterialPlan(models.Model):
         # create dependent demand
         for line, line_data in lines:
             child_op = self._get_orderpoint(line.product_id, self.location_id)
-            if not child_op and line.product_id.type == 'product':
+            if not child_op and line.product_id.type == 'product' and not line.product_id.e_kanban:
                 # log warning if no orderpoint found
                 message = "No orderpoint for product %s" % (line.product_id.display_name, )
                 _logger.warning(message)
@@ -554,12 +554,13 @@ class MrpMaterialPlan(models.Model):
         # here, we will check for products with real demand (stock moves) but no reordering rule
         # we detect products with only planned demand elsewhere
         # some products may be logged from both checks
-        _logger.info("Checking for products with demand but no Reordering Rule")
+        _logger.info("Checking for products with demand (stock moves) but no Reordering Rule")
         plan_log.create({'type': 'info', 'message': "Checking for products with demand but no Reordering Rule"})
         eng_manage_cats = self.env['product.category'].search([('eng_management', '=', True), ('name', 'not like', 'Obsolete')])
         domain = [
             ('state', 'not in', ['done', 'cancel']),
             ('product_id.type', '=', 'product'),
+            ('product_id.e_kanban', '=', False),
             # ('product_id.config_ok', '=', False),
             ('product_id.categ_id', 'in', eng_manage_cats.ids),
             ('product_id.orderpoint_ids', '=', False),

@@ -35,3 +35,4 @@ class StockMoveLine(models.Model):
                     raise ValidationError('Serial number %s is not available in stock location %s' %
                                           (self.lot_id.name, self.location_id.display_name))
         return super(StockMoveLine,self)._action_done()
+

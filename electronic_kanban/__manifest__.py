@@ -17,13 +17,12 @@ Electronic Kanban
 * Manage kanban barcode scan events
 * Manually review and create Purchase Orders from kanban scans
     """,
-    "depends": ['product', 'stock', 'mrp_mrp', 'barcodes'],
+    "depends": ['product', 'stock', 'barcodes', 'azi_product'],
     'data': [
         'views/product_views.xml',
         'security/ir.model.access.csv',
         'views/e_kanban_views.xml',
         'views/e_kanban_barcode_template.xml',
-        'views/mrp_material_plan_views.xml',
         'reports/bin_scan_report_template.xml',
         'reports/electronic_kanban_reports.xml',
         'data/e_kanban_sequence.xml',
