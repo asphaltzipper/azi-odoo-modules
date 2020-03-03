@@ -71,4 +71,27 @@
         </field>
     </record>
 
+    <record id="view_bank_statement_line_form_glentry" model="ir.ui.view">
+        <field name="name">bank.statement.line.form.glentry</field>
+        <field name="model">account.bank.statement.line</field>
+        <field name="inherit_id" ref="account.view_bank_statement_line_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group" position="after">
+                <group col="4">
+                    <field name="journal_entry_ids" nolabel="1">
+                        <tree>
+                            <field name="date"/>
+                            <field name="move_id"/>
+                            <field name="name"/>
+                            <field name="partner_id"/>
+                            <field name="account_id"/>
+                            <field name="debit"/>
+                            <field name="credit"/>
+                        </tree>
+                    </field>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>

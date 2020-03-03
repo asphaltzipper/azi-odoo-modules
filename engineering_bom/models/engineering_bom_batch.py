@@ -584,19 +584,19 @@ class EngBomBatch(models.Model):
             if eng_bom.quantity != eng_bom.bom_id.product_qty:
                 eng_bom.bom_id.product_qty = eng_bom.quantity
 
+            # change routing
+            route_changed = eng_bom.route_template_id and eng_bom.bom_id.routing_id and \
+                            eng_bom.route_template_id.operation_ids.mapped('workcenter_id') != \
+                            eng_bom.bom_id.routing_id.operation_ids.mapped('workcenter_id') or \
+                            False
+            # remove routing
+            if route_changed or (eng_bom.bom_id.routing_id and not eng_bom.route_template_id):
+                eng_bom.bom_id.routing_id.unlink()
             # add new routing
-            if eng_bom.route_template_id and not eng_bom.bom_id.routing_id:
+            if route_changed or (eng_bom.route_template_id and not eng_bom.bom_id.routing_id):
                 route = eng_bom.route_template_id.copy()
                 route.name = eng_bom.name.default_code
                 eng_bom.bom_id.routing_id = route
-            # remove routing
-            if eng_bom.bom_id.routing_id and not eng_bom.route_template_id:
-                eng_bom.bom_id.routing_id = False
-            # change routing
-            if eng_bom.route_template_id.operation_ids.mapped('workcenter_id') != \
-                    eng_bom.bom_id.routing_id.operation_ids.mapped('workcenter_id'):
-                # eng_bom.bom_id.routing_id.write({'operation_ids': [(6, 0, eng_bom.route_template_id.ids)]})
-                eng_bom.bom_id.routing_id.operation_ids = eng_bom.route_template_id.ids
 
             # change bom type
             if eng_bom.type != eng_bom.bom_id.type:
@@ -678,15 +678,15 @@ class EngBomBatch(models.Model):
         # delete boms
         for part in self.comp_ids.filtered(
                 lambda x: x.product_id
-                and not len(x.adjacency_parent_ids)
-                and not x.rm_product_id):
+                          and not len(x.adjacency_parent_ids)
+                          and not x.rm_product_id):
             # for raw material part boms, we won't delete existing boms
             # odoo data takes precedence over the imported data
             # we do show a diff, but we won't apply these changes
             domain = [('product_id', '=', part.product_id.id)]
             boms = bom_obj.search(domain).filtered(
                 lambda x: not x.one_comp_product_id
-                or not x.one_comp_product_id.is_continuous)
+                          or not x.one_comp_product_id.is_continuous)
             boms.unlink()
 
         self.state = 'done'
