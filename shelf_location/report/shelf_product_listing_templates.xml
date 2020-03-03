@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 <template id="shelf_product_listing">
-    <t t-call="report.html_container">
+    <t t-call="web.html_container">
         <t t-foreach="docs" t-as="o">
-            <t t-call="report.internal_layout">
+            <t t-call="web.internal_layout">
                 <div class="page">
                     <!--<div class="oe_structure"/>-->
 
@@ -15,7 +15,8 @@
                             <tr>
                                 <th><strong>Code</strong></th>
                                 <th><strong>Name</strong></th>
-                                <th><strong>Deprecated</strong></th>
+                                <!-- TODO in engineering_product -->
+                                <!--<th><strong>Deprecated</strong></th>-->
                                 <th><strong>UOM</strong></th>
                                 <th><strong>OnHand</strong></th>
                                 <th><strong>Count</strong></th>
@@ -29,9 +30,10 @@
                                 <td>
                                     <span t-field="line.name"/>
                                 </td>
-                                <td>
-                                    <t t-if="line.deprecated">Yes</t>
-                                </td>
+                                <!-- TODO in engineering_product -->
+                                <!--<td>-->
+                                    <!--<t t-if="line.deprecated">Yes</t>-->
+                                <!--</td>-->
                                 <td>
                                     <span t-field="line.uom_id.name"/>
                                 </td>

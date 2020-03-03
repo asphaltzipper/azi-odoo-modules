@@ -2,7 +2,7 @@ odoo.define('shelf_location.ShelfLocationBarcodeHandler', function (require) {
     "use strict";
     var core = require('web.core');
     var Model = require('web.Model');
-    var FormViewBarcodeHandler = require('barcodes.FormViewBarcodeHandler');
+    var FormViewBarcodeHandler = require('barcodes.FormView');
     var _t = core._t;
     var ShelfLocationBarcodeHandler = FormViewBarcodeHandler.extend({
         init: function (parent, context) {

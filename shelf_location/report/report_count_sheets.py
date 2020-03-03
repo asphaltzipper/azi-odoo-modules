@@ -7,8 +7,8 @@ class ReportCountSheets(models.AbstractModel):
     _name = 'report.shelf_location.shelf_count_sheets'
 
     @api.model
-    def render_html(self, docids, data=None):
-        report_obj = self.env['report']
+    def _get_report_values(self, docids, data=None):
+        report_obj = self.env['ir.actions.report']
         report = report_obj._get_report_from_name('shelf_location.shelf_count_sheets')
         group_docs = self.env['stock.shelf.products'].browse(docids).group_shelf_products()
         loc_count = len(group_docs)
@@ -18,4 +18,4 @@ class ReportCountSheets(models.AbstractModel):
             'docs': group_docs,
             'loc_count': loc_count,
         }
-        return report_obj.render('shelf_location.shelf_count_sheets', docargs)
+        return docargs

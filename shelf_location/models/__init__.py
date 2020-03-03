@@ -1,2 +1,2 @@
-import stock_shelf
-import product
+from . import stock_shelf
+from . import product

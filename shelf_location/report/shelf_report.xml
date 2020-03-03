@@ -27,14 +27,15 @@
         paperformat="paperformat_landscape_us"
     />
 
-    <report
-        string="Shelf Count Sheets"
-        id="action_report_shelf_count_sheets"
-        model="stock.shelf.products"
-        name="shelf_location.shelf_count_sheets"
-        file="shelf_location.report.shelf_count_sheets_templates"
-        report_type="qweb-pdf"
-        paperformat="paperformat_landscape_us"
-    />
+    <!--TODO in engineering_product -->
+    <!--<report-->
+        <!--string="Shelf Count Sheets"-->
+        <!--id="action_report_shelf_count_sheets"-->
+        <!--model="stock.shelf.products"-->
+        <!--name="shelf_location.shelf_count_sheets"-->
+        <!--file="shelf_location.report.shelf_count_sheets_templates"-->
+        <!--report_type="qweb-pdf"-->
+        <!--paperformat="paperformat_landscape_us"-->
+    <!--/>-->
 
 </odoo>

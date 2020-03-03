@@ -49,9 +49,8 @@ class StockShelf(models.Model):
         for shelf in self:
             shelf.inactive_count = len(shelf.product_ids.filtered(lambda product: not product.active))
 
-    @api.model
-    def sl_barcode(self, barcode, sl_id):
-        shelf = self.env['stock.shelf'].search([('id', '=', sl_id)])
+    def on_barcode_scanned(self, barcode):
+        shelf = self.env['stock.shelf'].search([('id', '=', self.id)])
         if not shelf:
             raise UserError(_('No Shelf Found/ so Save!'))
         product_id = self.env['product.template'].with_context(active_test=False).search([('barcode', '=', barcode)])
