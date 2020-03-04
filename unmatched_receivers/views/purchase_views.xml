@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="purchase_order_line_form2" model="ir.ui.view">
+        <field name="name">purchase.order.line.form</field>
+        <field name="model">purchase.order.line</field>
+        <field name="inherit_id" ref="purchase.purchase_order_line_form2"/>
+        <field name="arch" type="xml">
+            <field name="invoice_lines" position="after">
+                <separator string="Journal Entries"/>
+                <field name="account_move_ids"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="purchase_order_line_tree" model="ir.ui.view">
+        <field name="name">purchase.order.line.tree</field>
+        <field name="model">purchase.order.line</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false">
+                <field name="order_id"/>
+                <field name="name"/>
+                <field name="partner_id" string="Vendor" />
+                <field name="product_id"/>
+                <field name="price_unit"/>
+                <field name="qty_received" string="Rcv'd Qty"/>
+                <field name="qty_invoiced"/>
+                <field name="product_qty"/>
+                <field name="product_uom" groups="uom.group_uom" string="UOM"/>
+                <field name="price_subtotal" widget="monetary"/>
+                <field name="account_move_ids" string="Date of Journal Entries" widget="many2many_tags"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_purchase_line_product_tree" model="ir.actions.act_window">
+        <field name="domain">[('product_id.product_tmpl_id','in',active_ids), ('show_product_received', '=', True)]</field>
+        <field name="name">Purchases</field>
+        <field name="res_model">purchase.order.line</field>
+        <field name="context">{'purchase_view': True}</field>
+        <field name="view_id" ref="unmatched_receivers.purchase_order_line_tree"/>
+    </record>
+
+    <record id="action_purchase_line_tree" model="ir.actions.act_window">
+        <field name="domain">[('show_product_received', '=', True)]</field>
+        <field name="name">Unmatched Receivers</field>
+        <field name="res_model">purchase.order.line</field>
+        <field name="context">{'purchase_view': True}</field>
+        <field name="view_id" ref="unmatched_receivers.purchase_order_line_tree"/>
+    </record>
+
+    <menuitem id="menu_purchase_order_line" action="action_purchase_line_tree" parent="purchase.menu_purchase_control"/>
+
+    <record id="product_template_only_form_view" model="ir.ui.view">
+        <field name="name">product.template.product.form</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+            <button name="toggle_active" position="before">
+                <button class="oe_stat_button" name="%(unmatched_receivers.action_purchase_line_product_tree)d"
+                       type="action" icon="fa-shopping-cart">
+                   <field string="Unmatched Receivers" name="unmatched_receiver_count" widget="statinfo"/>
+               </button>
+            </button>
+        </field>
+    </record>
+
+    <record id="action_purchase_line_product_variant_tree" model="ir.actions.act_window" >
+        <field name="context">{}</field>
+        <field name="domain">[('product_id','in',active_ids), ('show_product_received', '=', True)]</field>
+        <field name="name">Purchases</field>
+        <field name="res_model">purchase.order.line</field>
+        <field name="context">{'purchase_view': True}</field>
+        <field name="view_id" ref="unmatched_receivers.purchase_order_line_tree"/>
+    </record>
+
+
+    <record id="view_product_variant_purchase_buttons_form" model="ir.ui.view">
+        <field name="name">product.variant.purchase.button.inherit</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view"/>
+        <field name="groups_id" eval="[(4, ref('purchase.group_purchase_user'))]"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+               <button class="oe_stat_button" name="%(unmatched_receivers.action_purchase_line_product_variant_tree)d"
+                   type="action" icon="fa-shopping-cart">
+                   <field string="Unmatched Receivers" name="unmatched_receiver_count" widget="statinfo"/>
+               </button>
+            </div>
+        </field>
+    </record>
+</odoo>
