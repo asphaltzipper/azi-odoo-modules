@@ -1,31 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
+<data>
 
-        <!-- having separate qweb templates for product.product and product.template prevents mix-ups between product id and template id -->
-        <template id="azi_report_product_template_label">
-            <t t-call="web.html_container">
-                <t t-foreach="docs" t-as="o">
-                    <div class="page text-center">
-                        <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('Code128', o.default_code, 600, 100)" style="width:350px;height:60px"/>
-                        <div style="font-size:175%; font-weight: bold; margin-top: -5px; margin-bottom: -5px" t-field="o.default_code"/>
-                        <div style="overflow: hidden; max-height:3em" t-field="o.name"/>
-                    </div>
-                </t>
+    <!-- having separate qweb templates for product.product and product.template prevents mix-ups between product id and template id -->
+    <template id="azi_report_product_template_label">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-set="pn_style" t-value="'font-weight: bold; margin-top: -4px; margin-bottom: -5px; font-size: %.2fem' % (len(o.default_code)&lt;11 and 2.0 or 2.0*15/len(o.default_code),)" />
+                <div class="page text-center">
+                    <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('Code128', o.default_code, 2000, 40)" style="width:500px;height:40px"/>
+                    <div t-att-style="pn_style" t-field="o.default_code"/>
+                    <div style="overflow: hidden; max-height:3em" t-field="o.name"/>
+                </div>
             </t>
-        </template>
+        </t>
+    </template>
 
-        <template id="azi_report_product_product_label">
-            <t t-call="web.html_container">
-                <t t-foreach="docs" t-as="o">
-                    <div class="page text-center">
-                        <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('Code128', o.default_code, 600, 100)" style="width:350px;height:60px"/>
-                        <div style="font-size:175%; font-weight: bold; margin-top: -5px; margin-bottom: -5px" t-field="o.default_code"/>
-                        <div style="overflow: hidden; max-height:3em" t-field="o.name"/>
-                    </div>
-                </t>
+    <template id="azi_report_product_product_label">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-set="pn_style" t-value="'font-weight: bold; margin-top: -4px; margin-bottom: -5px; font-size: %.2fem' % (len(o.default_code)&lt;11 and 2.0 or 2.0*15/len(o.default_code),)" />
+                <div class="page text-center">
+                    <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('Code128', o.default_code, 2000, 40)" style="width:500px;height:40px"/>
+                    <div t-att-style="pn_style" t-field="o.default_code"/>
+                    <div style="overflow: hidden; max-height:3em" t-field="o.name"/>
+                </div>
             </t>
-        </template>
+        </t>
+    </template>
 
-    </data>
+</data>
 </odoo>
