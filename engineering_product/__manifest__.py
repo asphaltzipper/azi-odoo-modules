@@ -44,6 +44,7 @@ Engineering Features for Products
         'stock',
         'electronic_kanban',
         'shelf_location',
+        'attachment_priority',
     ],
     'data': [
         'data/product_data.xml',
