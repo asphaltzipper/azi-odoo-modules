@@ -15,6 +15,9 @@
                 <field name="release_eco_id"/>
                 <field name="revision_eco_id"/>
             </xpath>
+            <button name="button_revise" position="attributes">
+                <attribute name="groups">ecm.group_engineering_user</attribute>
+            </button>
         </field>
     </record>
 

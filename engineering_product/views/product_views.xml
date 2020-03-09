@@ -27,7 +27,7 @@
                                     type="object"
                                     name="button_revise"
                                     attrs="{'invisible': [('eng_management', '=', False)]}"
-                                    groups="mrp_plm.group_plm_user"/>
+                                    groups="stock.group_stock_manager"/>
                         </group>
                         <group>
                             <field name="eng_code" attrs="{'readonly': [('eng_management', '=', False)]}"/>
