@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2017 Eficent
+     License LGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+
+    <record id="view_stock_request_e_kanban_tree" model="ir.ui.view">
+        <field name="name">stock.request.e.kanban.tree</field>
+        <field name="model">stock.request.kanban</field>
+        <field name="inherit_id" ref="stock_request_kanban.view_stock_request_kanban_tree"/>
+        <field name="arch" type="xml">
+            <field name="product_id" position="after">
+                <field name="product_active"/>
+                <field name="product_deprecated"/>
+                <field name="product_responsible_id"/>
+            </field>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="stock_request_e_kanban_search">
+        <field name="name">stock.request.e.kanban.search</field>
+        <field name="model">stock.request.kanban</field>
+        <field name="inherit_id" ref="stock_request_kanban.stock_request_kanban_search"/>
+        <field name="arch" type="xml">
+            <filter name="inactive" position="after">
+                <filter string="Obsolete" name="deprecated" domain="[('product_deprecated','=',True)]"/>
+                <filter string="Current" name="non_deprecated" domain="[('product_deprecated','=',False)]"/>
+            </filter>
+            <filter name="location" position="after">
+                <filter name="responsible" string="Manager" domain="[]" context="{'group_by':'product_responsible_id'}"/>
+            </filter>
+        </field>
+    </record>
+
+    <record id="view_stock_request_kanban_form" model="ir.ui.view">
+        <field name="name">stock.request.kanban.form</field>
+        <field name="model">stock.request.kanban</field>
+        <field name="inherit_id" ref="stock_request_kanban.view_stock_request_kanban_form"/>
+        <field name="arch" type="xml">
+            <field name="product_id" position="after">
+                <field name="product_active"/>
+                <field name="product_deprecated"/>
+                <field name="product_responsible_id"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>

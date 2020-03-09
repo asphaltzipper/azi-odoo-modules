@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
-
-import product
-import e_kanban
+from . import product
+from . import stock_request
+from . import stock_shelf

@@ -18,6 +18,4 @@ Usage
 =====
 * Stock Shelf: Inventory > Master Data > Stock Shelf
 * Adding Shelf Location from Product: Inventory > Master Data > Products > Inventory
-* Transfer Slip Report: Inventory > Reporting > Stock Moves
-* AZI Location Labels report: Inventory > Master Data > Stock Shelf
 * Product Listing report: Inventory > Master Data > Stock Shelf

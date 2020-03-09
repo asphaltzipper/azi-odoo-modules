@@ -93,7 +93,7 @@ class ProductionMoveAnalysis(models.Model):
         string='E-Kanban',
         default=False,
         help="Material planning (MRP) for This product will be handled by electronic kanban")
-    default_proc_qty = fields.Float(
+    e_kanban_avg_qty = fields.Float(
         string='Kanban Qty',
         help="Default procurement quantity for electronic kanban ordering")
 
@@ -124,7 +124,7 @@ class ProductionMoveAnalysis(models.Model):
                     m.state,
                     mto.mto_names,
                     p.e_kanban,
-                    p.default_proc_qty,
+                    coalesce(kb.e_kanban_avg_qty, 0) as e.default_proc_qty,
                     t.tracking,
                     t.type as product_type,
                     r.route_names,
@@ -205,6 +205,14 @@ class ProductionMoveAnalysis(models.Model):
                         where state not in ('cancel', 'done')
                         group by move_dest_id
                 ) as mto on mto.move_dest_id=m.id
+                left join (
+                    select
+                        product_id,
+                        avg(product_qty) as e_kanban_avg_qty
+                    from stock_request_kanban
+                    where active=true
+                    group by product_id
+                ) as kb on kb.product_id=m.product_id
                 order by m.sequence
             )
         """)

@@ -1,31 +1,45 @@
-# -*- coding: utf-8 -*-
 # Copyright 2017 Scott Saunders
+# Copyright 2020 Matt Taylor
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 {
     "name": "electronic_kanban",
-    "version": "10.0.0.1",
+    "version": "12.0.1.0.0",
     "summary": "Electronic Kanban",
     "category": "Stock",
     "author": "Matt Taylor",
     "license": "AGPL-3",
     "website": "http://www.asphaltzipper.com",
     'description': """
-Electronic Kanban
-=================
+Electronic Kanban Integration
+=============================
 
-* Flag products as e-kanban items and set a default kanban quantity (bin size) 
-* Manage kanban barcode scan events
-* Manually review and create Purchase Orders from kanban scans
+Products
+--------
+* Flag products for e-kanban management
+* Show computed e-kanban summary data on the product
+* Add header button to show kanbans for this product
+
+E-Kanban
+--------
+* Add Obsolete field (product deprecated) to Kanban objects
+* Add Product Active field to Kanban objects
+* Add Manager field (product responsible user) to Kanban objects
+
+Shelf Location
+--------------
+* Provide the ability to scan kanban cards to add product to a shelf location
     """,
-    "depends": ['product', 'stock', 'barcodes', 'azi_product'],
+    "depends": [
+        'stock',
+        'shelf_location',
+        'stock_request',
+        'stock_request_kanban',
+    ],
     'data': [
         'views/product_views.xml',
-        'security/ir.model.access.csv',
-        'views/e_kanban_views.xml',
-        'views/e_kanban_barcode_template.xml',
-        'reports/bin_scan_report_template.xml',
-        'reports/electronic_kanban_reports.xml',
-        'data/e_kanban_sequence.xml',
+        'views/stock_request_views.xml',
+        'views/stock_request_order_views.xml',
+        'views/stock_request_kanban_views.xml',
     ],
     "installable": True,
     "auto_install": False,

@@ -14,7 +14,7 @@
         <field name="model">product.template</field>
         <field name="inherit_id" ref="product.product_template_form_view"/>
         <field name="arch" type="xml">
-            <xpath expr="//page[@name='notes']" position="before">
+            <notebook position="inside">
                 <page string="Engineering" name="eng_management">
                     <group name="eng_management">
                         <group>
@@ -137,7 +137,7 @@
                         </kanban>
                     </field>
                 </page>
-            </xpath>
+            </notebook>
         </field>
     </record>
 

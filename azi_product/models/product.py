@@ -6,7 +6,6 @@ from odoo import models, fields, api, tools
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
-    product_manager = fields.Many2one('res.users', 'Product Manager')
     categ_id = fields.Many2one(track_visibility='onchange')
 
     image_medium_big = fields.Binary(

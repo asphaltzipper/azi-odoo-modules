@@ -17,7 +17,12 @@ AZI Specialized Customizations to Stock
 * Show creation date on stock picking tree
 * Prevent negative quants for serial tracked products
     """,
-    "depends": ['stock', 'purchase'],
+    "depends": [
+        'stock',
+        'purchase',
+        'engineering_product',
+        'shelf_location',
+    ],
     'data': [
         'views/stock_view_changes.xml',
         'report/transfer_slip_template.xml',
@@ -26,6 +31,9 @@ AZI Specialized Customizations to Stock
         'report/product_report.xml',
         'report/stock_quant_views.xml',
         'report/picking_report.xml',
+        'report/location_labels.xml',
+        'report/location_report.xml',
+        'report/transfer_slip_template.xml',
     ],
     "installable": True,
     "auto_install": False,

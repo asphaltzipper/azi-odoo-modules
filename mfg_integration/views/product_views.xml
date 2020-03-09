@@ -24,7 +24,7 @@
         </field>
     </record>
 
-    <!-- add product_manager to product template form view -->
+    <!-- add manufacturing page to product template form view -->
     <record id="product_template_form_mfg_product" model="ir.ui.view">
         <field name="name">product.template.mfg_product.inherit</field>
         <field name="model">product.template</field>

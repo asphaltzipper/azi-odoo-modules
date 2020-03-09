@@ -21,3 +21,4 @@ Usage
 * AZI Product Labels report: Inventory > Master Data > Products or Inventory > Master Data > Product Variants
 * New view of stock quant: Inventory > Reporting > FG Stock Valuation
 * Transfer Slip report: Inventory > Reporting > Stock Moves
+* AZI Location Labels report: Inventory > Master Data > Stock Shelf

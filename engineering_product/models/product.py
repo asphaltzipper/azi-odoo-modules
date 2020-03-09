@@ -222,9 +222,6 @@ class ProductProduct(models.Model):
         track_visibility='onchange',
         copy=False,
         help="A revision is impending, stop producing/purchasing this part")
-    product_manager = fields.Many2one(
-        comodel_name='res.users',
-        related='product_tmpl_id.product_manager')
     deprecated = fields.Boolean(
         string='Deprecated',
         default=False,

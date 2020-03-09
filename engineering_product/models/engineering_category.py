@@ -23,6 +23,7 @@ class EngineeringCategory(models.Model):
         string='Parent Category',
         index=True,
         ondelete='cascade')
+    parent_path = fields.Char(index=True)
     child_id = fields.One2many(
         comodel_name='engineering.category',
         inverse_name='parent_id',
@@ -32,8 +33,6 @@ class EngineeringCategory(models.Model):
         string='Category Type', default='normal',
         help="Type 'view' is virtual, for creating a hierarchical structure.  "
              "Products cannot be assigned to this type of category.")
-    parent_left = fields.Integer(string='Left Parent', index=1)
-    parent_right = fields.Integer(string='Right Parent', index=1)
     product_count = fields.Integer(
         string='# Products',
         compute='_compute_product_count',
