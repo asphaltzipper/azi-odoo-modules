@@ -23,7 +23,7 @@
 
 {
     "name": "ecm",
-    "version": "0.1",
+    "version": "12.0.1.0.0",
     "summary": "Engineering Change Management",
     "category": "Engineering",
     "author": "Matt Taylor",
@@ -45,13 +45,13 @@ Manage Engineering Changes to Products
         'engineering_product',
     ],
     'data': [
+        'security/security_data.xml',
         'security/ir.model.access.csv',
         'data/ecm_eco_data.xml',
         'wizards/upload_line_doc_views.xml',
         'views/ecm_views.xml',
         'views/product_views.xml',
         'wizards/approval_sign_views.xml',
-        'security/security_data.xml',
     ],
     "installable": True,
     "auto_install": False,
