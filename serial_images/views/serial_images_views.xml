@@ -1,12 +1,12 @@
 <odoo>
 
-    <record model="ir.actions.act_window" id="action_tree_stock_lot_images">
+    <record id="action_tree_stock_lot_images" model="ir.actions.act_window">
         <field name="name">Serial Image Book</field>
         <field name="res_model">stock.lot.images</field>
         <field name="view_mode">tree,form</field>
     </record>
 
-    <record model="ir.actions.act_window" id="action_form_stock_lot_images">
+    <record id="action_form_stock_lot_images" model="ir.actions.act_window">
         <field name="name">Serial Image Book</field>
         <field name="res_model">stock.lot.images</field>
         <field name="type">ir.actions.act_window</field>
@@ -21,11 +21,11 @@
             sequence="1000"
             action="action_tree_stock_lot_images"/>
 
-    <record model="ir.ui.view" id="stock_lot_images_form_view">
+    <record id="stock_lot_images_form_view" model="ir.ui.view">
         <field name="name">stock.lot.images.form</field>
         <field name="model">stock.lot.images</field>
         <field name="arch" type="xml">
-            <form string="Serial Images">
+            <form>
                 <sheet>
                     <group>
                         <field name="name"/>
@@ -84,7 +84,7 @@
                                     </t>
                                 </templates>
                             </kanban>
-                            <form string="Documents">
+                            <form>
                                <sheet>
                                 <label for="name" class="oe_edit_only"/>
                                 <h1>
@@ -114,11 +114,11 @@
         </field>
     </record>
 
-    <record model="ir.ui.view" id="stock_lot_images_tree_view">
+    <record id="stock_lot_images_tree_view" model="ir.ui.view">
         <field name="name">stock.lot.images.tree</field>
         <field name="model">stock.lot.images</field>
         <field name="arch" type="xml">
-            <tree string="Serial Images">
+            <tree>
                 <field name="name"/>
                 <field name="lot_ids" widget="many2many_tags"/>
                 <field name="create_date" readonly="1" widget="date"/>

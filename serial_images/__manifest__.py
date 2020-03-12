@@ -3,7 +3,7 @@
 
 {
     "name": "Serial Images",
-    "version": "10.0.1",
+    "version": "12.0.1.1.0",
     "summary": "Image Books for Serialized Product Builds",
     "category": "Inventory",
     "author": "Matt Taylor",
@@ -12,8 +12,8 @@
         Upload images and make notes on serial numbered builds
     """,
     "depends": [
-        "base",
         "stock",
+        "attachment_priority",
     ],
     "data": [
         'security/ir.model.access.csv',

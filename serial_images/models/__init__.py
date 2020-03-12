@@ -1,4 +1,4 @@
 # -*- coding: utf-8 -*-
 
-import stock_lot_images
-import stock_production_lot
+from . import stock_lot_images
+from . import stock_production_lot
