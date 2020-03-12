@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- product categories -->
+        <record id="prod_categ_engineering" model="product.category">
+            <field name="name">Engineered Parts</field>
+            <field name="eng_management" eval="True"/>
+            <field name="default_rev">-0</field>
+            <field name="rev_delimiter">.</field>
+            <field name="def_code_regex" eval="s'^([_A-Z0-9-]+)\.([A-Z-][0-9])$'"/>
+            <field name="eng_code_sequence" ref="engineering_product.sequence_product_eng_code"/>
+        </record>
+
+        <!-- engineering categories -->
+        <record id="eng_category_root" model="engineering.category">
+            <field name="name">Root</field>
+            <field name="type">view</field>
+        </record>
+        <record id="eng_category_catalog" model="engineering.category">
+            <field name="name">Catalog</field>
+            <field name="type">normal</field>
+            <field name="parent_id" ref="engineering_product.eng_category_root"/>
+        </record>
+        <record id="eng_category_designed" model="engineering.category">
+            <field name="name">Designed</field>
+            <field name="type">normal</field>
+            <field name="parent_id" ref="engineering_product.eng_category_root"/>
+        </record>
+
+        <!-- engineered products -->
+        <record id="product_part_1" model="product.product">
+            <field name="name">Part 1</field>
+            <field name="default_code">X111111.-0</field>
+            <field name="type">product</field>
+            <field name="sale_ok" eval="True"/>
+            <field name="purchase_ok" eval="True"/>
+            <field name="categ_id" ref="engineering_product.prod_categ_engineering"/>
+            <field name="eng_categ_id" ref="engineering_product.eng_category_catalog"/>
+        </record>
+        <record id="product_part_2" model="product.product">
+            <field name="name">Part 2</field>
+            <field name="default_code">X111112.-0</field>
+            <field name="type">product</field>
+            <field name="sale_ok" eval="True"/>
+            <field name="purchase_ok" eval="True"/>
+            <field name="categ_id" ref="engineering_product.prod_categ_engineering"/>
+            <field name="eng_categ_id" ref="engineering_product.eng_category_catalog"/>
+        </record>
+        <record id="product_part_3" model="product.product">
+            <field name="name">Part 3</field>
+            <field name="default_code">X111113.-0</field>
+            <field name="type">product</field>
+            <field name="sale_ok" eval="True"/>
+            <field name="purchase_ok" eval="True"/>
+            <field name="categ_id" ref="engineering_product.prod_categ_engineering"/>
+            <field name="eng_categ_id" ref="engineering_product.eng_category_catalog"/>
+        </record>
+        <record id="product_asm_1" model="product.product">
+            <field name="name">Assembly 1</field>
+            <field name="default_code">X111114.-0</field>
+            <field name="route_ids" eval="[(6, 0, [ref('mrp.route_warehouse0_manufacture')])]"/>
+            <field name="type">product</field>
+            <field name="sale_ok" eval="True"/>
+            <field name="purchase_ok" eval="True"/>
+            <field name="categ_id" ref="engineering_product.prod_categ_engineering"/>
+            <field name="eng_categ_id" ref="engineering_product.eng_category_designed"/>
+        </record>
+        <record id="product_asm_2" model="product.product">
+            <field name="name">Assembly 2</field>
+            <field name="default_code">X111115.-0</field>
+            <field name="route_ids" eval="[(6, 0, [ref('mrp.route_warehouse0_manufacture')])]"/>
+            <field name="type">product</field>
+            <field name="sale_ok" eval="True"/>
+            <field name="purchase_ok" eval="True"/>
+            <field name="categ_id" ref="engineering_product.prod_categ_engineering"/>
+            <field name="eng_categ_id" ref="engineering_product.eng_category_designed"/>
+        </record>
+
+        <!-- engineered BOMs -->
+        <record id="mrp_bom_asm_1" model="mrp.bom">
+            <field name="product_tmpl_id" eval="obj().env.ref('engineering_product.product_asm_1').product_tmpl_id"/>
+            <field name="product_id" ref="engineering_product.product_asm_1"/>
+            <field name="product_uom_id" ref="uom.product_uom_unit"/>
+            <field name="sequence">1</field>
+            <field name="routing_id" ref="mrp_routing_0"/>
+        </record>
+        <record id="mrp_bom_asm_1_line_1" model="mrp.bom.line">
+            <field name="product_id" ref="product.product_part_1"/>
+            <field name="product_qty">1</field>
+            <field name="product_uom_id" ref="uom.product_uom_unit"/>
+            <field name="sequence">1</field>
+            <field name="bom_id" ref="mrp_bom_asm_1"/>
+        </record>
+        <record id="mrp_bom_asm_1_line_2" model="mrp.bom.line">
+            <field name="product_id" ref="product.product_part_2"/>
+            <field name="product_qty">1</field>
+            <field name="product_uom_id" ref="uom.product_uom_unit"/>
+            <field name="sequence">2</field>
+            <field name="bom_id" ref="mrp_bom_asm_1"/>
+        </record>
+        <record id="mrp_bom_asm_2" model="mrp.bom">
+            <field name="product_tmpl_id" eval="obj().env.ref('engineering_product.product_asm_2').product_tmpl_id"/>
+            <field name="product_id" ref="engineering_product.product_asm_2"/>
+            <field name="product_uom_id" ref="uom.product_uom_unit"/>
+            <field name="sequence">1</field>
+            <field name="routing_id" ref="mrp_routing_0"/>
+        </record>
+        <record id="mrp_bom_asm_2_line_1" model="mrp.bom.line">
+            <field name="product_id" ref="product.product_part_3"/>
+            <field name="product_qty">1</field>
+            <field name="product_uom_id" ref="uom.product_uom_unit"/>
+            <field name="sequence">2</field>
+            <field name="bom_id" ref="mrp_bom_asm_2"/>
+        </record>
+        <record id="mrp_bom_asm_2_line_2" model="mrp.bom.line">
+            <field name="product_id" ref="product.product_asm_1"/>
+            <field name="product_qty">1</field>
+            <field name="product_uom_id" ref="uom.product_uom_unit"/>
+            <field name="sequence">2</field>
+            <field name="bom_id" ref="mrp_bom_asm_2"/>
+        </record>
+
+    </data>
+</odoo>

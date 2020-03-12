@@ -412,6 +412,7 @@ class EcmEco(models.Model):
 
 class EcmEcoRevLine(models.Model):
     _name = 'ecm.eco.rev.line'
+    _description = 'Revised ECO Product'
     _order = 'product_id'
 
     _sql_constraints = [('product_uniq', 'unique (product_id)', "Product already revised on another ECO")]
@@ -628,6 +629,7 @@ class EcmEcoRevLine(models.Model):
 
 class EcmEcoIntroLine(models.Model):
     _name = 'ecm.eco.intro.line'
+    _description = 'Introduced ECO Product'
     _order = 'product_id'
 
     eco_id = fields.Many2one(
@@ -702,6 +704,7 @@ class EcmEcoIntroLine(models.Model):
 
 class EcmEcoObsoleteLine(models.Model):
     _name = 'ecm.eco.obsolete.line'
+    _description = 'Obsolete ECO Product'
     _order = 'product_id'
 
     eco_id = fields.Many2one(

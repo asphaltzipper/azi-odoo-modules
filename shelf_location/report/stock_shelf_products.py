@@ -26,7 +26,7 @@ class StockShelfProducts(models.Model):
         required=True)
 
     uom_id = fields.Many2one(
-        comodel_name='product.uom',
+        comodel_name='uom.uom',
         string="UOM",
         related='product_id.uom_id')
 

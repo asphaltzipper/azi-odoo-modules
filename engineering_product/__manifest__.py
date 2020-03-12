@@ -35,6 +35,9 @@ Engineering Features for Products
         'security/ir.model.access.csv',
         'data/engineering.part.type.csv',
     ],
+    'demo': [
+        'data/engineering_product_demo.xml',
+    ],
     "installable": True,
     "auto_install": False,
 }

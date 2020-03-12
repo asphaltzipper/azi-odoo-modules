@@ -21,6 +21,11 @@ class ProductTemplate(models.Model):
     e_kanban_verified = fields.Boolean(
         related='product_variant_ids.e_kanban_verified')
 
+    def action_kanban_cards(self):
+        action = self.env.ref('stock_request_kanban.stock_request_kanban_action').read()[0]
+        action['domain'] = [('product_id', 'in', self.product_variant_ids.ids)]
+        return action
+
 
 class ProductProduct(models.Model):
     _inherit = "product.product"
