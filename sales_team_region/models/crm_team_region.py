@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright 2014-2016 Scott Saunders
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
@@ -9,22 +8,32 @@ from odoo.tools.translate import _
 
 class CrmTeamRegion(models.Model):
     _name = 'crm.team.region'
+    _description = 'Sales Team Regions'
 
-    name = fields.Char('Sales Region', required=True, translate=True)
-    region_types = fields.Many2many('crm.team.region.type',
-                                    column1='region_type_id',
-                                    column2='region_id',
-                                    string='Region Team Type(s)')
-    states = fields.Many2many('res.country.state',
-                              'crm_team_region_state_rel', 'region_id',
-                              'state_id')
-
-    countries = fields.Many2many('res.country',
-                                 'crm_team_region_country_rel', 'region_id',
-                                 'country_id')
-    country_groups = fields.Many2many('res.country.group',
-                                      'crm_team_region_country_group_rel',
-                                      'region_id', 'country_group_id')
+    name = fields.Char(
+        string='Sales Region',
+        required=True,
+        translate=True)
+    region_types = fields.Many2many(
+        comodel_name='crm.team.region.type',
+        column1='region_type_id',
+        column2='region_id',
+        string='Region Team Type(s)')
+    states = fields.Many2many(
+        comodel_name='res.country.state',
+        relation='crm_team_region_state_rel',
+        column1='region_id',
+        column2='state_id')
+    countries = fields.Many2many(
+        comodel_name='res.country',
+        relation='crm_team_region_country_rel',
+        column1='region_id',
+        column2='country_id')
+    country_groups = fields.Many2many(
+        comodel_name='res.country.group',
+        relation='crm_team_region_country_group_rel',
+        column1='region_id',
+        column2='country_group_id')
 
     # domain fields parameter appears to no longer be supported
 

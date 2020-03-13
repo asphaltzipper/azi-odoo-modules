@@ -7,6 +7,7 @@ from odoo import fields, models, api
 
 class SaleDiscountReason(models.Model):
     _name = "sale.discount.reason"
+    _description = "Sale Line Discount Reason"
 
     name = fields.Char(
         string='Discount Reason')

@@ -7,6 +7,7 @@ from odoo import fields, models
 
 class CrmTeamRegionType(models.Model):
     _name = 'crm.team.region.type'
+    _description = 'Sales Team Region Type'
 
     name = fields.Char('Region Team Type', required=True, translate=True)
     color = fields.Integer('Color Index')
