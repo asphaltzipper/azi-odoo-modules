@@ -34,6 +34,7 @@ Shelf Location
         'shelf_location',
         'stock_request',
         'stock_request_kanban',
+        'engineering_product',
     ],
     'data': [
         'views/product_views.xml',
