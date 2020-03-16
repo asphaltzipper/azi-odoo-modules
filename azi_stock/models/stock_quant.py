@@ -28,11 +28,12 @@ class StockMoveLine(models.Model):
     _inherit = 'stock.move.line'
 
     def _action_done(self):
-        if self.picking_id.picking_type_id.code == 'internal' and self.product_id.tracking == 'serial':
-            if self.lot_id:
-                location = self.lot_id.quant_ids.filtered(lambda q: q.location_id == self.location_id)
-                if not location or location.quantity < self.qty_done:
-                    raise ValidationError('Serial number %s is not available in stock location %s' %
-                                          (self.lot_id.name, self.location_id.display_name))
+        for record in self:
+            if record.picking_id.picking_type_id.code == 'internal' and record.product_id.tracking == 'serial':
+                if record.lot_id:
+                    location = record.lot_id.quant_ids.filtered(lambda q: q.location_id == record.location_id)
+                    if not location or location.quantity < record.qty_done:
+                        raise ValidationError('Serial number %s is not available in stock location %s' %
+                                              (record.lot_id.name, record.location_id.display_name))
         return super(StockMoveLine,self)._action_done()
 
