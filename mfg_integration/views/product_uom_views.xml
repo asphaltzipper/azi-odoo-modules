@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="product_uom_categ_mfg_form_view" model="ir.ui.view">
-        <field name="name">product.uom.categ.mfg.form</field>
-        <field name="model">product.uom.categ</field>
-        <field name="inherit_id" ref="product.product_uom_categ_form_view"/>
+    <record id="uom_category_mfg_form_view" model="ir.ui.view">
+        <field name="name">uom.category.mfg.form</field>
+        <field name="model">uom.category</field>
+        <field name="inherit_id" ref="uom.product_uom_categ_form_view"/>
         <field name="arch" type="xml">
             <field name="name" position="after">
                 <field name="is_continuous"/>

@@ -2,26 +2,11 @@
 
 from lxml import etree
 import base64
-import cStringIO
+import io
 from PIL import Image, ImageChops
 
 from odoo import api, models, fields, _
 from odoo.exceptions import UserError
-
-
-class MfgRadanDrgFile(models.TransientModel):
-    _name = 'mfg.radan.drg.file'
-    _description = 'Radan Drawing File Upload'
-
-    _sql_constraints = [('filename_import_id_uniq', 'unique (filename, import_id)', """File name must be unique."""), ]
-
-    data_file = fields.Binary(
-        string='Radan Drawing File',
-        required=True,
-        help='Must be a Radan .drg file type')
-
-    filename = fields.Char(
-        string="Filename")
 
 
 class MfgRadanDrgImport(models.TransientModel):
@@ -29,11 +14,10 @@ class MfgRadanDrgImport(models.TransientModel):
     _description = 'Import Multiple Radan Drawings'
 
     drg_file_ids = fields.Many2many(comodel_name="ir.attachment", string="Documents")
-    import_files = fields.Char("Upload")
 
     def trim_image(self, image):
         data = base64.b64decode(image)
-        file_input = cStringIO.StringIO(data)
+        file_input = io.BytesIO(data)
         im = Image.open(file_input)
 
         # trim the image
@@ -48,7 +32,7 @@ class MfgRadanDrgImport(models.TransientModel):
         w_ratio = float(im.size[0]) / float(im.size[1])
         im = im.resize((int(w_ratio*height), height), Image.ANTIALIAS)
 
-        buf = cStringIO.StringIO()
+        buf = io.BytesIO()
         im.save(buf, format="PNG")
         img_str = base64.b64encode(buf.getvalue())
         return img_str
@@ -70,7 +54,7 @@ class MfgRadanDrgImport(models.TransientModel):
 
             # Decode the file data
             data = base64.b64decode(drg.datas)
-            file_input = cStringIO.StringIO(data)
+            file_input = io.BytesIO(data)
 
             try:
                 tree = etree.parse(file_input)

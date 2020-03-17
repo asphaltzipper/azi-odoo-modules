@@ -4,6 +4,6 @@ from odoo import fields, models
 
 
 class ProductUoMCategory(models.Model):
-    _inherit = 'product.uom.categ'
+    _inherit = 'uom.category'
 
     is_continuous = fields.Boolean(string='Continuous')

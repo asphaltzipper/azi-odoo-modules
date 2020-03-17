@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import product_template
-import workorder
-import mfg_integration
-import product_uom
-import mrp_bom
-import mrp_routing
-import mrp_production
+from . import mfg_integration
+from . import product_uom
+from . import product_template
+from . import workorder
+from . import mrp_routing
+from . import mrp_bom
+from . import mrp_production

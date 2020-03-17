@@ -19,7 +19,7 @@ class MfgCreateBom(models.TransientModel):
         domain=[('is_continuous', '=', True)],
         help="Only products with continuous UOM will show here.")
     rm_uom_id = fields.Many2one(
-        comodel_name='product.uom',
+        comodel_name='uom.uom',
         related='rm_product_id.uom_id',
         string="RM Units",
         readonly=True)

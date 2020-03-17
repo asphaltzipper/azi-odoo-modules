@@ -8,9 +8,6 @@ from odoo.tools import float_round
 class MrpBom(models.Model):
     _inherit = 'mrp.bom'
 
-    def _get_default_product_uom_id(self):
-        return self.env['product.uom'].search([], limit=1, order='id').id
-
     one_comp_product_id = fields.Many2one(
         comodel_name='product.product',
         string='Component',
@@ -22,7 +19,7 @@ class MrpBom(models.Model):
         compute='_compute_one_component')
 
     one_comp_product_uom_id = fields.Many2one(
-        comodel_name='product.uom',
+        comodel_name='uom.uom',
         string='Comp UOM',
         compute='_compute_one_component')
 

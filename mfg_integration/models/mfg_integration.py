@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import datetime
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 from odoo.tools import float_compare, float_round
@@ -46,7 +46,7 @@ class MfgWorkHeader(models.Model):
     name = fields.Char(
         string="Name",
         required=True,
-        default="Empty: "+fields.Date.today(),
+        default="Empty: "+str(fields.Date.today()),
         readonly=True)
 
     file_name = fields.Char(
@@ -229,7 +229,7 @@ class MfgWorkHeader(models.Model):
                 labor_time = (detail.minutes_assigned/60)/wo_count
                 work.update({
                     'user_id': self.work_user_id.id,
-                    'labor_date': self.work_date,
+                    'labor_date': datetime.datetime.combine(self.work_date, datetime.datetime.min.time()),
                     'labor_time': labor_time,
                 })
             produce_wiz.do_produce()

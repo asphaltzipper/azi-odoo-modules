@@ -2,7 +2,7 @@
 
 import base64
 import csv
-import cStringIO
+import io
 
 from odoo import api, models, fields, _
 from odoo.exceptions import UserError
@@ -46,10 +46,8 @@ class MfgWorkImport(models.TransientModel):
 
         # Decode the file data
         data = base64.b64decode(self.data_file)
-        file_input = cStringIO.StringIO(data)
-        file_input.seek(0)
+        reader = csv.reader((data.decode()).splitlines())
         reader_info = []
-        reader = csv.reader(file_input, delimiter=',', lineterminator='\r\n')
         try:
             reader_info.extend(reader)
         except Exception:

@@ -14,12 +14,7 @@
                 </div>
                 <separator string="" colspan="4"/>
                 <group>
-                    <field name="import_files" widget="import_files_button"/>
-                    <field name="drg_file_ids" widget="one2many_list">
-                        <tree create="0">
-                            <field name="name" string="File name"/>
-                        </tree>
-                    </field>
+                    <field name="drg_file_ids" widget="many2many_binary"/>
                 </group>
                 <separator string="" colspan="4"/>
                 <footer>

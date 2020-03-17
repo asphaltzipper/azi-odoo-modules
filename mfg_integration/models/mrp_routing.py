@@ -16,4 +16,5 @@ class MrpRouting(models.Model):
     @api.depends('operation_ids')
     def _compute_operations_detail(self):
         for route in self:
-            route.operations_detail = ", ".join(route.operation_ids.mapped('workcenter_id.code'))
+            work_center_codes = [code for code in route.operation_ids.mapped('workcenter_id.code') if code]
+            route.operations_detail = ", ".join(work_center_codes)
