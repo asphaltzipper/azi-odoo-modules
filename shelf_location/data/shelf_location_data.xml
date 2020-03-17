@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+         <record id="stock_shelf_a_floor" model="stock.shelf">
+            <field name="name">A-FLOOR</field>
+        </record>
+        <record id="stock_shelf_b_floor" model="stock.shelf">
+            <field name="name">B-FLOOR</field>
+        </record>
+        <record id="stock_shelf_booth_floor" model="stock.shelf">
+            <field name="name">BLAST-BOOTH</field>
+        </record>
+        <record id="stock_shelf_b_sh_01_floor" model="stock.shelf">
+            <field name="name">B-SH-01-01</field>
+        </record>
+         <record id="stock_shelf_b_sh_02_floor" model="stock.shelf">
+            <field name="name">B-SH-01-02</field>
+        </record>
+         <record id="stock_shelf_b_sh_03_floor" model="stock.shelf">
+            <field name="name">B-SH-01-03</field>
+        </record>
+         <record id="stock_shelf_b_sh_04_floor" model="stock.shelf">
+            <field name="name">B-SH-01-04</field>
+        </record>
+         <record id="stock_shelf_b_sh_05_floor" model="stock.shelf">
+            <field name="name">B-SH-01-05</field>
+        </record>
+        <record id="stock_shelf_b_sh_02_01_floor" model="stock.shelf">
+            <field name="name">B-SH-02-01</field>
+        </record>
+        <record id="stock_shelf_b_sh_02_02_floor" model="stock.shelf">
+            <field name="name">B-SH-02-02</field>
+        </record>
+        <record id="stock_shelf_b_sh_02_03_floor" model="stock.shelf">
+            <field name="name">B-SH-02-03</field>
+        </record>
+        <record id="stock_shelf_b_sh_02_04_floor" model="stock.shelf">
+            <field name="name">B-SH-02-04</field>
+        </record>
+         <record id="stock_shelf_b_sh_03_01_floor" model="stock.shelf">
+            <field name="name">B-SH-03-01</field>
+        </record>
+         <record id="stock_shelf_b_sh_03_02_floor" model="stock.shelf">
+            <field name="name">B-SH-03-02</field>
+        </record>
+         <record id="stock_shelf_b_sh_03_03_floor" model="stock.shelf">
+            <field name="name">B-SH-03-03</field>
+        </record>
+         <record id="stock_shelf_b_sh_03_04_floor" model="stock.shelf">
+            <field name="name">B-SH-03-04</field>
+        </record>
+        <record id="stock_shelf_b_sh_04_01_floor" model="stock.shelf">
+            <field name="name">B-SH-04-01</field>
+        </record>
+        <record id="stock_shelf_b_sh_04_02_floor" model="stock.shelf">
+            <field name="name">B-SH-04-02</field>
+        </record>
+        <record id="stock_shelf_b_sh_04_03_floor" model="stock.shelf">
+            <field name="name">B-SH-04-03</field>
+        </record>
+        <record id="stock_shelf_b_sh_04_04_floor" model="stock.shelf">
+            <field name="name">B-SH-04-04</field>
+        </record>
+        <record id="stock_shelf_c_floor" model="stock.shelf">
+            <field name="name">C-FLOOR</field>
+        </record>
+    </data>
+</openerp>

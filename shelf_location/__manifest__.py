@@ -19,6 +19,7 @@ Shelf Location
         'stock',
         'mrp',
         'barcodes',
+        'web_notify',
     ],
     'data': [
         'views/stock_shelf_views.xml',
