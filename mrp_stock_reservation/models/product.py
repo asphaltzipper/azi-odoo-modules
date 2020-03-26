@@ -15,7 +15,8 @@ class ProductTemplate(models.Model):
 
 
 class ProductProduct(models.Model):
-    _inherit = "product.product"
+    _name = "product.product"
+    _inherit = ['product.product', 'barcodes.barcode_events_mixin']
 
     mfg_demand_ids = fields.One2many(
         comodel_name='stock.move',
@@ -29,7 +30,7 @@ class ProductProduct(models.Model):
         string='Reserved',
         compute='_compute_qty_reserved')
 
-    _mrp_reservation_barcode_scanned = fields.Char(
+    _barcode_scanned = fields.Char(
         string="Barcode Scanned",
         help="Value of the last barcode scanned.",
         store=False)
@@ -38,9 +39,7 @@ class ProductProduct(models.Model):
     def _compute_qty_reserved(self):
         for product in self:
             product.qty_reserved = sum(
-                product.stock_quant_ids.filtered(
-                    lambda r: r.reservation_id and r.reservation_id.state not in ['done', 'cancel']
-                ).mapped('qty')
+                product.stock_quant_ids.mapped('reserved_quantity')
             )
 
     @api.multi
@@ -50,21 +49,18 @@ class ProductProduct(models.Model):
         action['res_id'] = self.id
         return action
 
-    @api.model
-    def mrp_res_barcode(self, barcode, prod_id):
+    def on_barcode_scanned(self, barcode):
         new_prod = self.search(['|', ('mfg_code', '=', barcode), ('barcode', '=', barcode)], limit=1)
         if new_prod:
-            # return an action that will load a new product in the form
-            # this is done in the javascript barcode handler function
             return new_prod.action_mrp_reservation_form()
-
         mo = self.env['mrp.production'].search([('name', '=', barcode)], limit=1)
         if not mo:
             raise UserError("Unknown Barcode: %s" % (barcode,))
+        product_id = self.id or self._origin.id
         domain = [
-            ('product_id', '=', prod_id),
+            ('product_id', '=',product_id),
             ('raw_material_production_id', '=', mo.id)
         ]
         moves = self.env['stock.move'].search(domain)
         for move in moves:
-            move.action_assign()
+            move._action_assign()

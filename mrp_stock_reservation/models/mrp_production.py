@@ -5,7 +5,8 @@ from odoo.exceptions import UserError
 
 
 class MrpProduction(models.Model):
-    _inherit = "mrp.production"
+    _name = "mrp.production"
+    _inherit = ['mrp.production', 'barcodes.barcode_events_mixin']
 
     kit_done = fields.Boolean(
         string='Kit Done',
@@ -18,13 +19,13 @@ class MrpProduction(models.Model):
         compute='_compute_percent_available',
         store=True)
 
-    _move_reservation_barcode_scanned = fields.Char(
+    _barcode_scanned = fields.Char(
         string="Barcode Scanned",
         help="Value of the last barcode scanned.",
         store=False)
 
     @api.multi
-    @api.depends('move_raw_ids.state', 'move_raw_ids.partially_available', 'workorder_ids.move_raw_ids')
+    @api.depends('move_raw_ids.state', 'workorder_ids.move_raw_ids')
     def _compute_percent_available(self):
         for order in self:
             if order.state == 'done':
@@ -35,8 +36,9 @@ class MrpProduction(models.Model):
                 order.percent_available = 0.0
             else:
                 required_qty = sum(order.move_raw_ids.filtered(lambda r: r.state != 'cancel').mapped('product_qty'))
-                avail_qty = sum([sum(move.reserved_quant_ids.mapped('qty')) for move in order.move_raw_ids])
-                avail_qty += sum(order.move_raw_ids.filtered(lambda r: r.state != 'cancel' and r.product_id.type == 'consu').mapped('product_qty'))
+                #TODO need to check this
+                # avail_qty = sum([sum(move.reserved_quant_ids.mapped('qty')) for move in order.move_raw_ids])
+                avail_qty = sum(order.move_raw_ids.filtered(lambda r: r.state != 'cancel' and r.product_id.type == 'consu').mapped('product_qty'))
                 order.percent_available = required_qty and avail_qty/required_qty or 0.0
 
     @api.multi
@@ -46,14 +48,12 @@ class MrpProduction(models.Model):
         action['res_id'] = self.id
         return action
 
-    @api.model
-    def raw_move_res_barcode(self, barcode, mo_id):
+    def on_barcode_scanned(self, barcode):
         new_mo = self.search([('name', '=', barcode)], limit=1)
         if new_mo:
             # return an action that will load a new product in the form
             # this is done in the javascript barcode handler function
             return new_mo.action_production_from_barcode()
-
         prod_domain = [
             '|', ('default_code', '=', barcode),
             '|', ('mfg_code', '=', barcode),
@@ -62,10 +62,11 @@ class MrpProduction(models.Model):
         prod_id = self.env['product.product'].search(prod_domain, limit=1)
         if not prod_id:
             raise UserError("Unknown Barcode: %s" % (barcode,))
+        order_id = self.id or self._origin.id
         domain = [
             ('product_id', '=', prod_id.id),
-            ('raw_material_production_id', '=', mo_id)
+            ('raw_material_production_id', '=', order_id)
         ]
         moves = self.env['stock.move'].search(domain)
         for move in moves:
-            move.action_assign()
+            move._action_assign()

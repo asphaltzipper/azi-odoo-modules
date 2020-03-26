@@ -10,13 +10,13 @@
         <field name="arch" type="xml">
             <field name="routing_id" position="after">
                 <field name="kit_done" groups="mrp.group_mrp_routings"/>
-                <field name="_move_reservation_barcode_scanned" widget="mrp_product_reservation_barcode_handler" invisible="1"/>
+                <field name="_barcode_scanned" widget="barcode_handler" invisible="1"/>
             </field>
             <field name="origin" position="after">
                 <field name="percent_available" widget="percentage" groups="mrp.group_mrp_routings"/>
             </field>
             <xpath expr="//page/field[@name='move_raw_ids']/tree/field[@name='quantity_done']" position="after">
-                <button type="object" name="do_unreserve" string="UnReserve" icon="fa-undo" attrs="{'invisible':[('quantity_available', '=', 0.0)]}"/>
+                <button type="object" name="do_unreserve" string="UnReserve" icon="fa-undo" attrs="{'invisible':[('reserved_availability', '=', 0.0)]}"/>
                 <button type="object" name="action_assign" string="Reserve" icon="fa-check" attrs="{'invisible':[('state', '=', 'assigned')]}"/>
             </xpath>
         </field>
@@ -42,7 +42,7 @@
         <field name="model">mrp.production</field>
         <field name="inherit_id" ref="mrp.view_mrp_production_filter"/>
         <field name="arch" type="xml">
-            <xpath expr="//filter[@name='norouting']" position="after">
+            <xpath expr="//filter[@name='done']" position="after">
                     <filter string="Kit Done" domain="[('kit_done','=', True)]" name="kit_done" groups="mrp.group_mrp_routings"/>
                     <filter string="Kit Not Done" domain="[('kit_done','=', False)]" name="kit_not_done" groups="mrp.group_mrp_routings"/>
             </xpath>

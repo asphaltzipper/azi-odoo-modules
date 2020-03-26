@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-
-import product
-import mfg_integration
-import mrp_production
+from . import stock_move
+from . import product
+from . import mfg_integration
+from . import mrp_production
