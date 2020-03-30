@@ -3,7 +3,7 @@
 
 {
     "name": "Work Order Produce Wizard",
-    "version": "10.0.0.1",
+    "version": "12.0.1.0.0",
     "summary": "Wizard for producing/completing Manufacturing Orders with Work Orders",
     "category": "Inventory",
     "author": "Matt Taylor",
