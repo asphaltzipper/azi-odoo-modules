@@ -4,7 +4,7 @@
 
 {
     "name": "Customer Credit App",
-    "version": "12.0.0.1.0",
+    "version": "12.0.1.0.0",
     "summary": "Customer Credit Application",
     "category": "Sale",
     "author": "Matt Taylor",
