@@ -5,7 +5,7 @@
         <field name="name">engineering.bom.form</field>
         <field name="model">engineering.bom</field>
         <field name="arch" type="xml">
-            <form string="Engineering BOM">
+            <form>
                 <sheet>
                     <group>
                         <group>
@@ -36,7 +36,7 @@
         <field name="name">engineering.bom.tree</field>
         <field name="model">engineering.bom</field>
         <field name="arch" type="xml">
-            <tree string="Engineering BOM">
+            <tree>
                 <field name="batch_id"/>
                 <field name="name"/>
                 <field name="route_template_id"/>
@@ -50,7 +50,7 @@
         <field name="name">engineering.bom.search</field>
         <field name="model">engineering.bom</field>
         <field name="arch" type="xml">
-            <search string="BOM Filter">
+            <search>
                 <field name="batch_id" string="Batch"/>
                 <field name="name" string="Product"/>
                 <filter string="Raw Material Parts" name="is_rm_part" domain="[('rm_part', '=', True)]"/>

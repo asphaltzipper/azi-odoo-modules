@@ -141,7 +141,7 @@ class EngBomBatch(models.Model):
         product_obj = self.env['product.product']
         bom_obj = self.env['mrp.bom']
         routing_obj = self.env['mrp.routing']
-        attr_line_obj = self.env['product.attribute.line']
+        attr_line_obj = self.env['product.template.attribute.line']
 
         # get unique parent products and create boms
         product_boms = {}

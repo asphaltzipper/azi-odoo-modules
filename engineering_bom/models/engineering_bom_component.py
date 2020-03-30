@@ -92,7 +92,7 @@ class EngBomComp(models.Model):
         string='Obsolete',
         readonly=True)
     uom_id = fields.Many2one(
-        comodel_name='product.uom',
+        comodel_name='uom.uom',
         string='UOM')
     rm_product_id = fields.Many2one(
         comodel_name='product.product',
@@ -124,7 +124,7 @@ class EngBomComp(models.Model):
         type_obj = self.env['engineering.part.type']
         coat_obj = self.env['engineering.coating']
         prep_obj = self.env['engineering.preparation']
-        uom_obj = self.env['product.uom']
+        uom_obj = self.env['uom.uom']
         uom_name_map = {
             '': 'unit',
             'unit': 'unit',

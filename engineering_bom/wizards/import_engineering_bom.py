@@ -2,8 +2,7 @@
 
 from lxml import etree
 import base64
-import cStringIO
-from PIL import Image, ImageChops
+import io
 
 from odoo import api, models, fields, _
 from odoo.exceptions import UserError
@@ -55,7 +54,7 @@ class EngBomImport(models.TransientModel):
 
         # Decode the file data
         data = base64.b64decode(self.data_file)
-        file_input = cStringIO.StringIO(data)
+        file_input = io.BytesIO(data)
 
         # parse xml data
         try:

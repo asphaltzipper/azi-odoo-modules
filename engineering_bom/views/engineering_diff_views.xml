@@ -6,7 +6,7 @@
         <field name="name">engineering.part.diff.form</field>
         <field name="model">engineering.part.diff</field>
         <field name="arch" type="xml">
-            <form string="Part Diff">
+            <form>
                 <sheet>
                     <group>
                         <field name="batch_id" invisible="1"/>
@@ -55,7 +55,7 @@
         <field name="name">engineering.part.diff.tree</field>
         <field name="model">engineering.part.diff</field>
         <field name="arch" type="xml">
-            <tree string="Part Diffs">
+            <tree>
                 <field name="batch_id" invisible="1"/>
                 <field name="product_id"/>
                 <field name="important"/>
@@ -67,7 +67,7 @@
         <field name="name">engineering.part.diff.search</field>
         <field name="model">engineering.part.diff</field>
         <field name="arch" type="xml">
-            <search string="Part Diffs Filter">
+            <search>
                 <field name="batch_id" string="Batch"/>
                 <filter string='Important' name="important" domain="[('important', '!=', False)]" />
             </search>
@@ -89,7 +89,7 @@
         <field name="name">engineering.bom.diff.form</field>
         <field name="model">engineering.bom.diff</field>
         <field name="arch" type="xml">
-            <form string="Bom Diff">
+            <form>
                 <sheet>
                     <group>
                         <field name="batch_id" invisible="1"/>
@@ -124,7 +124,7 @@
         <field name="name">engineering.bom.diff.tree</field>
         <field name="model">engineering.bom.diff</field>
         <field name="arch" type="xml">
-            <tree string="BOM Diffs">
+            <tree>
                 <field name="batch_id" invisible="1"/>
                 <field name="product_id"/>
                 <field name="action_type"/>
@@ -141,7 +141,7 @@
         <field name="name">engineering.bom.diff.search</field>
         <field name="model">engineering.bom.diff</field>
         <field name="arch" type="xml">
-            <search string="BOM Diffs Filter">
+            <search>
                 <field name="batch_id" string="Batch"/>
                 <filter string="Raw Material Parts" name="is_rm_part" domain="[('rm_part', '=', True)]"/>
                 <group expand='0' string='Group by...'>
@@ -165,7 +165,7 @@
         <field name="name">engineering.bom.line.diff.form</field>
         <field name="model">engineering.bom.line.diff</field>
         <field name="arch" type="xml">
-            <form string="BOM Line Diff">
+            <form>
                 <sheet>
                     <group>
                         <group>
@@ -192,7 +192,7 @@
         <field name="name">engineering.bom.line.diff.tree</field>
         <field name="model">engineering.bom.line.diff</field>
         <field name="arch" type="xml">
-            <tree string="BOM Line Diffs">
+            <tree>
                 <field name="batch_id" invisible="1"/>
                 <field name="parent_id"/>
                 <field name="name"/>
@@ -210,7 +210,7 @@
         <field name="name">engineering.bom.line.diff.search</field>
         <field name="model">engineering.bom.line.diff</field>
         <field name="arch" type="xml">
-            <search string="BOM Line Diffs Filter">
+            <search>
                 <field name="batch_id" string="Batch"/>
                 <filter string="Raw Material Parts" name="is_rm_part" domain="[('rm_part', '=', True)]"/>
                 <group expand='0' string='Group by...'>

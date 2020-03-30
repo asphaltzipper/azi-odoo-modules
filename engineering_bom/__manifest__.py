@@ -23,7 +23,7 @@
 
 {
     "name": "engineering_bom",
-    "version": "0.1",
+    "version": "12.0.1.1.0",
     "summary": "Engineering Bills of Materials Management",
     "category": "Engineering",
     "author": "Matt Taylor",
@@ -37,16 +37,16 @@ Engineering Bills of Materials Management
     """,
     "depends": [
         'mrp',
-        'engineering_product',
         'mfg_integration',
         'ecm',
+        'product_configurator',
     ],
     'data': [
+        'security/ir.model.access.csv',
         'wizards/import_engineering_bom_views.xml',
         'views/engineering_bom_views.xml',
         'views/engineering_diff_views.xml',
         'views/engineering_bom_batch_views.xml',
-        'security/ir.model.access.csv',
     ],
     "installable": True,
     "auto_install": False,

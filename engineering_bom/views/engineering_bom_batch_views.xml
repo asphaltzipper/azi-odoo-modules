@@ -6,7 +6,7 @@
         <field name="name">engineering.bom.comp.tree</field>
         <field name="model">engineering.bom.component</field>
         <field name="arch" type="xml">
-            <tree string="Imported Components">
+            <tree>
                 <field name="batch_id"/>
                 <field name="name"/>
                 <field name="product_id"/>
@@ -21,7 +21,7 @@
         <field name="name">engineering.bom.comp.form</field>
         <field name="model">engineering.bom.component</field>
         <field name="arch" type="xml">
-            <form string="Imported Component">
+            <form>
                 <sheet>
                     <group>
                         <group>
@@ -86,7 +86,7 @@
         <field name="name">engineering.bom.comp.search</field>
         <field name="model">engineering.bom.component</field>
         <field name="arch" type="xml">
-            <search string="BOM Component Filter">
+            <search>
                 <filter string='Obsolete Products' name="obsolete_products" domain="[('product_id', '!=', False), '|', ('product_active', '=', False), ('product_deprecated', '=', True)]" />
                 <filter string='Unknown Products' name="unknown_products" domain="[('product_id', '=', False), ('suggested_product_id', '=', False)]" />
                 <filter string='Unknown Revisions' name="unknown_revisions" domain="[('product_id', '=', False), ('suggested_product_id', '!=', False)]" />
@@ -103,7 +103,7 @@
         <field name="name">engineering.bom.adjacency.tree</field>
         <field name="model">engineering.bom.adjacency</field>
         <field name="arch" type="xml">
-            <tree string="Imported Adjacencies">
+            <tree>
                 <field name="batch_id"/>
                 <field name="parent_comp_id"/>
                 <field name="child_comp_id"/>
@@ -116,7 +116,7 @@
         <field name="name">engineering.bom.adjacency.search</field>
         <field name="model">engineering.bom.adjacency</field>
         <field name="arch" type="xml">
-            <search string="BOM Adjacency Filter">
+            <search>
                 <field name="batch_id" string="Batch"/>
                 <group expand='0' string='Group by...'>
                     <filter name="group_parent_comp_id" string="Parent" domain="[]" context="{'group_by' : 'parent_comp_id'}"/>
@@ -131,7 +131,7 @@
         <field name="name">engineering.bom.batch.tree</field>
         <field name="model">engineering.bom.batch</field>
         <field name="arch" type="xml">
-            <tree string="Engineering BOM Batch">
+            <tree>
                 <field name="name"/>
                 <field name="owner_id"/>
                 <field name="create_date"/>
@@ -161,7 +161,7 @@
         <field name="name">engineering.bom.batch.form</field>
         <field name="model">engineering.bom.batch</field>
         <field name="arch" type="xml">
-            <form string="BOM Batch">
+            <form>
                 <header>
                     <button name="%(engineering_bom.action_engineering_bom_import)d" string="Import BOM" states="draft" type="action" class="oe_highlight"/>
                     <button string="Match Products" name="action_match_component_products" type="object" states="imported"/>
