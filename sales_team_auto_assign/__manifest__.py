@@ -4,7 +4,7 @@
 {
     "name": "Sales Team Auto Assign",
     "summary": "Auto assign sales teams to customers by region and industry.",
-    "version": "10.0.1.0.0",
+    "version": "12.0.1.0.0",
     "category": "Sales",
     "website": "http://www.github.com/asphaltzipper/azi-odoo-modules",
     'description': "Auto assign sales teams to customers, based on criteria controlled in other modules.",

@@ -1,37 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="sales_team_assign_view_form" model="ir.ui.view">
+        <field name="name">sales.team.assign.view.form</field>
+        <field name="model">sales.team.assign</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <div name="desc" class="col-lg-8">
+                        Wizard assigns sales teams to all customers, where the Auto Assign Team(s) field is True.
+                    </div>
+                </group>
+                <group>
+                    <div name="hint" class="col-lg-8">
+                        Useful for assigning teams for the first time or reassigning teams after modifying sales regions
+                    </div>
+                </group>
+                <footer>
+                    <button name="sales_team_assignment" string="Assign Sales Teams" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-default" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
 
-<record id="sales_team_assign_view_form" model="ir.ui.view">
-    <field name="name">Run Sales Team Assignments</field>
-    <field name="model">sales.team.assign</field>
-    <field name="arch" type="xml">
-        <form string="Parameters">
-            <group>
-                <label name="desc" string="Wizard assigns sales teams to all customers, where the Auto Assign Team(s) field is True."/>
-            </group>
-            <group>
-                <label name="hint" string="Useful for assigning teams for the first time or reassigning teams after modifying sales regions."/>
-            </group>
-            <footer>
-                <button name="sales_team_assignment" string="Assign Sales Teams" type="object" class="btn-primary"/>
-                <button string="Cancel" class="btn-default" special="cancel" />
-            </footer>
-        </form>
-    </field>
-</record>
+    <record id="sales_team_assign_action" model="ir.actions.act_window">
+        <field name="name">Run Auto Assign</field>
+        <field name="res_model">sales.team.assign</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
 
-<record id="sales_team_assign_action" model="ir.actions.act_window">
-    <field name="name">Run Auto Assign</field>
-    <field name="res_model">sales.team.assign</field>
-    <field name="view_type">form</field>
-    <field name="view_mode">form</field>
-    <field name="target">new</field>
-</record>
-
-<menuitem id="sales_team_assign_menu"
-    action="sales_team_assign_action"
-    parent="sales_team_region.menu_crm_team_region_config"
-    sequence="5"
-    groups="sales_team.group_sale_manager"/>
+    <menuitem id="sales_team_assign_menu"
+              action="sales_team_assign_action"
+              parent="sales_team_region.menu_crm_team_region_config"
+              sequence="5"
+              groups="sales_team.group_sale_manager"/>
 
 </odoo>
