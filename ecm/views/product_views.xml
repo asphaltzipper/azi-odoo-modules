@@ -5,7 +5,7 @@
     <record id="product_template_form_engineering_product" model="ir.ui.view">
         <field name="name">product.template.engineering_product.inherit</field>
         <field name="model">product.template</field>
-        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="inherit_id" ref="engineering_product.product_template_form_engineering_product"/>
         <field name="arch" type="xml">
             <xpath expr="//page[@name='eng_management']//field[@name='deprecated']" position="after">
                 <field name="release_eco_id"/>

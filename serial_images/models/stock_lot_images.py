@@ -5,6 +5,7 @@ from odoo import models, fields, api
 
 class StockLotImages(models.Model):
     _name = 'stock.lot.images'
+    _description = 'Serialized Product Documentation Images'
 
     name = fields.Char(string='Name', required=True)
 

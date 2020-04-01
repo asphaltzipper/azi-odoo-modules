@@ -114,6 +114,6 @@ class ProductionLot(models.Model):
             # sum quant_ids quantity, grouping by location
             # for serials, only one location can have a net quantity, and the quantity must be unity (1)
             # we sort locations by descending net quantity, and take the first record
-            locs = serial.quant_ids.read_group(domain=[('lot_id', '=', serial.id)], fields=['location_id', 'qty'], groupby=['location_id'], orderby='qty desc')
+            locs = serial.quant_ids.read_group(domain=[('lot_id', '=', serial.id)], fields=['location_id', 'quantity'], groupby=['location_id'], orderby='quantity desc')
             loc = self.env['stock.location'].browse(locs[0]['location_id'][0])
             serial.state = loc.usage

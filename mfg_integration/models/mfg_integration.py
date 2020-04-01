@@ -9,6 +9,7 @@ _logger = logging.getLogger(__name__)
 
 class MfgGauge(models.Model):
     _name = 'mfg.gauge'
+    _description = 'Sheet Metal Thickness Gauge'
 
     name = fields.Char(
         string='Name',
@@ -25,6 +26,7 @@ class MfgGauge(models.Model):
 
 class MfgMaterial(models.Model):
     _name = 'mfg.material'
+    _description = 'Sheet Metal Material Types'
 
     name = fields.Char(
         string="Material")
@@ -36,6 +38,7 @@ class MfgMaterial(models.Model):
 
 class MfgWorkHeader(models.Model):
     _name = 'mfg.work.header'
+    _description = 'Imported MFG Work Batch'
     _order = 'work_date desc, work_user_id'
 
     _sql_constraints = [
@@ -50,7 +53,7 @@ class MfgWorkHeader(models.Model):
         readonly=True)
 
     file_name = fields.Char(
-        string="Name",
+        string="File Name",
         readonly=True)
 
     state = fields.Selection(
@@ -249,6 +252,7 @@ class MfgWorkHeader(models.Model):
 
 class MfgWorkDetail(models.Model):
     _name = 'mfg.work.detail'
+    _description = 'MFG Work Batch Detail Lines'
     _order = 'product_id, production_id, import_mfg_code'
 
     header_id = fields.Many2one(

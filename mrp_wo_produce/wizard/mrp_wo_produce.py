@@ -10,6 +10,7 @@ from odoo.tools import float_compare, float_round
 
 class MrpWoProduceWork(models.TransientModel):
     _name = "mrp.wo.produce.work"
+    _description = 'Workorder Labor Details'
 
     produce_id = fields.Many2one(
         comodel_name='mrp.wo.produce',
@@ -60,6 +61,7 @@ class MrpWoProduce(models.TransientModel):
     wizard to handle routings/workorders would make it too complex.
     """
     _name = "mrp.wo.produce"
+    _description = 'Produce MO with Workorders'
 
     serial = fields.Boolean('Requires Serial')
     production_id = fields.Many2one('mrp.production', 'Production')

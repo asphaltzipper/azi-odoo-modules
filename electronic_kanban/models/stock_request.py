@@ -6,11 +6,13 @@ class StockRequest(models.AbstractModel):
 
     product_deprecated = fields.Boolean(
         related='product_id.deprecated',
+        string='Obsolete',
         readonly=True,
         store=True)
 
     product_active = fields.Boolean(
         related='product_id.active',
+        string='Product Active',
         readonly=True,
         store=True)
 

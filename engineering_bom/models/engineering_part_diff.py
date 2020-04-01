@@ -44,7 +44,7 @@ class EngPartDiff(models.Model):
         comodel_name='engineering.coating',
         string='Old Coating')
     uom_id = fields.Many2one(
-        comodel_name='product.uom',
+        comodel_name='uom.uom',
         string='Old UOM')
     cutting_length_outer = fields.Float(
         string='Old Outer Cut Length')
@@ -72,7 +72,7 @@ class EngPartDiff(models.Model):
         comodel_name='engineering.coating',
         string='New Coating')
     uom_new_id = fields.Many2one(
-        comodel_name='product.uom',
+        comodel_name='uom.uom',
         string='New UOM')
     cutting_length_outer_new = fields.Float(
         string='New Outer Cut Length')

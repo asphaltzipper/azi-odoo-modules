@@ -149,7 +149,7 @@ class EngBomLineDiff(models.Model):
         default=0.0,
         help="Component quantity in existing BOM")
     uom_id = fields.Many2one(
-        comodel_name='product.uom',
+        comodel_name='uom.uom',
         string='Old UOM',
         ondelete='set null',
         readonly=True)
@@ -159,7 +159,7 @@ class EngBomLineDiff(models.Model):
         required=True,
         help="Component quantity in new BOM")
     uom_new_id = fields.Many2one(
-        comodel_name='product.uom',
+        comodel_name='uom.uom',
         string='New UOM',
         ondelete='set null',
         readonly=True)

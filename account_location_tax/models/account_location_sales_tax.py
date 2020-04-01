@@ -5,6 +5,7 @@ from odoo import api, fields, models, tools
 
 class AccountLocationSalesTax(models.Model):
     _name = 'account.location.sales.tax'
+    _description = 'Sales Tax Report by Location'
     _auto = False
 
     # these fields are selected from the database view
