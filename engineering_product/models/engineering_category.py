@@ -28,6 +28,8 @@ class EngineeringCategory(models.Model):
         comodel_name='engineering.category',
         inverse_name='parent_id',
         string='Child Categories')
+    parent_left = fields.Integer(string='Left Parent', index=1)
+    parent_right = fields.Integer(string='Right Parent', index=1)
     type = fields.Selection(
         selection=[('view', 'View'), ('normal', 'Normal')],
         string='Category Type', default='normal',

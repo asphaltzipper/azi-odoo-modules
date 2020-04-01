@@ -8,7 +8,7 @@
             <field name="eng_management" eval="True"/>
             <field name="default_rev">-0</field>
             <field name="rev_delimiter">.</field>
-            <field name="def_code_regex" eval="s'^([_A-Z0-9-]+)\.([A-Z-][0-9])$'"/>
+            <field name="def_code_regex" eval="r'^([_A-Z0-9-]+)\.([A-Z-][0-9])$'"/>
             <field name="eng_code_sequence" ref="engineering_product.sequence_product_eng_code"/>
         </record>
 
@@ -79,7 +79,7 @@
 
         <!-- engineered BOMs -->
         <record id="mrp_bom_asm_1" model="mrp.bom">
-            <field name="product_tmpl_id" eval="obj().env.ref('engineering_product.product_asm_1').product_tmpl_id"/>
+            <field name="product_tmpl_id" eval="env.ref('engineering_product.product_asm_1').product_tmpl_id"/>
             <field name="product_id" ref="engineering_product.product_asm_1"/>
             <field name="product_uom_id" ref="uom.product_uom_unit"/>
             <field name="sequence">1</field>
@@ -100,7 +100,7 @@
             <field name="bom_id" ref="mrp_bom_asm_1"/>
         </record>
         <record id="mrp_bom_asm_2" model="mrp.bom">
-            <field name="product_tmpl_id" eval="obj().env.ref('engineering_product.product_asm_2').product_tmpl_id"/>
+            <field name="product_tmpl_id" eval="env.ref('engineering_product.product_asm_2').product_tmpl_id"/>
             <field name="product_id" ref="engineering_product.product_asm_2"/>
             <field name="product_uom_id" ref="uom.product_uom_unit"/>
             <field name="sequence">1</field>

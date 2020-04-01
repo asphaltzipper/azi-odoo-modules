@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api, _
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, UserError
 
 import re
 
@@ -52,6 +52,7 @@ class ProductTemplate(models.Model):
         comodel_name='engineering.category',
         string='Engineering Category',
         domain="[('type','=','normal')]",
+        copy=True,
         help="Select category for the current product")
     eng_type_id = fields.Many2one(
         related='product_variant_ids.eng_type_id')
@@ -102,7 +103,7 @@ class ProductTemplate(models.Model):
     @api.depends('route_ids')
     def _compute_make(self):
         for prod in self:
-            rules = prod.route_ids.mapped('pull_ids')
+            rules = prod.route_ids.mapped('rule_ids')
             actions = rules and rules.mapped('action') or []
             prod.make = 'manufacture' in actions and 'M' or 'P'
 
@@ -299,61 +300,60 @@ class ProductProduct(models.Model):
     def button_revise(self, values=None):
         """
         Best if called by a wizard where the user can specify a new rev
+        Revisions are only allowed for non-configurable products.
         """
         self.ensure_one()
         if values is None:
             values = {}
 
+        if self.product_tmpl_id.attribute_line_ids \
+                or self.product_tmpl_id.product_variant_count > 1:
+            raise UserError(
+                _("Can't revise this product because it's a variant of "
+                  "configurable product %s" % (self.product_tmpl_id.name, ))
+            )
+
         # copy product
         defaults = {
             'name': self.name,
-            'default_code': self.eng_code + self.product_tmpl_id.rev_delimiter + 'Z9',
+            'default_code':
+                self.eng_code + self.product_tmpl_id.rev_delimiter + 'Z9',
         }
         defaults.update(values)
         defaults['barcode'] = defaults['default_code']
         new_prod = self.copy(default=defaults)
 
         # copy orderpoints
-        # orderpoints reference the product directly
-        old_ops = self.env['stock.warehouse.orderpoint'].search([('product_id', '=', self.id)])
+        old_ops = self.env['stock.warehouse.orderpoint'].search(
+            [('product_id', '=', self.id)]
+        )
         for op in old_ops:
             op.copy(default={'product_id': new_prod.id})
 
-        # domain for models referencing the template
-        # if we copy a variant or create one, we keep the same template
-        domain = []
-        is_variant = False
-        if new_prod.product_tmpl_id == self.product_tmpl_id:
-            # this is a variant, so match only models related this product (not the template)
-            domain.append(('product_id', '=', self.id))
-            is_variant = True
-        else:
-            # not a variant, so match the template reference
-            domain.append(('product_tmpl_id', '=', self.product_tmpl_id.id))
-
-        # copy active boms
-        # we may require product_id on mrp.bom, but for now, assume the product_id is only set for variants
-        old_boms = self.env['mrp.bom'].search(domain)
+        # copy boms
+        old_boms = self.env['mrp.bom'].search([
+            '|',
+            ('product_tmpl_id', '=', self.product_tmpl_id.id),
+            ('product_id', '=', self.id),
+        ])
         for bom in old_boms:
+            # unless configurable, we want product_id on mrp.bom
             defaults = {
                 'product_tmpl_id': new_prod.product_tmpl_id.id,
-                'product_id': bom.product_id and new_prod.id or False}
+                'product_id': new_prod.id,
+            }
             bom.copy(default=defaults)
 
-        # copy quality points
-        old_qcs = self.env['quality.point'].search(domain)
-        for qc in old_qcs:
-            defaults = {
-                'product_tmpl_id': new_prod.product_tmpl_id.id,
-                'product_id': qc.product_id and new_prod.id or False}
-            qc.copy(default=defaults)
-
         # copy sellers
+        defaults = {'product_tmpl_id': new_prod.product_tmpl_id.id}
+        domain = [('product_tmpl_id', '=', self.product_tmpl_id.id)]
+        if self.product_tmpl_id.product_variant_count > 1:
+            # we never execute this code because of the test above
+            # this only is here for future reference
+            defaults['product_id'] = new_prod.id
+            domain.append(('product_id', '=', self.id))
         old_sellers = self.env['product.supplierinfo'].search(domain)
         for seller in old_sellers:
-            defaults = {
-                'product_tmpl_id': new_prod.product_tmpl_id.id,
-                'product_id': seller.product_id and new_prod.id or False}
             seller.copy(default=defaults)
 
         # deprecate and set warnings on old revision
