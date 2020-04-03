@@ -22,11 +22,15 @@ Shelf Location
         'web_notify',
     ],
     'data': [
+        'wizard/wizard_shelf_product_scan_views.xml',
         'views/stock_shelf_views.xml',
         'views/product_views.xml',
-        'security/ir.model.access.csv',
         'report/shelf_product_listing_templates.xml',
+        'report/shelf_label_templates.xml',
+        'report/shelf_count_sheets_templates.xml',
         'report/shelf_report.xml',
+        'report/report_stock_shelf_products_views.xml',
+        'security/ir.model.access.csv',
     ],
     'demo': [
         'data/shelf_location_demo.xml',

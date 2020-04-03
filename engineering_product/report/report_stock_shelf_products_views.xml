@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="report_stock_shelf_products_depr_tree_view" model="ir.ui.view">
+        <field name="name">report.stock.shelf.products.depr.tree</field>
+        <field name="model">report.stock.shelf.products</field>
+        <field name="inherit_id" ref="shelf_location.report_stock_shelf_products_tree_view"/>
+        <field name="arch" type="xml">
+            <field name="location_id" position="after">
+                <field name="deprecated"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>

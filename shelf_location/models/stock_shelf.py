@@ -6,8 +6,8 @@ from odoo.exceptions import UserError, ValidationError
 
 class StockShelf(models.Model):
     _name = 'stock.shelf'
+    _description = 'Stock Shelf'
     _order = 'name'
-    _inherit = ['barcodes.barcode_events_mixin']
 
     _sql_constraints = [('name_uniq', 'unique (name)', "Name must be unique")]
 
@@ -48,25 +48,6 @@ class StockShelf(models.Model):
     def _inactive_count(self):
         for shelf in self:
             shelf.inactive_count = len(shelf.product_ids.filtered(lambda product: not product.active))
-
-    def _find_product_from_barcode(self, barcode):
-        """
-        Method to be inherited and extended for finding products from alternate barcoded objects
-        :param barcode: string from barcode scan
-        :return: product
-        """
-        return self.env['product.template'].with_context(active_test=False).search(
-            ['|', ('barcode', '=', barcode), ('default_code', '=', barcode)])
-
-    def on_barcode_scanned(self, barcode):
-        shelf = self.env['stock.shelf'].search([('id', '=', self.id)])
-        if not shelf:
-            raise UserError(_('No Shelf Found/ so Save!'))
-        product = self._find_product_from_barcode(barcode)
-        if product:
-            shelf.update({'product_ids': [(4, product.id)]})
-        else:
-            self.env.user.notify_warning(message=barcode, title="Unknown Barcode", sticky=True)
 
     def button_delete_all(self):
         self.ensure_one()

@@ -16,10 +16,12 @@ class ProductTemplate(models.Model):
         related='product_variant_ids.e_kanban_avg_qty')
 
     e_kanban_count = fields.Integer(
-        related='product_variant_ids.e_kanban_count')
+        related='product_variant_ids.e_kanban_count',
+        store=True)
 
     e_kanban_verified = fields.Boolean(
-        related='product_variant_ids.e_kanban_verified')
+        related='product_variant_ids.e_kanban_verified',
+        store=True)
 
     def action_kanban_cards(self):
         action = self.env.ref('stock_request_kanban.stock_request_kanban_action').read()[0]

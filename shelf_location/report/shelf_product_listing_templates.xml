@@ -13,31 +13,25 @@
                     <table class="table table-condensed">
                         <thead style="display: table-header-group;">
                             <tr>
-                                <th><strong>Code</strong></th>
-                                <th><strong>Name</strong></th>
-                                <!-- TODO in engineering_product -->
-                                <!--<th><strong>Deprecated</strong></th>-->
-                                <th><strong>UOM</strong></th>
-                                <th><strong>OnHand</strong></th>
-                                <th><strong>Count</strong></th>
+                                <th name="code"><strong>Code</strong></th>
+                                <th name="name"><strong>Name</strong></th>
+                                <th name="uom"><strong>UOM</strong></th>
+                                <th name="onhand"><strong>OnHand</strong></th>
+                                <th name="count"><strong>Count</strong></th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr t-foreach="o.product_ids" t-as="line">
-                                <td>
+                                <td name="default_code">
                                     <span t-field="line.default_code"/>
                                 </td>
-                                <td>
+                                <td name="name">
                                     <span t-field="line.name"/>
                                 </td>
-                                <!-- TODO in engineering_product -->
-                                <!--<td>-->
-                                    <!--<t t-if="line.deprecated">Yes</t>-->
-                                <!--</td>-->
-                                <td>
+                                <td name="uom_name">
                                     <span t-field="line.uom_id.name"/>
                                 </td>
-                                <td>
+                                <td name="qty_available">
                                     <t t-if="line.qty_available">Yes</t>
                                 </td>
                                 <td style="padding:5px 30px;">

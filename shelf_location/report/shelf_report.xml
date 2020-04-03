@@ -27,15 +27,24 @@
         paperformat="paperformat_landscape_us"
     />
 
-    <!--TODO in engineering_product -->
-    <!--<report-->
-        <!--string="Shelf Count Sheets"-->
-        <!--id="action_report_shelf_count_sheets"-->
-        <!--model="stock.shelf.products"-->
-        <!--name="shelf_location.shelf_count_sheets"-->
-        <!--file="shelf_location.report.shelf_count_sheets_templates"-->
-        <!--report_type="qweb-pdf"-->
-        <!--paperformat="paperformat_landscape_us"-->
-    <!--/>-->
+    <report
+        id="action_report_shelf_label"
+        string="Azi Location Labels"
+        model="stock.shelf"
+        paperformat="azi_stock.paperformat_barcode"
+        report_type="qweb-pdf"
+        name="shelf_location.azi_report_shelflabel"
+        file="shelf_location.report.shelf_label_templates"
+    />
+
+    <report
+        string="Shelf Count Sheets"
+        id="action_report_shelf_count_sheets"
+        model="report.stock.shelf.products"
+        name="shelf_location.shelf_count_sheets"
+        file="shelf_location.report.shelf_count_sheets_templates"
+        report_type="qweb-pdf"
+        paperformat="paperformat_landscape_us"
+    />
 
 </odoo>

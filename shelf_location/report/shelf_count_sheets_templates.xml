@@ -6,36 +6,32 @@
         <t t-set="loc_num" t-value="0"/>
         <t t-foreach="docs" t-as="shelf">
             <t t-set="loc_num" t-value="loc_num + 1"/>
-            <t t-call="report.internal_layout">
+            <t t-call="web.internal_layout">
                 <div class="page">
                     <h3>Shelf : <span t-esc="shelf['shelf_name']"/></h3>
                     <p>Items: <span t-esc="shelf['prod_count']"/></p>
                     <table class="table table-condensed">
                         <thead style="display: table-header-group;">
                             <tr>
-                                <th><strong>Code</strong></th>
-                                <th><strong>Name</strong></th>
-                                <th><strong>Deprecated</strong></th>
-                                <th><strong>UOM</strong></th>
-                                <th><strong>OnHand</strong></th>
-                                <th><strong>Count</strong></th>
+                                <th name="code"><strong>Code</strong></th>
+                                <th name="name"><strong>Name</strong></th>
+                                <th name="uom"><strong>UOM</strong></th>
+                                <th name="onhand"><strong>OnHand</strong></th>
+                                <th name="count"><strong>Count</strong></th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr t-foreach="shelf['products'].sorted(lambda r: (r.default_code, r.product_name))" t-as="line">
-                                <td>
+                                <td name="default_code">
                                     <span t-field="line.default_code"/>
                                 </td>
-                                <td>
+                                <td name="product_name">
                                     <span t-field="line.product_name"/>
                                 </td>
-                                <td>
-                                    <t t-if="line.deprecated">Yes</t>
-                                </td>
-                                <td>
+                                <td name="uom_name">
                                     <span t-field="line.uom_id.name"/>
                                 </td>
-                                <td>
+                                <td name="location_qty">
                                     <t t-if="line.location_qty">Yes</t>
                                 </td>
                                 <td style="padding:5px 30px;">

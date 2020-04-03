@@ -4,8 +4,9 @@ from odoo import api, fields, models, tools
 from odoo.addons import decimal_precision as dp
 
 
-class StockShelfProducts(models.Model):
-    _name = 'stock.shelf.products'
+class ReportStockShelfProducts(models.Model):
+    _name = 'report.stock.shelf.products'
+    _description = 'Stock Shelf Products Report'
     _auto = False
     _order = 'shelf_id, default_code, product_name'
 
@@ -59,10 +60,6 @@ class StockShelfProducts(models.Model):
         string='Barcode',
         required=True)
 
-    deprecated = fields.Boolean(
-        string='Deprecated',
-        required=True)
-
     active = fields.Boolean(
         string='Active',
         required=True)
@@ -79,27 +76,75 @@ class StockShelfProducts(models.Model):
         required=True)
 
     def group_shelf_products(self):
-        # res = {
-        #   shelf_name1: {
-        #     'shelf_name': '',
-        #     'products': set(),
-        #     'prod_count': 0,
-        #   },
-        #   shelf_name2: {
-        shelves = {x: {'shelf_name': x, 'prod_count': 0, 'products': self.env['stock.shelf.products']} for x in self.mapped(lambda r: r.shelf_id.name)}
+        """
+        returns the following data structure:
+        res = {
+            shelf_name1: {
+                'shelf_name': '',
+                'products': set(),
+                'prod_count': 0,
+            },
+            shelf_name2: {
+               ...
+        """
+        shelves = {
+            x: {
+                'shelf_name': x,
+                'prod_count': 0,
+                'products': self.env['report.stock.shelf.products']
+            } for x in self.mapped(lambda r: r.shelf_id.name)}
         for line in self:
             shelves[line.shelf_id.name]['products'] |= line
             shelves[line.shelf_id.name]['prod_count'] += 1
         keys = shelves.keys()
-        keys.sort()
-        res = [shelves[k] for k in keys]
+        res = [shelves[k] for k in sorted(keys)]
         return res
+
+    def _select_fields(self):
+        select_fields = [
+            "shelf_id",
+            "product_id",
+            "categ_id",
+            "uom_id",
+            "product_name",
+            "default_code",
+            "barcode",
+            "active",
+            "location_qty",
+            "location_id",
+            "product_type",
+        ]
+        return select_fields
+
+    def _sub_select_fields(self):
+        select_fields = [
+            "r.stock_shelf_id as shelf_id",
+            "t.id as product_id",
+            "t.categ_id",
+            "t.uom_id",
+            "t.name as product_name",
+            "t.default_code",
+            "t.barcode",
+            "t.active",
+            "q.quantity as location_qty",
+            "q.location_id",
+            "t.type as product_type",
+        ]
+        return select_fields
+
+    def _template_aggregate_fields(self):
+        select_fields = [
+            "bool_and(p.active) as active",
+            "array_to_string(array_agg(p.default_code), ', ') as default_code",
+            "case when count(*)>1 then null else max(barcode) end as barcode",
+        ]
+        return select_fields
 
     @api.model_cr
     def init(self):
-        tools.drop_view_if_exists(self._cr, 'stock_shelf_products')
-        self._cr.execute("""
-            CREATE VIEW stock_shelf_products AS (
+        tools.drop_view_if_exists(self._cr, 'report_stock_shelf_products')
+        view_sql = """
+            CREATE VIEW report_stock_shelf_products AS (
                 select
                     -- generate a unique integer for the id
                     -- if the id exceeds 2147483647 there may be a problem with python on 32 bit systems 
@@ -108,18 +153,7 @@ class StockShelfProducts(models.Model):
                     -- then add a, b and c together
                     -- this will always be unique
                     (a*10^(b_size+c_size)+b*10^(c_size)+c)::bigint as id,
-                    shelf_id,
-                    product_id,
-                    categ_id,
-                    uom_id,
-                    product_name,
-                    default_code,
-                    barcode,
-                    deprecated,
-                    active,
-                    location_qty,
-                    location_id,
-                    product_type
+                    %s
                 from (
                     select
                         coalesce(t.id, 0) as a,
@@ -127,18 +161,7 @@ class StockShelfProducts(models.Model):
                         char_length((select max(id) from stock_shelf)::varchar) as b_size,
                         coalesce(q.location_id, 0) as c,
                         char_length((select max(id) from stock_location)::varchar) as c_size,
-                        r.stock_shelf_id as shelf_id,
-                        t.id as product_id,
-                        t.categ_id,
-                        t.uom_id,
-                        t.name as product_name,
-                        t.default_code,
-                        t.barcode,
-                        t.deprecated,
-                        t.active,
-                        q.qty as location_qty,
-                        q.location_id,
-                        t.type as product_type
+                        %s
                     from product_template_stock_shelf_rel as r
                     full outer join (
                         select
@@ -147,16 +170,13 @@ class StockShelfProducts(models.Model):
                             t.categ_id,
                             t.uom_id,
                             t.name,
-                            bool_and(p.deprecated) as deprecated,
-                            bool_and(p.active) as active,
-                            array_to_string(array_agg(p.default_code), ', ') as default_code,
-                            case when count(*)>1 then null else max(barcode) end as barcode
+                            %s
                         from product_product as p
                         left join product_template as t on t.id=p.product_tmpl_id
                         group by t.id, t.type, t.categ_id, t.uom_id, t.name
                     ) as t on t.id=r.product_template_id
                     left join (
-                        select p.product_tmpl_id, q.location_id, sum(q.qty) as qty
+                        select p.product_tmpl_id, q.location_id, sum(q.quantity) as quantity
                         from stock_quant as q
                         left join stock_location as l on l.id=q.location_id
                         left join product_product as p on p.id=q.product_id
@@ -165,4 +185,9 @@ class StockShelfProducts(models.Model):
                     ) as q on q.product_tmpl_id=t.id
                 ) as sp
             )
-        """)
+        """ % (
+            (",\n"+" "*20).join(self._select_fields()),
+            (",\n"+" "*24).join(self._sub_select_fields()),
+            (",\n"+" "*28).join(self._template_aggregate_fields()),
+        )
+        self._cr.execute(view_sql)

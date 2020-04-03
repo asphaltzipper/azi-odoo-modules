@@ -12,6 +12,14 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(shelf_location.wizard_shelf_product_scan_action)d"
+                                type="action"
+                                icon="fa-barcode"
+                                string="Scan"
+                                class="oe_read_only"
+                        />
+                    </div>
                     <group>
                         <field name="_barcode_scanned" widget="barcode_handler" invisible="1"/>
                         <field name="name"/>

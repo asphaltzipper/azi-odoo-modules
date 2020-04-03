@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="shelf_count_sheets" inherit_id="shelf_location.shelf_count_sheets">
+        <xpath expr="//th[@name='name']" position="after">
+            <th name="deprecated"><strong>Deprecated</strong></th>
+        </xpath>
+        <xpath expr="//td[@name='product_name']" position="after">
+            <td name="deprecated">
+                <t t-if="line.deprecated">Yes</t>
+            </td>
+        </xpath>
+    </template>
+
+</odoo>

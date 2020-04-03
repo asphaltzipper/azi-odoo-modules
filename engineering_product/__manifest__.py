@@ -34,6 +34,9 @@ Engineering Features for Products
         'views/engineering_attribute_views.xml',
         'security/ir.model.access.csv',
         'data/engineering.part.type.csv',
+        'report/report_stock_shelf_products_views.xml',
+        'report/shelf_count_sheets_templates.xml',
+        'report/shelf_product_listing_templates.xml',
     ],
     'demo': [
         'data/engineering_product_demo.xml',
