@@ -18,4 +18,4 @@ Usage
 =====
 * Stock Shelf: Inventory > Master Data > Stock Shelf
 * Adding Shelf Location from Product: Inventory > Master Data > Products > Inventory
-* Product Listing report: Inventory > Master Data > Stock Shelf
+* Product Listing report: Inventory > Reporting > Stock Shelf Products

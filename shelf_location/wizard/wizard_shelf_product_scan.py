@@ -1,5 +1,4 @@
 from odoo import fields, models, _
-from odoo.exceptions import UserError, ValidationError
 
 
 class WizardShelfProductScan(models.TransientModel):
@@ -33,21 +32,16 @@ class WizardShelfProductScan(models.TransientModel):
             ['|', ('barcode', '=', barcode), ('default_code', '=', barcode)])
 
     def on_barcode_scanned(self, barcode):
-        # import pdb
-        # pdb.set_trace()
-        # if not isinstance(self.shelf_id.id, int):
-        #     raise UserError(_('No Shelf ID Found.  Save the Shelf document "'
-        #                       '"before scanning products.'))
+        # TODO: add code to switch shelf when a shelf name is scanned
         self.product_tmpl_id = self.search_product_barcode(barcode)
-
-        if not self.product_tmpl_id:
-            self.status = _("Barcode %s does not correspond to any "
-                            "product. Try with another barcode or "
-                            "press Close to finish scanning.") % barcode
-            self.status_state = 1
-            return
-        else:
+        if self.product_tmpl_id:
             self.status_state = 0
             self.shelf_id.write({
                 'product_ids': [(4, self.product_tmpl_id.id)]
             })
+        else:
+            self.status = _("Barcode %s does not correspond to any "
+                            "product. Try with another barcode or "
+                            "press Close to finish scanning.") % barcode
+            self.status_state = 1
+            self.env.user.notify_warning(message=barcode, title="Unknown Barcode", sticky=True)
