@@ -1,4 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_production_move_analysis_users,production.move.analysis.users,model_production_move_analysis,mrp.group_mrp_user,1,0,0,0
-access_mrp_eco_user,mrp.eco,mrp_plm.model_mrp_eco,stock.group_stock_user,1,0,0,0
-access_mrp_stock_balance_users,production.move.analysis.users,model_mrp_stock_balance,mrp.group_mrp_user,1,0,0,0
+
+

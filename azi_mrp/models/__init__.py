@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import stock_move
-import mrp_production
-import mrp_bom
-import production_move_analysis
-import mrp_stock_balance
+from . import stock_move
+from . import production_move_analysis
+from . import mrp_production
+from . import mrp_bom

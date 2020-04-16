@@ -17,7 +17,7 @@
         model="mrp.production"
         name="azi_mrp.report_mrporder_pick"
         file="azi_mrp.report.mrp_production_templates"
-        paperformat="report.paperformat_us"
+        paperformat="base.paperformat_us"
         report_type="qweb-pdf"
     />
 

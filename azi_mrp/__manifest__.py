@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 {
     "name": "azi_mrp",
-    "version": "10.0.0.1",
+    "version": "12.0.1.1.0",
     "summary": "AZI MRP Customizations",
     "category": "Manufacturing",
     "author": "Matt Taylor",
@@ -23,8 +23,6 @@ AZI Specialized Customizations to MRP
         'report/mrp_report.xml',
         'report/mrp_production_templates.xml',
         'views/production_move_analysis.xml',
-        'views/mrp_stock_balance_views.xml',
-        'views/mrp_bom_views.xml',
         'security/ir.model.access.csv',
     ],
     "installable": True,

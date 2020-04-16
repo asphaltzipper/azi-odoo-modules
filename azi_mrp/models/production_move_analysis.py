@@ -37,7 +37,7 @@ class ProductionMoveAnalysis(models.Model):
              "backorder. Changing this quantity on assigned moves affects "
              "the product reservation, and should be done with care.")
     product_uom = fields.Many2one(
-        'product.uom', 'Unit of Measure', required=True, states={'done': [('readonly', True)]})
+        'uom.uom', 'Unit of Measure', required=True, states={'done': [('readonly', True)]})
     # TDE FIXME: make it stored, otherwise group will not work
     location_id = fields.Many2one(
         'stock.location', 'Source Location',
@@ -93,7 +93,7 @@ class ProductionMoveAnalysis(models.Model):
         string='E-Kanban',
         default=False,
         help="Material planning (MRP) for This product will be handled by electronic kanban")
-    e_kanban_avg_qty = fields.Float(
+    default_proc_qty = fields.Float(
         string='Kanban Qty',
         help="Default procurement quantity for electronic kanban ordering")
 
@@ -107,48 +107,49 @@ class ProductionMoveAnalysis(models.Model):
         self._cr.execute("""
             CREATE VIEW production_move_analysis AS (
                 select
-                    m.id,
-                    m.raw_material_production_id,
-                    m.production_id,
-                    m.date,
-                    m.date_expected,
-                    m.picking_id,
-                    m.sequence,
-                    m.origin,
-                    m.product_id,
-                    m.product_uom_qty,
-                    m.product_uom,
-                    m.location_id,
-                    m.location_dest_id,
-                    m.create_date,
-                    m.state,
-                    mto.mto_names,
-                    p.e_kanban,
-                    coalesce(kb.e_kanban_avg_qty, 0) as e.default_proc_qty,
-                    t.tracking,
-                    t.type as product_type,
-                    r.route_names,
-                    i.qty as input_qty,
-                    s.qty as stock_qty,
-                    res.res_qty,
-                    res.res_names,
-                    case
-                        when t.type = 'consu'
-                        then m.product_uom_qty
-                        else coalesce(a.res_qty, 0.0)
-                        end as assigned_qty,
-                    case
-                        when t.type = 'consu'
-                        then coalesce(res.res_qty, a.res_qty, m.product_uom_qty, 0.0)
-                        else coalesce(s.qty, 0.0) - coalesce(res.res_qty, 0.0) + coalesce(a.res_qty, 0.0)
-                        end as avail_qty
+                m.id,
+                m.raw_material_production_id,
+                m.production_id,
+                m.date,
+                m.date_expected,
+                m.picking_id,
+                m.sequence,
+                m.origin,
+                m.product_id,
+                m.product_uom_qty,
+                m.product_uom,
+                m.location_id,
+                m.location_dest_id,
+                m.create_date,
+                m.state,
+                mto.mto_names,
+                p.e_kanban,
+                coalesce(kb.e_kanban_avg_qty, 0) as default_proc_qty,
+                t.tracking,
+                t.type as product_type,
+                r.route_names,
+                i.qty as input_qty,
+                s.qty as stock_qty,
+                res.res_qty,
+                res.res_names,
+                case
+                    when t.type = 'consu'
+                    then m.product_uom_qty
+                    else coalesce(a.res_qty, 0.0)
+                    end as assigned_qty,
+                case
+                    when t.type = 'consu'
+                    then coalesce(res.res_qty, a.res_qty, m.product_uom_qty, 0.0)
+                    else coalesce(s.qty, 0.0) - coalesce(res.res_qty, 0.0) + coalesce(a.res_qty, 0.0)
+                    end as avail_qty
                 from stock_move as m
                 left join product_product as p on p.id=m.product_id
                 left join product_template as t on t.id=p.product_tmpl_id
                 left join (
+                    -- Ppocurement methods
                     select
-                    product_id,
-                    string_agg(name, ', ') as route_names
+                        product_id,
+                        string_agg(name, ', ') as route_names
                     from stock_route_product as sr
                     left join stock_location_route as r on r.id=sr.route_id
                     group by product_id
@@ -156,8 +157,8 @@ class ProductionMoveAnalysis(models.Model):
                 left join (
                     -- Input quantity
                     select
-                    q.product_id,
-                    sum(q.qty) as qty
+                        q.product_id,
+                        sum(q.quantity) as qty
                     from stock_quant as q
                     left join stock_location as l on l.id=q.location_id
                     where l.name='Input'
@@ -166,44 +167,43 @@ class ProductionMoveAnalysis(models.Model):
                 left join (
                     -- Stock quantity
                     select
-                    q.product_id,
-                    sum(q.qty) as qty
+                        q.product_id,
+                        sum(q.quantity) as qty
                     from stock_quant as q
                     left join stock_location as l on l.id=q.location_id
                     where l.name='Stock'
                     group by q.product_id
                 ) as s on s.product_id=m.product_id
                 left join (
-                    -- stock reservation quantity
+                    -- total quantity reserved to all moves
                     select
-                    q.product_id,
-                    sum(q.qty) as res_qty,
-                    string_agg(m.origin, ', ') as res_names
-                    from stock_quant as q
-                    left join stock_move as m on m.id=q.reservation_id
-                    left join stock_location as l on l.id=q.location_id
-                    where l.name='Stock'
-                    and reservation_id is not null
-                    group by q.product_id
+                        l.product_id,
+                        sum(l.product_uom_qty) as res_qty,
+                        string_agg(m.origin, ', ') as res_names    
+                    from stock_move_line as l
+                    left join stock_move as m on m.id=l.move_id
+                    where l.product_id=(select id from product_product where default_code='EF0118.-0')
+                    and l.state not in ('done', 'cancel')
+                    group by l.product_id
                 ) as res on res.product_id=m.product_id
                 left join (
-                    -- this reservation quantity
+                    -- quantity reserved to this move
                     select
-                    q.product_id,
-                    q.reservation_id,
-                    sum(q.qty) as res_qty
-                    from stock_quant as q
-                    where reservation_id is not null
-                    group by q.product_id, q.reservation_id
-                ) as a on a.product_id=m.product_id and a.reservation_id=m.id
+                        move_id,
+                        sum(product_uom_qty) as res_qty
+                    from stock_move_line
+                    group by move_id
+                ) as a on a.move_id=m.id
                 left join (
                     select
-                        move_dest_id,
-                        sum(product_qty) as product_qty,
-                        string_agg(origin, ', ') as mto_names
-                        from stock_move
-                        where state not in ('cancel', 'done')
-                        group by move_dest_id
+                        r.move_dest_id,
+                        sum(d.product_qty) as product_qty,
+                        string_agg(d.origin, ', ') as mto_names
+                    from stock_move_move_rel as r
+                    left join stock_move as o on o.id=r.move_orig_id
+                    left join stock_move as d on d.id=r.move_dest_id
+                    where d.state not in ('cancel', 'done')
+                    group by r.move_dest_id
                 ) as mto on mto.move_dest_id=m.id
                 left join (
                     select
