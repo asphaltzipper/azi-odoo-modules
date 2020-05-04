@@ -22,6 +22,7 @@ AZI Specialized Customizations to Stock
         'purchase',
         'engineering_product',
         'shelf_location',
+        'stock_inventory_valuation_location',
     ],
     'data': [
         'views/stock_view_changes.xml',
