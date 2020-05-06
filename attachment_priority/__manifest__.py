@@ -4,7 +4,7 @@
 {
     "name": "Attachment Priority",
     "version": "10.0.1.0.0",
-    "summary": "Add Priority field to attached documents",
+    "summary": "Set default for Priority field on attached documents",
     "category": "Document Management",
     "author": "Matt Taylor",
     "license": "AGPL-3",
@@ -14,6 +14,7 @@
     """,
     "depends": [
         "base",
+        "mrp",
     ],
     "installable": True,
     "auto_install": False,
