@@ -124,7 +124,11 @@ class MrpWoProduce(models.TransientModel):
         existing_lines = []
         for move in production.move_raw_ids.filtered(lambda x: (x.product_id.tracking != 'none') and x.state not in ('done', 'cancel')):
             if not move.move_lot_ids.filtered(lambda x: not x.lot_produced_id):
-                qty = quantity / move.bom_line_id.bom_id.product_qty * move.bom_line_id.product_qty
+                # ( (qty produced on this MO) / (qty to be produced by the parent BOM) ) * qty consumed on this BOM line
+                if move.rm_added:
+                    qty = move.product_qty
+                else:
+                    qty = quantity / move.bom_line_id.bom_id.product_qty * move.bom_line_id.product_qty
                 if move.product_id.tracking == 'serial':
                     while float_compare(qty, 0.0, precision_rounding=move.product_uom.rounding) > 0:
                         lines.append({
