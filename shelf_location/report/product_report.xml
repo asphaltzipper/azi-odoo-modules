@@ -8,8 +8,8 @@
             model="stock.shelf"
             paperformat="azi_stock.paperformat_barcode"
             report_type="qweb-pdf"
-            name="azi_stock.azi_report_locationlabel"
-            file="azi_stock.report.azi_report_locationlabel"/>
+            name="shelf_location.azi_report_locationlabel"
+            file="shelf_location.report.azi_report_locationlabel"/>
 
     </data>
 </odoo>

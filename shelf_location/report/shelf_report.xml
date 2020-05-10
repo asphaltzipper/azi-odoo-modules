@@ -31,10 +31,10 @@
         id="action_report_shelf_label"
         string="Azi Location Labels"
         model="stock.shelf"
-        paperformat="azi_stock.paperformat_barcode"
+        paperformat="base.paperformat_us"
         report_type="qweb-pdf"
         name="shelf_location.azi_report_shelflabel"
-        file="shelf_location.report.shelf_label_templates"
+        file="shelf_location.shelf_label_templates"
     />
 
     <report

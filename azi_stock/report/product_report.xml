@@ -36,5 +36,9 @@
             name="azi_stock.azi_report_product_product_label"
             file="azi_stock.report.product_labels"/>
 
+        <record id="shelf_location.action_report_shelf_label" model="ir.actions.report">
+            <field name="paperformat_id" ref="azi_stock.paperformat_barcode" />
+        </record>
+
     </data>
 </odoo>
