@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 {
     "name": "azi_sale",
-    "version": "12.0.1.1.0",
+    "version": "12.0.1.0.0",
     "summary": "AZI Sales Customizations",
     "category": "Sales",
     "author": "Scott Saunders",

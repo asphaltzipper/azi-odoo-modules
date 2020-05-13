@@ -1,9 +1,9 @@
-# -*- coding: utf-8 -*-
 # Copyright 2017 Chris Emigh
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+
 {
     "name": "requisition_blanket",
-    "version": "12.0.1.1.1",
+    "version": "12.0.1.0.0",
     "summary": "Improve Blanket PO Behavior",
     "category": "Purchases",
     "author": "Chris Emigh",

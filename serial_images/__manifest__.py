@@ -1,9 +1,9 @@
-# -*- coding: utf-8 -*-
 # (c) 2019 Matt Taylor
+# License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
 {
     "name": "Serial Images",
-    "version": "12.0.1.1.0",
+    "version": "12.0.1.0.0",
     "summary": "Image Books for Serialized Product Builds",
     "category": "Inventory",
     "author": "Matt Taylor",
