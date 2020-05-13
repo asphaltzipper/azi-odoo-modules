@@ -1,11 +1,9 @@
-# -*- coding: utf-8 -*-
-
-import stock_production_lot
-import stock_lot_change
-import stock_lot_note
-import res_partner
-import stock_lot_partner
-import mrp_repair
-import sale_order
-import stock_lot_revaluations
-import stock_lot_hour_log
+from . import stock_production_lot
+from . import stock_lot_change
+from . import stock_lot_note
+from . import res_partner
+from . import stock_lot_partner
+from . import mrp_repair
+from . import sale_order
+from . import stock_lot_revaluations
+from . import stock_lot_hour_log

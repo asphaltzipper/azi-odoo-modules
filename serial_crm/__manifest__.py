@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 # (c) 2017 Matt Taylor
 
 {
     "name": "Serial CRM",
-    "version": "10.0.1",
+    "version": "12.0.1.0.0",
     "summary": "Extra Info for Serialized Products",
     "category": "Inventory",
     "author": "Chris Emigh",

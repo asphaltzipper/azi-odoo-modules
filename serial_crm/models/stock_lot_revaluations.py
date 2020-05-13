@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from odoo import api, fields, models, tools
 from odoo.addons import decimal_precision as dp
 
@@ -16,9 +14,9 @@ class StockLotRevaluations(models.Model):
         string='Revaluation',
         readonly=True)
 
-    quant_id = fields.Many2one(
-        comodel_name='stock.quant',
-        string='Quant',
+    move_line_id = fields.Many2one(
+        comodel_name='stock.move.line',
+        string='Move',
         readonly=True)
 
     old_cost = fields.Float(
@@ -52,7 +50,7 @@ class StockLotRevaluations(models.Model):
     lot_id = fields.Many2one(
         comodel_name='stock.production.lot',
         string="Serial",
-        related='quant_id.lot_id',
+        related='move_line_id.lot_id',
         readonly=True)
 
     @api.model_cr
@@ -63,11 +61,12 @@ class StockLotRevaluations(models.Model):
                 select
                     l.id,
                     r.id as revaluation_id,
-                    l.quant_id,
+                    l.move_line_id,
                     l.old_cost,
                     l.new_cost,
                     r.post_date
                 from stock_inventory_revaluation as r
-                left join stock_inventory_revaluation_quant as l on l.revaluation_id=r.id
+                left join stock_inventory_revaluation_move as l on l.revaluation_id=r.id
+                left join stock_move_line as ml on ml.move_id=l.move_id
             )
         """)
