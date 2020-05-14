@@ -13,22 +13,28 @@ class Partner(models.Model):
     @api.multi
     def write(self, vals):
         for record in self:
-            require_industry = self.env['ir.config_parameter'].sudo().get_param('sales_team_industry.require_industry')
+            require_industry = self.env['ir.config_parameter'].sudo().\
+                get_param('sales_team_industry.require_industry')
             if (require_industry and not (
-                    vals.get('parent_id') or record.parent_id and 'parent_id' not in
-                    vals)):
-                current_customer = 'customer' not in vals and record.customer or vals.get('customer')
+                    vals.get('parent_id') or
+                    record.parent_id and
+                    'parent_id' not in vals)):
+                current_customer = 'customer' not in vals and \
+                                   record.customer or vals.get('customer')
                 if ((vals.get('customer') and not vals.get('industry_id')) or
                     (record.customer and 'customer' not in vals and not
-                     record.industry_id and 'industry_id' not in vals))or \
-                        ('industry_id' in vals and not vals['industry_id'] and current_customer):
-                    raise ValidationError(_("Customers require a valid Industry."))
+                     record.industry_id and 'industry_id' not in vals)) or (
+                        'industry_id' in vals and not
+                        vals['industry_id'] and current_customer):
+                    raise ValidationError(
+                        _("Customers require a valid Industry."))
         return super(Partner, self).write(vals)
 
     @api.model
     def create(self, vals):
-        if (self.env['ir.config_parameter'].sudo().get_param('sales_team_industry.require_industry') and not
-                vals.get('parent_id')):
+        if (self.env['ir.config_parameter'].sudo().get_param(
+                'sales_team_industry.require_industry')
+                and not vals.get('parent_id')):
             if vals.get('customer') and not vals.get('industry_id'):
                 raise ValidationError(_("Customers require a valid Industry."))
         return super(Partner, self).create(vals)

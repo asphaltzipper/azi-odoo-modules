@@ -19,10 +19,12 @@ class ResConfigSettings(models.TransientModel):
     def get_values(self):
         res = super(ResConfigSettings, self).get_values()
         res.update(require_industry=int(
-            self.env['ir.config_parameter'].sudo().get_param('sales_team_industry.require_industry', default=0)))
+            self.env['ir.config_parameter'].sudo().get_param(
+                'sales_team_industry.require_industry', default=0)))
         return res
 
     @api.multi
     def set_values(self):
         super(ResConfigSettings, self).set_values()
-        self.env['ir.config_parameter'].set_param('sales_team_industry.require_industry', self.require_industry)
+        self.env['ir.config_parameter'].set_param(
+            'sales_team_industry.require_industry', self.require_industry)
