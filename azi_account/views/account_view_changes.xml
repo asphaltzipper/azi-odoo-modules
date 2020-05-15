@@ -4,9 +4,6 @@
     <!-- add menu item for account types -->
     <menuitem action="account.action_account_type_form" sequence="45" id="menu_action_account_type_form" parent="account.account_account_menu" groups="base.group_no_one"/>
 
-    <!-- TODO: use OCAs account_move_line_product module -->
-    <!-- https://github.com/OCA/stock-logistics-warehouse/tree/12.0/account_move_line_product -->
-
     <!-- add product to journal item tree view -->
     <record id="account_move_line_withproduct" model="ir.ui.view">
         <field name="name">account.move.line</field>
@@ -14,7 +11,6 @@
         <field name="inherit_id" ref="account.view_move_line_tree"/>
         <field name="arch" type="xml">
             <field name="ref" position="after">
-                <field name="product_id"/>
                 <field name="statement_id" groups="base.group_no_one"/>
             </field>
         </field>
@@ -27,7 +23,6 @@
         <field name="inherit_id" ref="account.view_move_form"/>
         <field name="arch" type="xml">
             <xpath expr="//tree/field[@name='name']" position="after">
-                <field name="product_id"/>
                 <field name="statement_id" groups="base.group_no_one"/>
                 <field name="statement_line_id" groups="base.group_no_one"/>
             </xpath>
