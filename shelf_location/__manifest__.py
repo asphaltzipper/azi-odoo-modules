@@ -25,6 +25,7 @@ Shelf Location
         'wizard/wizard_shelf_product_scan_views.xml',
         'views/stock_shelf_views.xml',
         'views/product_views.xml',
+        'report/report_templates.xml',
         'report/shelf_product_listing_templates.xml',
         'report/shelf_label_templates.xml',
         'report/shelf_count_sheets_templates.xml',

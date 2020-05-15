@@ -6,32 +6,32 @@
         <t t-set="loc_num" t-value="0"/>
         <t t-foreach="docs" t-as="shelf">
             <t t-set="loc_num" t-value="loc_num + 1"/>
-            <t t-call="web.internal_layout">
+            <t t-call="shelf_location.internal_test_layout">
                 <div class="page">
                     <h3>Shelf : <span t-esc="shelf['shelf_name']"/></h3>
                     <p>Items: <span t-esc="shelf['prod_count']"/></p>
                     <table class="table table-condensed">
                         <thead style="display: table-header-group;">
                             <tr>
-                                <th name="code"><strong>Code</strong></th>
-                                <th name="name"><strong>Name</strong></th>
-                                <th name="uom"><strong>UOM</strong></th>
-                                <th name="onhand"><strong>OnHand</strong></th>
-                                <th name="count"><strong>Count</strong></th>
+                                <th style="padding:4px;" name="code"><strong>Code</strong></th>
+                                <th style="padding:4px;" name="name"><strong>Name</strong></th>
+                                <th style="padding:4px;" name="uom"><strong>UOM</strong></th>
+                                <th style="padding:4px;" name="onhand"><strong>OnHand</strong></th>
+                                <th style="padding:4px;" name="count"><strong>Count</strong></th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr t-foreach="shelf['products'].sorted(lambda r: (r.default_code, r.product_name))" t-as="line">
-                                <td name="default_code">
+                                <td style="padding:4px;" name="default_code">
                                     <span t-field="line.default_code"/>
                                 </td>
-                                <td name="product_name">
+                                <td style="padding:4px;" name="product_name">
                                     <span t-field="line.product_name"/>
                                 </td>
-                                <td name="uom_name">
+                                <td style="padding:4px;" name="uom_name">
                                     <span t-field="line.uom_id.name"/>
                                 </td>
-                                <td name="location_qty">
+                                <td style="padding:4px;" name="location_qty">
                                     <t t-if="line.location_qty">Yes</t>
                                 </td>
                                 <td style="padding:5px 30px;">
@@ -40,24 +40,6 @@
                             </tr>
                         </tbody>
                     </table>
-                </div>
-                <div class="footer">
-                    <div class="row">
-                        <div class="col-xs-2 pull-left">
-                            <small>
-                                <span t-esc="shelf['shelf_name']"/><br />
-                                Shelf <span t-esc="loc_num"/> of <span t-esc="loc_count"/>
-                            </small>
-                        </div>
-                        <div class="col-xs-2 pull-right">
-                            <small>
-                                <span>Page</span>
-                                <span class="page" />
-                                of
-                                <span class="topage" />
-                            </small>
-                        </div>
-                    </div>
                 </div>
             </t>
         </t>

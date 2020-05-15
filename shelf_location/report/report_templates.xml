@@ -1,0 +1,47 @@
+<odoo>
+    <template id="internal_test_layout">
+        <t t-if="not o" t-set="o" t-value="doc"/>
+
+        <t t-if="not company">
+            <!-- Multicompany -->
+            <t t-if="company_id">
+                <t t-set="company" t-value="company_id"/>
+            </t>
+            <t t-elif="o and 'company_id' in o">
+                <t t-set="company" t-value="o.company_id.sudo()"/>
+            </t>
+            <t t-else="else">
+                <t t-set="company" t-value="res_company"/>
+            </t>
+        </t>
+
+        <t t-call="shelf_location.shelf_layout"><t t-raw="0"/></t>
+
+    </template>
+    <template id="shelf_layout">
+        <div class="article o_report_layout_standard"  t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id" t-att-data-oe-lang="o and o.env.context.get('lang')">
+            <t t-call="web.address_layout"/>
+            <t t-raw="0"/>
+        </div>
+
+        <div class="footer o_standard_footer">
+            <div class="row">
+                <div class="col-10 pull-left">
+                    <small>
+                        <span t-esc="shelf['shelf_name']"/><br />
+                        Shelf <span t-esc="loc_num"/> of <span t-esc="loc_count"/>
+                    </small>
+                </div>
+                <div class="col-2 pull-right">
+                    <small>
+                        <span>Page</span>
+                        <span class="page" />
+                        of
+                        <span class="topage" />
+                    </small>
+                </div>
+            </div>
+        </div>
+    </template>
+
+</odoo>
