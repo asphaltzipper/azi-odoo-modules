@@ -19,16 +19,16 @@ class StockLotRevaluations(models.Model):
         string='Move',
         readonly=True)
 
-    old_cost = fields.Float(
-        string='Previous cost',
+    old_value = fields.Float(
+        string='Previous Value',
         readonly=True)
 
-    new_cost = fields.Float(
-        string='New Cost',
+    new_value = fields.Float(
+        string='New Value',
         digits=dp.get_precision('Product Price'),
         readonly=True)
 
-    post_date = fields.Datetime(
+    post_date = fields.Date(
         string='Posting Date',
         readonly=True)
 
@@ -61,9 +61,9 @@ class StockLotRevaluations(models.Model):
                 select
                     l.id,
                     r.id as revaluation_id,
-                    l.move_line_id,
-                    l.old_cost,
-                    l.new_cost,
+                    ml.id as move_line_id,
+                    l.old_value,
+                    l.new_value,
                     r.post_date
                 from stock_inventory_revaluation as r
                 left join stock_inventory_revaluation_move as l on l.revaluation_id=r.id

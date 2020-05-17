@@ -37,7 +37,7 @@ class ProductionLot(models.Model):
         string='Changes')
 
     repair_ids = fields.One2many(
-        comodel_name='mrp.repair',
+        comodel_name='repair.order',
         inverse_name='lot_id',
         string='Repairs')
 

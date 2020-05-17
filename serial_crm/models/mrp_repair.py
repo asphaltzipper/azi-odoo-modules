@@ -2,7 +2,7 @@ from odoo import fields, models
 
 
 class Repair(models.Model):
-    _inherit = 'mrp.repair'
+    _inherit = 'repair.order'
 
     move_date = fields.Datetime(
         string="Move Date",

@@ -11,11 +11,11 @@
         Add fields for additional info and for linking serials with customers
     """,
     "depends": [
-        "base",
-        "stock",
+        "repair",
         "mrp",
         "stock_inventory_revaluation",
         "attachment_priority",
+        "helpdesk",
     ],
     "data": [
         'security/ir.model.access.csv',
