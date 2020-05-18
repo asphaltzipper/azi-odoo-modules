@@ -17,7 +17,7 @@ class ResPartner(models.Model):
         mapped_data = dict([(m['partner_id'][0], m['partner_id_count']) for m in serial_data])
         for partner in self:
             # let's obtain the partner id and all its child ids from the read up there
-            partner_ids = filter(lambda r: r['id'] == partner.id, partner_child_ids)[0]
+            partner_ids = list(filter(lambda r: r['id'] == partner.id, partner_child_ids))[0]
             partner_ids = [partner_ids.get('id')] + partner_ids.get('child_ids')
             # then we can sum for all the partner's child
             partner.serial_count = sum(mapped_data.get(child, 0) for child in partner_ids)
@@ -32,7 +32,7 @@ class ResPartner(models.Model):
         mapped_data = dict([(m['partner_id'][0], m['partner_id_count']) for m in ticket_data])
         for partner in self:
             # let's obtain the partner id and all its child ids from the read up there
-            partner_ids = filter(lambda r: r['id'] == partner.id, partner_child_ids)[0]
+            partner_ids = list(filter(lambda r: r['id'] == partner.id, partner_child_ids))[0]
             partner_ids = [partner_ids.get('id')] + partner_ids.get('child_ids')
             # then we can sum for all the partner's child
             partner.ticket_count = sum(mapped_data.get(child, 0) for child in partner_ids)
