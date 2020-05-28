@@ -41,11 +41,14 @@ class MrpProduction(models.Model):
     def write(self, vals):
         """Override wirte method to update stock move expected date that is related to mrp production"""
         res = super(MrpProduction, self).write(vals)
-        if 'date_planned_finished' in vals:
+        if 'date_planned_finished' in vals or 'date_planned_start' in vals:
             for record in self:
+                date_planned_start = 'date_planned_start' in vals and vals['date_planned_start'] or record.date_planned_start
                 moves = self.env['stock.move'].search(['|', ('raw_material_production_id', '=', record.id),
                                                        ('production_id', '=', record.id),
                                                        ('state', 'not in', ('cancel', 'done'))])
-                moves.sudo().write({'date_expected': vals['date_planned_finished'],
-                                    'date': vals['date_planned_finished']})
+                moves.sudo().write({'date_expected': date_planned_start,
+                                    'date': date_planned_start})
+                move_lines = moves.mapped('move_line_ids')
+                move_lines and move_lines.sudo().write({'date': date_planned_start})
         return res
