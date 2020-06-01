@@ -22,6 +22,8 @@
         'views/stock_lot_views.xml',
         'views/res_partner_views.xml',
         'views/sale_order_views.xml',
+        'report/lot_serial_report.xml',
+        'report/serial_crm_reports.xml',
     ],
     "installable": True,
     "auto_install": False,

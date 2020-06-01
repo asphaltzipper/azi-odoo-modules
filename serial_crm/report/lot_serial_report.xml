@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="azi_lot_serial_report">
+        <t t-call="web.basic_layout">
+            <div class="page">
+                <t t-foreach="docs" t-as="o">
+                    <div class="row">
+                        <div class="col-10">
+                            <table class="table" style="border: 0px solid white !important;">
+                                <tr>
+                                    <th style="text-align: left;">
+                                        <t t-set="website_url"
+                                           t-value="env['ir.config_parameter'].sudo().get_param('web.base.url')+'/web#model=product.product&amp;id={}&amp;view_type=form'.format(o.product_id.id)"/>
+                                        <a target='_blank' t-att-href="website_url">
+                                            <span t-field="o.product_id.display_name"/>
+                                        </a>
+                                    </th>
+                                    <th>Quantity: <span t-field="o.product_qty"/></th>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        LN/SN:
+                                        <span t-field="o.name"/>
+                                    </td>
+                                    <td>Customer: <span t-field="o.partner_id.display_name"/></td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center; vertical-align: middle;" class="col-5">
+                                        <img t-if="o.name"
+                                             t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('Code128', o.name, 600, 150)"
+                                             style="width:100%;height:20%;"/>
+                                    </td>
+                                    <td>
+                                        Total Hours: <span t-field="o.current_hours"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <t t-set="traceability"
+                               t-value="env['stock.traceability.report'].with_context({'active_id': o.id, 'model': 'stock.production.lot'}).get_lines()"/>
+                            <h3 style="color:#007bff;">UpStream Traceability Items</h3>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>Reference</th>
+                                    <th>Product</th>
+                                    <th>Date</th>
+                                    <th>Lot/Serial #</th>
+                                    <th>From</th>
+                                    <th>To</th>
+                                    <th>Quantity</th>
+                                </tr>
+                                <t t-foreach="traceability" t-as="trace_line">
+                                    <t t-if="trace_line['usage']=='in'">
+                                        <t t-set="style" t-value="'color:rgb(60, 118, 61)'"/>
+                                    </t>
+                                    <t t-if="trace_line['usage']=='out'">
+                                        <t t-set="style" t-value="'color:rgb(169, 68, 66)'"/>
+                                    </t>
+                                    <tr t-att-style="style">
+                                        <td>
+                                            <t t-esc="trace_line['columns'][0]"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="trace_line['columns'][1]"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="trace_line['columns'][2]"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="trace_line['columns'][3]"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="trace_line['columns'][4]"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="trace_line['columns'][5]"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="trace_line['columns'][6]"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </table>
+                            <h3 style="color:#007bff;">BOM Changes</h3>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>Change Type</th>
+                                    <th>Change Date</th>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Component Serial</th>
+                                </tr>
+                                <t t-foreach="o.change_ids" t-as="change">
+                                    <tr>
+                                        <td>
+                                            <t t-esc="dict(change.fields_get(allfields=['change_type'])['change_type']['selection'])[change.change_type]"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="change.change_date"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="change.product_id.display_name"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="change.bom_qty"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="change.component_lot_id.display_name"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </table>
+                            <h3 style="color:#007bff;">Repair Orders</h3>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>Repair Reference</th>
+                                    <th>Status</th>
+                                    <th>Move Date</th>
+                                    <th>Customer</th>
+                                    <th>Warranty Expiration</th>
+                                </tr>
+                                <t t-foreach="o.repair_ids" t-as="repair">
+                                    <tr>
+                                        <td>
+                                            <t t-esc="repair.name"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="dict(repair.fields_get(allfields=['state'])['state']['selection'])[repair.state]"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="repair.move_date"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="repair.partner_id.display_name"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="repair.guarantee_limit"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </table>
+                        </div>
+                    </div>
+                </t>
+            </div>
+        </t>
+    </template>
+
+</odoo>

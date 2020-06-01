@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <report id="action_serial_lot_report"  string="Lots/Serial (HTML)" model="stock.production.lot"
+                report_type="qweb-html" name="serial_crm.azi_lot_serial_report"
+                file="serial_crm.lot_serial_report"/>
+    </data>
+</odoo>
