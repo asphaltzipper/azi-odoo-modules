@@ -14,6 +14,9 @@
     "depends": [
         "base",
     ],
+    "data": [
+        "views/ir_attachment_views.xml",
+    ],
     "installable": True,
     "auto_install": False,
 }
