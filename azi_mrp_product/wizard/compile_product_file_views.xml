@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_compile_product_file_form" model="ir.ui.view">
+        <field name="name">compile.product.file.form</field>
+        <field name="model">compile.product.file</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="bom_depth" required="1"/>
+                    </group>
+                    <group>
+                        <field name="included_files" required="1"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_show_files" string="Show Files" type="object" class="btn-primary"/>
+                    <button special="cancel" string="Cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="compile_product_file_action" model="ir.actions.act_window">
+        <field name="name">Compile PDFs</field>
+        <field name="res_model">compile.product.file</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>
