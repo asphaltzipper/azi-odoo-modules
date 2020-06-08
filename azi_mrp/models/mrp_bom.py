@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import fields, models, api, _
+from odoo.exceptions import ValidationError
 
 
 class MrpBom(models.Model):
@@ -16,11 +17,26 @@ class MrpBom(models.Model):
         domain="['&', ('product_tmpl_id', '=', product_tmpl_id), ('type', 'in', ['product', 'consu'])]",
         help="If a product variant is defined the BOM is available only for this product.")
 
+    re_config = fields.Boolean('Re-config')
+
     # null sorts last??!!
     # the default is null??!!!
     # I thought integer fields could not be null?
     # okay, make the default one
     sequence = fields.Integer(default=1)
+
+    @api.constrains('product_id', 'product_tmpl_id', 'bom_line_ids', 're_config')
+    def _check_product_recursion(self):
+        for bom in self:
+            if not bom.re_config:
+                if bom.product_id:
+                    if bom.bom_line_ids.filtered(lambda x: x.product_id == bom.product_id):
+                        raise ValidationError(
+                            _('BoM line product %s should not be same as BoM product.') % bom.display_name)
+                else:
+                    if bom.bom_line_ids.filtered(lambda x: x.product_id.product_tmpl_id == bom.product_tmpl_id):
+                        raise ValidationError(
+                            _('BoM line product %s should not be same as BoM product.') % bom.display_name)
 
 
 class MrpBomLine(models.Model):
