@@ -27,8 +27,11 @@ class MrpWoProduceWork(models.TransientModel):
 
     user_id = fields.Many2one(
         comodel_name='res.users',
-        string="User",
-        domain=['|', ('active', '=', True), ('active', '=', False)])
+        string="User",)
+
+    user_ids = fields.Many2many(
+        'res.users',
+        compute='_compute_user_ids')
 
     labor_date = fields.Datetime(
         string="Date")
@@ -45,6 +48,15 @@ class MrpWoProduceWork(models.TransientModel):
     def _compute_hours_expected(self):
         for rec in self:
             rec.hours_expected = rec.produce_id.product_qty * rec.workorder_id.duration_expected / 60
+
+    @api.multi
+    @api.depends('workorder_id')
+    def _compute_user_ids(self):
+        for record in self:
+            users = self.env['resource.resource'].search([('active', '=', True), ('resource_type', '=', 'user'),
+                                                          ('user_id', '!=', False)]).mapped('user_id').ids
+            user_ids = self.env['res.users'].search([('active', '=', True)]).ids
+            record.user_ids = [(6, _, list(set(users + user_ids)))]
 
 
 class MrpWoProduce(models.TransientModel):

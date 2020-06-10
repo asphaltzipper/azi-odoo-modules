@@ -23,6 +23,7 @@ Wizard for completing Manufacturing Orders with Work Orders
     "depends": [
         "stock",
         "mrp",
+        "hr",
     ],
     "data": [
         'wizard/mrp_wo_produce_views.xml',
