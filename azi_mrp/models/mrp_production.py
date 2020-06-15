@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 import datetime
+import base64
+from io import BytesIO
+from PyPDF2 import PdfFileReader, PdfFileWriter
+
 
 from odoo import fields, models, api
 
@@ -22,6 +26,8 @@ class MrpProduction(models.Model):
         inverse_name='raw_material_production_id',
         readonly=True
     )
+    report_attach = fields.Binary()
+    report_name = fields.Char()
 
     @api.depends('date_planned_finished', 'product_id.produce_delay')
     def _compute_date_planned_start(self):
@@ -43,7 +49,8 @@ class MrpProduction(models.Model):
         res = super(MrpProduction, self).write(vals)
         if 'date_planned_finished' in vals or 'date_planned_start' in vals:
             for record in self:
-                date_planned_start = 'date_planned_start' in vals and vals['date_planned_start'] or record.date_planned_start
+                date_planned_start = 'date_planned_start' in vals and vals[
+                    'date_planned_start'] or record.date_planned_start
                 moves = self.env['stock.move'].search(['|', ('raw_material_production_id', '=', record.id),
                                                        ('production_id', '=', record.id),
                                                        ('state', 'not in', ('cancel', 'done'))])
@@ -52,3 +59,33 @@ class MrpProduction(models.Model):
                 move_lines = moves.mapped('move_line_ids')
                 move_lines and move_lines.sudo().write({'date': date_planned_start})
         return res
+
+    @api.multi
+    def print_production_and_attachment(self):
+        for record in self:
+            report = self.env['ir.actions.report']._get_report_from_name('azi_mrp.report_mrporder_azi')
+            attachment = self.env['ir.attachment'].search([('mimetype', '=', 'application/pdf'),
+                                                           ('res_model', '=', 'product.product'),
+                                                           ('res_id', '=', record.product_id.id)],
+                                                          order='priority desc, name', limit=1)
+            report_bytes, _ = report.render_qweb_pdf(res_ids=record.id)
+            buffer = BytesIO(report_bytes)
+            production_pdf = PdfFileReader(buffer)
+            output = PdfFileWriter()
+            for page in range(production_pdf.getNumPages()):
+                output.addPage(production_pdf.getPage(page))
+            if attachment:
+                attachment_report = PdfFileReader(attachment._full_path(attachment.store_fname), 'rb')
+                for page in range(attachment_report.getNumPages()):
+                    output.addPage(attachment_report.getPage(page))
+            output_stream = BytesIO()
+            output.write(output_stream)
+            record.report_attach = base64.b64encode(output_stream.getvalue())
+            record.report_name = "Azi Production Order with Attachment.pdf"
+            output_stream.close()
+            return {
+                'type': 'ir.actions.act_url',
+                'name': 'Azi Production',
+                'url': '/web/content/mrp.production/%s/report_attach/Azi Production Order with Attachment.pdf?download=true' % (
+                    record.id),
+            }
