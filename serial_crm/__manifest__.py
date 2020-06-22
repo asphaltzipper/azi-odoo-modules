@@ -15,7 +15,6 @@
         "mrp",
         "stock_inventory_revaluation",
         "attachment_priority",
-        "helpdesk",
     ],
     "data": [
         'security/ir.model.access.csv',
