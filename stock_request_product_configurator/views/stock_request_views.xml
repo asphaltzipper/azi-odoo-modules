@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_stock_request_form" model="ir.ui.view">
+        <field name="name">stock.request.form</field>
+        <field name="model">stock.request</field>
+        <field name="inherit_id" ref="stock_request.view_stock_request_form"/>
+        <field name="arch" type="xml">
+            <field name="product_id" position="after">
+                <button name="action_config_start" states="draft" class="oe_highlight" type="object"
+                        style="margin-top: 10px;margin-bottom:10px;" string="Configure Product"
+                        groups="product_configurator.group_product_configurator"/>
+            </field>
+        </field>
+    </record>
+</odoo>
