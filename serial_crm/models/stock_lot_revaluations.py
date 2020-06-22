@@ -4,6 +4,7 @@ from odoo.addons import decimal_precision as dp
 
 class StockLotRevaluations(models.Model):
     _name = 'stock.lot.revaluations'
+    _description = 'Revaluations Summary for Serialized Units'
     _auto = False
     _order = 'post_date'
 
