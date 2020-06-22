@@ -3,6 +3,7 @@ from odoo import models, fields, api
 
 class StockLotChange(models.Model):
     _name = 'stock.lot.change'
+    _description = 'Serialize Unit Component Changes'
     _order = 'parent_lot_id,change_date'
 
     parent_lot_id = fields.Many2one(

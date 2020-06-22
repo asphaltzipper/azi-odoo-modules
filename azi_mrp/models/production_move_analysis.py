@@ -7,6 +7,7 @@ from odoo.addons import decimal_precision as dp
 
 class ProductionMoveAnalysis(models.Model):
     _name = 'production.move.analysis'
+    _description = 'Production Move Analysis View'
     _auto = False
 
     # these fields selected from the database view

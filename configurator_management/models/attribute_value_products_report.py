@@ -12,11 +12,14 @@ class AttributeValueProductsReport(models.Model):
     product_tmpl_id = fields.Many2one(
         comodel_name='product.template')
     product_attribute_id = fields.Many2one(
-        comodel_name='product.attribute')
+        comodel_name='product.attribute',
+        string='Attribute')
     product_attribute_value_id = fields.Many2one(
-        comodel_name='product.attribute.value')
+        comodel_name='product.attribute.value',
+        string='Value')
     product_id = fields.Many2one(
-        comodel_name='product.product')
+        comodel_name='product.product',
+        string='Component')
     product_qty = fields.Float(
         string='Quantity',
         digits=dp.get_precision('Unit of Measure'))

@@ -17,7 +17,13 @@ AZI Specialized Customizations to MRP
 * Add serial-required column to raw material list for sorting
 * Change repair order account move names to the name of the repair order
     """,
-    "depends": ['stock', 'mrp', 'shelf_location', 'attachment_priority'],
+    "depends": [
+        'stock',
+        'mrp',
+        'shelf_location',
+        'attachment_priority',
+        'electronic_kanban',
+    ],
     'data': [
         'views/mrp_view_changes.xml',
         'report/mrp_report.xml',

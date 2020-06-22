@@ -3,6 +3,7 @@ from odoo import models, fields
 
 class StockLotHourLog(models.Model):
     _name = 'stock.lot.hour.log'
+    _description = 'Serialized Unit Hour Logs'
 
     date = fields.Date(
         string='Date',

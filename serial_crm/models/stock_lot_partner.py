@@ -3,6 +3,7 @@ from odoo import models, fields
 
 class StockLotPartner(models.Model):
     _name = 'stock.lot.partner'
+    _description = 'Serialized Unit Ownership History'
 
     owner_date = fields.Date(
         string='Acquired date',
