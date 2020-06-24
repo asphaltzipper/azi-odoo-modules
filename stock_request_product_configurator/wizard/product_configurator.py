@@ -13,4 +13,5 @@ class ProductConfiguratorStockRequest(models.TransientModel):
         res = super(ProductConfiguratorStockRequest, self).action_config_done()
         if res.get('res_model') == self._name:
             return res
-        self.stock_request_id.product_id = res['res_id']
+        product = self.env['product.product'].browse(res['res_id'])
+        self.stock_request_id.write({'product_id': product.id, 'product_uom_id': product.uom_id.id})

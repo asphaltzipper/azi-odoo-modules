@@ -11,7 +11,7 @@ Stock Request Product Configurator
 ==================================
 * Add new button to configure product in stock.request model
     """,
-    'depends': ['stock_request', 'product_configurator'],
+    'depends': ['stock_request_submit', 'product_configurator'],
     "data": [
         'views/stock_request_views.xml',
     ],
