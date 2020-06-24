@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="report_simple_label">
-        <div class="col-xs-3" style="padding:20;height:350px;">
+        <div class="col-xs-3" style="padding:20;height:100px;">
             <div class="container">
                 <div class="row">
-                    <div class="col-12"
-                         style="height:10%;text-align:right;vertical-align:middle;display:table;">
-                        <div style="display: table-cell; vertical-align: middle;">
+                    <div class="col-2"
+                         style="height:1%;text-align:right;vertical-align:middle;display:table;">
+                        <div style="display: table-cell; vertical-align: middle;font-size:7px">
                             <span t-field="o.name"/>
                         </div>
                     </div>
@@ -19,8 +19,8 @@
                 </div>
                 <div class="row" t-if="o.product_id.default_code">
                     <div class="col-12"
-                        style="height:15%;text-align:center;vertical-align:middle;display:table;">
-                        <t t-set="pn_style" t-value="'font-weight: bold;margin-top: -4px; margin-bottom: -5px; font-size: %.2fem' % (len(o.product_id.default_code)&lt;11 and 2.0 or 2.0*15/len(o.product_id.default_code),)" />
+                        style="height:5%;text-align:center;vertical-align:middle;display:table;">
+                        <t t-set="pn_style" t-value="'font-weight: bold;margin-top: -2px; margin-bottom: -2px; font-size:15px'" />
                         <div style="display: table-cell; vertical-align: middle;">
                             <strong t-field="o.product_id.default_code" t-att-style="pn_style"
                                     t-if="o.product_id.default_code"/>
@@ -28,23 +28,23 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-12 align-middle"
-                         style="height:40%;text-align:center;vertical-align:middle;display:table;font-weight:bold">
+                    <div class="col-6 align-middle"
+                         style="height:2%;text-align:center;vertical-align:middle;display:table;font-weight:bold; font-size:10px;">
                         <div style="display: table-cell; vertical-align: middle;">
                             <strong t-field="o.product_id.name"/>
                         </div>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-12"
-                         style="height:15%;text-align:center;vertical-align:middle;display:table;">
+                    <div class="col-6"
+                         style="height:2%;text-align:center;vertical-align:middle;display:table;font-size:8px;">
                         <div style="display: table-cell; vertical-align: middle;">
                             <strong t-field="o.location_id.name"/>
                         </div>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-12">
+                    <div class="col-12" style="height:1%;font-size:6px;">
                         <span t-esc="float(o.product_qty)"/>
                         <span t-field="o.product_id.uom_id.name"/>|
                         <span t-esc="float(o.product_uom_qty)"/>
@@ -73,7 +73,7 @@
             report_type="qweb-pdf"
             name="azi_stock_request_kanban.report_kanban"
             file="azi_stock_request_kanban.report_kanban"
-            paperformat="stock_request_kanban.kanban_paper_format"
+            paperformat="azi_stock.paperformat_barcode"
             menu="True"/>
 
 </odoo>
