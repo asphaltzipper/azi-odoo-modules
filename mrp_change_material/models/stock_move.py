@@ -10,3 +10,7 @@ class StockMove(models.Model):
         string='Added Raw Material',
         required=False,
         help="Raw material added to Manufacturing Order, not on BOM")
+
+    def action_cancel(self):
+        for record in self:
+            record._action_cancel()
