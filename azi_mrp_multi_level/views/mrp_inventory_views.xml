@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="mrp_inventory_form" model="ir.ui.view">
+        <field name="name">mrp.inventory.form</field>
+        <field name="model">mrp.inventory</field>
+        <field name="inherit_id" ref="mrp_multi_level.mrp_inventory_form"/>
+        <field name="arch" type="xml">
+            <field name="product_id" position="after">
+                <field name="routing_detail"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="mrp_inventory_tree" model="ir.ui.view">
+        <field name="name">mrp.inventory.tree</field>
+        <field name="model">mrp.inventory</field>
+        <field name="inherit_id" ref="mrp_multi_level.mrp_inventory_tree"/>
+        <field name="arch" type="xml">
+            <field name="product_id" position="after">
+                <field name="routing_detail"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>
