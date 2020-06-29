@@ -16,7 +16,10 @@ a master production schedule.
         'sale',
     ],
     "data": [
+        'security/ir.model.access.csv',
+        'views/product_views.xml',
         'views/stock_request_views.xml',
+        'report/managing_independent_demand_views.xml',
     ],
     "installable": True,
     "auto_install": False,

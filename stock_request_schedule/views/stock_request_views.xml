@@ -17,4 +17,25 @@
             </field>
         </field>
     </record>
+    <record id="stock_request_search" model="ir.ui.view">
+        <field name="name">stock.request.search</field>
+        <field name="model">stock.request</field>
+        <field name="inherit_id" ref="stock_request.stock_request_search"/>
+        <field name="arch" type="xml">
+            <filter name="inactive" position="before">
+                <filter string="Finished Goods" name="finished_goods" domain="[('finished_goods','=',True)]"/>
+            </filter>
+        </field>
+    </record>
+    <record id="stock_request_finished_goods_action" model="ir.actions.act_window">
+        <field name="name">Stock Requests for Finished Goods</field>
+        <field name="res_model">stock.request</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="stock_request.view_stock_request_tree"/>
+        <field name="search_view_id" ref="stock_request.stock_request_search" />
+        <field name="context">{'search_default_finished_goods': 1}</field>
+    </record>
+    <menuitem id="menu_stock_request_finished_goods" action="stock_request_finished_goods_action"
+              parent="stock_request.menu_stock_request_operations" sequence="31"/>
 </odoo>

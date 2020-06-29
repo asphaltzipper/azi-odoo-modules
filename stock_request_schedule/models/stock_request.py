@@ -24,6 +24,8 @@ class StockRequest(models.Model):
         string='Partner',
         store=True)
 
+    finished_goods = fields.Boolean('Finished Goods', related='product_id.categ_id.finished_goods', store=True)
+
     # @api.depends('sale_order_line_id')
     # def _compute_sale_partner_id(self):
     #     for rec in self:
