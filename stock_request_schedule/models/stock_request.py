@@ -13,6 +13,11 @@ class StockRequest(models.Model):
 
     note = fields.Char(string='Note')
 
+    scheduled = fields.Boolean(
+        string='Scheduled',
+        required=True,
+        default=False)
+
     sale_order_line_id = fields.Many2one(
         comodel_name='sale.order.line',
         string='Sale Line')
@@ -20,18 +25,22 @@ class StockRequest(models.Model):
     sale_partner_id = fields.Many2one(
         comodel_name='res.partner',
         related='sale_order_line_id.order_id.partner_id',
-        # compute='_compute_sale_partner_id',
         string='Partner',
         store=True)
 
     finished_goods = fields.Boolean('Finished Goods', related='product_id.categ_id.finished_goods', store=True)
 
-    # @api.depends('sale_order_line_id')
-    # def _compute_sale_partner_id(self):
-    #     for rec in self:
-    #         rec.sale_partner_id = \
-    #             rec.sale_order_line_id and \
-    #             rec.sale_order_line_id.order_id.partner_id or False
+    sold = fields.Boolean(
+        string='Sold',
+        compute='_compute_sold',
+        required=True,
+        default=False,
+        store=True)
+
+    @api.depends('sale_order_line_id')
+    def _compute_sold(self):
+        for rec in self:
+            rec.sold = rec.sale_order_line_id
 
     # TODO: enforce sale_order_line_id is unique
 

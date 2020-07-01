@@ -5,18 +5,21 @@
         <field name="model">stock.request</field>
         <field name="inherit_id" ref="stock_request.view_stock_request_form"/>
         <field name="arch" type="xml">
+            <field name="procurement_group_id" position="after">
+                <field name="scheduled"/>
+                <field name="sale_order_line_id" domain="[('product_id', '=' , product_id)]" attrs="{'invisible':[('scheduled','=',False)]}"/>
+                <field name="sale_partner_id" attrs="{'invisible':[('scheduled','=',False)]}"/>
+                <field name="sold" attrs="{'invisible':[('scheduled','=',False)]}"/>
+            </field>
             <xpath expr="//group[1]" position="before">
                 <b/>
                 <div>
-                    <field name="note"/>
+                    <field name="note" placeholder="Write a Note Here" attrs="{'invisible':[('scheduled','=',False)]}"/>
                 </div>
             </xpath>
-            <field name="procurement_group_id" position="after">
-                <field name="sale_order_line_id" domain="[('product_id', '=' , product_id)]"/>
-                <field name="sale_partner_id"/>
-            </field>
         </field>
     </record>
+
     <record id="stock_request_search" model="ir.ui.view">
         <field name="name">stock.request.search</field>
         <field name="model">stock.request</field>
@@ -36,6 +39,137 @@
         <field name="search_view_id" ref="stock_request.stock_request_search" />
         <field name="context">{'search_default_finished_goods': 1}</field>
     </record>
+
     <menuitem id="menu_stock_request_finished_goods" action="stock_request_finished_goods_action"
               parent="stock_request.menu_stock_request_operations" sequence="31"/>
+
+    <record id="view_stock_request_schedule_tree" model="ir.ui.view">
+        <field name="name">stock.request.schedule.tree</field>
+        <field name="model">stock.request</field>
+        <field name="arch" type="xml">
+            <tree string="Scheduled Stock Requests" decoration-muted="state == 'cancel'"
+                  decoration-bf="message_needaction==True">
+                <field name="message_needaction" invisible="1"/>
+                <field name="name"/>
+                <field name="expected_date" widget="date"/>
+                <field name="allow_virtual_location" invisible="1"/>
+                <field name="product_tmpl_id"/>
+                <field name="product_uom_qty"/>
+                <field name="qty_in_progress" />
+                <field name="qty_done" />
+                <field name="qty_cancelled" />
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="stock_request_schedule_search" model="ir.ui.view">
+        <field name="name">stock.request.schedule.search</field>
+        <field name="model">stock.request</field>
+        <field name="arch" type="xml">
+            <search string="Scheduled Stock Requests Search">
+                <field name="name" string="Stock Requests"/>
+                <field name="product_id" string="Product" filter_domain="['|',('product_id.default_code','ilike',self),('product_id.name','ilike',self)]"/>
+                <field name="note" string="Notes"/>
+                <field name="sale_partner_id" string="Customer"/>
+                <field name="location_id" groups="stock.group_stock_multi_locations"/>
+                <separator/>
+                <filter string="Active" name="active_requests" domain="[('state', 'not in', ['done', 'cancel'])]"/>
+                <filter name="recent_requests" string="Recent Requests" domain="['|', ('expected_date', '>', (datetime.date.today() - relativedelta(months=1)).strftime('%Y-%m-01')), ('state', '!=', 'done')]"/>
+                <filter string="Archived" name="inactive" domain="[('active','=',False)]"/>
+                <separator/>
+                <filter string="Sold" name="sold" domain="[('sold','=',True)]"/>
+                <filter string="Draft" name="draft" domain="[('state','=','draft')]"/>
+                <filter string="In Progress" name="open" domain="[('state','=','open')]"/>
+                <filter string="Finished" name="done" domain="[('state','=','done')]"/>
+                <filter string="Cancelled" name="cancel" domain="[('state','=','cancel')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="status" string="Status" domain="[]" context="{'group_by':'state'}"/>
+                    <filter name="product_family" string="Family" domain="[]" context="{'group_by':'product_tmpl_id'}"/>
+                    <filter name="planned_week" string="Planned Week" domain="[]" context="{'group_by':'expected_date:week'}"/>
+                    <filter name="location" string="Location" domain="[]" context="{'group_by':'location_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="stock_request_schedule_kanban" model="ir.ui.view">
+        <field name="name">stock.request.schedule.kanban</field>
+        <field name="model">stock.request</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_small_column"
+                    default_order="product_tmpl_id, expected_date"
+                    default_group_by="expected_date:week">
+                <field name="note"/>
+                <field name="product_tmpl_id"/>
+                <field name="sold" />
+                <field name="expected_date"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                            <div class="row">
+                                <div class="col-6">
+                                    <span t-attf-class="label #{record.sold.raw_value == True ? 'label-danger' : 'label-default'}">
+                                        <span t-if="record.sold.raw_value == True">Sold</span>
+                                        <span t-else="">Stock</span>
+                                    </span>
+                                </div>
+                                <div class="col-6">
+                                    <strong><div class="pull-right text-right"><field name="expected_date" widget="date"/></div></strong>
+                                </div>
+                            </div>
+                            <div>
+                                <strong><span><t t-esc="record.product_tmpl_id.value"/></span></strong>
+                            </div>
+                            <div class="text-muted">
+                                <span><t t-esc="record.note.value"/></span>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="action_stock_request_schedule_form" model="ir.actions.act_window">
+        <field name="name">Scheduled Stock Requests</field>
+        <field name="res_model">stock.request</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">[('scheduled', '=', True)]</field>
+        <field name="context">{
+            'default_scheduled': True,
+            'search_default_active_requests': 1,
+            'pivot_column_groupby': ['location_id'],
+            'pivot_row_groupby': ['product_id'],
+            'pivot_measures': ['product_uom_qty', 'qty_done'],
+            'search_default_draft': 1,
+            'search_default_open': 1,
+            'search_default_current_requests': 1,
+        }</field>
+        <field name="view_id" ref="view_stock_request_schedule_tree"/>
+        <field name="search_view_id" ref="stock_request_schedule_search" />
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Click to add a Stock Request.
+          </p>
+        </field>
+    </record>
+
+    <menuitem
+        id="menu_stock_request_schedule"
+        action="action_stock_request_schedule_form"
+        name="Scheduled Stock Requests"
+        parent="stock_request.menu_stock_request_operations"
+        sequence="30"/>
+
+    <record id="stock_request_cancel_server_action" model="ir.actions.server">
+        <field name="name">Cancel</field>
+        <field name="model_id" ref="stock_request.model_stock_request"/>
+        <field name="state">code</field>
+        <field name="code">records.action_cancel()</field>
+        <field name="binding_model_id" ref="stock_request.model_stock_request"/>
+    </record>
+
 </odoo>

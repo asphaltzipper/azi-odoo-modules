@@ -13,6 +13,7 @@ a master production schedule.
     """,
     'depends': [
         'stock_request',
+        'stock_request_submit',
         'sale',
     ],
     "data": [
