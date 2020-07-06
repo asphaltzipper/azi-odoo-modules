@@ -70,16 +70,17 @@ class ProductProduct(models.Model):
 
     @api.depends('image_variant', 'product_tmpl_id.image')
     def _compute_med_big_image(self):
-        if self._context.get('bin_size'):
-            self.image_medium_big = self.image_variant
-        else:
-            resized_image = tools.image_resize_image(
-                self.image_variant,
-                size=(320, 320),
-                avoid_if_small=True)
-            self.image_medium_big = resized_image
-        if not self.image_medium_big:
-            self.image_medium_big = self.product_tmpl_id.image_medium_big
+        for prod in self:
+            if prod._context.get('bin_size'):
+                prod.image_medium_big = prod.image_variant
+            else:
+                resized_image = tools.image_resize_image(
+                    prod.image_variant,
+                    size=(320, 320),
+                    avoid_if_small=True)
+                prod.image_medium_big = resized_image
+            if not prod.image_medium_big:
+                prod.image_medium_big = prod.product_tmpl_id.image_medium_big
 
     def _set_image_medium_big(self):
         self._set_image_value(self.image_medium_big)
