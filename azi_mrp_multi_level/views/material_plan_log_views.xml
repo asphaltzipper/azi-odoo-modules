@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="material_plan_log_view_search" model="ir.ui.view">
+        <field name="name">material.plan.log.search</field>
+        <field name="model">material.plan.log</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="message" string="Log" filter_domain="[('message','ilike',self)]"/>
+                <filter string='Info' name="info-only" icon="terp-accessories-achiver" domain="[('type', '=', 'info')]" />
+                <filter string='Debug' name="debug-only" icon="terp-accessories-achiver" domain="[('type', '=', 'debug')]" />
+                <filter string='Warning' name="warning-only" icon="terp-accessories-achiver" domain="[('type', '=', 'warning')]" />
+                <group expand='0' string='Group by...'>
+                    <filter string='Type' name="log_type" domain="[]" context="{'group_by' : 'type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="material_plan_log_view_tree" model="ir.ui.view">
+        <field name="name">material.plan.log.tree</field>
+        <field name="model">material.plan.log</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false">
+                <field name="create_date" />
+                <field name="type" />
+                <field name="message" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="material_plan_log_view_form" model="ir.ui.view">
+        <field name="name">material.plan.log.form</field>
+        <field name="model">material.plan.log</field>
+        <field name="arch" type="xml">
+            <form create="false" edit="false">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="type" class="oe_edit_only" />
+                        <h1>
+                            <field name="type" />
+                        </h1>
+                    </div>
+                    <group>
+                        <field name="create_date" />
+                        <field name="message" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="material_plan_log_action" model="ir.actions.act_window">
+        <field name="name">Material Plan Log</field>
+        <field name="res_model">material.plan.log</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="material_plan_log_menu" action="material_plan_log_action" sequence="40"
+              parent="mrp.menu_mrp_manufacturing"/>
+</odoo>

@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_material_plan_log_manager,access.material.plan.log.manager,model_material_plan_log,mrp.group_mrp_manager,1,1,1,1
+access_material_plan_log_user,access.material.plan.log.users,model_material_plan_log,mrp.group_mrp_user,1,0,0,0
