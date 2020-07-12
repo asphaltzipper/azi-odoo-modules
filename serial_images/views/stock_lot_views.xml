@@ -2,25 +2,23 @@
 
 <odoo>
 
-    <record id="production_lot_crm_integration_form" model="ir.ui.view">
-        <field name="name">lot.production.sn_integrate</field>
+    <record id="production_lot_serial_images_form" model="ir.ui.view">
+        <field name="name">production.lot.serial.images.form</field>
         <field name="model">stock.production.lot</field>
-        <field name="inherit_id" ref="stock.view_production_lot_form"/>
+        <field name="inherit_id" ref="serial_crm.production_lot_crm_integration_form"/>
         <field name="arch" type="xml">
-            <group name="main_group" position="after">
-                <notebook>
-                    <page name="images" string="Build Books">
-                        <field name="serial_images_ids" nolabel="1" context="{'default_lot_id': active_id}">
-                            <tree editable="bottom">
-                                <field name="name"/>
-                                <field name="note"/>
-                                <field name="create_date" widget="date"/>
-                                <button name="action_open_line" type="object" string="Open Full" class="oe_link"/>
-                            </tree>
-                        </field>
-                    </page>
-                </notebook>
-            </group>
+            <page name="documents" position="after">
+                <page name="images" string="Build Books">
+                    <field name="serial_images_ids" nolabel="1" context="{'default_lot_id': active_id}">
+                        <tree editable="bottom">
+                            <field name="name"/>
+                            <field name="note"/>
+                            <field name="create_date" widget="date"/>
+                            <button name="action_open_line" type="object" string="Open Full" class="oe_link"/>
+                        </tree>
+                    </field>
+                </page>
+            </page>
         </field>
     </record>
 

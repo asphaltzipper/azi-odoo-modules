@@ -61,7 +61,7 @@ class ProductionLot(models.Model):
         readonly=True,
         string='Status',
         compute='_compute_state',
-        store=True,
+        # store=True,
         help="Assigned: product assigned, no stock moves\n"
              "Inventory: SERIAL moved to stock location\n"
              "WIP: SERIAL consumed in production location\n"

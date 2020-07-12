@@ -11,6 +11,47 @@ class MultiLevelMrp(models.TransientModel):
     _inherit = 'mrp.multi.level'
 
     @api.model
+    def _prepare_mrp_move_data_from_stock_request(
+            self, request, product_mrp_area):
+        mrp_date = date.today()
+        if fields.Date.from_string(request.expected_date) > date.today():
+            mrp_date = fields.Date.from_string(request.expected_date)
+        return {
+            'product_id': request.product_id.id,
+            'product_mrp_area_id': product_mrp_area.id,
+            'request_id': request.id,
+            'production_id': None,
+            'purchase_order_id': None,
+            'purchase_line_id': None,
+            'stock_move_id': None,
+            'mrp_qty': request.product_uom_qty,
+            'current_qty': request.product_qty,
+            'mrp_date': mrp_date,
+            'current_date': request.expected_date,
+            'mrp_type': 's',
+            'mrp_origin': 'fc',
+            'mrp_order_number': request.name,
+            'parent_product_id': None,
+            'name': request.name,
+            'state': False,
+        }
+
+    @api.model
+    def _init_mrp_move_from_forecast(self, product_mrp_area):
+        super(MultiLevelMrp, self)._init_mrp_move_from_forecast(product_mrp_area)
+        requests = self.env['stock.request'].search([
+            ('product_id', '=', product_mrp_area.product_id.id),
+            ('state', '=', 'submitted'),
+            ('scheduled', '=', True),
+            ('allocation_ids', '=', False),
+        ])
+        for request in requests:
+            mrp_move_data = \
+                self._prepare_mrp_move_data_from_stock_request(
+                    request, product_mrp_area)
+            self.env['mrp.move'].create(mrp_move_data)
+
+    @api.model
     def _mrp_calculation(self, mrp_lowest_llc, mrp_areas):
         message = 'Start MRP calculation'
         logger.info(message)

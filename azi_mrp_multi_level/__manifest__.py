@@ -11,11 +11,16 @@ AZI MRP Multi Level
 ===================
 * Modified mrp.inventory to have routing details of the product
     """,
-    'depends': ['mrp_multi_level', 'web_notify'],
+    'depends': [
+        'mrp_multi_level',
+        'web_notify',
+        'stock_request_schedule',
+    ],
     "data": [
         'security/ir.model.access.csv',
         'views/mrp_inventory_views.xml',
         'views/material_plan_log_views.xml',
+        'views/product_mrp_area_views.xml',
     ],
     "installable": True,
     "auto_install": False,

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="azi_product_mrp_area_form" model="ir.ui.view">
+        <field name="name">azi.product.mrp.area.form</field>
+        <field name="model">product.mrp.area</field>
+        <field name="inherit_id" ref="mrp_multi_level.product_mrp_area_form"/>
+        <field name="arch" type="xml">
+            <page name="mrp_moves" position="attributes">
+                <attribute name="groups"></attribute>
+            </page>
+            <page name="planned_orders" position="attributes">
+                <attribute name="groups"></attribute>
+            </page>
+        </field>
+    </record>
+
+</odoo>

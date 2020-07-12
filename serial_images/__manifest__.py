@@ -14,6 +14,7 @@
     "depends": [
         "stock",
         "attachment_priority",
+        "serial_crm",
     ],
     "data": [
         'security/ir.model.access.csv',

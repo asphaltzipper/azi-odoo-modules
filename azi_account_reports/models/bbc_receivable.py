@@ -71,8 +71,6 @@ class report_account_bbc_aged_partner(models.AbstractModel):
                     line_totals[0] = line['amount']
             elif over_60_days and line['amount'] > 0.0 and over_60_days > 0.2 * partner_total:
                 # cross aging rule
-                # import pdb
-                # pdb.set_trace()
                 cross_age_20_pct += line['amount']
                 line_totals[1] = line['amount']
             elif line['amount'] > 0.2 * all_total:
