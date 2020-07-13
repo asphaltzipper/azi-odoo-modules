@@ -1,61 +1,32 @@
 <?xml version="1.0"?>
 <odoo>
 
-        <record id="purchase_order_form_carrier" model="ir.ui.view">
-            <field name="name">purchase.order.form.carrier</field>
-            <field name="model">purchase.order</field>
-            <field name="inherit_id" ref="purchase.purchase_order_form"/>
-            <field name="arch" type="xml">
-                <xpath expr="//sheet/group/group[2]/field[@name='company_id']" position="after">
-                    <label for="default_carrier_id"/>
-                    <div>
-                        <field name="default_carrier_id"/>
-                        <button name="action_set_shipping" type="object"
-                            states="draft,sent"
-                            string="Set shipping to all order lines"
-                            help="This changes the shipping of all order lines to the Shipping Method"
-                            class="fa fa-envelope o_icon_button oe_edit_only"/>
-                    </div>
-                </xpath>
-                <xpath expr="//field[@name='order_line']" position="attributes">
-                    <attribute name="context">{'default_carrier_id': default_carrier_id}</attribute>
-                </xpath>
-                <xpath expr="//field[@name='order_line']/tree/field[@name='date_planned']" position="after">
-                    <field name="carrier_id"/>
-                </xpath>
-                <xpath expr="//field[@name='order_line']/tree/field[@name='product_uom']" position="attributes">
-                    <attribute name="string">UOM</attribute>
-                </xpath>
-            </field>
-        </record>
-
-    <record id="purchase_stock.res_config_settings_view_form_purchase" model="ir.ui.view">
-        <field name="name">res.config.settings.carrier</field>
-        <field name="model">res.config.settings</field>
+    <record id="purchase_order_form_carrier" model="ir.ui.view">
+        <field name="name">purchase.order.form.carrier</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//div[@data-key='purchase']" position="inside">
-                <field name="is_installed_sale" invisible="1"/>
-                <h2 attrs="{'invisible': [('is_installed_sale', '=', False)]}">Logistics</h2>
-                <div class="row mt16 o_settings_container">
-                    <div class="col-12 col-lg-6 o_setting_box"
-                         attrs="{'invisible': [('is_installed_sale', '=', False)]}"
-                         title="This adds a dropshipping route to apply on products in order to request your vendors to deliver to your customers. A product to dropship will generate a purchase request for quotation once the sales order confirmed. This is a on-demand flow. The requested delivery address will be the customer delivery address and not your warehouse.">
-                        <div class="o_setting_left_pane">
-                            <field name="module_stock_dropshipping"/>
-                        </div>
-                        <div class="o_setting_right_pane">
-                            <label for="module_stock_dropshipping"/>
-                            <div class="text-muted">
-                                Request your vendors to deliver to your customers
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-lg-6 o_setting_box" id="carrier">
-                        <label for="po_carrier_id"/>
-                        <field name="po_carrier_id"/>
-                    </div>
+            <xpath expr="//sheet/group/group[2]/field[@name='company_id']" position="after">
+                <label for="default_carrier_id"/>
+                <div>
+                    <field name="default_carrier_id"/>
+                    <button name="action_set_shipping" type="object"
+                        states="draft,sent"
+                        string="Set shipping to all order lines"
+                        help="This changes the shipping of all order lines to the Shipping Method"
+                        class="fa fa-envelope o_icon_button oe_edit_only"/>
                 </div>
+            </xpath>
+            <xpath expr="//field[@name='order_line']" position="attributes">
+                <attribute name="context">{'default_carrier_id': default_carrier_id}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree/field[@name='date_planned']" position="after">
+                <field name="carrier_id"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree/field[@name='product_uom']" position="attributes">
+                <attribute name="string">UOM</attribute>
             </xpath>
         </field>
     </record>
+
 </odoo>

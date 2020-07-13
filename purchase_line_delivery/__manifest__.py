@@ -15,6 +15,7 @@
     "depends": ["purchase_stock", "delivery"],
     "data": [
         'views/purchase_views.xml',
+        'views/res_config_settings_views.xml',
         'report/templates.xml',
     ],
     "installable": True,
