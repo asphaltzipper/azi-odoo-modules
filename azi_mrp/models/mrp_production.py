@@ -64,10 +64,17 @@ class MrpProduction(models.Model):
     def print_production_and_attachment(self):
         for record in self:
             report = self.env['ir.actions.report']._get_report_from_name('azi_mrp.report_mrporder_azi')
-            attachment = self.env['ir.attachment'].search([('mimetype', '=', 'application/pdf'),
-                                                           ('res_model', '=', 'product.product'),
-                                                           ('res_id', '=', record.product_id.id)],
-                                                          order='priority desc, name', limit=1)
+            attachment = self.env['ir.attachment'].search(
+                [('mimetype', '=', 'application/pdf'),
+                 ('res_model', '=', 'product.product'),
+                 ('res_id', '=', record.product_id.id)],
+                order='priority desc, name', limit=1)
+            if not attachment:
+                attachment = self.env['ir.attachment'].search(
+                    [('mimetype', '=', 'application/pdf'),
+                     ('res_model', '=', 'product.template'),
+                     ('res_id', '=', record.product_id.product_tmpl_id.id)],
+                    order='priority desc, name', limit=1)
             report_bytes, _ = report.render_qweb_pdf(res_ids=record.id)
             buffer = BytesIO(report_bytes)
             production_pdf = PdfFileReader(buffer)

@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
     <record model="ir.actions.act_window" id="action_production_move_analysis">
@@ -20,8 +19,7 @@
         <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
         <field name="arch" type="xml">
             <header position="inside">
-                <button name="print_production_and_attachment" string="AZI Production Order / Attachment"
-                        class="btn-primary" type="object"/>
+                <button name="print_production_and_attachment" string="Print" type="object"/>
             </header>
             <button name="%(mrp.action_mrp_production_moves)d" position="attributes">
                 <attribute name="attrs"/>
