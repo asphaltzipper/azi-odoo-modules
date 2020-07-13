@@ -7,55 +7,51 @@
                 <div class="page">
                     <div class="oe_structure"/>
                     <div class="row">
-                        <div class="col-xs-8">
+                        <div class="col-8">
                             <span style="font-size:75px;font-weight:bold;" t-field="o.name"/>
                         </div>
-                        <div class="col-xs-4">
+                        <div class="col-5">
                             <span class="text-right">
                                 <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('Code128', o.name, 600, 100)" style="width:350px;height:60px"/>
                             </span>
                         </div>
                     </div>
-                    <div class="row mt32 mb32">
-                        <div class="col-xs-3">
-                            <strong>Source Document:</strong><br/>
-                            <span t-field="o.origin"/>
-                        </div>
-                        <div class="col-xs-3">
+                    <div class="row mt32 mb32" style="font-size:16px;">
+                        <div class="col-6">
                             <strong>Product:</strong><br/>
-                            <span t-field="o.product_id.code"/>
-                            <span t-field="o.product_id.name"/>
+                            <span t-field="o.product_id.display_name"/>
                         </div>
-                        <div class="col-xs-3">
+                        <div class="col-3">
                             <strong>Quantity:</strong><br/>
                             <span t-field="o.product_qty"/>
                             <span t-field="o.product_uom_id.name" groups="product.group_uom"/>
                         </div>
+                        <div class="col-3">
+                            <strong>Routing:</strong><br/>
+                            <span t-field="o.routing_detail"/>
+                        </div>
                     </div>
 
-                    <div class="row mt32 mb32">
-                        <div class="col-xs-3">
-                            <strong>Scheduled Date:</strong><br/>
-                            <span t-field="o.date_planned_start"/><span t-if="o.date_planned_finished"> - <span t-field="o.date_planned_finished"/></span>
+                    <div class="row mt32 mb32" style="font-size:16px;">
+                        <div class="col-6">
+                            <strong>Source Document:</strong><br/>
+                            <span t-field="o.origin"/>
                         </div>
-                        <div class="col-xs-3">
+                        <div class="col-3">
+                            <strong>Scheduled Date:</strong><br/>
+                            <span t-field="o.date_planned_start" t-options='{"widget": "date"}'/>
+                            - <span t-field="o.date_planned_finished" t-options='{"widget": "date"}'/>
+                        </div>
+                        <div class="col-3">
                             <strong>Printing date:</strong><br/>
                             <span t-esc="time.strftime('%Y-%m-%d')"
                                   t-options='{"widget": "date"}'/>
-                        </div>
-                        <div class="col-xs-3" t-if="'sale_ref' in o">
-                            <strong>Partner Ref:</strong><br/>
-                            <span t-esc="'sale_ref' in o and o.sale_ref"/>
-                        </div>
-                        <div class="col-xs-3" t-if="'sale_name' in o">
-                            <strong>SO Number:</strong><br/>
-                            <span t-esc="'sale_name' in o and o.sale_name"/>
                         </div>
                     </div>
 
                     <div t-if="o.workorder_ids">
                         <strong>Work Orders</strong>
-                        <table class="table table-condensed">
+                        <table class="table table-sm">
                             <tr>
                                 <td class="text-center"><strong>Name</strong></td>
                                 <td class="text-center"><strong>WorkCenter</strong></td>
@@ -71,7 +67,7 @@
 
                     <h3 t-if="o.move_raw_ids.filtered(lambda x: x.has_tracking == 'serial')">Serials</h3>
 
-                    <table class="table table-condensed" t-if="o.move_raw_ids.filtered(lambda x: x.has_tracking == 'serial')">
+                    <table class="table table-sm" t-if="o.move_raw_ids.filtered(lambda x: x.has_tracking == 'serial')">
                         <thead>
                             <tr>
                                 <th><strong>Products</strong></th>
@@ -98,9 +94,9 @@
                         </tbody>
                     </table>
 
-                    <h3 t-if="o.routing_id">Labor</h3>
+                    <h3 t-if="o.routing_id" style="page-break-before:always;">Labor</h3>
 
-                    <table class="table table-condensed" t-if="o.routing_id">
+                    <table class="table table-sm" t-if="o.routing_id">
                         <thead>
                             <tr>
                                 <td class="text-left"><strong>Workcenter</strong></td>
@@ -110,7 +106,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <t t-foreach="range(0,9)" t-as="row">
+                            <t t-foreach="range(0,12)" t-as="row">
                             <tr>
                                 <td colspan="4" style="width:10.5cm; border-bottom:1px solid #000; height:.75cm">
                                     <span></span>
@@ -120,15 +116,15 @@
                         </tbody>
                     </table>
 
-                    <h3 t-if="o.move_raw_ids and (o.routing_id or o.move_raw_ids.filtered(lambda x: x.has_tracking == 'serial'))" style="page-break-before:always;">Bill Of Material</h3>
-                    <h3 t-elif="o.move_raw_ids">Bill Of Material</h3>
+                    <h3 t-if="o.move_raw_ids and (o.routing_id or o.move_raw_ids.filtered(lambda x: x.has_tracking == 'serial'))" style="page-break-before:always;">Products to Consume</h3>
+                    <h3 t-elif="o.move_raw_ids">Products to Consume</h3>
 
-                    <table class="table table-condensed" t-if="o.move_raw_ids">
+                    <table class="table table-sm" t-if="o.move_raw_ids">
                         <thead>
                             <tr>
                                 <th><strong>Product</strong></th>
                                 <th class="text-right"><strong>Bin</strong></th>
-                                <th class="text-right"><strong>Available</strong></th>
+                                <th class="text-right"><strong>Avail</strong></th>
                                 <th class="text-right"><strong>Assigned</strong></th>
                                 <th class="text-right"><strong>Quantity</strong></th>
                                 <th class="text-center"><strong>Shelf Location</strong></th>
@@ -136,11 +132,8 @@
                         </thead>
                         <tbody>
                             <t t-if="o.moves_plus">
-                                <tr>
-                                    <td colspan="5"><strong>Products to Consume</strong></td>
-                                </tr>
-                                <tr t-foreach="o.moves_plus.sorted(key=lambda x: (x.e_kanban, ' | '.join(x.product_id.shelf_ids.sorted(key=lambda x: name).mapped('name')), x.product_id.default_code))" t-as="line">
-                                    <td style="width:18cm;">
+                                <tr t-foreach="o.moves_plus.sorted(key=lambda x: (x.e_kanban, ' | '.join(x.product_id.shelf_ids.sorted(key=lambda x: x.name).mapped('name')), x.product_id.default_code))" t-as="line">
+                                    <td style="width:15cm; font-size:85%;">
                                         [<span t-field="line.product_id.default_code"/>]
                                         <span t-field="line.product_id.name"/>
                                     </td>
@@ -158,23 +151,21 @@
                                         <span t-field="line.product_uom.name" groups="product.group_uom"/>
                                     </td>
                                     <td class="text-center">
-                                        <span style="font-size:68%" t-esc="' | '.join(line.product_id.shelf_ids.sorted(key=lambda x: name).mapped('name'))"/>
+                                        <span style="font-size:60%" t-esc="' | '.join(line.product_id.shelf_ids.sorted(key=lambda x: x.name).mapped('name'))"/>
                                     </td>
                                 </tr>
                             </t>
                         </tbody>
                     </table>
                     <div class="oe_structure"/>
-                    <div class="footer" t-if="o.routing_id or o.move_raw_ids.filtered(lambda x: x.has_tracking == 'serial')">
-                        <div class="row">
-                            <div class="col-xs-2 pull-right">
-                                <small>
-                                    <span><span t-field="o.name"/> Page</span>
-                                    <span class="page" />
-                                    of
-                                    <span class="topage" />
-                                </small>
-                            </div>
+                    <!--<div class="footer" t-if="o.routing_id or o.move_raw_ids.filtered(lambda x: x.has_tracking == 'serial')">-->
+                    <div class="footer o_background_footer">
+                        <div class="text-right page_number" style="font-size:10px;">
+                            <span t-field="o.name"/>
+                            Page:
+                            <span class="page"/>
+                            of
+                            <span class="topage"/>
                         </div>
                     </div>
                 </div>
@@ -210,7 +201,7 @@
                         <span t-field="o.product_uom_id.name" groups="product.group_uom"/>
                     </div>
 
-                    <table class="table table-condensed" t-if="o.move_raw_ids">
+                    <table class="table table-sm" t-if="o.move_raw_ids">
                         <thead style="display:table-header-group;">
                             <tr>
                                 <th><strong>Product</strong></th>
