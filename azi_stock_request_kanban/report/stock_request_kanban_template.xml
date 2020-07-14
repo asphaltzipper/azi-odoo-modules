@@ -62,6 +62,7 @@
                     <t t-call="azi_stock_request_kanban.report_simple_label">
                         <t t-set="o" t-value="o"/>
                     </t>
+                    <p style="page-break-before: always"></p>
                 </div>
             </t>
         </t>
