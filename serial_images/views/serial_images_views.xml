@@ -65,7 +65,7 @@
                                                                 <t t-set="webimage" t-value="new RegExp('image.*(gif|jpeg|jpg|png)').test(record.mimetype.value)"/>
                                                                 <div t-if="!webimage" class="o_image" t-att-data-mimetype="record.mimetype.value"/>
                                                                 <div t-if="webimage" class="o_kanban_attachment_image">
-                                                                    <img t-attf-src="/web/image_small/#{record.id.raw_value}/240x240?download=1"/>
+                                                                    <img t-attf-src="/web/image/#{record.id.raw_value}/256x256?download=1"/>
                                                                 </div>
                                                             </a>
                                                         </div>
