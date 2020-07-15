@@ -21,11 +21,21 @@
         </field>
     </record>
 
-    <record id="compile_product_file_action" model="ir.actions.act_window">
+    <record id="compile_product_template_action" model="ir.actions.act_window">
         <field name="name">Compile PDFs</field>
         <field name="res_model">compile.product.file</field>
         <field name="view_type">form</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
+        <field name="binding_model_id" ref="product.model_product_template"/>
+    </record>
+
+    <record id="compile_product_product_action" model="ir.actions.act_window">
+        <field name="name">Compile PDFs</field>
+        <field name="res_model">compile.product.file</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="product.model_product_product"/>
     </record>
 </odoo>

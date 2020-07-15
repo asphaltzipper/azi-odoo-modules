@@ -13,7 +13,6 @@
     "depends": ["azi_mrp"],
     "data": [
         'wizard/compile_product_file_views.xml',
-        'views/product_views.xml',
     ],
     "auto_install": False,
     "application": False,
