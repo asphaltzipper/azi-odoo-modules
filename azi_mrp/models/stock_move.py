@@ -13,3 +13,8 @@ class StockMove(models.Model):
         related='product_id.tracking',
         string='Product with Tracking',
         store=True)
+
+    def action_view_manufacturing_order(self):
+        action = self.env.ref('mrp.mrp_production_action').read()[0]
+        action['domain'] = [('product_id', '=', self.product_id.id)]
+        return action
