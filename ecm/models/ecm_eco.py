@@ -531,31 +531,29 @@ class EcmEcoRevLine(models.Model):
 
     @api.constrains('product_id')
     def _validate_product_id(self):
-        category = self.product_id.categ_id
-        if not category.eng_management:
+        if not all(self.mapped('product_id.categ_id.eng_management')):
             raise ValidationError("Only products marked for Engineering Management can be revised on an ECO")
         return True
 
     @api.constrains('product_id', 'new_rev')
     def _validate_product_code(self):
-        category = self.product_id.categ_id
-        if not category.eng_management:
-            raise ValidationError("Only products marked for Engineering Management can be revised on an ECO")
-        new_code = "{}{}{}".format(self.product_id.eng_code, category.rev_delimiter, self.new_rev)
-        if not re.match(category.def_code_regex, self.new_code):
-            raise ValidationError("The new revision code {} is not valid for "
-                                  "this product's Engineering Category".format(new_code))
-        if self.new_rev != category.default_rev and self.new_rev <= self.product_id.eng_rev:
-            raise ValidationError("The new revision code must be greater than the old one: {}".format(new_code))
-        # throw an error if product_id is revised on another ECO
-        domain = [('eco_id', '!=', self.eco_id.id), ('product_id', '=', self.product_id.id)]
-        other_count = self.search_count(domain)
-        if other_count and not (
-            other_count == 1 and
-            self.product_id.eng_rev == category.default_rev and
-            self.new_rev != category.default_rev
-        ):
-            raise ValidationError("Product has already been revised on another ECO")
+        for rec in self:
+            category = rec.product_id.categ_id
+            new_code = "{}{}{}".format(rec.product_id.eng_code, category.rev_delimiter, rec.new_rev)
+            if not re.match(category.def_code_regex, rec.new_code):
+                raise ValidationError("The new revision code {} is not valid for "
+                                      "this product's Engineering Category".format(new_code))
+            if rec.new_rev != category.default_rev and rec.new_rev <= rec.product_id.eng_rev:
+                raise ValidationError("The new revision code must be greater than the old one: {}".format(new_code))
+            # throw an error if product_id is revised on another ECO
+            domain = [('eco_id', '!=', rec.eco_id.id), ('product_id', '=', rec.product_id.id)]
+            other_count = rec.search_count(domain)
+            if other_count and not (
+                other_count == 1 and
+                rec.product_id.eng_rev == category.default_rev and
+                rec.new_rev != category.default_rev
+            ):
+                raise ValidationError("Product has already been revised on another ECO")
         return True
 
     @api.depends('product_id', 'new_rev')
@@ -681,8 +679,7 @@ class EcmEcoIntroLine(models.Model):
 
     @api.constrains('product_id')
     def _validate_product_id(self):
-        category = self.product_id.categ_id
-        if not category.eng_management:
+        if not all(self.mapped('product_id.categ_id.eng_management')):
             raise ValidationError("Only products marked for Engineering Management can be introduced on an ECO")
         return True
 
@@ -755,7 +752,6 @@ class EcmEcoObsoleteLine(models.Model):
 
     @api.constrains('product_id')
     def _validate_product_id(self):
-        category = self.product_id.categ_id
-        if not category.eng_management:
+        if not all(self.mapped('product_id.categ_id.eng_management')):
             raise ValidationError("Only products marked for Engineering Management can be deprecated on an ECO")
         return True
