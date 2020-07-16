@@ -40,7 +40,8 @@ class StockRequest(models.Model):
     @api.depends('sale_order_line_id')
     def _compute_sold(self):
         for rec in self:
-            rec.sold = rec.sale_order_line_id
+            rec.sold = rec.sale_order_line_id and \
+                       rec.sale_order_line_id.state == 'sale' or False
 
     # TODO: enforce sale_order_line_id is unique
 

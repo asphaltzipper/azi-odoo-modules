@@ -24,11 +24,11 @@ class MultiLevelMrp(models.TransientModel):
             'purchase_order_id': None,
             'purchase_line_id': None,
             'stock_move_id': None,
-            'mrp_qty': request.product_uom_qty,
-            'current_qty': request.product_qty,
+            'mrp_qty': -request.product_uom_qty,
+            'current_qty': -request.product_qty,
             'mrp_date': mrp_date,
             'current_date': request.expected_date,
-            'mrp_type': 's',
+            'mrp_type': 'd',
             'mrp_origin': 'fc',
             'mrp_order_number': request.name,
             'parent_product_id': None,
@@ -44,6 +44,7 @@ class MultiLevelMrp(models.TransientModel):
             ('state', '=', 'submitted'),
             ('scheduled', '=', True),
             ('allocation_ids', '=', False),
+            ('sold', '=', False),
         ])
         for request in requests:
             mrp_move_data = \
