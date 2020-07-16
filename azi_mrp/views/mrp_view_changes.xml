@@ -36,7 +36,7 @@
                 <attribute name="invisible"/>
                 <attribute name="string">Tracking</attribute>
             </xpath>
-            <xpath expr="//page/field[@name='move_raw_ids']/tree/field[@name='date_expected']" position="before">
+            <xpath expr="//page/field[@name='move_raw_ids']/tree/field[@name='quantity_done']" position="after">
                 <button name="action_view_manufacturing_order" string="View MOs" type="object" icon="fa-arrow-right" />
             </xpath>
             <xpath expr="//sheet/div[@name='button_box']/button[2]" position="before">

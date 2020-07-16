@@ -17,4 +17,5 @@ class StockMove(models.Model):
     def action_view_manufacturing_order(self):
         action = self.env.ref('mrp.mrp_production_action').read()[0]
         action['domain'] = [('product_id', '=', self.product_id.id)]
+        action['context'] = {'search_default_todo': 1}
         return action
