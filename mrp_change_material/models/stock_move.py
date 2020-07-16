@@ -13,4 +13,5 @@ class StockMove(models.Model):
 
     def action_cancel(self):
         for record in self:
+            record.move_line_ids.sudo().unlink()
             record._action_cancel()

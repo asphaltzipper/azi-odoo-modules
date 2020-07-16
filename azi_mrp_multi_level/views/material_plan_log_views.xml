@@ -56,6 +56,10 @@
         <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem id="material_plan_log_menu" action="material_plan_log_action" sequence="40"
-              parent="mrp.menu_mrp_manufacturing"/>
+    <menuitem id="material_plan_log_menu"
+          name="Material Plan Log"
+          parent="mrp.menu_mrp_reporting"
+          action="material_plan_log_action"
+          sequence="21"/>
+
 </odoo>

@@ -10,7 +10,7 @@
     "website": "http://www.github.com/asphaltzipper",
     'description': """
 Work Order Produce Wizard
-============================
+=========================
 Wizard for completing Manufacturing Orders with Work Orders
 1. Check Availability
 1. Plan

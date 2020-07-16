@@ -5,58 +5,85 @@
         <field name="name">Complete Work Orders</field>
         <field name="model">mrp.wo.produce</field>
         <field name="arch" type="xml">
-            <form string="Produce">
+            <form string="Produce Workorders">
                 <group>
                     <group>
-                        <field name="serial" invisible="1"/>
+                        <field name="product_tracking" invisible="1"/>
                         <field name="production_id" invisible="1"/>
-                        <field name="product_id" readonly="1"/>
+                        <field name="product_id"/>
                         <label for="product_qty"/>
                         <div class="o_row">
-                            <field name="product_qty" attrs="{'readonly': [('serial', '=', True)]}"/>
-                            <field name="product_uom_id" readonly="1" groups="uom.group_uom"/>
+                            <field name="product_qty"/>
+                            <field name="product_uom_id" groups="uom.group_uom"/>
                         </div>
-                        <field name="product_tracking" invisible="1"/>
                         <field name="lot_id"
-                               attrs="{'invisible': [('product_tracking', '=', 'none')],
-                                       'required': [('product_tracking', '!=', 'none')]}"
+                               options="{'create': True}"
+                               attrs="{'invisible': [('product_tracking', '=', 'none')], 'required': [('product_tracking', '!=', 'none')]}"
                                domain="[('product_id', '=', product_id)]"
                                context="{'default_product_id': product_id}"/>
                     </group>
                 </group>
                 <group>
-                    <field name="produce_line_ids" attrs="{'invisible': [('produce_line_ids', '=', [])]}" nolabel="1" context="{'w_production': True, 'active_id': production_id, 'default_lot_id': lot_id}">
-                        <tree editable="top" delete="0" decoration-danger="(qty_to_consume &lt; qty_done) or (qty_done &gt; qty_reserved)">
-                            <field name="product_id" attrs="{'readonly': [('move_id', '!=', False)]}" required="1" domain="[('id', '!=', parent.product_id)]" force_save="1"/>
-                            <field name="product_tracking" invisible="1"/>
-                            <field name="lot_id" attrs="{'readonly': [('product_tracking', '=', 'none')]}" context="{'default_product_id': product_id}" domain="[('product_id', '=', product_id)]" groups="stock.group_production_lot"/>
-                            <field name="qty_to_consume" readonly="1"/>
-                            <field name="qty_reserved" readonly="1"/>
-                            <field name="qty_done"/>
-                            <field name="product_uom_id" readonly="1" force_save="1" groups="uom.group_uom"/>
-                            <field name="move_id" invisible="1"/>
-                        </tree>
-                    </field>
+                    <div>
+                        <label for="produce_line_ids" attrs="{'invisible': [('produce_line_ids', '=', [])]}" style="font-weight: bold; font-size: larger;"/>
+                        <field name="produce_line_ids"
+                               attrs="{'invisible': [('produce_line_ids', '=', [])]}"
+                               nolabel="1"
+                               context="{'default_produce_id': active_id}">
+                            <tree editable="top" create="0" delete="0" decoration-danger="(qty_to_produce &lt; qty_done) or (qty_done &gt; qty_reserved)">
+                                <field name="produce_id" invisible="1"/>
+                                <field name="product_id"/>
+                                <field name="lot_id" domain="[('product_id', '=', product_id)]"/>
+                                <field name="qty_to_produce"/>
+                                <field name="qty_reserved"/>
+                                <field name="qty_done"/>
+                                <field name="product_uom_id" groups="uom.group_uom"/>
+                                <field name="move_id" invisible="1"/>
+                            </tree>
+                        </field>
+                    </div>
                 </group>
-                <button name="load_work" type="object" string="Load Standard Labor"/>
                 <group>
-                    <field name="work_ids"
-                           context="{'default_produce_id': active_id, 'default_production_id': production_id}"
-                           nolabel="1">
-                        <tree editable="bottom">
-                            <field name="produce_id" invisible="1"/>
-                            <field name="production_id" invisible="1"/>
-                            <field name="workorder_id" domain="[('production_id', '=', production_id)]"/>
-                            <field name="user_id" domain="[('id', '=', user_ids)]"  context="{'active_test': False}"/>
-                            <field name="user_ids" invisible="1" widget="many2many_tags"/>
-                            <field name="hours_expected"/>
-                            <field name="labor_date"/>
-                            <field name="labor_time"/>
-                        </tree>
-                    </field>
+                    <div>
+                        <label for="consume_line_ids" attrs="{'invisible': [('consume_line_ids', '=', [])]}" style="font-weight: bold; font-size: larger;"/>
+                        <field name="consume_line_ids"
+                               attrs="{'invisible': [('consume_line_ids', '=', [])]}"
+                               nolabel="1"
+                               context="{'default_produce_id': active_id}">
+                            <tree editable="top" create="0" delete="0" decoration-danger="(qty_to_consume &lt; qty_done) or (qty_done &gt; qty_reserved)">
+                                <field name="produce_id" invisible="1"/>
+                                <field name="product_id"/>
+                                <field name="lot_id" domain="[('product_id', '=', product_id)]"/>
+                                <field name="qty_to_consume"/>
+                                <field name="qty_reserved"/>
+                                <field name="qty_done"/>
+                                <field name="product_uom_id" groups="uom.group_uom"/>
+                                <field name="move_id" invisible="1"/>
+                            </tree>
+                        </field>
+                    </div>
+                </group>
+                <group>
+                    <div>
+                        <label for="work_line_ids" style="font-weight: bold; font-size: larger;"/>
+                        <field name="work_line_ids"
+                               context="{'default_produce_id': active_id, 'default_production_id': production_id}"
+                               nolabel="1">
+                            <tree editable="bottom">
+                                <field name="produce_id" invisible="1"/>
+                                <field name="production_id" invisible="1"/>
+                                <field name="workorder_id" domain="[('production_id', '=', production_id)]"/>
+                                <field name="user_id" domain="[('id', 'in', user_ids)]" context="{'active_test': False}"/>
+                                <field name="user_ids" invisible="1" widget="many2many_tags"/>
+                                <field name="hours_expected"/>
+                                <field name="labor_date"/>
+                                <field name="labor_time"/>
+                            </tree>
+                        </field>
+                    </div>
                 </group>
                 <footer>
-                    <button name="do_produce" type="object" string="Record Production" class="btn-primary"/>
+                    <button name="do_produce" type="object" string="Record Production" class="btn-primary" context="{'active_id': active_id}"/>
                     <button string="Cancel" class="btn-default" special="cancel"/>
                 </footer>
             </form>

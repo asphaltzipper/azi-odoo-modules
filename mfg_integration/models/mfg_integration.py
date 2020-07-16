@@ -222,11 +222,11 @@ class MfgWorkHeader(models.Model):
             ctx = dict(self.env.context)
             ctx['default_production_id'] = mo.id
             produce_wiz = self.env['mrp.wo.produce'].with_context(ctx).create({'production_id': mo.id})
+            produce_wiz.load_lines()
 
             # divide time evenly across workorders
-            produce_wiz.load_work()
-            wo_count = len(produce_wiz.work_ids)
-            for work in produce_wiz.work_ids:
+            wo_count = len(produce_wiz.production_id.workorder_ids)
+            for work in produce_wiz.work_line_ids:
                 if detail.minutes_assigned <= 1.0:
                     raise UserError("Work time cannot be less than 1 minute per manufacturing order")
                 labor_time = (detail.minutes_assigned/60)/wo_count
@@ -236,7 +236,6 @@ class MfgWorkHeader(models.Model):
                     'labor_time': labor_time,
                 })
             produce_wiz.do_produce()
-            mo.button_mark_done()
 
         self.state = 'closed'
 
