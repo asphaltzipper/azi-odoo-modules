@@ -10,7 +10,9 @@
                 <filter string='Debug' name="debug-only" icon="terp-accessories-achiver" domain="[('type', '=', 'debug')]" />
                 <filter string='Warning' name="warning-only" icon="terp-accessories-achiver" domain="[('type', '=', 'warning')]" />
                 <group expand='0' string='Group by...'>
-                    <filter string='Type' name="log_type" domain="[]" context="{'group_by' : 'type'}"/>
+                    <filter string='Message' name="group_message" domain="[]" context="{'group_by' : 'message'}"/>
+                    <filter string='Type' name="group_type" domain="[]" context="{'group_by' : 'type'}"/>
+                    <filter string='User' name="group_user" domain="[]" context="{'group_by' : 'create_uid'}"/>
                 </group>
             </search>
         </field>
@@ -22,6 +24,7 @@
         <field name="arch" type="xml">
             <tree create="false" edit="false">
                 <field name="create_date" />
+                <field name="create_uid" />
                 <field name="type" />
                 <field name="message" />
             </tree>
