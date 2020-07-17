@@ -302,7 +302,7 @@ class MrpWoProduce(models.TransientModel):
 
     @api.multi
     def complete_workorders(self):
-        last_workorder = self.production_id.workorder_ids.filtered(lambda x: not x.next_work_order_id)
+        last_workorder = self.production_id.workorder_ids.filtered(lambda x: not x.next_work_order_id)[0]
         for line in self.consume_line_ids:
             if not line.lot_id:
                 raise UserError(_('Please enter a lot or serial number for component %s !' % line.product_id.display_name))
@@ -364,8 +364,13 @@ class MrpWoProduce(models.TransientModel):
                 'lot_id': self.lot_id.id,
             })
         else:
-            # TODO: is this is necessary?
-            produce_move.quantity_done = produce_move.product_uom_qty
+            # TODO: this fails and says use the stock move lines
+            produce_move._set_quantity_done(self.product_qty)
+            if len(produce_move.move_line_ids) > 1:
+                # apparently, the work orders created multiple move lines
+                # we will delete them all, and then set the quantity done
+                produce_move.move_line_ids.unlink()
+                produce_move._set_quantity_done(self.product_qty)
 
         # by-products with tracking
         for line in self.produce_line_ids:
@@ -395,6 +400,9 @@ class MrpWoProduce(models.TransientModel):
                       and x.state not in ('done', 'cancel')
                       and x.product_id.tracking == 'none')
         for by_move in by_product_moves:
+            # TODO: is this necessary?
+            if len(produce_move.move_line_ids) > 1:
+                raise UserError(_("There are multiple move lines for by-product %s" % by_move.product_id.display_name))
             by_move.quantity_done = by_move.product_uom_qty
 
         # TODO: pass all quality checks
