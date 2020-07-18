@@ -39,6 +39,9 @@ class ProductTemplate(models.Model):
         string='Routing Template',
         compute='_compute_mfg_properties',
         readonly=True)
+    routing_detail = fields.Char(
+        string="Routing Detail",
+        compute='_compute_mfg_properties')
     # only here for backward compatibility
     # TODO: remove this field
     formed = fields.Boolean(
@@ -121,6 +124,8 @@ class ProductTemplate(models.Model):
                 rec.rm_material_code = bom.one_comp_product_id.material_id.name
                 rec.rm_gauge_code = bom.one_comp_product_id.gauge_id.name
                 rec.laser_code = bom.one_comp_product_id.gauge_id.laser_code
+                rec.routing_detail = ", ".join(
+                    [x for x in bom.routing_id.operation_ids.mapped('workcenter_id.code') if x])
 
     def get_routing_template(self, bom_id):
         op_ids = set(bom_id.routing_id.operation_ids.mapped('workcenter_id').ids)

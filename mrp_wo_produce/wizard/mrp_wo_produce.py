@@ -364,7 +364,6 @@ class MrpWoProduce(models.TransientModel):
                 'lot_id': self.lot_id.id,
             })
         else:
-            # TODO: this fails and says use the stock move lines
             produce_move._set_quantity_done(self.product_qty)
             if len(produce_move.move_line_ids) > 1:
                 # apparently, the work orders created multiple move lines
@@ -416,10 +415,12 @@ class MrpProductProduceCompLine(models.TransientModel):
     produce_id = fields.Many2one(
         comodel_name='mrp.wo.produce',
         required=True,
+        ondelete='cascade',
     )
     move_id = fields.Many2one(
         comodel_name='stock.move',
         required=True,
+        ondelete='cascade',
     )
     product_id = fields.Many2one(
         comodel_name='product.product',
@@ -430,6 +431,7 @@ class MrpProductProduceCompLine(models.TransientModel):
         comodel_name='uom.uom',
         string='Unit of Measure',
         related='move_id.product_id.uom_id',
+        ondelete='cascade',
     )
     qty_to_consume = fields.Float(
         string='To Consume',
@@ -482,10 +484,12 @@ class MrpProductProduceByLine(models.TransientModel):
     produce_id = fields.Many2one(
         comodel_name='mrp.wo.produce',
         required=True,
+        ondelete='cascade',
     )
     move_id = fields.Many2one(
         comodel_name='stock.move',
         required=True,
+        ondelete='cascade',
     )
     product_id = fields.Many2one(
         comodel_name='product.product',
@@ -496,6 +500,7 @@ class MrpProductProduceByLine(models.TransientModel):
         comodel_name='uom.uom',
         string='Unit of Measure',
         related='move_id.product_id.uom_id',
+        ondelete='cascade',
     )
     qty_to_produce = fields.Float(
         string='To Produce',
