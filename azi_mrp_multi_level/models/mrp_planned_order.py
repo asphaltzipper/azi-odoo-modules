@@ -18,6 +18,12 @@ class MrpPlannedOrder(models.Model):
         related='product_id.routing_detail',
         store='true',
     )
+    main_supplierinfo_id = fields.Many2one(
+        comodel_name='product.supplierinfo',
+        string='Vendor',
+        related='product_mrp_area_id.main_supplierinfo_id',
+        store=True,
+    )
 
     @api.depends('order_release_date')
     def _compute_priority(self):

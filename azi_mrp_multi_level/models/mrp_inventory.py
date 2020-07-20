@@ -4,7 +4,17 @@ from odoo import models, fields, api
 class MrpInventory(models.Model):
     _inherit = 'mrp.inventory'
 
-    routing_detail = fields.Char('Routing Detail', compute='_compute_routing_detail', store=True)
+    routing_detail = fields.Char(
+        string='Routing Detail',
+        compute='_compute_routing_detail',
+        store=True,
+    )
+    main_supplierinfo_id = fields.Many2one(
+        comodel_name='product.supplierinfo',
+        string='Vendor',
+        related='product_mrp_area_id.main_supplierinfo_id',
+        store=True,
+    )
 
     @api.depends('product_id')
     def _compute_routing_detail(self):

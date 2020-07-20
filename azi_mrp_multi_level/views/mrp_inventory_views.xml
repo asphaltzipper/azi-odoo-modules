@@ -8,6 +8,7 @@
         <field name="arch" type="xml">
             <field name="product_id" position="after">
                 <field name="routing_detail"/>
+                <field name="main_supplierinfo_id"/>
             </field>
         </field>
     </record>
@@ -19,7 +20,36 @@
         <field name="arch" type="xml">
             <field name="product_id" position="after">
                 <field name="routing_detail"/>
+                <field name="main_supplierinfo_id"/>
             </field>
+        </field>
+    </record>
+
+    <record id="mrp_inventory_azi_search" model="ir.ui.view">
+        <field name="name">mrp.inventory.azi.search</field>
+        <field name="model">mrp.inventory</field>
+        <field name="inherit_id" ref="mrp_multi_level.mrp_inventory_search"/>
+        <field name="arch" type="xml">
+            <field name="mrp_area_id" position="after">
+                <field name="routing_detail"/>
+                <field name="main_supplierinfo_id"/>
+            </field>
+            <filter name="filter_to_procure" position="after">
+                <separator />
+                <filter string="Non-Kanban" name="filter_non_kanban" domain="[('e_kanban','=',False)]"/>
+                <filter string="Kanban" name="filter_kanban" domain="[('e_kanban','=',True)]"/>
+                <separator />
+                <filter string="Buy" name="filter_buy" domain="[('supply_method','=','buy')]"/>
+                <filter string="Make" name="filter_produce" domain="[('supply_method','=','manufacture')]"/>
+            </filter>
+            <filter name='group_release_date' position="after">
+                <filter name='group_routing_detail'
+                        string="Routing Detail"
+                        context="{'group_by':'routing_detail'}"/>
+                <filter name='group_main_supplier'
+                        string="Vendor"
+                        context="{'group_by':'main_supplierinfo_id'}"/>
+            </filter>
         </field>
     </record>
 

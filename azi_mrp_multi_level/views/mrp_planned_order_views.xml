@@ -15,6 +15,7 @@
             <field name="product_id" position="after">
                 <field name="e_kanban"/>
                 <field name="routing_detail"/>
+                <field name="main_supplierinfo_id"/>
             </field>
         </field>
     </record>
@@ -30,6 +31,7 @@
             <field name="fixed" position="after">
                 <field name="e_kanban"/>
                 <field name="routing_detail"/>
+                <field name="main_supplierinfo_id"/>
             </field>
         </field>
     </record>
@@ -42,12 +44,16 @@
             <field name="mrp_area_id" position="after">
                 <field name="routing_detail"/>
                 <separator />
-                <filter string="Non-Kanban" name="non_kanban" domain="[('e_kanban','=',False)]"/>
-                <filter string="Kanban" name="kanban" domain="[('e_kanban','=',True)]"/>
+                <filter string="Non-Kanban" name="filter_non_kanban" domain="[('e_kanban','=',False)]"/>
+                <filter string="Kanban" name="filter_kanban" domain="[('e_kanban','=',True)]"/>
+                <separator />
+                <filter string="Buy" name="filter_buy" domain="[('mrp_action','=','buy')]"/>
+                <filter string="Make" name="filter_produce" domain="[('mrp_action','=','manufacture')]"/>
             </field>
             <filter name='due_date' position="after">
                 <filter name='group_routing_detail' string="Routing Detail" context="{'group_by':'routing_detail'}"/>
                 <filter name='group_mrp_action' string="Action" context="{'group_by':'mrp_action'}"/>
+                <filter name='group_main_supplierinfo' string="Vendor" context="{'group_by':'main_supplierinfo_id'}"/>
             </filter>
         </field>
     </record>
