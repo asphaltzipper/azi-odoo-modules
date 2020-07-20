@@ -4,6 +4,10 @@ from odoo import models, fields, api
 class MrpInventory(models.Model):
     _inherit = 'mrp.inventory'
 
+    e_kanban = fields.Boolean(
+        related='product_id.e_kanban',
+        store=True,
+    )
     routing_detail = fields.Char(
         string='Routing Detail',
         compute='_compute_routing_detail',
