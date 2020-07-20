@@ -13,10 +13,10 @@ class MrpInventory(models.Model):
         compute='_compute_routing_detail',
         store=True,
     )
-    main_supplierinfo_id = fields.Many2one(
-        comodel_name='product.supplierinfo',
+    main_supplier_id = fields.Many2one(
+        comodel_name='res.partner',
         string='Vendor',
-        related='product_mrp_area_id.main_supplierinfo_id',
+        related='product_mrp_area_id.main_supplier_id',
         store=True,
     )
 

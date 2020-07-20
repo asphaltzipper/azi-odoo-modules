@@ -15,7 +15,7 @@
             <field name="product_id" position="after">
                 <field name="e_kanban"/>
                 <field name="routing_detail"/>
-                <field name="main_supplierinfo_id"/>
+                <field name="main_supplier_id"/>
             </field>
         </field>
     </record>
@@ -31,7 +31,7 @@
             <field name="fixed" position="after">
                 <field name="e_kanban"/>
                 <field name="routing_detail"/>
-                <field name="main_supplierinfo_id"/>
+                <field name="main_supplier_id"/>
             </field>
         </field>
     </record>
@@ -51,9 +51,15 @@
                 <filter string="Make" name="filter_produce" domain="[('mrp_action','=','manufacture')]"/>
             </field>
             <filter name='due_date' position="after">
-                <filter name='group_routing_detail' string="Routing Detail" context="{'group_by':'routing_detail'}"/>
-                <filter name='group_mrp_action' string="Action" context="{'group_by':'mrp_action'}"/>
-                <filter name='group_main_supplierinfo' string="Vendor" context="{'group_by':'main_supplierinfo_id'}"/>
+                <filter name='group_routing_detail'
+                        string="Routing Detail"
+                        context="{'group_by':'routing_detail'}"/>
+                <filter name='group_mrp_action'
+                        string="Action"
+                        context="{'group_by':'mrp_action'}"/>
+                <filter name='group_main_supplier'
+                        string="Vendor"
+                        context="{'group_by':'main_supplier_id'}"/>
             </filter>
         </field>
     </record>

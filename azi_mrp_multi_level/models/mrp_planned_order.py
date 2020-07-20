@@ -18,10 +18,10 @@ class MrpPlannedOrder(models.Model):
         related='product_id.routing_detail',
         store='true',
     )
-    main_supplierinfo_id = fields.Many2one(
-        comodel_name='product.supplierinfo',
+    main_supplier_id = fields.Many2one(
+        comodel_name='res.partner',
         string='Vendor',
-        related='product_mrp_area_id.main_supplierinfo_id',
+        related='product_mrp_area_id.main_supplier_id',
         store=True,
     )
 
