@@ -62,37 +62,38 @@ class MrpProduction(models.Model):
 
     @api.multi
     def print_production_and_attachment(self):
-        for record in self:
-            report = self.env['ir.actions.report']._get_report_from_name('azi_mrp.report_mrporder_azi')
+        self.ensure_one()
+        report = self.env['ir.actions.report']._get_report_from_name('azi_mrp.report_mrporder_azi')
+        attachment = self.env['ir.attachment'].search(
+            [('mimetype', '=', 'application/pdf'),
+             ('res_model', '=', 'product.product'),
+             ('res_id', '=', self.product_id.id)],
+            order='priority desc, name', limit=1)
+        if not attachment:
             attachment = self.env['ir.attachment'].search(
                 [('mimetype', '=', 'application/pdf'),
-                 ('res_model', '=', 'product.product'),
-                 ('res_id', '=', record.product_id.id)],
+                 ('res_model', '=', 'product.template'),
+                 ('res_id', '=', self.product_id.product_tmpl_id.id)],
                 order='priority desc, name', limit=1)
-            if not attachment:
-                attachment = self.env['ir.attachment'].search(
-                    [('mimetype', '=', 'application/pdf'),
-                     ('res_model', '=', 'product.template'),
-                     ('res_id', '=', record.product_id.product_tmpl_id.id)],
-                    order='priority desc, name', limit=1)
-            report_bytes, _ = report.render_qweb_pdf(res_ids=record.id)
-            buffer = BytesIO(report_bytes)
-            production_pdf = PdfFileReader(buffer)
-            output = PdfFileWriter()
-            for page in range(production_pdf.getNumPages()):
-                output.addPage(production_pdf.getPage(page))
-            if attachment:
-                attachment_report = PdfFileReader(attachment._full_path(attachment.store_fname), 'rb')
-                for page in range(attachment_report.getNumPages()):
-                    output.addPage(attachment_report.getPage(page))
-            output_stream = BytesIO()
-            output.write(output_stream)
-            record.report_attach = base64.b64encode(output_stream.getvalue())
-            record.report_name = "Azi Production Order with Attachment.pdf"
-            output_stream.close()
-            return {
-                'type': 'ir.actions.act_url',
-                'name': 'Azi Production',
-                'url': '/web/content/mrp.production/%s/report_attach/Azi Production Order with Attachment.pdf?download=true' % (
-                    record.id),
-            }
+        report_bytes, _ = report.render_qweb_pdf(res_ids=self.id)
+        buffer = BytesIO(report_bytes)
+        production_pdf = PdfFileReader(buffer)
+        output = PdfFileWriter()
+        for page in range(production_pdf.getNumPages()):
+            output.addPage(production_pdf.getPage(page))
+        if attachment:
+            attachment_report = PdfFileReader(attachment._full_path(attachment.store_fname), 'rb')
+            for page in range(attachment_report.getNumPages()):
+                output.addPage(attachment_report.getPage(page))
+        output_stream = BytesIO()
+        output.write(output_stream)
+        self.report_attach = base64.b64encode(output_stream.getvalue())
+        self.report_name = "Azi Production Order with Attachment.pdf"
+        output_stream.close()
+        return {
+            'type': 'ir.actions.act_url',
+            'name': 'Azi Production',
+            'target': 'self',
+            'url': '/web/content/mrp.production/%s/report_attach/Azi Production Order with Attachment.pdf?download=true'
+                   % self.id,
+        }

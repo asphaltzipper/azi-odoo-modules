@@ -18,9 +18,6 @@
         <field name="model">mrp.production</field>
         <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
         <field name="arch" type="xml">
-            <header position="inside">
-                <button name="print_production_and_attachment" string="Print" type="object"/>
-            </header>
             <button name="%(mrp.action_mrp_production_moves)d" position="attributes">
                 <attribute name="attrs"/>
             </button>
@@ -83,6 +80,14 @@
         <field name="model_id" ref="mrp.model_mrp_production"/>
         <field name="state">code</field>
         <field name="code">records.action_cancel()</field>
+        <field name="binding_model_id" ref="mrp.model_mrp_production"/>
+    </record>
+
+    <record id="production_order_with_attachment_server_action" model="ir.actions.server">
+        <field name="name">Print: AZI Production Order with Attachments</field>
+        <field name="model_id" ref="mrp.model_mrp_production"/>
+        <field name="state">code</field>
+        <field name="code">action = records.print_production_and_attachment()</field>
         <field name="binding_model_id" ref="mrp.model_mrp_production"/>
     </record>
 
