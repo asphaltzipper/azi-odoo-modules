@@ -15,7 +15,7 @@ def find_text(node, path, out_type=str, true_condition="TRUE"):
     if out_type == bool:
         return tag.text.upper() == true_condition
     if out_type == str:
-        return tag.text.encode('utf-8')
+        return tag.text
     return out_type(tag.text)
 
 
