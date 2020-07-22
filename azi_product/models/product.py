@@ -79,10 +79,11 @@ class ProductProduct(models.Model):
             if prod._context.get('bin_size'):
                 prod.image_medium_big = prod.image_variant
             else:
+                image = prod.image_variant
                 if isinstance(image, pycompat.text_type):
                     image = image.encode('ascii')
                 resized_image = tools.image_resize_image(
-                    prod.image_variant,
+                    image,
                     size=(320, 320),
                     avoid_if_small=True)
                 prod.image_medium_big = resized_image
