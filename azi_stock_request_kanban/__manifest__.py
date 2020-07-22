@@ -13,7 +13,6 @@
     "depends": ["stock_request_kanban", "azi_stock"],
     "data": [
         'report/stock_request_kanban_template.xml',
-        'views/stock_request_kanban_views.xml',
     ],
     "auto_install": False,
     "application": False,

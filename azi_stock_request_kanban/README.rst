@@ -1,7 +1,6 @@
 AZI Stock Request Kanban
 ========================
 * Create new report "AZI Print Kanban
-* Modify `stock.request.kanban` to add a workflow
 
 Installation
 ============
@@ -14,4 +13,3 @@ Configuration
 Usage
 =====
 * AZI Print Kanban Report: Stock Requests > Master Data > Kanban Cards
-* Workflow: Stock Requests > Master Data > Kanban Cards
