@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api, tools
+from odoo.tools import pycompat
 
 
 class ProductTemplate(models.Model):
@@ -28,6 +29,8 @@ class ProductTemplate(models.Model):
         if image:
             if not vals.get('image'):
                 vals['image'] = image
+            if isinstance(image, pycompat.text_type):
+                image = image.encode('ascii')
             vals['image_medium_big'] = tools.image_resize_image(
                 image,
                 size=(320, 320),
@@ -48,6 +51,8 @@ class ProductTemplate(models.Model):
         if image:
             if not vals.get('image'):
                 vals['image'] = image
+            if isinstance(image, pycompat.text_type):
+                image = image.encode('ascii')
             vals['image_medium_big'] = tools.image_resize_image(
                 image,
                 size=(320, 320),
@@ -74,6 +79,8 @@ class ProductProduct(models.Model):
             if prod._context.get('bin_size'):
                 prod.image_medium_big = prod.image_variant
             else:
+                if isinstance(image, pycompat.text_type):
+                    image = image.encode('ascii')
                 resized_image = tools.image_resize_image(
                     prod.image_variant,
                     size=(320, 320),
