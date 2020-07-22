@@ -102,19 +102,25 @@
                     default_group_by="expected_date:week">
                 <field name="note"/>
                 <field name="product_tmpl_id"/>
-                <field name="sold" />
+                <field name="sold"/>
                 <field name="expected_date"/>
+                <field name="state"/>
                 <templates>
                     <t t-name="kanban-box">
                         <div t-attf-class="oe_kanban_card oe_kanban_global_click">
                             <div class="row">
-                                <div class="col-6">
-                                    <span t-attf-class="label #{record.sold.raw_value == True ? 'label-danger' : 'label-default'}">
-                                        <span t-if="record.sold.raw_value == True">Sold</span>
-                                        <span t-else="">Stock</span>
+                                <div class="col-8">
+                                    <span t-if="record.sold.raw_value == true">
+                                        <span t-attf-class="badge badge-primary">Sold</span>
+                                    </span>
+                                    <span t-else="">
+                                        <span t-attf-class="badge badge-info">Stock</span>
+                                    </span>
+                                    <span t-attf-class="badge #{['draft'].indexOf(record.state.raw_value) > -1 ? 'badge-danger' : ['submitted'].indexOf(record.state.raw_value) > -1 ? 'badge-warning' : ['open'].indexOf(record.state.raw_value) > -1 ? 'badge-success' : 'badge-secondary'}">
+                                        <t t-esc="record.state.value"/>
                                     </span>
                                 </div>
-                                <div class="col-6">
+                                <div class="col-4">
                                     <strong><div class="pull-right text-right"><field name="expected_date" widget="date"/></div></strong>
                                 </div>
                             </div>
