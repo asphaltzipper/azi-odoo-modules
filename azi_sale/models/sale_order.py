@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 
 
@@ -69,8 +69,19 @@ class SaleOrderLine(models.Model):
         readonly=True,
         compute='_compute_delivery_remaining_qty',
         store=True)
+    product_ids = fields.Many2many('product.product', compute='_compute_product_without_phantom')
 
     @api.depends('product_uom_qty', 'qty_delivered')
     def _compute_delivery_remaining_qty(self):
         for line in self:
             line.delivery_remaining_qty = line.product_uom_qty - line.qty_delivered
+
+    @api.depends('product_id')
+    def _compute_product_without_phantom(self):
+        for line in self:
+            product_ids = []
+            products = self.env['product.product'].search([('sale_ok', '=', True)])
+            for product in products:
+                if not self.env['mrp.bom'].search_count([('product_id', '=', product.id), ('type', '=', 'phantom')]):
+                    product_ids.append(product.id)
+            line.product_ids = [(6, _, product_ids)]
