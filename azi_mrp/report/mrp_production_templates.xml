@@ -132,7 +132,7 @@
                         </thead>
                         <tbody>
                             <t t-if="o.moves_plus">
-                                <tr t-foreach="o.moves_plus.sorted(key=lambda x: (x.e_kanban, ' | '.join(x.product_id.shelf_ids.sorted(key=lambda x: x.name).mapped('name')), x.product_id.default_code))" t-as="line">
+                                <tr t-foreach="o.moves_plus.sorted(key=lambda x: (x.e_kanban, ' | '.join(x.product_id.shelf_ids.sorted(key=lambda x: x.name or '').mapped('name')), x.product_id.default_code or ''))" t-as="line">
                                     <td style="width:15cm; font-size:85%;">
                                         [<span t-field="line.product_id.default_code"/>]
                                         <span t-field="line.product_id.name"/>
@@ -151,7 +151,7 @@
                                         <span t-field="line.product_uom.name" groups="product.group_uom"/>
                                     </td>
                                     <td class="text-center">
-                                        <span style="font-size:60%" t-esc="' | '.join(line.product_id.shelf_ids.sorted(key=lambda x: x.name).mapped('name'))"/>
+                                        <span style="font-size:60%" t-esc="' | '.join(line.product_id.shelf_ids.sorted(key=lambda x: x.name or '').mapped('name'))"/>
                                     </td>
                                 </tr>
                             </t>

@@ -98,6 +98,14 @@ class MultiLevelMrp(models.TransientModel):
         self.env['material.plan.log'].create({'type': 'info', 'message': message})
         self.env.cr.commit()
 
+        # report products with no product_mrp_area record
+        no_pma_products = self._get_products_missing_pma()
+        if no_pma_products:
+            for product in no_pma_products:
+                message = "Missing parameters for %s" % product.display_name
+                self.env['material.plan.log'].create({'type': 'warning', 'message': message})
+            self.env.cr.commit()
+
         result = super(MultiLevelMrp, self).run_mrp_multi_level()
 
         exec_stop = time.time()
@@ -108,3 +116,14 @@ class MultiLevelMrp(models.TransientModel):
         self.env.cr.commit()
 
         return result
+
+    @api.model
+    def _get_products_missing_pma(self):
+        pmas = self.env['product.mrp.area'].search([])
+        pma_prod_ids = pmas.mapped('product_id').ids
+        domain = [
+            ('product_id', 'not in', pma_prod_ids),
+            ('type', '=', 'product'),
+            ('eng_management', '=', True),
+        ]
+        return self.env['product.product'].search(domain)

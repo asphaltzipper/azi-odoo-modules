@@ -57,9 +57,11 @@ class ProductTemplate(models.Model):
     eng_type_id = fields.Many2one(
         related='product_variant_ids.eng_type_id')
     eng_mod_flag = fields.Boolean(
-        related='product_variant_ids.eng_mod_flag')
+        related='product_variant_ids.eng_mod_flag',
+        readonly=False)
     eng_hold_flag = fields.Boolean(
-        related='product_variant_ids.eng_hold_flag')
+        related='product_variant_ids.eng_hold_flag',
+        readonly=False)
     deprecated = fields.Boolean(
         string='Deprecated',
         compute='_compute_deprecated',
