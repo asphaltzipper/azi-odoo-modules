@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="mrp_planned_pick_kit_form" model="ir.ui.view">
+        <field name="name">mrp.planned.pick.kit.form</field>
+        <field name="model">mrp.planned.pick.kit</field>
+        <field name="arch" type="xml">
+            <form string="Pick Kit">
+                <header>
+                    <button string="Finish" name="action_done" type="object" states="new" class="oe_highlight"/>
+                    <button string="Hide Images" name="action_toggle_images" type="object" attrs="{'invisible': [('show_images', '=', False)]}"/>
+                    <button string="Show Images" name="action_toggle_images" type="object" attrs="{'invisible': [('show_images', '=', True)]}"/>
+                    <field name="state" widget="statusbar" clickable="False"/>
+                </header>
+                <sheet string="Pick Kit">
+                    <group>
+                        <field name="product_id"/>
+                        <field name="product_qty"/>
+                        <field name="show_images" invisible="1"/>
+                    </group>
+                    <group>
+                        <field name="line_ids" nolabel="1">
+                            <tree decoration-danger="available_qty - product_qty &lt; 0.0001" decoration-success="available_qty - product_qty &gt;= -0.0001">
+                                <field name="kit_id" invisible="1"/>
+                                <field name="show_images" invisible="1"/>
+                                <field name="product_id"/>
+                                <field name="routing_detail"/>
+                                <field name="type"/>
+                                <field name="supply_method"/>
+                                <field name="onhand_qty"/>
+                                <field name="reserved_qty"/>
+                                <field name="available_qty"/>
+                                <field name="product_qty"/>
+                                <field name="short"/>
+                                <field name="image_small" string="Image" widget="image" height="64" attrs="{'invisible': [('show_images', '=', False)]}"/>
+                            </tree>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_mrp_planned_pick_kit" model="ir.actions.act_window">
+        <field name="name">Planned Pick Kit</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">mrp.planned.pick.kit</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="mrp_planned_pick_kit.mrp_planned_pick_kit_form"/>
+    </record>
+
+</odoo>

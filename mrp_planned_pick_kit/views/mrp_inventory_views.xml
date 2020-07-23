@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="mrp_inventory_form" model="ir.ui.view">
+        <field name="name">mrp.inventory.form</field>
+        <field name="model">mrp.inventory</field>
+        <field name="inherit_id" ref="mrp_multi_level.mrp_inventory_form"/>
+        <field name="arch" type="xml">
+            <sheet position="before">
+                <header>
+                    <button string="Create Procurement"
+                            name="%(mrp_multi_level.act_mrp_inventory_procure)d"
+                            type="action"
+                            attrs="{'invisible':[('to_procure','&lt;=',0.0)]}"/>
+                    <button string="Create Kit"
+                            name="action_create_mfg_kit"
+                            type="object"
+                            attrs="{'invisible':[('to_procure','&lt;=',0.0)]}"/>
+                </header>
+            </sheet>
+            <field name="to_procure" position="before">
+                <field name="kit_qty"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="mrp_inventory_tree" model="ir.ui.view">
+        <field name="name">mrp.inventory.tree</field>
+        <field name="model">mrp.inventory</field>
+        <field name="inherit_id" ref="mrp_multi_level.mrp_inventory_tree"/>
+        <field name="arch" type="xml">
+            <field name="to_procure" position="before">
+                <field name="kit_qty"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="mrp_inventory_azi_search" model="ir.ui.view">
+        <field name="name">mrp.inventory.azi.search</field>
+        <field name="model">mrp.inventory</field>
+        <field name="inherit_id" ref="mrp_multi_level.mrp_inventory_search"/>
+        <field name="arch" type="xml">
+            <field name="mrp_area_id" position="after">
+                <field name="routing_detail"/>
+                <field name="main_supplier_id"/>
+            </field>
+            <filter name="filter_to_procure" position="after">
+                <separator />
+                <filter string="Non-Kanban" name="filter_non_kanban" domain="[('e_kanban','=',False)]"/>
+                <filter string="Kanban" name="filter_kanban" domain="[('e_kanban','=',True)]"/>
+                <separator />
+                <filter string="Buy" name="filter_buy" domain="[('supply_method','=','buy')]"/>
+                <filter string="Make" name="filter_produce" domain="[('supply_method','=','manufacture')]"/>
+            </filter>
+            <filter name='group_release_date' position="after">
+                <filter name='group_routing_detail'
+                        string="Routing Detail"
+                        context="{'group_by':'routing_detail'}"/>
+                <filter name='group_main_supplier'
+                        string="Vendor"
+                        context="{'group_by':'main_supplier_id'}"/>
+            </filter>
+        </field>
+    </record>
+
+</odoo>

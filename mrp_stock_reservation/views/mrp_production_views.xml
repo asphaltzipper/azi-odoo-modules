@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- add kit_done field -->
-    <!-- add raw move (un)reserve buttons -->
     <record id="view_picking_form_name" model="ir.ui.view">
         <field name="name">mrp.production.azi.form</field>
         <field name="model">mrp.production</field>
         <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
         <field name="arch" type="xml">
             <field name="routing_id" position="after">
-                <field name="kit_done" groups="mrp.group_mrp_routings"/>
                 <field name="_barcode_scanned" widget="barcode_handler" invisible="1"/>
             </field>
             <field name="origin" position="after">
@@ -22,7 +19,6 @@
         </field>
     </record>
 
-    <!-- add kit_done to MO tree/search views -->
     <record id="mrp_production_tree_reservations_view" model="ir.ui.view">
         <field name="name">mrp.production.tree.reservations</field>
         <field name="model">mrp.production</field>
@@ -33,19 +29,7 @@
             </field>
             <field name="availability" position="after">
                 <field name="percent_available" widget="percentage" groups="mrp.group_mrp_routings"/>
-                <field name="kit_done" groups="mrp.group_mrp_routings"/>
             </field>
-        </field>
-    </record>
-    <record id="view_mrp_production_filter_reservations" model="ir.ui.view">
-        <field name="name">mrp.production.search.reservations</field>
-        <field name="model">mrp.production</field>
-        <field name="inherit_id" ref="mrp.view_mrp_production_filter"/>
-        <field name="arch" type="xml">
-            <xpath expr="//filter[@name='done']" position="after">
-                    <filter string="Kit Done" domain="[('kit_done','=', True)]" name="kit_done" groups="mrp.group_mrp_routings"/>
-                    <filter string="Kit Not Done" domain="[('kit_done','=', False)]" name="kit_not_done" groups="mrp.group_mrp_routings"/>
-            </xpath>
         </field>
     </record>
 

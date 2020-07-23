@@ -8,12 +8,6 @@ class MrpProduction(models.Model):
     _name = "mrp.production"
     _inherit = ['mrp.production', 'barcodes.barcode_events_mixin']
 
-    kit_done = fields.Boolean(
-        string='Kit Done',
-        required=True,
-        default=False,
-        help="Parts kit is complete, and has been moved to starting workcenter")
-
     percent_available = fields.Float(
         string='Avail%',
         compute='_compute_percent_available',
@@ -35,11 +29,21 @@ class MrpProduction(models.Model):
             elif not order.move_raw_ids:
                 order.percent_available = 0.0
             else:
-                required_qty = sum(order.move_raw_ids.filtered(lambda r: r.state != 'cancel').mapped('product_qty'))
-                #TODO need to check this
-                # avail_qty = sum([sum(move.reserved_quant_ids.mapped('qty')) for move in order.move_raw_ids])
-                avail_qty = sum(order.move_raw_ids.filtered(lambda r: r.state != 'cancel' and r.product_id.type == 'consu').mapped('product_qty'))
-                order.percent_available = required_qty and avail_qty/required_qty or 0.0
+                # required_qty = sum(
+                #     order.move_raw_ids.filtered(
+                #         lambda r: r.state != 'cancel').mapped('product_qty'))
+                # avail_qty = sum(
+                #     order.move_raw_ids.filtered(
+                #         lambda r: r.state != 'cancel'
+                #     ).mapped('reserved_availability'))
+                required_qty = len(
+                    order.move_raw_ids.filtered(lambda r: r.state != 'cancel')
+                )
+                avail_qty = len(
+                    order.move_raw_ids.filtered(lambda r: r.state == 'assigned')
+                )
+                order.percent_available = required_qty and \
+                                          avail_qty/required_qty or 0.0
 
     @api.multi
     def action_production_from_barcode(self):

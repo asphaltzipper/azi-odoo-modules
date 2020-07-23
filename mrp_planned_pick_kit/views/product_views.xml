@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="product_template_form_mfg_product_kit" model="ir.ui.view">
+        <field name="name">template.stock.shelf.form</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="mfg_integration.product_template_form_mfg_product"/>
+        <field name="arch" type="xml">
+            <field name="formed" position="after">
+                <label for="mfg_kit_qty"/>
+                <div>
+                    <field name="mfg_kit_qty" class="oe_inline"/>  <button name="action_create_mfg_kit" type="object" string="Make Kit" class="oe_inline"/>
+                </div>
+            </field>
+        </field>
+    </record>
+
+</odoo>

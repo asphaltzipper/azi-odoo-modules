@@ -28,24 +28,31 @@
     <record id="product_template_form_mfg_product" model="ir.ui.view">
         <field name="name">product.template.mfg_product.inherit</field>
         <field name="model">product.template</field>
-        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
         <field name="arch" type="xml">
-            <xpath expr="//page[@name='sales']" position="after">
+            <notebook position="inside">
                 <page string="MFG">
                     <group>
-                        <group string="Manufacturing Summary">
+                        <group name="mfg_summary_left">
                             <label for="produce_delay" string="Mfg Lead Time" attrs="{'invisible':[('type','=','service')]}"/>
                             <div attrs="{'invisible':[('type','=','service')]}">
                                 <field name="produce_delay" class="oe_inline"/> days
                             </div>
+                            <field name="mfg_code"/>
+                            <field name="formed"/>
+                        </group>
+                        <group name="mfg_summary_right">
                             <field name="rm_product_id"/>
                             <field name="rm_material_code"/>
                             <field name="rm_gauge_code"/>
-                            <field name="raw_material_qty"/>
-                            <field name="formed"/>
-                            <field name="mfg_code"/>
-                            <button string="Create BOM" type="action" name="%(mfg_integration.action_mfg_create_bom_wizard)d"/>
+                            <label for="raw_material_qty"/>
+                            <div>
+                                <field name="raw_material_qty"/> <button string="Create BOM" type="action" name="%(mfg_integration.action_mfg_create_bom_wizard)d" class="oe_inline"/>
+                            </div>
+
                         </group>
+                    </group>
+                    <group>
                         <group string="Laser Parameters" class="col-xs-2 pull-right">
                             <field name="common_cutting"/>
                             <field name="common_cutting_qty"/>
@@ -59,14 +66,14 @@
                             <field name="cut_out_count"/>
                             <field name="bend_count"/>
                         </group>
-
-                        <group string="Sheet Metal Attributes" class="col-xs-2 pull-right" attrs="{'invisible': [('is_continuous', '=', False)]}">
-                            <field name="is_continuous" invisible="1"/>
-                            <field name="material_id"/>
-                            <field name="gauge_id"/>
-                        </group>
+                    </group>
+                    <group string="Sheet Metal Attributes" class="col-xs-2 pull-right" attrs="{'invisible': [('is_continuous', '=', False)]}">
+                        <field name="is_continuous" invisible="1"/>
+                        <field name="material_id"/>
+                        <field name="gauge_id"/>
                     </group>
                     <group string="Bill of Materials">
+                        <field name="default_code" invisible="1"/>
                         <field name="bom_ids" nolabel="1" context="{'default_product_tmpl_id': id, 'default_code': default_code}">
                             <tree>
                                 <field name="one_comp_product_id"/>
@@ -78,7 +85,7 @@
                         </field>
                     </group>
                 </page>
-            </xpath>
+            </notebook>
         </field>
     </record>
 
