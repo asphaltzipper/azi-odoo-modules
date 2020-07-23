@@ -19,7 +19,7 @@ class MrpProduction(models.Model):
         store=False)
 
     @api.multi
-    @api.depends('move_raw_ids.state', 'workorder_ids.move_raw_ids')
+    @api.depends('move_raw_ids', 'move_raw_ids.state')
     def _compute_percent_available(self):
         for order in self:
             if order.state == 'done':

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2020 Matt Taylor
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+
+<odoo>
+
+    <record id="stock_forecast_detail_wizard_form_view" model="ir.ui.view">
+        <field name="name">stock.forecast.detail.wizard.form</field>
+        <field name="model">stock.forecast.detail.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Forecasted Stock Move Schedule">
+                <group>
+                    <field name="product_id" />
+                    <field name="planned" />
+                    <field name="quoted" />
+                </group>
+                <footer>
+                    <button name="action_compute" type="object" string="Show Forecast" class="oe_highlight" />
+                    or
+                    <button special="cancel" string="Cancel" class="oe_link" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="stock_forecast_detail_wizard_action" model="ir.actions.act_window">
+        <field name="name">Stock Forecast Detail Wizard</field>
+        <field name="res_model">stock.forecast.detail.wizard</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="stock_forecast_detail_wizard_menu"
+        name="Stock Forecast Detail"
+        sequence="30"
+        action="stock_forecast_detail_wizard_action"
+        parent="mrp.menu_mrp_reporting"/>
+
+</odoo>

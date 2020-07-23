@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="product_template_form_view_material_analysis_button" model="ir.ui.view">
+        <field name="name">product.template.forecast.detail.button</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+            <button name="%(stock.action_stock_level_forecast_report_template)d"
+                    position="before">
+                <button type="object"
+                        name="action_planned_forecast_detail"
+                        attrs="{'invisible':[('type', '!=', 'product')]}"
+                        class="oe_stat_button" icon="fa-building-o">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="virtual_available" widget="statinfo" nolabel="1"/>
+                            <span attrs="{'invisible': [('outgoing_qty', '=', 0), ('incoming_qty', '=', 0)]}" groups="base.group_no_one">
+                                (-<field name="outgoing_qty" widget="statinfo" nolabel="1"/>+<field name="incoming_qty" widget="statinfo" nolabel="1"/>)
+                            </span>
+                            <field name="uom_name" class="ml4"/>
+                        </span>
+                        <span class="o_stat_text">Forecasted</span>
+                    </div>
+                </button>
+            </button>
+            <button name="%(stock.action_stock_level_forecast_report_template)d"
+                position="attributes">
+                <attribute name="invisible">1</attribute>
+            </button>
+        </field>
+    </record>
+
+    <record id="product_variant_form_view_material_analysis_button" model="ir.ui.view">
+        <field name="name">product.variant.forecast.detail.button</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view"/>
+        <field name="arch" type="xml">
+            <button name="%(stock.action_stock_level_forecast_report_product)d"
+                    position="before">
+                <button type="object"
+                        name="action_planned_forecast_detail"
+                        attrs="{'invisible':[('type', '!=', 'product')]}"
+                        class="oe_stat_button" icon="fa-building-o">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="virtual_available" widget="statinfo" nolabel="1"/>
+                            <span attrs="{'invisible': [('outgoing_qty', '=', 0), ('incoming_qty', '=', 0)]}" groups="base.group_no_one">
+                                (-<field name="outgoing_qty" widget="statinfo" nolabel="1"/>+<field name="incoming_qty" widget="statinfo" nolabel="1"/>)
+                            </span>
+                            <field name="uom_name" class="ml4"/>
+                        </span>
+                        <span class="o_stat_text">Forecasted</span>
+                    </div>
+                </button>
+            </button>
+            <button name="%(stock.action_stock_level_forecast_report_product)d"
+                position="attributes">
+                <attribute name="invisible">1</attribute>
+            </button>
+        </field>
+    </record>
+
+</odoo>

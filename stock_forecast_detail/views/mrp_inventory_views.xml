@@ -6,15 +6,11 @@
         <field name="model">mrp.inventory</field>
         <field name="inherit_id" ref="mrp_multi_level.mrp_inventory_form"/>
         <field name="arch" type="xml">
-            <button name="%(mrp_multi_level.act_mrp_inventory_procure)d" position="after">
-                <button string="Create Kit"
-                        name="action_create_mfg_kit"
-                        type="object"
-                        attrs="{'invisible':[('to_procure','&lt;=',0.0)]}"/>
+            <button name="%(mrp_multi_level.act_mrp_inventory_procure)d" position="before">
+                <button string="Forecast Detail"
+                        name="action_planned_forecast_detail"
+                        type="object"/>
             </button>
-            <field name="to_procure" position="before">
-                <field name="kit_qty"/>
-            </field>
         </field>
     </record>
 
@@ -23,8 +19,10 @@
         <field name="model">mrp.inventory</field>
         <field name="inherit_id" ref="mrp_multi_level.mrp_inventory_tree"/>
         <field name="arch" type="xml">
-            <field name="to_procure" position="before">
-                <field name="kit_qty"/>
+            <field name="running_availability" position="after">
+                <button string="Forecast Detail"
+                        name="action_planned_forecast_detail"
+                        icon="fa-bars" type="object"/>
             </field>
         </field>
     </record>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="stock_forecast_detail_line_view_search" model="ir.ui.view">
+        <field name="name">stock.forecast.detail.line.search</field>
+        <field name="model">stock.forecast.detail.line</field>
+        <field name="arch" type="xml">
+            <search string="Product">
+                <filter string='Late' name="filter_late" icon="terp-accessories-achiver" domain="[('late', '=', True)]" />
+                <group expand='0' string='Group by...'>
+                    <filter string='Status' name="group_status" domain="[]" context="{'group_by' : 'status'}"/>
+                    <filter string='Type' name="group_type" domain="[]" context="{'group_by' : 'tx_type'}"/>
+                    <filter string='Week' name="group_week" domain="[]" context="{'group_by' : 'tx_date:week'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="stock_forecast_detail_line_view_form" model="ir.ui.view">
+        <field name="name">stock.forecast.detail.line.form</field>
+        <field name="model">stock.forecast.detail.line</field>
+        <field name="arch" type="xml">
+            <form string="Stock Transactions" create="false" edit="false">
+                <sheet>
+                    <field name="product_id" />
+                    <group col="4">
+                        <group>
+                            <field name="status" />
+                            <field name="origin" />
+                            <field name="tx_type" />
+                            <field name="tx_date" />
+                            <field name="late" />
+                        </group>
+                        <group>
+                            <field name="before_qty" />
+                            <field name="product_qty" />
+                            <field name="after_qty" />
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="stock_forecast_detail_line_view_tree" model="ir.ui.view">
+        <field name="name">stock.forecast.detail.line.tree</field>
+        <field name="model">stock.forecast.detail.line</field>
+        <field name="arch" type="xml">
+            <tree string="Stock Transactions" create="false" edit="false">
+                <field name="product_id" />
+                <field name="tx_date" />
+                <field name="tx_type" />
+                <field name="before_qty" />
+                <field name="product_qty" />
+                <field name="after_qty" />
+                <field name="late" />
+                <field name="status" />
+                <field name="origin" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="stock_forecast_detail_line_view_graph" model="ir.ui.view">
+        <field name="name">stock.forecast.detail.line.graph</field>
+        <field name="model">stock.forecast.detail.line</field>
+        <field name="arch" type="xml">
+            <graph string="Stock Transactions" type="line">
+                <field name="tx_date" type="col" interval="day"/>
+                <field name="tx_type" type="row" />
+                <field name="product_qty" type="measure" />
+            </graph>
+        </field>
+    </record>
+
+    <record id="stock_forecast_detail_line_view_pivot" model="ir.ui.view">
+        <field name="name">stock.forecast.detail.line.pivot</field>
+        <field name="model">stock.forecast.detail.line</field>
+        <field name="arch" type="xml">
+            <pivot string="Stock Transactions">
+                <field name="tx_date" type="col" interval="week"/>
+                <field name="tx_type" type="row" />
+                <field name="product_qty" type="measure" />
+            </pivot>
+        </field>
+    </record>
+
+</odoo>
