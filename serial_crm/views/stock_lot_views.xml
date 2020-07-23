@@ -13,6 +13,13 @@
         </field>
     </record>
 
+    <record id="stock.view_production_lot_form" model="ir.ui.view">
+        <field name="priority" eval="1"/>
+    </record>
+    <record id="stock.view_production_lot_form_simple" model="ir.ui.view">
+        <field name="priority" eval="10"/>
+    </record>
+
     <record id="production_lot_crm_integration_form" model="ir.ui.view">
         <field name="name">lot.production.sn_integrate</field>
         <field name="model">stock.production.lot</field>
