@@ -19,7 +19,7 @@ AZI Specialized Customizations to Sales
 * Prevent Children of Children
 * Add priority to Contact Addresses
     """,
-    "depends": ['sale', 'crm', 'sales_team_industry', 'delivery', 'mrp'],
+    "depends": ['sale', 'crm', 'sales_team_industry', 'delivery'],
     'data': [
         'views/crm_team_view.xml',
         'views/res_partner_views.xml',
