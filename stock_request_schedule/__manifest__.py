@@ -15,11 +15,13 @@ a master production schedule.
         'stock_request',
         'stock_request_submit',
         'sale',
+        'azi_mrp',
     ],
     "data": [
         'security/ir.model.access.csv',
         'views/product_views.xml',
         'views/stock_request_views.xml',
+        'wizard/change_stock_request_views.xml',
         'report/managing_independent_demand_views.xml',
     ],
     "installable": True,
