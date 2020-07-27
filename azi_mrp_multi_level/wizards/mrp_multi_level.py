@@ -122,7 +122,7 @@ class MultiLevelMrp(models.TransientModel):
         pmas = self.env['product.mrp.area'].search([])
         pma_prod_ids = pmas.mapped('product_id').ids
         domain = [
-            ('product_id', 'not in', pma_prod_ids),
+            ('id', 'not in', pma_prod_ids),
             ('type', '=', 'product'),
             ('eng_management', '=', True),
         ]
