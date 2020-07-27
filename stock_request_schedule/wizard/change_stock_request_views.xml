@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_change_stock_request_form" model="ir.ui.view">
+        <field name="name">change.stock.request.form</field>
+        <field name="model">change.stock.request</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="expected_date" required="1"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="change_date_of_request" string="Change Date Of Request" type="object" class="btn-primary"/>
+                    <button special="cancel" string="Cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="change_stock_request_action" model="ir.actions.act_window">
+        <field name="name">Change Date of Stock Request</field>
+        <field name="res_model">change.stock.request</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="stock_request.model_stock_request"/>
+    </record>
+
+</odoo>
