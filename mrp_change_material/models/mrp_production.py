@@ -19,12 +19,18 @@ class MrpProduction(models.Model):
             # We can handle this here for non-tracked raw materials.  It may not behave as expected when there isn't
             # enough material to reserve the increased quantity.
             # TODO: This really should be handled by customizing the change.production.qty wizard
+            finished_move = order.move_finished_ids.filtered(lambda x: x.product_id == order.product_id)
+            finished_move_lines = finished_move.move_line_ids
+            lot_produced = finished_move_lines and finished_move_lines[0].lot_id
             moves_added = order.move_raw_ids.filtered(
                 lambda x: (x.has_tracking == 'none') and (x.state not in ('done', 'cancel')) and x.added_rm)
             for move in moves_added:
                 if move.unit_factor:
                     rounding = move.product_uom.rounding
                     move.quantity_done = float_round(order.product_qty * move.unit_factor, precision_rounding=rounding)
+                if lot_produced:
+                    # assign all added consumption to the first lot produced
+                    move.move_line_ids.update({'lot_produced_id': lot_produced.id})
 
             # There may be a gap here:
             # If the user adds serial-tracked raw material, after clicking the Plan button, the move_lot for the work
