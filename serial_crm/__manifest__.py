@@ -23,6 +23,7 @@
         'views/sale_order_views.xml',
         'report/lot_serial_report.xml',
         'report/serial_crm_reports.xml',
+        'data/serial_crm_data.xml',
     ],
     "installable": True,
     "auto_install": False,
