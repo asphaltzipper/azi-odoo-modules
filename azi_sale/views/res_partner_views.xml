@@ -20,6 +20,9 @@
             <xpath expr="//notebook/page/field/kanban" position="attributes">
                 <attribute name="default_order">priority desc, name</attribute>
             </xpath>
+            <xpath expr="//field[@name='child_ids']/form/sheet" position="inside">
+                <field name="priority" invisible="1"/>
+            </xpath>
             <xpath expr="//notebook/page/field/kanban/templates" position="replace">
                 <templates>
                     <t t-name="kanban-box">
