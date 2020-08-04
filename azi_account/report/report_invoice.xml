@@ -67,6 +67,17 @@
             <xpath expr="//t[@t-call='web.external_layout']" position="attributes">
                 <attribute name="t-call"></attribute>
             </xpath>
+            <xpath expr="//t[@t-foreach='o.amount_by_group']" position="replace">
+                <t t-set="total_tax" t-value="sum([group[1] for group in o.amount_by_group])"/>
+                <tr style="">
+                    <t t-if="total_tax">
+                        <td>Total Tax</td>
+                        <td class="text-right o_price_total">
+                            <span t-esc="total_tax" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                        </td>
+                    </t>
+                </tr>
+            </xpath>
         </template>
 
         <template id="azi_invoice_no_header_footer_main">
