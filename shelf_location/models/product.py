@@ -7,7 +7,7 @@ class ProductTemplate(models.Model):
 
     shelf_ids = fields.Many2many(
         comodel_name='stock.shelf',
-        string="Stock Shelves")
+        string="Stock Shelves", copy=False)
 
     shelf_list = fields.Char(
         string="Shelf List",
