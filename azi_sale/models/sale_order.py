@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api
-from odoo.exceptions import UserError
+from odoo import models, fields, api, _
+from odoo.exceptions import UserError, ValidationError
 
 
 class SaleOrder(models.Model):
@@ -74,3 +74,20 @@ class SaleOrderLine(models.Model):
     def _compute_delivery_remaining_qty(self):
         for line in self:
             line.delivery_remaining_qty = line.product_uom_qty - line.qty_delivered
+
+    @api.onchange('product_id')
+    def _onchange_product(self):
+        if self.product_id:
+            if self.env['mrp.bom'].sudo().search_count([('product_id', '=', self.product_id.id),
+                                                        ('type', '=', 'phantom')]):
+                return {'warning': {'title': _('Warning'),
+                                    'message': _('You can not choose %s because it has a '
+                                                 'phantom BOM') % self.product_id.display_name}}
+
+    @api.constrains('product_id')
+    def _check_product_is_phantom(self):
+        for record in self:
+            if self.env['mrp.bom'].sudo().search_count([('product_id', '=', record.product_id.id),
+                                                        ('type', '=', 'phantom')]):
+                raise ValidationError(_('You can not choose %s because it has a '
+                                        'phantom BOM') % record.product_id.display_name)
