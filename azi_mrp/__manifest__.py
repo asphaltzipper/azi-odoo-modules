@@ -26,9 +26,11 @@ AZI Specialized Customizations to MRP
         'electronic_kanban',
     ],
     'data': [
+        'views/report_bom_template.xml',
         'views/mrp_view_changes.xml',
         'report/mrp_report.xml',
         'report/mrp_production_templates.xml',
+        'report/mrp_report_bom_structure.xml',
         'views/production_move_analysis.xml',
         'views/product_views.xml',
         'wizards/compile_product_file_views.xml',
