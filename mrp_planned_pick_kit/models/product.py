@@ -39,7 +39,8 @@ class ProductTemplate(models.Model):
                 raise UserError(_("Can't set Kit quantity because there are"
                                   " multiple variants for product %s"
                                   % rec.display_name))
-            rec.product_variant_ids.mfg_kit_qty = rec.mfg_kit_qty
+            if rec.product_variant_ids:
+                rec.product_variant_ids.mfg_kit_qty = rec.mfg_kit_qty
 
 
 class ProductProduct(models.Model):

@@ -6,8 +6,9 @@
         <field name="model">engineering.category</field>
         <field name="arch" type="xml">
             <search string="Engineering Categories">
-                <field name="name" string="Engineering Categories"/>
-                <field name="parent_id"/>
+                <field name="complete_name" string="Full Name"/>
+                <field name="name" string="Name"/>
+                <field name="parent_id" string="Parent Name"/>
             </search>
         </field>
     </record>
