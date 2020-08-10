@@ -63,10 +63,7 @@
         ('letterhead-'+(object.number or '').replace('/','')+'.pdf')"
         />
 
-        <template id="azi_invoice_no_header_footer" inherit_id="account.report_invoice_document" primary="True">
-            <xpath expr="//t[@t-call='web.external_layout']" position="attributes">
-                <attribute name="t-call"></attribute>
-            </xpath>
+        <template id="report_invoice_document_inherit" inherit_id="account.report_invoice_document">
             <xpath expr="//t[@t-foreach='o.amount_by_group']" position="replace">
                 <t t-set="total_tax" t-value="sum([group[1] for group in o.amount_by_group])"/>
                 <tr style="">
@@ -77,6 +74,13 @@
                         </td>
                     </t>
                 </tr>
+            </xpath>
+            <xpath expr="//p[@t-if='o.reference']" position="replace"/>
+        </template>
+
+        <template id="azi_invoice_no_header_footer" inherit_id="account.report_invoice_document" primary="True">
+            <xpath expr="//t[@t-call='web.external_layout']" position="attributes">
+                <attribute name="t-call"></attribute>
             </xpath>
         </template>
 
