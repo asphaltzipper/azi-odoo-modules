@@ -21,6 +21,7 @@
             <field name="debit_credit" eval="False"/>
             <field name="analytic" eval="True"/>
             <field name="date_range" eval="False"/>
+            <field name="hierarchy_option" eval="False"/>
             <field name='parent_id' ref='account_reports.account_reports_partners_reports_menu'/>
         </record>
 
@@ -107,6 +108,7 @@
             <field name="name">AZI Profit and Loss</field>
             <field name="debit_credit" eval="False"/>
             <field name="analytic" eval="True"/>
+            <field name="hierarchy_option" eval="False"/>
             <field name='parent_id' ref='account.account_reports_legal_statements_menu'/>
         </record>
 
@@ -520,6 +522,7 @@
             <field name="debit_credit" eval="False"/>
             <field name="date_range" eval="False"/>
             <field name="analytic" eval="True"/>
+            <field name="hierarchy_option" eval="False"/>
             <field name='parent_id' ref='account.account_reports_legal_statements_menu'/>
         </record>
 
