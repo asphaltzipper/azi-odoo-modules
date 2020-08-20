@@ -29,8 +29,10 @@ class StockForecastDetailLine(models.TransientModel):
             ('ppo', 'In Planned PO'),
             ('pmo', 'In Planned MO'),
             ('ppick', 'Out Planned Pick'),
-            ('pxfer', 'Out Planned Transfer'),
-            ('pmove', 'Out Planned Move'),
+            ('pxfer', 'In Planned Transfer'),
+            ('iphantom', 'In Phantom Move'),
+            ('ophantom', 'Out Phantom Move'),
+            ('ipmove', 'In Planned Move'),
         ],
         string='Tx Type',
         help="PO: Inbound from vendor\n"

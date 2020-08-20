@@ -17,7 +17,7 @@ Create and manage picking kits
     "depends": [
         'stock',
         'mrp',
-        'mrp_multi_level',
+        'azi_mrp_multi_level',
     ],
     "data": [
         'views/mrp_planned_pick_kit_views.xml',

@@ -81,10 +81,15 @@ class StockForecastDetailWizard(models.TransientModel):
             ('mrp_type', '=', 'd'),
         ]
         mrp_moves = self.env['mrp.move'].search(mrp_domain)
+        supply_method = mrp_moves and mrp_moves[0].product_mrp_area_id.supply_method
         for move in mrp_moves:
+            if supply_method == 'phantom':
+                tx_type = 'ophantom'
+            else:
+                tx_type = 'ppick'
             lines.append({
                 'product_id': self.product_id.id,
-                'tx_type': 'ppick',
+                'tx_type': tx_type,
                 'tx_date': move.mrp_date,
                 'product_qty': move.mrp_qty,
                 'after_qty': 0.0,
@@ -107,8 +112,12 @@ class StockForecastDetailWizard(models.TransientModel):
                 tx_type = 'ppo'
             elif order.mrp_action == 'manufacture':
                 tx_type = 'pmo'
+            elif order.mrp_action == 'phantom':
+                tx_type = 'iphantom'
             else:
-                tx_type = 'pmove'
+                import pdb
+                pdb.set_trace()
+                tx_type = 'ipmove'
             lines.append({
                 'product_id': self.product_id.id,
                 'tx_type': tx_type,
