@@ -44,7 +44,15 @@ class ProductionLot(models.Model):
     reval_ids = fields.One2many(
         comodel_name='stock.lot.revaluations',
         inverse_name='lot_id',
-        string='Revaluation line quants')
+        string='Revaluation lines')
+
+    move_line_ids = fields.One2many(
+        comodel_name='stock.move.line',
+        inverse_name='lot_id',
+        string='Moves',
+        readonly=True,
+        domain=[('state', '=', 'done')],
+    )
 
     state = fields.Selection(
         selection=[
@@ -100,18 +108,21 @@ class ProductionLot(models.Model):
         self.name = self.env['ir.sequence'].next_by_code('azi.fg.serial')
 
     @api.multi
-    @api.depends('quant_ids.location_id')
+    @api.depends('move_line_ids')
     def _compute_state(self):
         for serial in self:
             if serial.product_id.tracking == 'lot':
                 serial.state = 'lot'
                 continue
-            if not serial.quant_ids:
+            moves_in_out = serial.move_line_ids.filtered(
+                lambda x: x.state == 'done' and
+                          (x.location_id.usage == 'internal' and
+                           x.location_dest_id.usage != 'internal') or
+                          (x.location_id.usage != 'internal' and
+                           x.location_dest_id.usage == 'internal')
+            )
+            if not moves_in_out:
                 serial.state = 'assigned'
                 continue
-            # sum quant_ids quantity, grouping by location
-            # for serials, only one location can have a net quantity, and the quantity must be unity (1)
-            # we sort locations by descending net quantity, and take the first record
-            locs = serial.quant_ids.read_group(domain=[('lot_id', '=', serial.id)], fields=['location_id', 'quantity'], groupby=['location_id'], orderby='quantity desc')
-            loc = self.env['stock.location'].browse(locs[0]['location_id'][0])
-            serial.state = loc.usage
+            last_move = moves_in_out.sorted(lambda x: x.date)[-1]
+            serial.state = last_move.location_dest_id.usage

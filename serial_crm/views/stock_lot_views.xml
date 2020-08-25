@@ -35,6 +35,18 @@
             </xpath>
             <group name="main_group" position="after">
                 <notebook>
+                    <page name="move_lines" string="Moves">
+                        <field name="move_line_ids">
+                            <tree>
+                                <field name="date"/>
+                                <field name="state"/>
+                                <field name="reference"/>
+                                <field name="location_id"/>
+                                <field name="location_dest_id"/>
+                                <field name="price_unit"/>
+                            </tree>
+                        </field>
+                    </page>
                     <page name="changes" string="BOM Changes">
                         <field name="change_ids">
                             <tree editable="bottom">
