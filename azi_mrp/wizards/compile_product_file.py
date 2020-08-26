@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 import base64
 from io import BytesIO
 from PyPDF2 import PdfFileReader, PdfFileWriter
 
 
 from odoo import fields, models, api, _
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, UserError
 
 
 class CompileProductFile(models.TransientModel):
@@ -21,75 +20,56 @@ class CompileProductFile(models.TransientModel):
         if self.bom_depth <= 0:
             raise ValidationError(_('BOM Depth should be greater than zero'))
 
-    def _get_returned_attachment(self, attachments_with_order):
-        returned_attachments = []
-        if self.included_files == 'high':
-            for attachment in attachments_with_order:
-                to_attach = attachment[3].filtered(lambda a: a.priority == '3' and a.mimetype.split('/')[1] == 'pdf')
-                to_attach and returned_attachments.extend(to_attach)
+    def _get_structure_recursion(self, product, limit, path='', level=0):
+        current_path = path + '|' + product.display_name
+        stack = {current_path: product}
+        if level >= limit or not product.bom_ids:
+            return stack
+        for line in product.bom_ids[0].bom_line_ids:
+            stack.update(self._get_structure_recursion(
+                line.product_id, limit, current_path, level+1))
+        return stack
+
+    def _get_attachments(self, product, get_all):
+        attachments = self.env['ir.attachment'].search([
+            '|',
+            '&', ('res_model', '=', 'product.product'), ('res_id', '=', product.id),
+            '&', ('res_model', '=', 'product.template'), ('res_id', '=', product.product_tmpl_id.id),
+        ], order='priority desc')
+        if attachments and not get_all:
+            # return only the highest priority attachment
+            return attachments[0]
         else:
-            for attachment in attachments_with_order:
-                to_attach = attachment[3].filtered(lambda a: a.mimetype.split('/')[1] == 'pdf')
-                to_attach and returned_attachments.extend(to_attach)
-        return returned_attachments
+            return attachments
 
     def action_show_files(self):
         context = self._context.copy()
-        returned_attachments = []
+        bom_structure = {}
         output = PdfFileWriter()
+
+        # get bom structure
         for active_id in context['active_ids']:
-            # structure (level, parent_product_id, product_id, attachment)
-            attachments_with_level = []
-            level = 1
             if context['active_model'] == 'product.template':
-                bom = self.env['mrp.bom'].search([('product_tmpl_id', '=', active_id)], limit=1)
+                top_template = self.env['product.template'].browse(active_id)
+                if len(top_template.product_variant_ids) > 1:
+                    raise UserError(_(
+                        "Can't compile PDFs for template with multiple variants:\n%s" % top_template))
+                top_product = top_template.product_variant_ids
             else:
-                bom = self.env['mrp.bom'].search([('product_id', '=', active_id)], limit=1)
-            attach = self.env['ir.attachment'].search([
-                '|',
-                '&', ('res_model', '=', 'product.product'), ('res_id', '=', bom.product_id.id),
-                '&', ('res_model', '=', 'product.template'), ('res_id', '=', bom.product_tmpl_id.id)])
-            attachments_with_level.append((level, bom.product_id.id, bom.product_id.id, attach))
-            for line in bom.bom_line_ids:
-                level = 1
-                product = line.product_id
-                i = 1
-                attach = self.env['ir.attachment'].search([
-                    '|',
-                    '&', ('res_model', '=', 'product.product'), ('res_id', '=', product.id),
-                    '&', ('res_model', '=', 'product.template'), ('res_id', '=', product.product_tmpl_id.id)])
-                attachments_with_level.append((level, line.bom_id.product_id.id, line.product_id.id, attach))
-                childs = line.child_line_ids
-                while childs and i < self.bom_depth:
-                    level += 1
-                    for child in childs:
-                        attach = self.env['ir.attachment'].search([
-                            '|',
-                            '&', ('res_model', '=', 'product.product'), ('res_id', '=', child.product_id.id),
-                            '&', ('res_model', '=', 'product.template'),
-                            ('res_id', '=', child.product_id.product_tmpl_id.id)])
-                        attachments_with_level.append((level, child.bom_id.product_id.id,
-                                                                  child.product_id.id, attach))
-                    i += 1
-                    childs = childs.mapped('child_line_ids')
-            attachments_with_order = []
-            for i in range(1, self.bom_depth + 1):
-                temp = [attach for attach in attachments_with_level if attach[0] == i]
-                if not attachments_with_order:
-                    attachments_with_order = temp
-                else:
-                    if temp:
-                        index = [attach[2] for attach in attachments_with_order].index(temp[0][1])
-                        for item in temp:
-                            index = index + 1
-                            attachments_with_order.insert(index, item)
-                    else:
-                        break
-            returned_attachments.extend(self._get_returned_attachment(attachments_with_order))
-        for attachment in returned_attachments:
-            attachment_report = PdfFileReader(attachment._full_path(attachment.store_fname), 'rb')
-            for page in range(attachment_report.getNumPages()):
-                output.addPage(attachment_report.getPage(page))
+                top_product = self.env['product.product'].browse(active_id)
+            bom_structure.update(self._get_structure_recursion(top_product, self.bom_depth))
+
+        # get and compile pdf attachments
+        for key in sorted(bom_structure):
+            attachments = self._get_attachments(
+                bom_structure[key],
+                self.included_files == 'all')
+            for attachment in attachments:
+                attachment_report = PdfFileReader(attachment._full_path(attachment.store_fname), 'rb')
+                for page in range(attachment_report.getNumPages()):
+                    output.addPage(attachment_report.getPage(page))
+
+        # encode and return compiled document
         output_stream = BytesIO()
         output.write(output_stream)
         self.compiled_file = base64.b64encode(output_stream.getvalue())
@@ -98,6 +78,5 @@ class CompileProductFile(models.TransientModel):
         return {
             'type': 'ir.actions.act_url',
             'name': 'Compiled PDFs',
-            'url': '/web/content/compile.product.file/%s/compiled_file/Compiled PDFs.pdf?download=true' % (
-                self.id),
+            'url': '/web/content/compile.product.file/%s/compiled_file/Compiled PDFs.pdf?download=true' % self.id,
         }
