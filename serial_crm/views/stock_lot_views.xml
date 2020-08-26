@@ -37,7 +37,7 @@
                 <notebook>
                     <page name="move_lines" string="Moves">
                         <field name="move_line_ids">
-                            <tree>
+                            <tree default_order="date">
                                 <field name="date"/>
                                 <field name="state"/>
                                 <field name="reference"/>
