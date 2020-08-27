@@ -303,6 +303,10 @@ class MrpWoProduce(models.TransientModel):
     @api.multi
     def complete_workorders(self):
         last_workorder = self.production_id.workorder_ids.filtered(lambda x: not x.next_work_order_id)[0]
+        # delete all existing move lines
+        self.consume_line_ids.mapped('move_id.move_line_ids').\
+            filtered(lambda x: x.state not in ['done', 'cancel']).unlink()
+        # create new move lines
         for line in self.consume_line_ids:
             if not line.lot_id:
                 raise UserError(_('Please enter a lot or serial number for component %s !' % line.product_id.display_name))
@@ -311,7 +315,6 @@ class MrpWoProduce(models.TransientModel):
                     line.qty_done,
                     precision_rounding=line.product_id.uom_id.rounding) != 0:
                 raise UserError(_('Please correct Consumed quantity for lot %s !' % line.lot_id.display_name))
-            line.move_id.move_line_ids.filtered(lambda x: x.state not in ['done', 'cancel']).unlink()
             line.move_id.move_line_ids.create({
                 'move_id': line.move_id.id,
                 'lot_id': line.lot_id.id,
@@ -372,6 +375,10 @@ class MrpWoProduce(models.TransientModel):
                 produce_move._set_quantity_done(self.product_qty)
 
         # by-products with tracking
+        # delete all existing move lines
+        self.produce_line_ids.mapped('move_id.move_line_ids').\
+            filtered(lambda x: x.state not in ['done', 'cancel']).unlink()
+        # create new move lines
         for line in self.produce_line_ids:
             if not line.lot_id:
                 raise UserError(_('Please enter a lot or serial number for by-product %s !' % line.product_id.display_name))
@@ -380,7 +387,6 @@ class MrpWoProduce(models.TransientModel):
                     line.qty_done,
                     precision_rounding=line.product_id.uom_id.rounding) != 0:
                 raise UserError(_('Please correct Produced quantity for lot %s !' % line.lot_id.display_name))
-            line.move_id.move_line_ids.filtered(lambda x: x.state not in ['done', 'cancel']).unlink()
             line.move_id.move_line_ids.create({
                 'move_id': line.move_id.id,
                 'lot_id': line.lot_id.id,
