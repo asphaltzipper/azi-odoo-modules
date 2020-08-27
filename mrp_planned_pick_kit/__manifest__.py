@@ -24,5 +24,6 @@ Create and manage picking kits
         'views/product_views.xml',
         'views/mrp_production_views.xml',
         'views/mrp_inventory_views.xml',
+        'wizards/mrp_planned_product_views.xml',
     ],
 }
