@@ -65,7 +65,11 @@ class CompileProductFile(models.TransientModel):
                 bom_structure[key],
                 self.included_files == 'all')
             for attachment in attachments:
-                attachment_report = PdfFileReader(attachment._full_path(attachment.store_fname), 'rb')
+                try:
+                    attachment_report = PdfFileReader(attachment._full_path(attachment.store_fname), 'rb')
+                except Exception as e:
+                    value = '. '.join(e.args)
+                    raise UserError(_("Failed to include %s:\n%s" % (attachment.name, value)))
                 for page in range(attachment_report.getNumPages()):
                     output.addPage(attachment_report.getPage(page))
 
