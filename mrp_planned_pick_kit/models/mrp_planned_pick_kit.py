@@ -73,7 +73,7 @@ class MrpPlannedPickKit(models.TransientModel):
         self.write({'state': 'done'})
 
 
-class MrpPlannedPickKit(models.TransientModel):
+class MrpPlannedPickKitLine(models.TransientModel):
     _name = 'mrp.planned.pick.kit.line'
     _description = 'MRP Planned Pick Kit Line'
     _order = 'product_id'
@@ -174,7 +174,7 @@ class MrpPlannedPickKit(models.TransientModel):
                 rec.supply_method = rule.action if rule else 'none'
 
     @api.model
-    @api.depends('product_id')
+    @api.depends('kit_id.product_qty', 'product_id')
     def _compute_available_qty(self):
         for rec in self:
             if rec.product_id.type == 'product':
