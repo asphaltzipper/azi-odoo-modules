@@ -32,8 +32,8 @@ class CompileProductFile(models.TransientModel):
 
     def _get_attachments(self, product, get_all):
         attachments = self.env['ir.attachment'].search([
-            'res_field', '=', False,
-            'mimetype', '=', 'application/pdf',
+            ('res_field', '=', False),
+            ('mimetype', '=', 'application/pdf'),
             '|',
             '&', ('res_model', '=', 'product.product'), ('res_id', '=', product.id),
             '&', ('res_model', '=', 'product.template'), ('res_id', '=', product.product_tmpl_id.id),
