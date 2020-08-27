@@ -91,6 +91,7 @@ class MultiLevelMrp(models.TransientModel):
         message = "Plan complete with execution time=%0.1f minutes" % (
                 (exec_stop - exec_start) / 60)
         self.env.user.notify_warning(message=message, title="MRP Complete", sticky=True)
+        self.env.cr.commit()
         self.env['material.plan.log'].create({'type': 'info', 'message': message})
         self.env.cr.commit()
 

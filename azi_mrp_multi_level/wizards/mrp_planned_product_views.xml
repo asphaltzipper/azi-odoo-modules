@@ -5,7 +5,7 @@
         <field name="model">mrp.planned.product</field>
         <field name="arch" type="xml">
             <form>
-                <div class="alert alert-success text-center">
+                <div class="text-center" style="background-color: #CCECDB;color:#005326;height:30px">
                     <bold>Please scan barcode of product</bold>
                 </div>
                 <field name="product_id" invisible="1"/>
