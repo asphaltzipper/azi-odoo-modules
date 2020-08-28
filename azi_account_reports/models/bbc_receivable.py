@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from dateutil.relativedelta import relativedelta
+import datetime
 
 from odoo import models, api, _, fields
 from odoo.tools.misc import formatLang, format_date
@@ -148,10 +149,11 @@ class report_account_bbc_aged_partner(models.AbstractModel):
         periods = {}
         date_from = fields.Date.from_string(date_from)
         start = date_from
+        period_stop = date_from
         for i in range(5)[::-1]:
             stop = start - relativedelta(days=period_length)
             period_name = str((5-(i+1)) * period_length + 1) + '-' + str((5-i) * period_length)
-            period_stop = (start - relativedelta(days=1)).strftime('%Y-%m-%d')
+
             if i == 0:
                 period_name = '+' + str(4 * period_length)
             periods[str(i)] = {
@@ -160,6 +162,7 @@ class report_account_bbc_aged_partner(models.AbstractModel):
                 'start': (i!=0 and stop.strftime('%Y-%m-%d') or False),
             }
             start = stop
+            period_stop = (start - relativedelta(days=1)).strftime('%Y-%m-%d')
 
         res = []
         total = []
@@ -299,11 +302,15 @@ class report_account_bbc_aged_partner(models.AbstractModel):
             if not self.env.user.company_id.currency_id.is_zero(line_amount):
                 undue_amounts[partner_id] += line_amount
                 lines.setdefault(partner_id, [])
-                lines[partner_id].append({
-                    'line': line,
-                    'amount': line_amount,
-                    'period': 6,
-                })
+                line_exist = False
+                if partner_id in lines and list(filter(lambda a: a['line'] == line, lines[partner_id])):
+                    line_exist = True
+                if not line_exist:
+                    lines[partner_id].append({
+                        'line': line,
+                        'amount': line_amount,
+                        'period': 6,
+                    })
 
         for partner in partners:
             if partner['partner_id'] is None:
@@ -352,7 +359,9 @@ class report_account_bbc_aged_partner(models.AbstractModel):
         lines = []
         bbc_totals = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         account_types = [self.env.context.get('account_type')]
-        results, total, amls = self.with_context(include_nullified_amount=True)._get_partner_move_lines(account_types, self._context['date_to'], 'posted', 30)
+        date_to = self._context['date_to']
+        results, total, amls = self.with_context(include_nullified_amount=True)._get_partner_move_lines(account_types, date_to, 'posted', 30)
+
         for values in results:
             if line_id and 'partner_%s' % (values['partner_id'],) != line_id:
                 continue
