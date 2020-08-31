@@ -14,6 +14,7 @@ a master production schedule.
     'depends': [
         'stock_request',
         'stock_request_submit',
+        'stock_request_mrp',
         'sale',
         'azi_mrp',
     ],

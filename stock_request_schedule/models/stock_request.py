@@ -37,6 +37,8 @@ class StockRequest(models.Model):
         default=False,
         store=True)
 
+    production_ids = fields.Many2many(copy=False)
+
     @api.depends('sale_order_line_id')
     def _compute_sold(self):
         for rec in self:
