@@ -11,8 +11,6 @@ class ProductionKitConvert(models.TransientModel):
     product_qty = fields.Float()
 
     def on_barcode_scanned(self, barcode):
-        import pdb
-        pdb.set_trace()
         try:
             barcode_product, barcode_qty = barcode.split(',')
             product_id = int(barcode_product)
