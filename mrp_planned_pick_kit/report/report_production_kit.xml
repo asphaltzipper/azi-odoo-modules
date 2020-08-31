@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="paperformat_portrait_ledger" model="report.paperformat">
+        <field name="name">US Ledger Portrait</field>
+        <field name="default" eval="False" />
+        <field name="format">custom</field>
+        <field name="page_height">432</field>
+        <field name="page_width">279</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">12</field>
+        <field name="margin_bottom">12</field>
+        <field name="margin_left">12</field>
+        <field name="margin_right">12</field>
+        <field name="header_line" eval="True" />
+        <field name="header_spacing">12</field>
+        <field name="dpi">110</field>
+    </record>
+
+    <report
+        string="Production Kit"
+        id="action_report_production_kit"
+        model="mrp.planned.pick.kit"
+        name="mrp_planned_pick_kit.report_production_kit"
+        file="mrp_planned_pick_kit.report.report_production_kit_templates"
+        paperformat="mrp_planned_pick_kit.paperformat_portrait_ledger"
+        report_type="qweb-pdf"
+    />
+
+    <report
+        string="Production Kit Images"
+        id="action_report_production_kit_images"
+        model="mrp.planned.pick.kit"
+        name="mrp_planned_pick_kit.report_production_kit_images"
+        file="mrp_planned_pick_kit.report.report_production_kit_templates"
+        paperformat="mrp_planned_pick_kit.paperformat_portrait_ledger"
+        report_type="qweb-pdf"
+    />
+
+</odoo>

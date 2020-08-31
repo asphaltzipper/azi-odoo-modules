@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="production_kit_convert_form" model="ir.ui.view">
+        <field name="name">production.kit.convert.form</field>
+        <field name="model">production.kit.convert</field>
+        <field name="arch" type="xml">
+            <form>
+                <div class="text-center" style="background-color: #CCECDB;color:#005326;height:30px">
+                    <bold>Scan Production Kit Barcode</bold>
+                </div>
+                <field name="product_id" invisible="1"/>
+                <field name="product_qty" invisible="1"/>
+                <field name="_barcode_scanned" widget="barcode_handler" invisible="1"/>
+                <footer>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="production_kit_convert_action" model="ir.actions.act_window">
+        <field name="name">Convert Kit</field>
+        <field name="res_model">production.kit.convert</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="production_kit_convert_menu"
+            action="production_kit_convert_action"
+            parent="mrp.menu_mrp_manufacturing"
+            groups="mrp.group_mrp_manager"
+            sequence="100"/>
+
+</odoo>

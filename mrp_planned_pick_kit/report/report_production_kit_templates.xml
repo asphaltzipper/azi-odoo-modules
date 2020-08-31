@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<template id="report_production_kit_images">
+    <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="o">
+            <t t-call="web.internal_layout">
+                <div class="page">
+
+                    <div style="width:100%">
+                        <span style="font-size:30px; text-align:center;"><span t-field="o.product_id.display_name"/></span>
+                    </div>
+                    <div style="width:100%">
+                        <div style="float:left; width:33%; text-align:left;">
+                            <span style="font-size:30px">Kit : <span t-field="o.product_id.default_code"/></span>
+                            <br />
+                            <span style="font-size:30px">Qty : <span t-field="o.product_qty"/></span>
+                        </div>
+                        <div style="float:left; width:33%; text-align:center;">
+                            <span style="font-size:30px">Route : <span t-field="o.routing_detail"/></span>
+                        </div>
+                        <div style="float:left; width:33%; text-align:right;">
+                            <span class="text-right">
+                                <img t-att-src="'/report/barcode/?type=%s&amp;value=%s,%s&amp;width=%s&amp;height=%s' % ('Code128', o.product_id.id, o.product_qty, 600, 100)" style="width:100%;height:60px"/>
+                            </span>
+                        </div>
+                    </div>
+
+                    <table class="table" t-if="o.line_ids">
+                        <thead style="display:table-header-group;">
+                            <tr>
+                                <th><strong>Product</strong></th>
+                                <th><strong>Type</strong></th>
+                                <th><strong>Method</strong></th>
+                                <th class="text-right"><strong>OnHand</strong></th>
+                                <th class="text-right"><strong>Reserved</strong></th>
+                                <th class="text-right"><strong>Avail</strong></th>
+                                <th class="text-right"><strong>Required</strong></th>
+                                <th><strong class="text-center">Short</strong></th>
+                                <th class="text-center"><strong>Image</strong></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-if="o.line_ids">
+                                <tr t-foreach="o.line_ids.sorted(key=lambda x: (x.supply_method or '', x.routing_detail or '', x.product_id.default_code or ''), reverse=True)" t-as="line">
+                                    <td>
+                                        <div t-field="line.product_id"/>
+                                        <br/>
+                                        <div style="font-size:68%" t-esc="' | '.join(line.product_id.shelf_ids.sorted(key=name).mapped('name'))"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="line.type"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="line.supply_method"/>
+                                        <span t-if="line.routing_detail">
+                                            : <span t-field="line.routing_detail"/>
+                                        </span>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="line.onhand_qty"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="line.reserved_qty"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="line.available_qty"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="line.product_qty"/>
+                                        <span t-field="line.product_id.uom_id" groups="product.group_uom"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <t t-if="line.short">
+                                            <strong>X</strong>
+                                        </t>
+                                    </td>
+                                    <td valign="middle" align="center">
+                                        <img style="max-width:75px; max-height:75px; width:auto; height:auto;" t-attf-src="/web/image/product.product/#{line.product_id.id}/image"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </t>
+</template>
+
+<template id="report_production_kit">
+    <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="o">
+            <t t-call="web.internal_layout">
+                <div class="page">
+                    <div class="oe_structure"/>
+
+                    <div style="width:100%">
+                        <span style="font-size:30px; text-align:center;"><span t-field="o.product_id.display_name"/></span>
+                    </div>
+                    <div style="width:100%">
+                        <div style="float:left; width:33%; text-align:left;">
+                            <span style="font-size:30px">Kit : <span t-field="o.product_id.default_code"/></span>
+                            <br />
+                            <span style="font-size:30px">Qty : <span t-field="o.product_qty"/></span>
+                        </div>
+                        <div style="float:left; width:33%; text-align:center;">
+                            <span style="font-size:30px">Route : <span t-field="o.routing_detail"/></span>
+                        </div>
+                        <div style="float:left; width:33%; text-align:right;">
+                            <span class="text-right">
+                                <img t-att-src="'/report/barcode/?type=%s&amp;value=%s,%s&amp;width=%s&amp;height=%s' % ('Code128', o.product_id.id, o.product_qty, 600, 100)" style="width:100%;height:60px"/>
+                            </span>
+                        </div>
+                    </div>
+
+                    <table class="table table-sm" t-if="o.line_ids">
+                        <thead style="display:table-header-group;">
+                            <tr>
+                                <th><strong>Product</strong></th>
+                                <th><strong>Locations</strong></th>
+                                <th><strong>Type</strong></th>
+                                <th><strong>Method</strong></th>
+                                <th class="text-right"><strong>OnHand</strong></th>
+                                <th class="text-right"><strong>Reserved</strong></th>
+                                <th class="text-right"><strong>Avail</strong></th>
+                                <th class="text-right"><strong>Required</strong></th>
+                                <th class="text-center"><strong>Short</strong></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-if="o.line_ids">
+                                <tr t-foreach="o.line_ids.sorted(key=lambda x: (x.supply_method or '', x.routing_detail or '', x.product_id.default_code or ''), reverse=True)" t-as="line">
+                                    <td>
+                                        <div t-field="line.product_id"/>
+                                    </td>
+                                    <td>
+                                        <div style="font-size:68%" t-esc="' | '.join(line.product_id.shelf_ids.sorted(key=name).mapped('name'))"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="line.type"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="line.supply_method"/>
+                                        <span t-if="line.routing_detail">
+                                            : <span t-field="line.routing_detail"/>
+                                        </span>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="line.onhand_qty"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="line.reserved_qty"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="line.available_qty"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="line.product_qty"/>
+                                        <span t-field="line.product_id.uom_id" groups="product.group_uom"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <t t-if="line.short">
+                                            <strong>X</strong>
+                                        </t>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </t>
+</template>
+
+</odoo>

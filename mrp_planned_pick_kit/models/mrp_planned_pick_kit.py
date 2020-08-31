@@ -3,7 +3,7 @@
 
 from odoo import fields, models, api, _
 import odoo.addons.decimal_precision as dp
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 
 
 class MrpPlannedPickKit(models.TransientModel):
@@ -34,6 +34,14 @@ class MrpPlannedPickKit(models.TransientModel):
         default='new',
         required=True,
     )
+    routing_detail = fields.Char(
+        string="Route",
+        compute="_compute_routing_detail",
+    )
+    no_batch = fields.Boolean(
+        string="No Batch",
+        compute="_compute_no_batch",
+    )
     line_ids = fields.One2many(
         comodel_name='mrp.planned.pick.kit.line',
         inverse_name='kit_id',
@@ -55,6 +63,27 @@ class MrpPlannedPickKit(models.TransientModel):
     def _onchange_product_qty(self):
         for line in self.line_ids:
             line.product_qty = line.factor * self.product_qty
+
+    @api.model
+    @api.depends('product_id')
+    def _compute_routing_detail(self):
+        for rec in self:
+            bom = rec.product_id.bom_ids and rec.product_id.bom_ids[0]
+            if bom:
+                rec.routing_detail = ", ".join(
+                    [x for x in bom.routing_id.operation_ids.mapped('workcenter_id.code') if x])
+
+    @api.model
+    @api.depends('product_id')
+    def _compute_no_batch(self):
+        for rec in self:
+            rec.no_batch = rec.product_id.mrp_area_ids[0].mrp_nbr_days == 0
+
+    @api.constrains('product_qty', 'no_batch')
+    def _check_no_batch_quantity(self):
+        if self.no_batch and self.product_qty > 1.0:
+            raise ValidationError(_("This product cannot be produced in batches. Set the kit quantity to 1.0"))
+        return True
 
     @api.multi
     def action_toggle_images(self):
@@ -154,6 +183,10 @@ class MrpPlannedPickKitLine(models.TransientModel):
     warehouse_id = fields.Many2one(
         related='kit_id.warehouse_id',
     )
+    kanban_item = fields.Boolean(
+        string="Kanban",
+        related='product_id.e_kanban_verified',
+    )
 
     @api.multi
     @api.depends('product_id', 'location_id', 'warehouse_id')
@@ -196,6 +229,6 @@ class MrpPlannedPickKitLine(models.TransientModel):
     def _compute_routing_detail(self):
         for rec in self:
             bom = rec.product_id.bom_ids and rec.product_id.bom_ids[0]
-            if bom:
+            if bom and bom.routing_id:
                 rec.routing_detail = ", ".join(
                     [x for x in bom.routing_id.operation_ids.mapped('workcenter_id.code') if x])

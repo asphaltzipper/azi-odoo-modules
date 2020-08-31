@@ -15,6 +15,7 @@
                 <sheet string="Pick Kit">
                     <group>
                         <field name="product_id"/>
+                        <field name="routing_detail"/>
                         <field name="product_qty"/>
                         <field name="show_images" invisible="1"/>
                     </group>
@@ -27,6 +28,7 @@
                                 <field name="routing_detail"/>
                                 <field name="type"/>
                                 <field name="supply_method"/>
+                                <field name="kanban_item"/>
                                 <field name="onhand_qty"/>
                                 <field name="reserved_qty"/>
                                 <field name="available_qty"/>
