@@ -32,8 +32,8 @@
                                 <th><strong>Product</strong></th>
                                 <th><strong>Type</strong></th>
                                 <th><strong>Method</strong></th>
+                                <th><strong class="text-center">Bin</strong></th>
                                 <th class="text-right"><strong>OnHand</strong></th>
-                                <th class="text-right"><strong>Reserved</strong></th>
                                 <th class="text-right"><strong>Avail</strong></th>
                                 <th class="text-right"><strong>Required</strong></th>
                                 <th><strong class="text-center">Short</strong></th>
@@ -57,11 +57,13 @@
                                             : <span t-field="line.routing_detail"/>
                                         </span>
                                     </td>
-                                    <td class="text-right">
-                                        <span t-field="line.onhand_qty"/>
+                                    <td class="text-center">
+                                        <t t-if="line.kanban_item">
+                                            <strong>X</strong>
+                                        </t>
                                     </td>
                                     <td class="text-right">
-                                        <span t-field="line.reserved_qty"/>
+                                        <span t-field="line.onhand_qty"/>
                                     </td>
                                     <td class="text-right">
                                         <span t-field="line.available_qty"/>
@@ -121,8 +123,8 @@
                                 <th><strong>Locations</strong></th>
                                 <th><strong>Type</strong></th>
                                 <th><strong>Method</strong></th>
+                                <th><strong class="text-center">Bin</strong></th>
                                 <th class="text-right"><strong>OnHand</strong></th>
-                                <th class="text-right"><strong>Reserved</strong></th>
                                 <th class="text-right"><strong>Avail</strong></th>
                                 <th class="text-right"><strong>Required</strong></th>
                                 <th class="text-center"><strong>Short</strong></th>
@@ -146,11 +148,13 @@
                                             : <span t-field="line.routing_detail"/>
                                         </span>
                                     </td>
-                                    <td class="text-right">
-                                        <span t-field="line.onhand_qty"/>
+                                    <td class="text-center">
+                                        <t t-if="line.kanban_item">
+                                            <strong>X</strong>
+                                        </t>
                                     </td>
                                     <td class="text-right">
-                                        <span t-field="line.reserved_qty"/>
+                                        <span t-field="line.onhand_qty"/>
                                     </td>
                                     <td class="text-right">
                                         <span t-field="line.available_qty"/>

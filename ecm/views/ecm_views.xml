@@ -92,7 +92,7 @@
                 <header>
                     <button string="Create Revs" name="action_create_revisions" type="object" attrs="{'invisible':[('final', '=', True)]}"/>
                     <!-- <button name="button_reassign_orders" string="Reassign Orders" type="object" class="oe_highlight" attrs="{'invisible': ['|', ('state', '!=', 'imported')]}"/> -->
-                    <field name="stage_id" widget="statusbar" clickable="True" confirm="Are you sure you want to change the stage?"/>
+                    <field name="stage_id" widget="statusbar" options="{'clickable': '1'}" confirm="TODO: Make this work: Are you sure you want to change the stage?"/>
                 </header>
                 <sheet string="ECO">
                     <group>

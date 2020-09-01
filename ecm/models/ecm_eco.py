@@ -223,7 +223,6 @@ class EcmEco(models.Model):
         string="Stage",
         group_expand='_read_group_stage_ids',
         required=True,
-        readonly=True,
         default=_get_default_stage_id,
         domain="[('type_ids', '=', type_id)]",
         track_visibility='onchange')
