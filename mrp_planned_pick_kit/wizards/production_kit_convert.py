@@ -94,6 +94,6 @@ class ProductionKitConvert(models.TransientModel):
         production.action_assign()
         production.button_plan()
         action = self.env.ref('mrp.mrp_production_action').read()[0]
-        action['res_id'] = production.id
-        action['target'] = 'current'
-        return action
+        message = "<a href='/web#id={}&action={}&model=mrp.production&view_type=form'>" \
+                  "<span style='color: white'>View MO</span></a>".format(production.id, action['id'])
+        self.env.user.notify_success(message=message, title="Created MO", sticky=True)
