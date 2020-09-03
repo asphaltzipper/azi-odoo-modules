@@ -1,5 +1,6 @@
 from datetime import date
 import time
+import threading
 
 from odoo import api, fields, models, exceptions, _
 
@@ -107,3 +108,16 @@ class MultiLevelMrp(models.TransientModel):
             ('eng_management', '=', True),
         ]
         return self.env['product.product'].search(domain)
+
+    def process_mrp(self):
+        with api.Environment.manage():
+            new_cr = self.pool.cursor()
+            self = self.with_env(self.env(cr=new_cr))
+            self.run_mrp_multi_level()
+            new_cr.close()
+            return {}
+
+    def run_mrp_multi_level_in_bg(self):
+        threaded_calculation = threading.Thread(target=self.process_mrp, args=())
+        threaded_calculation.start()
+        return {'type': 'ir.actions.act_window_close'}

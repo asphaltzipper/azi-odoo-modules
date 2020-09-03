@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="view_run_mrp_multi_level_wizard" model="ir.ui.view">
+        <field name="name">Run MRP</field>
+        <field name="model">mrp.multi.level</field>
+        <field name="inherit_id" ref="mrp_multi_level.view_run_mrp_multi_level_wizard"/>
+        <field name="arch" type="xml">
+            <button name="run_mrp_multi_level" position="replace">
+                <button name="run_mrp_multi_level_in_bg" string="Run MRP" type="object"  class="oe_highlight"  />
+            </button>
+        </field>
+    </record>
+</odoo>
