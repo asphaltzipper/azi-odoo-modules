@@ -414,8 +414,6 @@ class EcmEcoRevLine(models.Model):
     _description = 'Revised ECO Product'
     _order = 'product_id'
 
-    _sql_constraints = [('product_uniq', 'unique (product_id)', "Product already revised on another ECO")]
-
     eco_id = fields.Many2one(
         comodel_name='ecm.eco',
         string="ECO",
@@ -529,9 +527,18 @@ class EcmEcoRevLine(models.Model):
         compute='_compute_doc_ids')
 
     @api.constrains('product_id')
-    def _validate_product_id(self):
+    def _validate_product_management(self):
         if not all(self.mapped('product_id.categ_id.eng_management')):
             raise ValidationError("Only products marked for Engineering Management can be revised on an ECO")
+        return True
+
+    @api.constrains('product_id')
+    def _validate_product_unique(self):
+        for rec in self:
+            domain = [('id', '!=', rec.id), ('product_id', '=', rec.product_id.id)]
+            other_line = rec.search(domain, limit=1)
+            if other_line:
+                raise ValidationError("Product has already been revised on ECO %s:\n%s" % (other_line.eco_id.name, rec.product_id.display_name))
         return True
 
     @api.constrains('product_id', 'new_rev')
@@ -544,15 +551,6 @@ class EcmEcoRevLine(models.Model):
                                       "this product's Engineering Category".format(new_code))
             if rec.new_rev != category.default_rev and rec.new_rev <= rec.product_id.eng_rev:
                 raise ValidationError("The new revision code must be greater than the old one: {}".format(new_code))
-            # throw an error if product_id is revised on another ECO
-            domain = [('eco_id', '!=', rec.eco_id.id), ('product_id', '=', rec.product_id.id)]
-            other_count = rec.search_count(domain)
-            if other_count and not (
-                other_count == 1 and
-                rec.product_id.eng_rev == category.default_rev and
-                rec.new_rev != category.default_rev
-            ):
-                raise ValidationError("Product has already been revised on another ECO")
         return True
 
     @api.depends('product_id', 'new_rev')
@@ -677,9 +675,18 @@ class EcmEcoIntroLine(models.Model):
         string="Notes")
 
     @api.constrains('product_id')
-    def _validate_product_id(self):
+    def _validate_product_management(self):
         if not all(self.mapped('product_id.categ_id.eng_management')):
             raise ValidationError("Only products marked for Engineering Management can be introduced on an ECO")
+        return True
+
+    @api.constrains('product_id')
+    def _validate_product_unique(self):
+        for rec in self:
+            domain = [('id', '!=', rec.id), ('product_id', '=', rec.product_id.id)]
+            other_line = rec.search(domain, limit=1)
+            if other_line:
+                raise ValidationError("Product has already been introduced on ECO %s:\n%s" % (other_line.eco_id.name, rec.product_id.display_name))
         return True
 
     @api.depends('product_id')
