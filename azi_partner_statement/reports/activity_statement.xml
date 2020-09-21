@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="activity_statement_document" inherit_id="partner_statement.activity_statement_document">
+        <xpath expr="//t[@t-set='address']" position="replace">
+            <t t-set="address">
+                <br/>
+                <address  style="margin-left:-555px;margin-top:35px;" t-esc="get_inv_addr(o)" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}' />
+                <div  style="margin-left:-555px" t-if="o.vat" class="mt16"><t t-esc="company.country_id.vat_label or 'Tax ID'"/>: <span t-field="o.vat"/></div>
+            </t>
+        </xpath>
+
+    </template>
+</odoo>

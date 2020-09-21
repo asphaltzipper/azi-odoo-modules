@@ -1,52 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="outstanding_statement_document" inherit_id="partner_statement.outstanding_statement_document">
-        <xpath expr="//table/tbody/tr" position="replace">
-            <t t-foreach="currency['lines']" t-as="line" >
-                <tr t-att-class="'statement-blocked' if line['blocked'] else ''" t-if="line['balance'] != 0">
-                    <td>
-                        <span t-esc="line['move_id']"/>
-                    </td>
-                    <td>
-                        <span t-esc="line['date']"/>
-                    </td>
-                    <td>
-                        <span t-esc="line['date_maturity']"/>
-                    </td>
-                    <td>
-                        <t t-if="line['name'] != '/'">
-                            <t t-if="not line['ref']">
-                                <span t-esc="line['name']"/>
-                            </t>
-                            <t t-if="line['ref'] and line['name']">
-                                <t t-if="line['name'] not in line['ref']">
-                                    <span t-esc="line['name']"/>
-                                </t>
-                                <t t-if="line['ref'] not in line['name']">
-                                    <span t-esc="line['ref']"/>
-                                </t>
-                                <t t-if="line['ref'] == line['name']">
-                                    <span t-esc="line['name']"/>
-                                </t>
-                            </t>
-                        </t>
-                        <t t-if="line['name'] == '/'">
-                            <span t-esc="line['ref']"/>
-                        </t>
-                    </td>
-                    <td class="amount">
-                        <span t-esc="line['amount']" t-options="{'widget': 'monetary', 'display_currency': display_currency}"/>
-                    </td>
-                    <td class="amount">
-                        <span t-esc="line['open_amount']" t-options="{'widget': 'monetary', 'display_currency': display_currency}"/>
-                    </td>
-                    <td class="amount">
-                        <span t-esc="line['balance']" t-options="{'widget': 'monetary', 'display_currency': display_currency}"/>
-                    </td>
-
-                </tr>
+        <xpath expr="//t[@t-set='address']" position="replace">
+            <t t-set="address">
+                <br/>
+                <address style="margin-left:-555px;margin-top:35px;" t-esc="get_inv_addr(o)" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}' />
+                <div style="margin-left:-555px" t-if="o.vat" class="mt16"><t t-esc="company.country_id.vat_label or 'Tax ID'"/>: <span t-field="o.vat"/></div>
             </t>
-
         </xpath>
     </template>
 </odoo>

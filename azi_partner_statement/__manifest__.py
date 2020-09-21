@@ -8,14 +8,15 @@
     "website": "http://www.github.com/asphaltzipper",
     'description': """
 AZI Partner Statement
-===================
-* Modified outstanding report, so it will not displayed zero balance line
+=====================
+* Modified outstanding and activity reports to align address
     """,
     'depends': [
         'partner_statement',
     ],
     "data": [
-        'reports/outstanding_statement.xml'
+        'reports/outstanding_statement.xml',
+        'reports/activity_statement.xml',
     ],
     "installable": True,
     "auto_install": False,
