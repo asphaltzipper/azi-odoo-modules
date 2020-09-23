@@ -20,6 +20,7 @@ class MrpProduction(models.Model):
         wiz = self.env['mrp.wo.produce'].create({})
         action['res_id'] = wiz.id
         action['target'] = 'current'
+        action['context'] = "{'form_view_initial_mode': 'edit', 'force_detailed_view': 'true'}"
         return action
 
     @api.multi
