@@ -14,6 +14,15 @@ class MrpProduction(models.Model):
         return action
 
     @api.multi
+    def new_wo_produce(self):
+        self.ensure_one()
+        action = self.env.ref('mrp_wo_produce.act_mrp_wo_produce_wizard').read()[0]
+        wiz = self.env['mrp.wo.produce'].create({})
+        action['res_id'] = wiz.id
+        action['target'] = 'current'
+        return action
+
+    @api.multi
     def post_inventory(self):
         for order in self:
             # The default behavior is to cancel stock moves when the serial number is not specified

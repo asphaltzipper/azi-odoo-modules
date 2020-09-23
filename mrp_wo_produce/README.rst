@@ -12,13 +12,13 @@ Configuration
 
 Usage
 =====
-Steps for creating manufacturing order:
+Steps for processing manufacturing order:
 
-* Create Manufacturing Order (with a routing)
-* Check Availability
-* Plan
-* Enter component serial numbers
-* Enter finished good serial numbers
-* Start WO Completion Wizard
-   - Enter labor time per work order
-   - Click Done to complete all work orders and the manufacturing order
+#. Create Manufacturing Order (with a routing)
+#. Check Availability
+#. Plan
+#. Start WO Completion Wizard
+#. Enter produced serial number
+#. Enter consumed serial numbers
+#. Enter labor time per work order
+#. Click Done to complete all work orders and the manufacturing order

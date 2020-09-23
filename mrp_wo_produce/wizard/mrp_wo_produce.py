@@ -39,7 +39,6 @@ class MrpWoProduce(models.TransientModel):
     product_qty = fields.Float(
         string='Quantity',
         digits=dp.get_precision('Product Unit of Measure'),
-        required=True,
         readonly=True)
     product_uom_id = fields.Many2one(
         comodel_name='uom.uom',
@@ -79,7 +78,7 @@ class MrpWoProduce(models.TransientModel):
         elif self._context and self._context.get('active_model', '') == 'mrp.production' and self._context.get('active_id'):
             production = self.env['mrp.production'].browse(self._context['active_id'])
         else:
-            raise UserError("Produce Workorders Wizard called without reference to a Manufacturing Order")
+            return res
 
         serial_finished = (production.product_id.tracking == 'serial')
         todo_uom = production.product_uom_id
@@ -109,6 +108,13 @@ class MrpWoProduce(models.TransientModel):
     @api.onchange('production_id')
     def _onchange_production_id(self):
         self.load_lines()
+        main_product_moves = self.production_id.move_finished_ids.filtered(
+            lambda x: x.product_id.id == self.production_id.product_id.id)
+        todo_quantity = self.production_id.product_qty - sum(main_product_moves.mapped('quantity_done'))
+        todo_quantity = todo_quantity if (todo_quantity > 0.0) else 0.0
+        self.update({
+            'product_qty': todo_quantity,
+        })
 
     @api.model
     def load_lines(self):

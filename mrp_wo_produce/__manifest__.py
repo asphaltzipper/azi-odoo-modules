@@ -1,9 +1,10 @@
-# -*- coding: utf-8 -*-
 # (c) 2018 Matt Taylor
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 {
     "name": "Work Order Produce Wizard",
     "version": "12.0.1.0.0",
+    "license": "AGPL-3",
     "summary": "Wizard for producing/completing Manufacturing Orders with Work Orders",
     "category": "Inventory",
     "author": "Matt Taylor",
@@ -12,14 +13,18 @@
 Work Order Produce Wizard
 =========================
 Wizard for completing Manufacturing Orders with Work Orders
-1. Check Availability
-1. Plan
-1. Enter component serial numbers
-1. Enter finished good serial numbers
-1. Start WO Completion Wizard
-   * Enter labor time per work order
-   * Click Done to complete all work orders and the manufacturing order
-    """,
+
+Steps for processing manufacturing order:
+
+#. Create Manufacturing Order (with a routing)
+#. Check Availability
+#. Plan
+#. Start WO Completion Wizard
+#. Enter produced serial number
+#. Enter consumed serial numbers
+#. Enter labor time per work order
+#. Click Done to complete all work orders and the manufacturing order
+""",
     "depends": [
         "stock",
         "mrp",
