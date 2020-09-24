@@ -35,14 +35,6 @@ class MrpProduction(models.Model):
             production.date_planned_start = production.date_planned_finished - datetime.timedelta(
                 days=int(production.product_id.produce_delay))
 
-    # select *
-    # from mrp_bom as b
-    # left join product_template as t on t.id=b.product_tmpl_id
-    # where b.routing_id is null
-    # and t.deprecated=false
-    # and b.type='normal'
-    # and b.product_id in (
-
     @api.multi
     def write(self, vals):
         """Override wirte method to update stock move expected date that is related to mrp production"""
@@ -61,7 +53,7 @@ class MrpProduction(models.Model):
         return res
 
     @api.multi
-    def print_production_and_attachment(self):
+    def get_production_and_attachment(self):
         self.ensure_one()
         report = self.env['ir.actions.report']._get_report_from_name('azi_mrp.report_mrporder_azi')
         attachment = self.env['ir.attachment'].search(
@@ -85,15 +77,36 @@ class MrpProduction(models.Model):
             attachment_report = PdfFileReader(attachment._full_path(attachment.store_fname), 'rb')
             for page in range(attachment_report.getNumPages()):
                 output.addPage(attachment_report.getPage(page))
-        output_stream = BytesIO()
-        output.write(output_stream)
-        self.report_attach = base64.b64encode(output_stream.getvalue())
-        self.report_name = "Azi Production Order with Attachment.pdf"
-        output_stream.close()
-        return {
-            'type': 'ir.actions.act_url',
-            'name': 'Azi Production',
-            'target': 'self',
-            'url': '/web/content/mrp.production/%s/report_attach/Azi Production Order with Attachment.pdf?download=true'
-                   % self.id,
-        }
+        with BytesIO() as output_stream:
+            output.write(output_stream)
+            self.report_attach = base64.b64encode(output_stream.getvalue())
+            self.report_name = "Azi Production Order with Attachment.pdf"
+
+    @api.multi
+    def print_production_and_attachment(self):
+        self.get_production_and_attachment()
+        printer_obj = self.env['printing.printer']
+        user = self.env.user
+        printer = user.printing_printer_id or printer_obj.get_default()
+        if not printer:
+            message = "No printer configured to print %s" % self.name
+            self.env.user.notify_warning(message=message, title="Print MO", sticky=False)
+            return {
+                'type': 'ir.actions.act_url',
+                'name': 'Azi Production',
+                'target': 'self',
+                'url': '/web/content/mrp.production/%s/report_attach/'
+                       'Azi Production Order with Attachment.pdf?download=true'
+                       % self.id,
+            }
+        tray = str(user.printer_tray_id.system_name) if user.printer_tray_id else False
+        printer.print_document(
+            self,
+            base64.b64decode(self.report_attach),
+            doc_format='qweb-pdf',
+            action='print',
+            tray=tray,
+        )
+        message = "MO sent to printer %s" % printer.name
+        self.env.user.notify_success(message=message, title="Print MO", sticky=False)
+        return {}

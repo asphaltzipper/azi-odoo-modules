@@ -24,6 +24,7 @@ AZI Specialized Customizations to MRP
         'shelf_location',
         'attachment_priority',
         'electronic_kanban',
+        'base_report_printer',
     ],
     'data': [
         'views/report_bom_template.xml',
