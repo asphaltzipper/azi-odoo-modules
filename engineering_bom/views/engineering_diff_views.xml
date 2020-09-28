@@ -213,7 +213,9 @@
             <search>
                 <field name="batch_id" string="Batch"/>
                 <filter string="Raw Material Parts" name="is_rm_part" domain="[('rm_part', '=', True)]"/>
+                <filter string="Non-RM Parts" name="not_rm_part" domain="[('rm_part', '=', False)]"/>
                 <group expand='0' string='Group by...'>
+                    <filter name="group_parent_id" string="Parent" domain="[]" context="{'group_by' : 'parent_id'}"/>
                     <filter name="group_action_type" string="Action" domain="[]" context="{'group_by' : 'action_type'}"/>
                 </group>
             </search>
