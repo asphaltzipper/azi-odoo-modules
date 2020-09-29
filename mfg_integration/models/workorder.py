@@ -26,7 +26,7 @@ class MrpWorkorder(models.Model):
            - order scheduled on day 21
              - priority = ceiling(0.38*1)+1 = 9
         """
-        d_now = fields.Date.today()
+        d_now = fields.Datetime.now()
         d_max = max(self.mapped('production_date'))
         span_days = (d_max - d_now).days
         factor = 8.0 / span_days
