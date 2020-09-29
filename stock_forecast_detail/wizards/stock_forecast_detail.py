@@ -115,8 +115,6 @@ class StockForecastDetailWizard(models.TransientModel):
             elif order.mrp_action == 'phantom':
                 tx_type = 'iphantom'
             else:
-                import pdb
-                pdb.set_trace()
                 tx_type = 'ipmove'
             lines.append({
                 'product_id': self.product_id.id,
