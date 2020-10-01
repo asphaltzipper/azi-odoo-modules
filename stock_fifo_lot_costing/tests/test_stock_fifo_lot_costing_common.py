@@ -19,6 +19,7 @@ class TestStockFifoLotCostingCase(SavepointCase):
         cls.entry_obj = cls.env['account.move']
         cls.journal_obj = cls.env['account.journal']
         cls.picking_obj = cls.env['stock.picking']
+        cls.move_obj = cls.env['stock.move']
 
         cls.uom_unit = cls.env.ref('uom.product_uom_unit')
         cls.company = cls.env.ref('base.main_company')
@@ -82,6 +83,15 @@ class TestStockFifoLotCostingCase(SavepointCase):
         })
         cls.prod_2 = cls.product_obj.create({
             'product_tmpl_id': cls.template_2.id,
+        })
+        cls.template_3 = cls.template_obj.create({
+            'name': 'Test Product 3',
+            'type': 'product',
+            'categ_id': cls.category_1.id,
+            'tracking': 'none',
+        })
+        cls.prod_3 = cls.product_obj.create({
+            'product_tmpl_id': cls.template_3.id,
         })
 
         cls.prod_1_lot1 = cls.lot_obj.create({

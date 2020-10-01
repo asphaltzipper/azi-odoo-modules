@@ -7,9 +7,9 @@ class StockMoveLine(models.Model):
     remaining_qty = fields.Float(copy=False)
 
     def write(self, values):
-        if 'remaining_qty' not in values:
+        if 'qty_done' in values and 'remaining_qty' not in values:
             for ml in self:
-                values['remaining_qty'] = values.get('qty_done', ml.qty_done)
+                values['remaining_qty'] = values.get('qty_done')
         return super(StockMoveLine, self).write(values)
 
     @api.model
