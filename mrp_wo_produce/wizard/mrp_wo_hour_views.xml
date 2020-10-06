@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_mrp_wo_hour_form" model="ir.ui.view">
+        <field name="name">mrp.wo.hour.form</field>
+        <field name="model">mrp.wo.hour</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="produce_id" invisible="1"/>
+                        <field name="work_order_line" invisible="1"/>
+                        <field name="no_of_hours" required="1"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="set_hours_of_wo" type="object" string="Set Hours" class="btn-primary"/>
+                    <button string="Cancel" class="btn-default" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="mrp_wo_hour_action" model="ir.actions.act_window">
+        <field name="name">MRP Wo Hour</field>
+        <field name="res_model">mrp.wo.hour</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

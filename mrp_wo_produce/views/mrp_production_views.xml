@@ -8,6 +8,7 @@
         <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
         <field name="arch" type="xml">
             <button name="open_produce_product" position="before">
+                <field name="_barcode_scanned" widget="mo_barcode_handler" invisible="1"/>
                 <button
                         name="open_wo_produce"
                         attrs="{'invisible': ['|', ('state', '!=', 'planned'), '|', ('routing_id', '=', False), ('check_to_done', '=', True)]}"

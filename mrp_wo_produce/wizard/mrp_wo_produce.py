@@ -1,7 +1,7 @@
 from odoo import api, fields, models, _
 from dateutil.relativedelta import relativedelta
 from odoo.addons import decimal_precision as dp
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 from odoo.tools import float_compare, float_round
 
 
@@ -25,6 +25,7 @@ class MrpWoProduce(models.TransientModel):
     """
 
     _name = "mrp.wo.produce"
+    _inherit = ["barcodes.barcode_events_mixin"]
     _description = 'Produce MO with Workorders'
 
     production_id = fields.Many2one(
@@ -222,6 +223,19 @@ class MrpWoProduce(models.TransientModel):
         self.complete_workorders()
         self.prepare_finished_moves()
         self.production_id.button_mark_done()
+        if self._context.get('barcode_scan', False):
+            view_id = self.env.ref('mrp.mrp_production_form_view').id
+            return {
+                'type': 'ir.actions.act_window',
+                'name': _('Manufacturing Order'),
+                'res_model': 'mrp.production',
+                'target': 'current',
+                'view_mode': 'form',
+                'view_type': 'form',
+                'res_id': self.production_id.id,
+                'views': [[view_id, 'form']],
+
+            }
         return {'type': 'ir.actions.act_window_close'}
 
     @api.multi
@@ -309,10 +323,6 @@ class MrpWoProduce(models.TransientModel):
     @api.multi
     def complete_workorders(self):
         last_workorder = self.production_id.workorder_ids.filtered(lambda x: not x.next_work_order_id)[0]
-        # delete all existing move lines
-        self.consume_line_ids.mapped('move_id.move_line_ids').\
-            filtered(lambda x: x.state not in ['done', 'cancel']).unlink()
-        # create new move lines
         for line in self.consume_line_ids:
             if not line.lot_id:
                 raise UserError(_('Please enter a lot or serial number for component %s !' % line.product_id.display_name))
@@ -321,6 +331,7 @@ class MrpWoProduce(models.TransientModel):
                     line.qty_done,
                     precision_rounding=line.product_id.uom_id.rounding) != 0:
                 raise UserError(_('Please correct Consumed quantity for lot %s !' % line.lot_id.display_name))
+            line.move_id.move_line_ids.filtered(lambda x: x.state not in ['done', 'cancel']).unlink()
             line.move_id.move_line_ids.create({
                 'move_id': line.move_id.id,
                 'lot_id': line.lot_id.id,
@@ -381,10 +392,6 @@ class MrpWoProduce(models.TransientModel):
                 produce_move._set_quantity_done(self.product_qty)
 
         # by-products with tracking
-        # delete all existing move lines
-        self.produce_line_ids.mapped('move_id.move_line_ids').\
-            filtered(lambda x: x.state not in ['done', 'cancel']).unlink()
-        # create new move lines
         for line in self.produce_line_ids:
             if not line.lot_id:
                 raise UserError(_('Please enter a lot or serial number for by-product %s !' % line.product_id.display_name))
@@ -393,6 +400,7 @@ class MrpWoProduce(models.TransientModel):
                     line.qty_done,
                     precision_rounding=line.product_id.uom_id.rounding) != 0:
                 raise UserError(_('Please correct Produced quantity for lot %s !' % line.lot_id.display_name))
+            line.move_id.move_line_ids.filtered(lambda x: x.state not in ['done', 'cancel']).unlink()
             line.move_id.move_line_ids.create({
                 'move_id': line.move_id.id,
                 'lot_id': line.lot_id.id,
@@ -418,6 +426,26 @@ class MrpWoProduce(models.TransientModel):
 
         # TODO: pass all quality checks
         return True
+
+    def barcode_scanned_action(self, barcode):
+        employee = self.env['hr.employee'].sudo().search([('barcode', '=', barcode)], limit=1)
+        if employee and employee.user_id:
+            work_line_ids = self.work_line_ids.filtered(lambda w: not w.user_id)
+            if work_line_ids:
+                work_line_ids[0].update({'user_id': employee.user_id})
+                view_id = self.env.ref('mrp_wo_produce.view_mrp_wo_hour_form').id
+                return {'type': 'ir.actions.act_window',
+                        'name': _('Wo Hour'),
+                        'res_model': 'mrp.wo.hour',
+                        'target': 'new',
+                        'view_mode': 'form',
+                        'view_type': 'form',
+                        'context': {'default_produce_id': self.id, 'default_work_order_line': work_line_ids[0].id},
+                        'views': [[view_id, 'form']],
+                        }
+            raise ValidationError("There is no work order associated to this produce")
+        raise ValidationError(_("Please scan the correct barcode for employee or check that "
+                                "employee is linked to a user"))
 
 
 class MrpProductProduceCompLine(models.TransientModel):

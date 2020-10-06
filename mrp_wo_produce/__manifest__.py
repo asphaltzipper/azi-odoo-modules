@@ -31,8 +31,11 @@ Steps for processing manufacturing order:
         "hr",
     ],
     "data": [
+        'views/barcode_templates.xml',
+        'wizard/mrp_wo_hour_views.xml',
         'wizard/mrp_wo_produce_views.xml',
         'views/mrp_production_views.xml',
+        'views/hr_employee_views.xml',
     ],
     "installable": True,
     "auto_install": False,
