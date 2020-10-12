@@ -36,17 +36,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-6"
-                         style="height:2%;text-align:center;vertical-align:middle;display:table;font-size:8px;">
-                        <div style="display: table-cell; vertical-align: middle;">
-                            <strong t-field="o.location_id.name"/>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
                     <div class="col-12" style="height:1%;font-size:6px;">
-                        <span t-esc="float(o.product_qty)"/>
-                        <span t-field="o.product_id.uom_id.name"/>|
                         <span t-esc="float(o.product_uom_qty)"/>
                         <span t-field="o.product_uom_id.name"/>
                     </div>
