@@ -107,7 +107,7 @@ class StockMove(models.Model):
         unavailable_lots = self.env['stock.production.lot']
         for lot, qty in qty_to_take_on_lots.items():
             if qty > 0.0:
-                unavailable_lots += lot
+                unavailable_lots |= lot
         if unavailable_lots:
             raise UserError(_("We can't process the move because the following "
                               "lots/serials are not available: %s" %
