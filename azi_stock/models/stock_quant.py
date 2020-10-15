@@ -12,6 +12,8 @@ class StockQuant(models.Model):
         related='product_id.categ_id',
         readonly=True,
         store=True)
+    value = fields.Float(compute='_compute_value',
+                            groups='stock.group_stock_manager')
 
     # @api.constrains('location_id', 'product_id', 'lot_id')
     # def _check_internal_location_with_serial_product(self):
@@ -22,7 +24,8 @@ class StockQuant(models.Model):
     #         else:
     #             raise ValidationError('Serial tracked item %s is not available in stock location %s' %
     #                                   (self.product_id.display_name, self.location_id.display_name))
-    @api.depends('quantity')
+
+    @api.multi
     def _compute_value(self):
         """ For FIFO valuation, compute the current accounting valuation
         using the stock moves of the product with remaining value filled,
@@ -41,8 +44,7 @@ class StockQuant(models.Model):
         # Just take into account the quants with usage internal and
         # that belong to the company
         for quant in self:
-            if quant.location_id._should_be_valued() and not (quant.owner_id and quant.owner_id !=
-                                                              quant.company_id.partner_id):
+            if not (quant.owner_id and quant.owner_id != quant.company_id.partner_id):
                 product_valuation = {quant.product_id.id: 0.0}
                 product_quantity = {quant.product_id.id: 0.0}
                 move_lines = self.env['stock.move.line'].search([('product_id', '=', quant.product_id.id), '|',
@@ -51,22 +53,11 @@ class StockQuant(models.Model):
                                                                 ('lot_id', '=', quant.lot_id.id), '|',
                                                                 ('package_id', '=', quant.package_id.id),
                                                                 ('result_package_id', '=', quant.package_id.id)])
-                move_ids = move_lines.mapped('move_id').ids
+                move_ids = move_lines.mapped('move_id')
                 if quant.product_id.cost_method != 'fifo':
                     product_valuation[quant.product_id.id] = quant.product_id.standard_price
                 else:
-                    self.env.cr.execute("""SELECT product_id,
-                                                        COALESCE(SUM(remaining_value),0)
-                                                        FROM stock_move WHERE remaining_value > 0
-                                                        and id IN %s group by product_id;""",
-                                        (tuple(move_ids),))
-                    product_valuation.update(self.env.cr.fetchall())
-                self.env.cr.execute("""SELECT product_id,
-                                                    COALESCE(SUM(remaining_qty),0)
-                                                    FROM stock_move WHERE remaining_value > 0
-                                                    and id IN %s group by product_id;""",
-                                    (tuple(move_ids),))
-                product_quantity.update(dict(self.env.cr.fetchall()))
+                    product_valuation[quant.product_id.id] = sum(map(abs, move_ids.mapped('price_unit')))
                 prod = quant.product_id
                 quant.value = 0.0
 
@@ -80,9 +71,8 @@ class StockQuant(models.Model):
                 # In case of FIFO, the average value of the product in the
                 # moves -> sum(total_valuation) / sum(qty_on_hand), will be
                 # multiplied by quantity in the quant.
-                if product_quantity[prod.id] > 0:
-                    quant.value = (product_valuation[prod.id] /
-                                   product_quantity[prod.id] * quant.quantity)
+                if quant.quantity > 0:
+                    quant.value = (product_valuation[prod.id] * quant.quantity)
 
 
 class StockMoveLine(models.Model):
