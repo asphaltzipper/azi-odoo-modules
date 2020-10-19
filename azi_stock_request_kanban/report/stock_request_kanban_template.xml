@@ -57,9 +57,6 @@
             </t>
         </t>
     </template>
-    <record id="stock_request_kanban.action_report_kanban" model="ir.actions.report">
-        <field name="menu" eval="False"/>
-    </record>
     <report id="action_kanban_report" string="AZI Print kanban" model="stock.request.kanban"
             report_type="qweb-pdf"
             name="azi_stock_request_kanban.report_kanban"
