@@ -608,7 +608,8 @@ class MrpWoProduceWorkLine(models.TransientModel):
         string="User",
     )
     user_ids = fields.Many2many(
-        'res.users',
+        comodel_name='res.users',
+        string='Users',
         compute='_compute_user_ids',
     )
     labor_date = fields.Datetime(

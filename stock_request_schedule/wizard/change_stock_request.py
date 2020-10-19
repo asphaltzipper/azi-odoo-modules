@@ -4,6 +4,7 @@ from odoo import models, fields, api
 
 class ChangeStockRequest(models.TransientModel):
     _name = 'change.stock.request'
+    _description = "Change Stock Request"
 
     expected_date = fields.Datetime('Expected Date')
 

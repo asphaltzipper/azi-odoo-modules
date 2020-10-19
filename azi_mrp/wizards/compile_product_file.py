@@ -9,6 +9,7 @@ from odoo.exceptions import ValidationError, UserError
 
 class CompileProductFile(models.TransientModel):
     _name = 'compile.product.file'
+    _description = "Compile Product Files"
 
     bom_depth = fields.Integer('BOM Depth', default=1)
     included_files = fields.Selection([('high', 'Highest Priority PDFs Only'), ('pdf', 'All PDFs')])

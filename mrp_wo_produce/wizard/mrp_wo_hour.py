@@ -3,6 +3,7 @@ from odoo import models, api, fields, _
 
 class MrpWoHour(models.TransientModel):
     _name = 'mrp.wo.hour'
+    _description = "Production Line Hours Entry"
 
     produce_id = fields.Many2one('mrp.wo.produce', 'MRP Produce')
     work_order_line = fields.Many2one('mrp.wo.produce.work_line', 'Work Order')
