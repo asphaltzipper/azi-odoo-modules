@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-
+from . import product
 from . import engineering_bom_batch
 from . import engineering_bom
 from . import engineering_bom_component

@@ -116,6 +116,13 @@ class EngBomComp(models.Model):
     coating_id = fields.Many2one(
         comodel_name='engineering.coating',
         string='Coating')
+    release_eco_id = fields.Many2one(
+        related='product_id.release_eco_id')
+    preserve_bom_on_import = fields.Boolean(
+        string='Ignore BOM',
+        default=False,
+        required=True,
+        help="Ignore the imported BOM for this product")
 
     @api.model
     def set_product(self):
@@ -292,3 +299,4 @@ class EngBomComp(models.Model):
             comp.uom_id = uom_obj.search(
                 [('name', '=', uom_name_map.get(comp.uom, comp.uom))],
                 limit=1)
+            comp.preserve_bom_on_import = comp.product_id.preserve_bom_on_import

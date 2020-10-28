@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- add eco info to product versions list -->
+    <record id="product_template_form_engineering_product" model="ir.ui.view">
+        <field name="name">product.template.engineering_product.inherit</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="engineering_product.product_template_form_engineering_product"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='eng_management']//field[@name='deprecated']" position="after">
+                <field name="preserve_bom_on_import"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

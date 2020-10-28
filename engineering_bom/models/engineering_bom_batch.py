@@ -146,7 +146,9 @@ class EngBomBatch(models.Model):
         # get unique parent products and create boms
         product_boms = {}
         duplicate_parents = []
-        parents = self.comp_ids.filtered(lambda x: len(x.adjacency_parent_ids))
+        parents = self.comp_ids.filtered(
+            lambda x: len(x.adjacency_parent_ids)
+                      and not x.preserve_bom_on_import)
         for parent in parents:
             if not parent.product_id:
                 continue
@@ -180,7 +182,9 @@ class EngBomBatch(models.Model):
 
         # create bom lines
         product_bom_lines = {}
-        adjacencies = self.adjacency_ids.filtered(lambda x: x.child_comp_id.eng_type_id.code != 'S')
+        adjacencies = self.adjacency_ids.filtered(
+            lambda x: x.child_comp_id.eng_type_id.code != 'S'
+                      and not x.parent_comp_id.preserve_bom_on_import)
         for adjacency in adjacencies:
             if not adjacency.parent_comp_id.product_id or not adjacency.child_comp_id.product_id:
                 continue
@@ -377,7 +381,10 @@ class EngBomBatch(models.Model):
 
         # create remove diffs for this batch
         for part in self.comp_ids.filtered(
-                lambda x: x.product_id and not len(x.adjacency_parent_ids) and not x.rm_product_id):
+                lambda x: x.product_id
+                          and not len(x.adjacency_parent_ids)
+                          and not x.rm_product_id
+                          and not x.preserve_bom_on_import):
             bom = bom_obj.search([('product_id', '=', part.product_id.id)], limit=1)
             if bom:
                 diff = bom_diff_obj.create({
@@ -498,7 +505,10 @@ class EngBomBatch(models.Model):
 
         # create line diffs for removed boms
         for part in self.comp_ids.filtered(
-                lambda x: x.product_id and not len(x.adjacency_parent_ids) and not x.rm_product_id):
+                lambda x: x.product_id
+                          and not len(x.adjacency_parent_ids)
+                          and not x.rm_product_id
+                          and not x.preserve_bom_on_import):
             bom = bom_obj.search([('product_id', '=', part.product_id.id)], limit=1)
             is_mrp_rm_part = bom.one_comp_product_id and \
                              bom.one_comp_product_id.product_tmpl_id.is_continuous
@@ -679,7 +689,8 @@ class EngBomBatch(models.Model):
         for part in self.comp_ids.filtered(
                 lambda x: x.product_id
                           and not len(x.adjacency_parent_ids)
-                          and not x.rm_product_id):
+                          and not x.rm_product_id
+                          and not x.preserve_bom_on_import):
             # for raw material part boms, we won't delete existing boms
             # odoo data takes precedence over the imported data
             # we do show a diff, but we won't apply these changes

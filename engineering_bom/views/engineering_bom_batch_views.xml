@@ -13,6 +13,8 @@
                 <field name="product_active"/>
                 <field name="product_deprecated"/>
                 <field name="suggested_product_id"/>
+                <field name="preserve_bom_on_import"/>
+                <field name="release_eco_id"/>
             </tree>
         </field>
     </record>
@@ -41,9 +43,11 @@
                             <field name="alt_qty"/>
                             <field name="part_type"/>
                             <field name="eng_type_id"/>
-                            <field name="make"/>
+                            <field name="preserve_bom_on_import"/>
+                            <field name="release_eco_id"/>
                         </group>
                         <group>
+                            <field name="make"/>
                             <field name="material_spec"/>
                             <field name="material_pn"/>
                             <field name="rm_product_id"/>
