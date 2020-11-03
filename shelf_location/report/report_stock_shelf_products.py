@@ -97,7 +97,7 @@ class ReportStockShelfProducts(models.Model):
             shelves[line.shelf_id.name]['products'] |= line
             shelves[line.shelf_id.name]['prod_count'] += 1
         keys = shelves.keys()
-        res = [shelves[k] for k in sorted(keys)]
+        res = [shelves[k] for k in sorted(keys, key=lambda x: str(x))]
         return res
 
     def _select_fields(self):
