@@ -69,7 +69,7 @@ class CompileProductFile(models.TransientModel):
                 self.included_files == 'all')
             for attachment in attachments:
                 try:
-                    attachment_report = PdfFileReader(attachment._full_path(attachment.store_fname), 'rb')
+                    attachment_report = PdfFileReader(attachment._full_path(attachment.store_fname), strict=False)
                 except Exception as e:
                     value = '. '.join(e.args)
                     raise UserError(_("Failed to include %s:\n%s" % (attachment.name, value)))
