@@ -3,9 +3,11 @@ import time
 import threading
 
 from odoo import api, fields, models, exceptions, _
+from odoo.exceptions import ValidationError
 
 import logging
 logger = logging.getLogger(__name__)
+RUNTHREAD = False
 
 
 class MultiLevelMrp(models.TransientModel):
@@ -115,9 +117,16 @@ class MultiLevelMrp(models.TransientModel):
             self = self.with_env(self.env(cr=new_cr))
             self.run_mrp_multi_level()
             new_cr.close()
+            global RUNTHREAD
+            RUNTHREAD = False
             return {}
 
     def run_mrp_multi_level_in_bg(self):
-        threaded_calculation = threading.Thread(target=self.process_mrp, args=())
-        threaded_calculation.start()
+        global RUNTHREAD
+        if not RUNTHREAD:
+            RUNTHREAD = True
+            threaded_calculation = threading.Thread(target=self.process_mrp, args=())
+            threaded_calculation.start()
+        else:
+            raise ValidationError(_('It is already running in the background'))
         return {'type': 'ir.actions.act_window_close'}
