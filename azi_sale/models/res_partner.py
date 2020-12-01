@@ -43,12 +43,15 @@ class ResPartner(models.Model):
             name = partner.name or ''
             if partner.company_name or partner.parent_id:
                 if partner.type in ['invoice', 'delivery', 'other']:
-                    name = "[%s] " % partner.type
+                    if partner.name:
+                        name = "[%s - %s] " % (partner.type.upper(), partner.name)
+                    else:
+                        name = "[%s] " % partner.type.upper()
                 if not partner.is_company:
                     flat_address = partner._flat_address()
                     name = "%s, %s %s" % (
                         partner.commercial_company_name or partner.parent_id.name,
-                        name.upper(),
+                        name,
                         flat_address)
             name = name.replace('\n', ', ')
             res.append((partner.id, name))
