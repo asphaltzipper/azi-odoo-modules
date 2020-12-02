@@ -29,7 +29,7 @@ class ResPartner(models.Model):
     # force uppercase for code field on res_partner record write
     @api.multi
     def write(self, vals):
-        if 'code' in vals:
+        if vals.get('code'):
             vals['code'] = vals['code'].replace(' ', '').upper()
         return super(ResPartner, self).write(vals)
 
