@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_stock_inv_turns_tree" model="ir.ui.view">
+        <field name="name">stock.inv.turns.tree</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="stock_inventory_turnover_report.view_stock_inv_turns_tree"/>
+        <field name="arch" type="xml">
+            <field name="qty_consumed_6m" position="replace"/>
+            <field name="qty_consumed_12m" position="replace"/>
+            <field name="inventory_turns_6m" position="before">
+                <field name="average_cost_6m"/>
+                <field name="average_cost_12m"/>
+                <field name="consumed_cost_6m"/>
+                <field name="consumed_cost_12m"/>
+            </field>
+        </field>
+    </record>
+    <record id="view_category_turnover_tree" model="ir.ui.view">
+        <field name="name">view.category.turnover.tree</field>
+        <field name="model">product.category</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="display_name"/>
+                <field name="average_cost_6m"/>
+                <field name="average_cost_12m"/>
+                <field name="consumed_cost_6m"/>
+                <field name="consumed_cost_12m"/>
+                <field name="inventory_turns_6m"/>
+                <field name="inventory_turns_12m"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="product_category_turnover_action" model="ir.actions.act_window">
+        <field name="name">Category Turnover</field>
+        <field name="res_model">product.category</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_category_turnover_tree"/>
+    </record>
+
+    <menuitem id="menu_product_category_turnover" parent="stock.menu_warehouse_report"
+              action="product_category_turnover_action" sequence="51"/>
+
+</odoo>
