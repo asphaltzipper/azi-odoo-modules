@@ -12,7 +12,14 @@ class CompileProductFile(models.TransientModel):
     _description = "Compile Product Files"
 
     bom_depth = fields.Integer('BOM Depth', default=1)
-    included_files = fields.Selection([('high', 'Highest Priority PDFs Only'), ('pdf', 'All PDFs')])
+    included_files = fields.Selection(
+        selection=[
+            ('high', 'Highest Priority PDFs'),
+            ('three', 'Priority 3 PDFs Only'),
+            ('non-zero', 'Non-Zero Priority PDFs'),
+            ('pdf', 'All PDFs'),
+        ]
+    )
     compiled_file = fields.Binary('Compiled File')
     compiled_filename = fields.Char('File Name')
 
@@ -31,7 +38,7 @@ class CompileProductFile(models.TransientModel):
                 line.product_id, limit, current_path, level+1))
         return stack
 
-    def _get_attachments(self, product, get_all):
+    def _get_attachments(self, product):
         attachments = self.env['ir.attachment'].search([
             ('res_field', '=', False),
             ('mimetype', '=', 'application/pdf'),
@@ -39,9 +46,13 @@ class CompileProductFile(models.TransientModel):
             '&', ('res_model', '=', 'product.product'), ('res_id', '=', product.id),
             '&', ('res_model', '=', 'product.template'), ('res_id', '=', product.product_tmpl_id.id),
         ], order='priority desc')
-        if attachments and not get_all:
+        if attachments and self.included_files == 'high':
             # return only the highest priority attachment
             return attachments[0]
+        elif attachments and self.included_files == 'three':
+            return attachments.filtered(lambda x: x.priority == '3')
+        elif attachments and self.included_files == 'non-zero':
+            return attachments.filtered(lambda x: x.priority != '0')
         else:
             return attachments
 
@@ -64,9 +75,7 @@ class CompileProductFile(models.TransientModel):
 
         # get and compile pdf attachments
         for key in sorted(bom_structure):
-            attachments = self._get_attachments(
-                bom_structure[key],
-                self.included_files == 'all')
+            attachments = self._get_attachments(bom_structure[key])
             for attachment in attachments:
                 try:
                     attachment_report = PdfFileReader(attachment._full_path(attachment.store_fname), strict=False)
