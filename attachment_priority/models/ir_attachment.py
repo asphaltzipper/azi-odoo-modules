@@ -11,5 +11,5 @@ class IrAttachment(models.Model):
             ('2', 'Normal'),
             ('3', 'High'),
         ],
-        default="0",
+        default="1",
         required=True)
