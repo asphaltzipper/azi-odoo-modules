@@ -43,7 +43,7 @@ class StockRequest(models.Model):
     def _compute_sold(self):
         for rec in self:
             rec.sold = rec.sale_order_line_id and \
-                       rec.sale_order_line_id.state == 'sale' or False
+                       rec.sale_order_line_id.state != 'cancel' or False
 
     # TODO: enforce sale_order_line_id is unique
 
