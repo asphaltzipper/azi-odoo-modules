@@ -7,4 +7,4 @@ from . import mrp_repair
 from . import sale_order
 from . import stock_lot_revaluations
 from . import stock_lot_hour_log
-from . import stock_move_line
+from . import stock_move

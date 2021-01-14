@@ -43,7 +43,7 @@
                                 <field name="reference"/>
                                 <field name="location_id"/>
                                 <field name="location_dest_id"/>
-                                <field name="price_unit"/>
+                                <field name="account_cost_unit"/>
                             </tree>
                         </field>
                     </page>
