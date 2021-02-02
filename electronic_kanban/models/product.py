@@ -7,7 +7,8 @@ class ProductTemplate(models.Model):
     _inherit = "product.template"
 
     e_kanban = fields.Boolean(
-        related='product_variant_ids.e_kanban')
+        related='product_variant_ids.e_kanban',
+        readonly=False)
 
     e_kanban_ids = fields.One2many(
         related='product_variant_ids.e_kanban_ids')
