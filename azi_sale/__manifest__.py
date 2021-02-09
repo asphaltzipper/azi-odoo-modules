@@ -19,11 +19,12 @@ AZI Specialized Customizations to Sales
 * Prevent Children of Children
 * Add priority to Contact Addresses
     """,
-    "depends": ['sale', 'crm', 'sales_team_industry', 'delivery'],
+    "depends": ['sale', 'crm', 'sales_team_industry', 'delivery', 'sale_stock'],
     'data': [
         'views/crm_team_view.xml',
         'views/res_partner_views.xml',
         'views/sale_order_view.xml',
+        'views/product_views.xml',
         'report/azi_sales_order.xml',
     ],
     "installable": True,
