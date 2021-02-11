@@ -15,6 +15,9 @@
         <field name="model">mrp.bom</field>
         <field name="inherit_id" ref="mrp.mrp_bom_tree_view"/>
         <field name="arch" type="xml">
+            <field name="product_id" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
             <field name="product_uom_id" position="attributes">
                 <attribute name="string">UOM</attribute>
             </field>
@@ -23,6 +26,7 @@
             </field>
             <field name="routing_id" position="before">
                 <field name="routing_detail"/>
+                <field name="deprecated"/>
             </field>
         </field>
     </record>

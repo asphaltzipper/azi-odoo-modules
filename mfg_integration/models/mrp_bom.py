@@ -27,6 +27,10 @@ class MrpBom(models.Model):
         related='routing_id.operations_detail',
         string='Routing Detail')
 
+    deprecated = fields.Boolean(
+        string="Obsolete",
+        related='product_tmpl_id.deprecated')
+
     def _compute_one_component(self):
         for bom in self:
             if len(bom.bom_line_ids) == 1:
