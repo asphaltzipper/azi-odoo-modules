@@ -9,6 +9,35 @@
         <field name="view_type">form</field>
     </record>
 
+    <record id="product_template_tree_view" model="ir.ui.view">
+        <field name="name">engineering.product.template.tree</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_tree_view"/>
+        <field name="arch" type="xml">
+            <tree position="attributes">
+                <attribute name="default_order">default_code desc,name</attribute>
+            </tree>
+            <field name="list_price" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+            <field name="standard_price" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+            <field name="categ_id" position="attributes">
+                <attribute name="string">Accounting Category</attribute>
+            </field>
+            <field name="categ_id" position="before">
+                <field name="eng_categ_id"/>
+            </field>
+            <field name="qty_available" position="attributes">
+                <attribute name="string">On Hand</attribute>
+            </field>
+            <field name="virtual_available" position="attributes">
+                <attribute name="string">Forecasted</attribute>
+            </field>
+        </field>
+    </record>
+
     <record id="product_template_form_engineering_product" model="ir.ui.view">
         <field name="name">product.template.engineering_product.inherit</field>
         <field name="model">product.template</field>
@@ -175,6 +204,62 @@
         <field name="model_id" ref="engineering_product.model_product_product" />
         <field name="state">code</field>
         <field name="code">self.action_revise()</field>
+    </record>
+
+    <record id="azi_product_template_search" model="ir.ui.view">
+        <field name="name">azi.product.template.search</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_search_view"/>
+        <field name="arch" type="xml">
+            <field name="categ_id" position="before">
+                <field name="eng_categ_id"/>
+            </field>
+            <filter name="consumable" position="after">
+                <separator/>
+                <filter string="Engineering Parts" name="current" domain="[('eng_management', '=', True)]"/>
+                <filter string="Non-Engineering Parts" name="current" domain="[('eng_management', '=', False)]"/>
+                <separator/>
+                <filter string="Current" name="current" domain="[('deprecated', '=', False)]"/>
+                <filter string="Obsolete" name="obsolete" domain="[('deprecated', '=', True)]"/>
+            </filter>
+        </field>
+    </record>
+
+    <record id="engineering_product_template_kanban_view" model="ir.ui.view">
+        <field name="name">engineering.product.template.product.kanban</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_kanban_view"/>
+        <field name="arch" type="xml">
+            <!-- this is too long. maybe we could get the short name -->
+            <!-- <ul position="inside"> -->
+            <!--     <li><field name="eng_categ_id"/></li> -->
+            <!-- </ul> -->
+            <xpath expr="//kanban" position="attributes">
+                <attribute name="default_order">default_code desc,name</attribute>
+            </xpath>
+            <xpath expr="//kanban" position="inside">
+                <field name="deprecated"/>
+                <field name="eng_categ_id"/>
+            </xpath>
+            <xpath expr="//div/div[2]" position="before">
+                <div class="pull-right" attrs="{'invisible': [('deprecated', '=', False)]}">
+                    <a name="deprecated_product" type="object">
+                        <i class="fa fa-exclamation-triangle fa-lg"/>
+                    </a>
+                </div>
+            </xpath>
+            <xpath expr="//div/strong[hasclass('o_kanban_record_title')]" position="replace">
+                <strong name="title" class="o_kanban_record_title">
+                    <t t-if="record.default_code.value">
+                        [<field name="default_code"/>]
+                        <small><field name="name"/></small>
+                    </t>
+                    <t t-else="">
+                        <field name="name"/>
+                    </t>
+                </strong>
+            </xpath>
+        </field>
     </record>
 
 </openerp>
