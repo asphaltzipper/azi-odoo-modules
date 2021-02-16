@@ -613,7 +613,7 @@ class MrpWoProduceWorkLine(models.TransientModel):
         compute='_compute_user_ids',
     )
     labor_date = fields.Datetime(
-        string="Date",
+        string="Date", default=fields.Datetime.now()
     )
     labor_time = fields.Float(
         string='Hours',

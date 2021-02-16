@@ -36,6 +36,7 @@ Steps for processing manufacturing order:
         'wizard/mrp_wo_produce_views.xml',
         'views/mrp_production_views.xml',
         'views/hr_employee_views.xml',
+        'wizard/mrp_automation_views.xml',
     ],
     "installable": True,
     "auto_install": False,
