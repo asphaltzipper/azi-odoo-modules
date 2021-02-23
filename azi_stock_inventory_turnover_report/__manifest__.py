@@ -9,13 +9,14 @@
     'description': """
 AZI Stock Inventory Turnover Report
 ===================================
-* Create a new turnover report and fixing bug in oca module
+* Create a new turnover report 
     """,
     'depends': [
-        'stock_inventory_turnover_report',
+        'stock_account',
     ],
     "data": [
-        'views/product_views.xml',
+        'security/ir.model.access.csv',
+        'report/inventory_turnover_report.xml',
     ],
     "installable": True,
     "auto_install": False,

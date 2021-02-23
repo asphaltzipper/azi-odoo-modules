@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_inventory_product_turnover_tree" model="ir.ui.view">
+        <field name="name">view.inventory.product.turnover.tree</field>
+        <field name="model">inventory.product.turnover</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="category_id"/>
+                <field name="product_id"/>
+                <field name="avg_6_balance"/>
+                <field name="avg_12_balance"/>
+                <field name="consumed_6_cost"/>
+                <field name="consumed_12_cost"/>
+                <field name="turns_6m"/>
+                <field name="turns_12m"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_inventory_product_turnover_search" model="ir.ui.view">
+        <field name="name">view.inventory.product.turnover.search</field>
+        <field name="model">inventory.product.turnover</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="product_id"/>
+                <group expand="0" string="Group By">
+                    <filter name="category" string="Category" domain="[]" context="{'group_by':'category_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="inventory_product_turnover_action" model="ir.actions.act_window">
+        <field name="name">Inventory Turnover</field>
+        <field name="res_model">inventory.product.turnover</field>
+        <field name="view_mode">tree</field>
+    </record>
+
+    <menuitem id="menu_inventory_product_turnover" parent="stock.menu_warehouse_report"
+              action="inventory_product_turnover_action" sequence="51"/>
+</odoo>
