@@ -46,6 +46,7 @@ class MrpPlannedPickKit(models.TransientModel):
         comodel_name='mrp.planned.pick.kit.line',
         inverse_name='kit_id',
         string="Lines",
+        readonly=True,
     )
     show_images = fields.Boolean(
         string="Show Images",
@@ -77,12 +78,18 @@ class MrpPlannedPickKit(models.TransientModel):
     @api.depends('product_id')
     def _compute_no_batch(self):
         for rec in self:
-            rec.no_batch = rec.product_id.mrp_area_ids[0].mrp_nbr_days == 0
+            if not rec.product_id.mrp_area_ids:
+                rec.no_batch = False
+            else:
+                rec.no_batch = rec.product_id.mrp_area_ids[0].mrp_nbr_days == 0
 
     @api.constrains('product_qty', 'no_batch')
     def _check_no_batch_quantity(self):
         if self.no_batch and self.product_qty > 1.0:
-            raise ValidationError(_("This product cannot be produced in batches. Set the kit quantity to 1.0"))
+            raise ValidationError(_("Attempting to create a kit for quantity %s:\n"
+                                    "This product cannot be produced in "
+                                    "batches. Set the kit quantity to 1.0, "
+                                    "or change MRP Area demand grouping (Nbr. Days)." % self.product_qty))
         return True
 
     @api.multi
@@ -199,12 +206,14 @@ class MrpPlannedPickKitLine(models.TransientModel):
                 # TODO: better way to get company
             }
             rule = group_obj._get_rule(rec.product_id, rec.location_id, values)
-            if rule.action == 'manufacture' and \
+            if not rule:
+                rec.supply_method = 'none'
+            elif rule.action == 'manufacture' and \
                     rec.product_id.product_tmpl_id.bom_ids and \
                     rec.product_id.product_tmpl_id.bom_ids[0].type == 'phantom':
                 rec.supply_method = 'phantom'
             else:
-                rec.supply_method = rule.action if rule else 'none'
+                rec.supply_method = rule.action
 
     @api.model
     @api.depends('kit_id.product_qty', 'product_id')

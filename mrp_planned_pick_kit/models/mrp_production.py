@@ -10,6 +10,7 @@ class MrpProduction(models.Model):
     kit_done = fields.Boolean(
         string="Kit Done",
         compute="_compute_kit_done",
+        readonly=True,
         store=True,
         help="Parts kit is complete, and has been moved to starting workcenter",
     )
@@ -38,6 +39,38 @@ class MrpProduction(models.Model):
             kit_change_qty = vals['kit_assigned_qty'] - self.kit_assigned_qty
             new_avail_qty = self.kit_avail_qty - kit_change_qty
             self.product_id.mfg_kit_qty = max(0, new_avail_qty)
+        if 'product_qty' in vals and 'kit_assigned_qty' not in vals:
+            # assign available kits, trying to match the new production quantity
+            # case 1:
+            #   product_qty 6 -> 4
+            #   kit_assigned_qty 6 -> 4
+            #   kit_avail_qty 3 -> 5
+            #   local_avail_qty = 6 + 3 = 9
+            #   qty_to_assign = 4
+            #   kit_change_qty = 4 - 6 = -2
+            #   new_avail_qty = 3 - (-2) = 5
+            # case 2:
+            #   product_qty 4 -> 6
+            #   kit_assigned_qty 4 -> 5
+            #   kit_avail_qty 1 -> 0
+            #   local_avail_qty = 1 + 4 = 5
+            #   qty_to_assign = 5
+            #   kit_change_qty = 5 - 4 = 1
+            #   new_avail_qty = 1 - 1 = 0
+            local_avail_qty = self.kit_assigned_qty + self.kit_avail_qty
+            qty_to_assign = min(local_avail_qty, vals['product_qty'])
+            kit_change_qty = qty_to_assign - self.kit_assigned_qty
+            new_avail_qty = self.kit_avail_qty - kit_change_qty
+            self.product_id.mfg_kit_qty = max(0, new_avail_qty)
+            vals['kit_assigned_qty'] = qty_to_assign
+        if vals.get('state') and vals['state'] == 'done':
+            # assign available kits, trying to match the final production quantity
+            local_avail_qty = self.kit_assigned_qty + self.kit_avail_qty
+            qty_to_assign = min(local_avail_qty, self.product_qty)
+            kit_change_qty = qty_to_assign - self.kit_assigned_qty
+            new_avail_qty = self.kit_avail_qty - kit_change_qty
+            self.product_id.mfg_kit_qty = max(0, new_avail_qty)
+            vals['kit_assigned_qty'] = qty_to_assign
         return super(MrpProduction, self).write(vals)
 
     @api.depends('kit_assigned_qty', 'product_qty')
