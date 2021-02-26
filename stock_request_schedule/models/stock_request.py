@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models
+from odoo import api, fields, models, _
+from odoo.exceptions import UserError
 
 
 class StockRequest(models.Model):
@@ -44,6 +45,12 @@ class StockRequest(models.Model):
         for rec in self:
             rec.sold = rec.sale_order_line_id and \
                        rec.sale_order_line_id.state != 'cancel' or False
+
+    def action_cancel(self):
+        states = self.production_ids.mapped('state')
+        if any([x != 'cancel' for x in states]):
+            raise UserError(_("Cancel all Manufacturing Orders before canceling this Stock Request."))
+        return super(StockRequest, self).action_cancel()
 
     # TODO: enforce sale_order_line_id is unique
 
