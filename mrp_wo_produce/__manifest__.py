@@ -6,12 +6,13 @@
     "version": "12.0.1.0.0",
     "license": "AGPL-3",
     "summary": "Wizard for producing/completing Manufacturing Orders with Work Orders",
-    "category": "Inventory",
+    "category": "Manufacturing",
     "author": "Matt Taylor",
     "website": "http://www.github.com/asphaltzipper",
     'description': """
 Work Order Produce Wizard
 =========================
+
 Wizard for completing Manufacturing Orders with Work Orders
 
 Steps for processing manufacturing order:
@@ -28,15 +29,10 @@ Steps for processing manufacturing order:
     "depends": [
         "stock",
         "mrp",
-        "hr",
     ],
     "data": [
-        'views/barcode_templates.xml',
-        'wizard/mrp_wo_hour_views.xml',
         'wizard/mrp_wo_produce_views.xml',
         'views/mrp_production_views.xml',
-        'views/hr_employee_views.xml',
-        'wizard/mrp_automation_views.xml',
     ],
     "installable": True,
     "auto_install": False,

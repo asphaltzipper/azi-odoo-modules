@@ -5,18 +5,21 @@
         <field name="model">mrp.automation</field>
         <field name="arch" type="xml">
             <form>
-                <field name="mo_error" invisible="1"/>
+                <field name="scan_error" invisible="1"/>
                 <field name="_barcode_scanned" widget="mo_barcode_handler" invisible="1"/>
-                <div style="color: #dc3545" attrs="{'invisible': [('mo_error', '=', False)]}">
-                    <b>
-                        Please scan the correct barcode, there is no manufacturing order with this name
-                        <i>
-                            <field name="mo_name" nolabel="1" readonly="1"/>
-                        </i>
-                    </b>
+                <div style="color: #dc3545" attrs="{'invisible': [('scan_error', '=', False)]}">
+                    <b>You scanned an unrecognized barcode: <i><field name="scan_name" nolabel="1" readonly="1"/></i></b>
+                    <ul name="possible_errors">
+                        <li>No manufacturing order with this name</li>
+                        <li>No matching production kit was found</li>
+                    </ul>
                 </div>
-                <div class="text-center" style="background-color: #CCECDB;color:#005326;height:30px">
-                    <b>Scan Manufacturing Order Barcode</b>
+                <div class="text-left" style="background-color: #CCECDB;color:#005326;">
+                    <b>Scan a Barcode for one of the following:</b>
+                    <ul name="possible_objects">
+                        <li>Manufacturing Order</li>
+                        <li>Production Kit</li>
+                    </ul>
                 </div>
                 <footer>
                     <button string="Cancel" special="cancel"/>

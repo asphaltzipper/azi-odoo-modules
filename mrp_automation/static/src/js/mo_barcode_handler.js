@@ -1,4 +1,4 @@
-odoo.define('mrp_wo_produce.MOBarcodeHandler', function (require) {
+odoo.define('mrp_automation.MOBarcodeHandler', function (require) {
     "use strict";
 
     var AbstractField = require('web.AbstractField');

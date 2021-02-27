@@ -9,7 +9,17 @@
     'description': """
 Create and manage picking kits
 ==============================
-    """,
+
+This module was written to support the process of building parts kits for planned manufacturing orders.
+
+We add the following:
+
+* Kits quantity field on product
+* Kits quantity field on MRP Inventory record
+* Kit form view
+* Kit component reports
+* Kits assigned/available on Manufacturing Orders
+""",
     "author": "mtaylor",
     "license": "AGPL-3",
     "application": False,
@@ -24,7 +34,6 @@ Create and manage picking kits
         'views/product_views.xml',
         'views/mrp_production_views.xml',
         'views/mrp_inventory_views.xml',
-        'wizards/production_kit_convert_views.xml',
         'report/report_production_kit_templates.xml',
         'report/report_production_kit.xml',
     ],

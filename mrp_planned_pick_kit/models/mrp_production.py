@@ -41,22 +41,6 @@ class MrpProduction(models.Model):
             self.product_id.mfg_kit_qty = max(0, new_avail_qty)
         if 'product_qty' in vals and 'kit_assigned_qty' not in vals:
             # assign available kits, trying to match the new production quantity
-            # case 1:
-            #   product_qty 6 -> 4
-            #   kit_assigned_qty 6 -> 4
-            #   kit_avail_qty 3 -> 5
-            #   local_avail_qty = 6 + 3 = 9
-            #   qty_to_assign = 4
-            #   kit_change_qty = 4 - 6 = -2
-            #   new_avail_qty = 3 - (-2) = 5
-            # case 2:
-            #   product_qty 4 -> 6
-            #   kit_assigned_qty 4 -> 5
-            #   kit_avail_qty 1 -> 0
-            #   local_avail_qty = 1 + 4 = 5
-            #   qty_to_assign = 5
-            #   kit_change_qty = 5 - 4 = 1
-            #   new_avail_qty = 1 - 1 = 0
             local_avail_qty = self.kit_assigned_qty + self.kit_avail_qty
             qty_to_assign = min(local_avail_qty, vals['product_qty'])
             kit_change_qty = qty_to_assign - self.kit_assigned_qty
@@ -71,6 +55,11 @@ class MrpProduction(models.Model):
             new_avail_qty = self.kit_avail_qty - kit_change_qty
             self.product_id.mfg_kit_qty = max(0, new_avail_qty)
             vals['kit_assigned_qty'] = qty_to_assign
+        if vals.get('state') and vals['state'] == 'cancel':
+            # un-assign kits, return them to available
+            new_avail_qty = self.kit_avail_qty + self.kit_assigned_qty
+            self.product_id.mfg_kit_qty = max(0, new_avail_qty)
+            vals['kit_assigned_qty'] = 0
         return super(MrpProduction, self).write(vals)
 
     @api.depends('kit_assigned_qty', 'product_qty')
@@ -88,10 +77,3 @@ class MrpProduction(models.Model):
                 values['kit_assigned_qty'] = to_assign
                 product.mfg_kit_qty = max(0, product.mfg_kit_qty - to_assign)
         return super(MrpProduction, self).create(values)
-
-    @api.multi
-    def action_cancel(self):
-        for rec in self:
-            if rec.kit_assigned_qty > 0:
-                rec.kit_assigned_qty = 0
-        return super(MrpProduction, self).action_cancel()

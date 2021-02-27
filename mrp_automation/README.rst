@@ -2,35 +2,33 @@
    :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
    :alt: License: AGPL-3
 
-=====================
-mrp_planned_pick_kits
-=====================
-This module was written to support the process of building parts kits for planned manufacturing orders.
+==============
+MRP Automation
+==============
+* Create a Manufacturing Order by scanning a production kit barcode
+* Produce a Manufacturing Order (i.e. launch and fill the produce wizard) by scanning the MO barcode
 
-We add the following:
 
-* Kits quantity field on product
-* Kits quantity field on MRP Inventory record
-* Kit form view
-* Kit component reports
-* Kits assigned/available on Manufacturing Orders
+Installation
+============
+* No specific installation instructions
+
+Configuration
+=============
+* No configuration settings
 
 Usage
 =====
+Steps for creating and processing a manufacturing order:
 
-To set the quantity of kits available for a product, simply specify the quantity in the MFG tab of the product form.
-
-If kits are available, they will automatically be assigned when creating a Manufacturing Order.
-
-**To create a kit report:**
-
-- On the product form MFG tab, click "Make Kit"
-- Click Edit, specify the Produce Qty, and click Save
-- Click Finish
-   - Note that this will add Produce Qty to kits available
-- From the print menu, choose a report (with or without images)
-
-The resulting report has a barcode that contains the product ID and the kit quantity.
+#. Click Manufacturing -> Operations -> MO Automation
+#. Scan a kit barcode (this will create a Manufacturing Order)
+#. Print the resulting MO
+#. Click Manufacturing -> Operations -> MO Automation
+#. Scan the MO barcode
+#. Scan an employee badge
+#. Specify the number of labor hours for the employee on this MO
+#. Click RECORD PRODUCTION
 
 Known issues / Roadmap
 ======================
@@ -50,10 +48,6 @@ behavior**%0A%0A**Expected%20behavior**>`_.
 
 Credits
 =======
-
-Contributors
-------------
-* Matt Taylor <mtaylor@asphaltzipper.com>
 
 Funders
 -------
