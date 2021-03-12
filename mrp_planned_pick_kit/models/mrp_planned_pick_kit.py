@@ -108,6 +108,13 @@ class MrpPlannedPickKit(models.TransientModel):
         self.product_id.mfg_kit_qty += self.product_qty
         self.write({'state': 'done'})
 
+    @api.multi
+    def write(self, vals):
+        if vals.get('product_qty'):
+            for line in self.line_ids:
+                line.product_qty = line.factor * vals['product_qty']
+        return super(MrpPlannedPickKit, self).write(vals)
+
 
 class MrpPlannedPickKitLine(models.TransientModel):
     _name = 'mrp.planned.pick.kit.line'

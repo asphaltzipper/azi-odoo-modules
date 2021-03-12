@@ -21,7 +21,7 @@
                     </group>
                     <group>
                         <field name="line_ids" nolabel="1" readonly="1">
-                            <tree decoration-danger="available_qty - product_qty &lt; 0.0001" decoration-success="available_qty - product_qty &gt;= -0.0001">
+                            <tree decoration-danger="short" decoration-success="not short">
                                 <field name="kit_id" invisible="1"/>
                                 <field name="show_images" invisible="1"/>
                                 <field name="product_id"/>
