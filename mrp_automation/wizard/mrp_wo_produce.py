@@ -6,8 +6,15 @@ class MrpWoProduce(models.TransientModel):
     _name = "mrp.wo.produce"
     _inherit = ["mrp.wo.produce", "barcodes.barcode_events_mixin"]
 
+    update_quantity = fields.Boolean('Update Quantity')
+    new_quantity = fields.Float('New Quantity to Produce')
+
     @api.multi
     def do_produce(self):
+        if self.update_quantity:
+            change_mo_qty = self.env['change.production.qty'].create({'mo_id': self.production_id.id,
+                                                                      'product_qty': self.new_quantity})
+            change_mo_qty.change_prod_qty()
         action = super(MrpWoProduce, self).do_produce()
         if self._context.get('barcode_scan', False):
             view_id = self.env.ref('mrp.mrp_production_form_view').id

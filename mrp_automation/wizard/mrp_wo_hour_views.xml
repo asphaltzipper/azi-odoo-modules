@@ -8,6 +8,10 @@
             <form>
                 <group>
                     <group>
+                        <field name="quantity_to_produce"/>
+                        <field name="quantity" required="1"/>
+                    </group>
+                    <group>
                         <field name="produce_id" invisible="1"/>
                         <field name="work_order_line" invisible="1"/>
                         <field name="no_of_hours" required="1"/>
