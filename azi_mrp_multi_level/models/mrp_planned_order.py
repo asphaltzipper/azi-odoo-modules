@@ -51,11 +51,11 @@ class MrpPlannedOrder(models.Model):
            - order scheduled on day 21
              - priority = ceiling(0.38*1)+1 = 9
         """
-        d_now = fields.Date.today()
+        d_min = min(self.mapped('order_release_date'))
         d_max = max(self.mapped('order_release_date'))
-        span_days = (d_max - d_now).days
+        span_days = (d_max - d_min).days
         factor = 8.0 / span_days
         for rec in self:
-            day = (rec.order_release_date - d_now).days
+            day = (rec.order_release_date - d_min).days
             priority = int(math.ceil(day*factor)+1)
             rec.priority_code = min(max(priority, 2), 9)
