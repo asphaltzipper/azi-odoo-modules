@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="report_product_bom">
+        <div class="container o_mrp_bom_report_page">
+            <t t-if="data">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1>Reverse BOM</h1>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="mt16">
+                            <table width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Product Template</th>
+                                        <th>BOM</th>
+                                        <th>BOM Line</th>
+                                        <th>Quantity</th>
+                                        <th>Unit Of Measure</th>
+                                        <th>Type</th>
+                                        <th>active</th>
+                                        <th>Deprecated</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="data" t-as="line">
+                                        <tr>
+                                            <td>
+                                                <span>
+                                                    <a href="#" t-att-data-res-id="line['product'].id" t-att-data-model="'product.product'" class="o_product_bom_action">
+                                                        <t t-esc="line['product'].display_name"/>
+                                                    </a>
+                                                </span>
+                                            </td>
+                                            <td><t t-esc="line['product_template'].display_name"/></td>
+                                            <td><t t-esc="line['bom_id'].display_name"/></td>
+                                            <td>
+                                                <a href="#" t-att-data-res-id="line['bom_line_id']" t-att-data-model="'mrp.bom.line'" class="o_product_bom_action">
+                                                    <t t-esc="line['bom_line_id']"/>
+                                                </a>
+                                            </td>
+                                            <td><t t-esc="line['quantity']"/> </td>
+                                            <td><t t-esc="line['uom'].display_name"/> </td>
+                                            <td><t t-esc="line['type']"/> </td>
+                                            <td><t t-esc="line['active']"/> </td>
+                                            <td><t t-esc="line['deprecated']"/> </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </t>
+            <t t-else="">
+                <h1 class="text-center">No data available.</h1>
+            </t>
+        </div>
+    </template>
+
+
+</odoo>

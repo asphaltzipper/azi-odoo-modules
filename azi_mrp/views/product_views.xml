@@ -42,5 +42,10 @@
             </button>
         </field>
     </record>
-
+    <record id="action_report_product_bom" model="ir.actions.client">
+        <field name="name">Reverse BOM</field>
+        <field name="tag">product_bom_report</field>
+        <field name="context" eval="{'model': 'report.azi_mrp.report_product_bom'}" />
+        <field name="binding_model_id" ref="product.model_product_product"/>
+    </record>
 </odoo>
