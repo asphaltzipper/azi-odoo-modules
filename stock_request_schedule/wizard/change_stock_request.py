@@ -14,7 +14,13 @@ class ChangeStockRequest(models.TransientModel):
                                                      ('state', 'not in', ('done', 'cancel')), ('scheduled', '=', True)])
         for request in requests:
             request.expected_date = self.expected_date
+            # update manufacturing order dates
             order = self.env['mrp.production'].search([('origin', '=', request.name)])
             if order:
                 order.date_planned_finished = self.expected_date
-
+            # update sale order dates
+            if request.sale_order_line_id:
+                request.sale_order_line_id.order_id.commitment_date = self.expected_date
+                pickings = request.sale_order_line_id.order_id.picking_ids
+                for pick in pickings.filtered(lambda x: x.state not in ['done', 'cancel']):
+                    pick.scheduled_date = self.expected_date

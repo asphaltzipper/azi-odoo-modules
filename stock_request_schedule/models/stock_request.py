@@ -12,7 +12,9 @@ class StockRequest(models.Model):
         string='Template',
         store=True)
 
-    note = fields.Char(string='Note')
+    note = fields.Char(
+        string='Note',
+        copy=False)
 
     scheduled = fields.Boolean(
         string='Scheduled',
@@ -21,13 +23,15 @@ class StockRequest(models.Model):
 
     sale_order_line_id = fields.Many2one(
         comodel_name='sale.order.line',
-        string='Sale Line')
+        string='Sale Line',
+        copy=False)
 
     sale_partner_id = fields.Many2one(
         comodel_name='res.partner',
         related='sale_order_line_id.order_id.partner_id',
         string='Partner',
-        store=True)
+        store=True,
+        copy=False)
 
     finished_goods = fields.Boolean('Finished Goods', related='product_id.categ_id.finished_goods', store=True)
 
@@ -36,7 +40,8 @@ class StockRequest(models.Model):
         compute='_compute_sold',
         required=True,
         default=False,
-        store=True)
+        store=True,
+        copy=False)
 
     production_ids = fields.Many2many(copy=False)
 
