@@ -29,9 +29,13 @@ class MrpProduction(models.Model):
         for rec in self:
             if rec.kit_assigned_qty > float_round(
                     rec.product_qty, precision_digits=0):
-                raise UserError(_("Can't assign more kits than required"))
+                raise UserError(_("Can't assign more kits than required for "
+                                  "product %s on order %s" %
+                                  (rec.product_id.display_name, rec.name)))
             if rec.kit_assigned_qty < 0:
-                raise UserError(_("Can't assign negative number of kits"))
+                raise UserError(_("Can't assign negative number of kits for "
+                                  "product %s on order %s" %
+                                  (rec.product_id.display_name, rec.name)))
 
     @api.multi
     def write(self, vals):
