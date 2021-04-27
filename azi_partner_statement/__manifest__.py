@@ -17,6 +17,7 @@ AZI Partner Statement
     "data": [
         'reports/outstanding_statement.xml',
         'reports/activity_statement.xml',
+        'wizards/partner_due_report_views.xml',
     ],
     "installable": True,
     "auto_install": False,
