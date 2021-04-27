@@ -1,4 +1,12 @@
 * text eol=lf
 *.ods binary
 *.odt binary
+*.xlsx binary
+*.xls binary
 *.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.pdf binary
+*.mp4 binary
+*.ttf binary
