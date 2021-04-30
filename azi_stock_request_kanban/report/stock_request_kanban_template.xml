@@ -64,4 +64,51 @@
             paperformat="azi_stock.paperformat_barcode"
             menu="True"/>
 
+
+    <template id="report_kanban_label_2x1_body">
+        <div class="row no-gutters">
+            <div class="col-9" style="text-align:left; vertical-align:top; margin:-7px -18px -12px -12px;">
+                <div style="text-align:left; font-size:46px; font-family:'Code 128';" t-field="o.code128"/>
+            </div>
+            <div class="col-3" style="text-align:right; vertical-align:top; font-size:10px; margin-top:6px;">
+                <span style="text-align:right;" t-field="o.name"/><br/>
+                <span style="white-space:nowrap;" t-esc="'%s %s' % (float(o.product_uom_qty), o.product_uom_id.name)"/>
+            </div>
+        </div>
+        <div class="row no-gutters" t-if="o.product_id.default_code">
+            <div class="col-12" style="height:5%; text-align:center; vertical-align:middle; overflow:invisible;">
+                <t t-set="pn_size" t-value="int(min(15, 180/(0.5*len(o.product_id.default_code))))"/>
+                <t t-set="pn_style" t-value="'font-weight:bold; margin:-2px -2px -2px -2px; font-size:%.2fpx' % (pn_size,)" />
+                <div t-field="o.product_id.default_code" t-att-style="pn_style"/>
+            </div>
+        </div>
+        <div class="row no-gutters">
+            <div class="col-12"
+                 style="height:47px; vertical-align:top; margin:-2px -2px -2px -2px; overflow:hidden;">
+                <div style="text-align:left; line-height:14px; font-size:12px;" t-field="o.product_id.name"/>
+            </div>
+        </div>
+    </template>
+    <template id="report_kanban_label_2x1">
+        <t t-call="web.basic_layout">
+            <t t-foreach="docs" t-as="o">
+                <div class="page">
+                    <t t-call="azi_stock_request_kanban.report_kanban_label_2x1_body">
+                        <t t-set="o" t-value="o"/>
+                    </t>
+                    <p style="page-break-before: always"></p>
+                </div>
+            </t>
+        </t>
+    </template>
+    <report
+        id="action_report_kanban_label_2x1"
+        string="AZI Label 2x1"
+        model="stock.request.kanban"
+        paperformat="azi_stock.paperformat_label_2x1"
+        report_type="qweb-pdf"
+        name="azi_stock_request_kanban.report_kanban_label_2x1"
+        file="azi_stock_request_kanban.report.stock_request_kanban_template"
+        menu="True"/>
+
 </odoo>

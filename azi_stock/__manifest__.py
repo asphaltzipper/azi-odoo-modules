@@ -23,6 +23,7 @@ AZI Specialized Customizations to Stock
         'engineering_product',
         'shelf_location',
         'stock_inventory_valuation_location',
+        'barcode_font',
     ],
     'data': [
         'views/stock_view_changes.xml',

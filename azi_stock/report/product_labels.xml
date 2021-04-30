@@ -14,7 +14,6 @@
             </t>
         </t>
     </template>
-
     <template id="azi_report_product_product_label">
         <t t-call="web.basic_layout">
             <t t-foreach="docs" t-as="o">
@@ -24,6 +23,243 @@
                     <div t-att-style="pn_style" t-field="o.default_code"/>
                     <div style="overflow: hidden; max-height:3em; line-height: 0.9em; font-size: 0.9em" t-field="o.name"/>
                 </div>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_prod_2x1_label_body">
+        <!-- barcode size parameters -->
+        <t t-set="bc_size" t-value="int(719.0/len(o.code128))"/>
+        <t t-set="bc_top" t-value="int(1.05*len(o.code128)-25.5)"/>
+        <t t-set="bc_right" t-value="int(0.625*len(o.code128)-21.25)"/>
+        <t t-set="bc_bottom" t-value="int(3.125*len(o.code128)-76.25)"/>
+        <t t-set="bc_left" t-value="int(0.625*len(o.code128)-21.25)"/>
+        <t t-set="bc_style"
+           t-value="'clear:both; float:left; margin:%spx %spx %spx %spx; white-space:nowrap; text-align:center; font-family:\'Code 128\'; font-size:%spx' % (bc_top,bc_right,bc_bottom,bc_left,bc_size)" />
+
+        <!-- part number size parameters -->
+        <t t-set="pn_size" t-value="int(-0.5*len(o.code128)+27.0)"/>
+        <t t-set="pn_style"
+           t-value="'display:block; margin:-2px -2px -2px -2px; white-space:nowrap; text-align:center; font-weight:bold; font-family:sans-serif; font-size:%spx;' % (pn_size,)" />
+
+        <div style="display:block; height:96px; width:205px; overflow:hidden;">
+            <div
+                t-att-style="bc_style"
+                t-field="o.code128"/>
+            <div
+                style="display:block; clear:both; float:left; width:100%; background:white;">
+                <div
+                    t-att-style="pn_style"
+                    t-field="o.default_code"/>
+                <div
+                    style="display:block; width:100%; text-align:center; font-family:sans-serif; line-height:12px; font-size:10px;"
+                    t-field="o.name"/>
+            </div>
+        </div>
+    </template>
+    <template id="report_prod_tmpl_2x1_label">
+        <t t-call="web.basic_layout">
+            <t t-foreach="docs" t-as="o">
+                <div class="page text-center">
+                    <t t-call="azi_stock.report_prod_2x1_label_body">
+                        <t t-set="o" t-value="o"/>
+                    </t>
+                    <p style="page-break-before: always"> </p>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <!-- This is the preferred method for laying out labels -->
+    <template id="report_prod_3x2_label_body">
+        <!-- barcode size parameters -->
+        <t t-set="bc_size" t-value="int(1000/len(o.code128))"/>
+        <t t-set="bc_top" t-value="int(1.375*len(o.code128)-43.750)"/>
+        <t t-set="bc_style"
+           t-value="'position:absolute; width:%s; left:0px; top:%spx; white-space:nowrap; text-align:center; font-family:\'Code 128\'; font-size:%spx' % ('100%',bc_top,bc_size)" />
+
+        <!-- part number size parameters -->
+        <t t-set="pn_size" t-value="int(-0.5*len(o.code128)+27.0)"/>
+        <t t-set="pn_style"
+           t-value="'display:block; margin:-2px -2px -2px -2px; white-space:nowrap; text-align:center; font-weight:bold; font-family:sans-serif; font-size:%spx;' % (pn_size,)" />
+
+        <div style="position:relative; display:block; height:192px; width:320px; overflow:hidden;">
+            <div
+                t-att-style="bc_style"
+                t-field="o.code128"/>
+<!--                style="position:absolute; width:100%; left:0px; top:-10px; white-space:nowrap; text-align:center; font-family:'Code 128'; font-size:100px"-->
+            <div style="position:absolute; left:0px; top:50px; height:142px; width:100%; background:white; overflow:hidden;">
+                <div
+                    t-att-style="pn_style"
+                    t-field="o.default_code"/>
+                <div name="lower" style="clear:both; float:left; width:100%">
+                    <div name="image" style="clear:left; float:left; width:120px; height:120px;">
+                        <img
+                            style="max-width:120px; max-height:120px; width:auto; height:auto;"
+                            t-attf-src="/web/image/product.product/#{o.id}/image"/>
+                    </div>
+                    <div name="name"
+                         style="float:left; font-size:0.9em; width:1.75in; max-height:120px; overflow:hidden;"
+                         t-field="o.name"/>
+                </div>
+            </div>
+        </div>
+    </template>
+    <template id="report_prod_tmpl_3x2_label">
+        <t t-call="web.basic_layout">
+            <t t-foreach="docs" t-as="o">
+                <div class="page text-center">
+                    <t t-call="azi_stock.report_prod_3x2_label_body">
+                        <t t-set="o" t-value="o"/>
+                    </t>
+                    <p style="page-break-before: always"> </p>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_prod_tmpl_4x2_label">
+        <t t-call="web.basic_layout">
+            <t t-foreach="docs" t-as="o">
+                <t t-set="pn_font_size"
+                   t-value="len(o.default_code)&lt;11 and 1.8 or 1.8*12/len(o.default_code)"/>
+                <t t-set="code_style"
+                   t-value="'display:block; clear:both; float:left; width:4.0in; height:0.5in; overflow:hidden; font-family:\'Code 128\',sans-serif; text-align:center; font-size: %.2fem' % (2.9*pn_font_size,)"/>
+                <t t-set="pn_style"
+                   t-value="'display:block; clear:both; float:left; width:2.5in; height:0.5in; text-align:center; font-weight: bold; margin-top: -4px; margin-bottom: -0.3em; font-size: %.2fem' % (pn_font_size,)"/>
+                <t t-set="name_style"
+                   t-value="'display:block; float:left; font-size:0.9em; width:2.5in; height:1.0in; max-height:1.0in; overflow:hidden;'"/>
+
+                <div name="label" style="display:block; clear:both; float:left; width:4.0in; height:2.0in;">
+                    <div name="barcode" t-att-style="code_style" t-field="o.code128"/>
+                    <div name="lower" style="display:block; clear:both; float:left; width:4.0in; height:1.5in">
+                        <div name="image" style="clear:left; float:left; width:1.5in; height:1.5in;">
+                            <img style="max-width:1.5in; max-height:1.5in; width:auto; height:auto;"
+                                 t-attf-src="/web/image/product.product/#{o.id}/image"/>
+                        </div>
+                        <div name="lower_right" style="float:left; width:2.5in; height:1.5:">
+                            <div name="pn"
+                                 t-att-style="pn_style"
+                                 t-field="o.default_code"/>
+                            <div name="name"
+                                 t-att-style="name_style"
+                                 t-field="o.name"/>
+                        </div>
+                    </div>
+                </div>
+
+                <t t-if="not o_last">
+                    <p style="page-break-after: always;"/>
+                </t>
+
+            </t>
+        </t>
+    </template>
+    <template id="report_prod_prod_4x2_label">
+        <t t-call="web.basic_layout">
+            <t t-foreach="docs" t-as="o">
+                <t t-set="pn_font_size"
+                   t-value="len(o.default_code)&lt;11 and 1.8 or 1.8*12/len(o.default_code)"/>
+                <t t-set="code_style"
+                   t-value="'display:block; clear:both; float:left; width:4.0in; height:0.5in; overflow:hidden; font-family:\'Code 128\',sans-serif; text-align:center; font-size: %.2fem' % (2.9*pn_font_size,)"/>
+                <t t-set="pn_style"
+                   t-value="'display:block; clear:both; float:left; width:2.5in; height:0.5in; text-align:center; font-weight: bold; margin-top: -4px; margin-bottom: -0.3em; font-size: %.2fem' % (pn_font_size,)"/>
+                <t t-set="name_style"
+                   t-value="'display:block; float:left; font-size:0.9em; width:2.5in; height:1.0in; max-height:1.0in; overflow:hidden;'"/>
+
+                <div name="label" style="display:block; clear:both; float:left; width:4.0in; height:2.0in;">
+                    <div name="barcode" t-att-style="code_style" t-field="o.code128"/>
+                    <div name="lower" style="display:block; clear:both; float:left; width:4.0in; height:1.5in">
+                        <div name="image" style="clear:left; float:left; width:1.5in; height:1.5in;">
+                            <img style="max-width:1.5in; max-height:1.5in; width:auto; height:auto;"
+                                 t-attf-src="/web/image/product.product/#{o.id}/image"/>
+                        </div>
+                        <div name="lower_right" style="float:left; width:2.5in; height:1.5:">
+                            <div name="pn"
+                                 t-att-style="pn_style"
+                                 t-field="o.default_code"/>
+                            <div name="name"
+                                 t-att-style="name_style"
+                                 t-field="o.name"/>
+                        </div>
+                    </div>
+                </div>
+
+                <t t-if="not o_last">
+                    <p style="page-break-after: always;"/>
+                </t>
+
+            </t>
+        </t>
+    </template>
+
+    <template id="report_prod_tmpl_4x3_label">
+        <t t-call="web.basic_layout">
+            <t t-foreach="docs" t-as="o">
+                <t t-set="pn_font_size" t-value="len(o.default_code)&lt;14 and 2.1 or 2.1*18/len(o.default_code)"/>
+                <t t-set="pn_style"
+                   t-value="'height:0.5in; text-align:center; font-weight: bold; margin-top: -4px; margin-bottom: -0.3em; font-size: %.2fem' % (pn_font_size,)"/>
+                <t t-set="code_style"
+                   t-value="'font-family:\'Code 128\',sans-serif; text-align:center; font-size: %.2fem' % (2.0*pn_font_size,)"/>
+                <t t-set="barcode_url" t-value="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('Code128', quote_plus(o.default_code or ''), 2000, 333)"/>
+
+                <div name="label" style="clear:both; float:left; width:4in; height:3in;">
+                    <div name="barcode" style="clear:both; float:left; width:4in; height:0.75in; overflow:hidden;">
+                        <div t-att-style="code_style" t-field="o.code128"/>
+                    </div>
+                    <div name="pn" style="clear:both; float:left; width:4in; height:0.5in;">
+                        <div t-att-style="pn_style" t-field="o.default_code"/>
+                    </div>
+                    <div name="lower" style="clear:both; float:left; width:4in; height:1.75in">
+                        <div name="image" style="clear:left; float:left; width:1.75in; height:1.75in;">
+                            <img style="max-width:1.75in; max-height:1.75in; width:auto; height:auto;"
+                                 t-attf-src="/web/image/product.product/#{o.id}/image"/>
+                        </div>
+                        <div name="name"
+                             t-field="o.name"
+                             style="float:left; font-size:1.1em; width:2.25in; max-height:1.75in; overflow:hidden;"/>
+                    </div>
+                </div>
+
+                <t t-if="not o_last">
+                    <p style="page-break-after: always;"/>
+                </t>
+
+            </t>
+        </t>
+    </template>
+    <template id="report_prod_prod_4x3_label">
+        <t t-call="web.basic_layout">
+            <t t-foreach="docs" t-as="o">
+                <t t-set="pn_font_size" t-value="len(o.default_code)&lt;14 and 2.1 or 2.1*18/len(o.default_code)"/>
+                <t t-set="pn_style"
+                   t-value="'height:0.5in; text-align:center; font-weight: bold; margin-top: -4px; margin-bottom: -0.3em; font-size: %.2fem' % (pn_font_size,)"/>
+                <t t-set="code_style"
+                   t-value="'font-family:\'Code 128\',sans-serif; text-align:center; font-size: %.2fem' % (2.0*pn_font_size,)"/>
+                <t t-set="barcode_url" t-value="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('Code128', quote_plus(o.default_code or ''), 2000, 333)"/>
+
+                <div name="label" style="clear:both; float:left; width:4in; height:3in;">
+                    <div name="barcode" style="clear:both; float:left; width:4in; height:0.75in; overflow:hidden;">
+                        <div t-att-style="code_style" t-field="o.code128"/>
+                    </div>
+                    <div name="pn" style="clear:both; float:left; width:4in; height:0.5in;">
+                        <div t-att-style="pn_style" t-field="o.default_code"/>
+                    </div>
+                    <div name="lower" style="clear:both; float:left; width:4in; height:1.75in">
+                        <div name="image" style="clear:left; float:left; width:1.75in; height:1.75in;">
+                            <img style="max-width:1.75in; max-height:1.75in; width:auto; height:auto;"
+                                 t-attf-src="/web/image/product.product/#{o.id}/image"/>
+                        </div>
+                        <div name="name"
+                             t-field="o.name"
+                             style="float:left; font-size:1.1em; width:2.25in; max-height:1.75in; overflow:hidden;"/>
+                    </div>
+                </div>
+
+                <t t-if="not o_last">
+                    <p style="page-break-after: always;"/>
+                </t>
+
             </t>
         </t>
     </template>

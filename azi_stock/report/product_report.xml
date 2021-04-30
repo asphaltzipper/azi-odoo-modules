@@ -2,6 +2,70 @@
 <odoo>
     <data>
 
+        <record id="paperformat_label_2x1" model="report.paperformat">
+            <field name="name">Label 2x1</field>
+            <field name="default" eval="True" />
+            <field name="format">custom</field>
+            <field name="page_height">25</field>
+            <field name="page_width">50</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">0</field>
+            <field name="margin_bottom">0</field>
+            <field name="margin_left">0</field>
+            <field name="margin_right">0</field>
+            <field name="header_line" eval="False" />
+            <field name="header_spacing">0</field>
+            <field name="dpi">96</field>
+        </record>
+
+        <record id="paperformat_label_3x2" model="report.paperformat">
+            <field name="name">Label 3x2</field>
+            <field name="default" eval="True" />
+            <field name="format">custom</field>
+            <field name="page_height">50</field>
+            <field name="page_width">76</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">1</field>
+            <field name="margin_bottom">0</field>
+            <field name="margin_left">0</field>
+            <field name="margin_right">0</field>
+            <field name="header_line" eval="False" />
+            <field name="header_spacing">0</field>
+            <field name="dpi">96</field>
+        </record>
+
+        <record id="paperformat_label_4x2" model="report.paperformat">
+            <field name="name">Label 4x2</field>
+            <field name="default" eval="True" />
+            <field name="format">custom</field>
+            <field name="page_height">50</field>
+            <field name="page_width">101</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">1</field>
+            <field name="margin_bottom">1</field>
+            <field name="margin_left">1</field>
+            <field name="margin_right">1</field>
+            <field name="header_line" eval="False" />
+            <field name="header_spacing">0</field>
+            <field name="dpi">85</field>
+        </record>
+
+        <record id="paperformat_label_4x3" model="report.paperformat">
+            <field name="name">Label 4x3</field>
+            <field name="default" eval="True" />
+            <field name="format">custom</field>
+            <field name="page_height">76</field>
+            <field name="page_width">101</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">1</field>
+            <field name="margin_bottom">1</field>
+            <field name="margin_left">1</field>
+            <field name="margin_right">1</field>
+            <field name="header_line" eval="False" />
+            <field name="header_spacing">0</field>
+            <field name="dpi">85</field>
+        </record>
+
         <record id="paperformat_barcode" model="report.paperformat">
             <field name="name">Barcode Printer</field>
             <field name="default" eval="True" />
@@ -26,7 +90,6 @@
             report_type="qweb-pdf"
             name="azi_stock.azi_report_product_template_label"
             file="azi_stock.report.product_labels"/>
-
         <report
             id="action_report_azi_product_product_label"
             string="Azi Products Labels"
@@ -34,6 +97,74 @@
             paperformat="azi_stock.paperformat_barcode"
             report_type="qweb-pdf"
             name="azi_stock.azi_report_product_product_label"
+            file="azi_stock.report.product_labels"/>
+
+        <report
+            id="action_report_prod_tmpl_azi_2x1_label"
+            string="AZI 2x1 Label"
+            model="product.template"
+            paperformat="azi_stock.paperformat_label_2x1"
+            report_type="qweb-pdf"
+            name="azi_stock.report_prod_tmpl_2x1_label"
+            file="azi_stock.report.product_labels"/>
+        <report
+            id="action_report_prod_prod_azi_2x1_label"
+            string="AZI 2x1 Label"
+            model="product.product"
+            paperformat="azi_stock.paperformat_label_2x1"
+            report_type="qweb-pdf"
+            name="azi_stock.report_prod_prod_2x1_label"
+            file="azi_stock.report.product_labels"/>
+
+        <report
+            id="action_report_prod_tmpl_azi_3x2_label"
+            string="AZI 3x2 Label"
+            model="product.template"
+            paperformat="azi_stock.paperformat_label_3x2"
+            report_type="qweb-pdf"
+            name="azi_stock.report_prod_tmpl_3x2_label"
+            file="azi_stock.report.product_labels"/>
+        <report
+            id="action_report_prod_prod_azi_3x2_label"
+            string="AZI 3x2 Label"
+            model="product.product"
+            paperformat="azi_stock.paperformat_label_3x2"
+            report_type="qweb-pdf"
+            name="azi_stock.report_prod_prod_3x2_label"
+            file="azi_stock.report.product_labels"/>
+
+        <report
+            id="action_report_prod_tmpl_azi_4x2_label"
+            string="AZI 4x2 Label"
+            model="product.template"
+            paperformat="azi_stock.paperformat_label_4x2"
+            report_type="qweb-pdf"
+            name="azi_stock.report_prod_tmpl_4x2_label"
+            file="azi_stock.report.product_labels"/>
+        <report
+            id="action_report_prod_prod_azi_4x2_label"
+            string="AZI 4x2 Label"
+            model="product.product"
+            paperformat="azi_stock.paperformat_label_4x2"
+            report_type="qweb-pdf"
+            name="azi_stock.report_prod_prod_4x2_label"
+            file="azi_stock.report.product_labels"/>
+
+        <report
+            id="action_report_prod_tmpl_azi_4x3_label"
+            string="AZI 4x3 Label"
+            model="product.template"
+            paperformat="azi_stock.paperformat_label_4x3"
+            report_type="qweb-pdf"
+            name="azi_stock.report_prod_tmpl_4x3_label"
+            file="azi_stock.report.product_labels"/>
+        <report
+            id="action_report_prod_prod_azi_4x3_label"
+            string="AZI 4x3 Label"
+            model="product.product"
+            paperformat="azi_stock.paperformat_label_4x3"
+            report_type="qweb-pdf"
+            name="azi_stock.report_prod_prod_4x3_label"
             file="azi_stock.report.product_labels"/>
 
         <record id="shelf_location.action_report_shelf_label" model="ir.actions.report">
