@@ -10,7 +10,11 @@
     'description': """
     This module modify kanban report.""",
     "website": "http://www.github.com/asphaltzipper",
-    "depends": ["stock_request_kanban", "azi_stock"],
+    "depends": [
+        "stock_request_kanban",
+        "azi_stock",
+        "barcode_font",
+    ],
     "data": [
         'report/stock_request_kanban_template.xml',
     ],
