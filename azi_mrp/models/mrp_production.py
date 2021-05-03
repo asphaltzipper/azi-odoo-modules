@@ -110,3 +110,70 @@ class MrpProduction(models.Model):
         message = "MO sent to printer %s" % printer.name
         self.env.user.notify_success(message=message, title="Print MO", sticky=False)
         return {}
+
+    @api.multi
+    def direct_print_azi_report(self):
+        self.ensure_one()
+        report = self.env['ir.actions.report']._get_report_from_name('azi_mrp.report_mrporder_azi')
+        report_bytes, _ = report.render_qweb_pdf(res_ids=self.id)
+        printer_obj = self.env['printing.printer']
+        user = self.env.user
+        printer = user.printing_printer_id or printer_obj.get_default()
+        if not printer:
+            message = "No printer configured to print %s" % self.name
+            self.env.user.notify_warning(message=message, title="Print MO", sticky=False)
+            return False
+        tray = str(user.printer_tray_id.system_name) if user.printer_tray_id else False
+        printer.print_document(
+            report,
+            report_bytes,
+            doc_format='qweb-pdf',
+            action='print',
+            tray=tray,
+        )
+        message = "MO sent to printer %s" % printer.name
+        self.env.user.notify_success(message=message, title="Print MO", sticky=False)
+        return True
+
+    @api.multi
+    def direct_print_product_attachment(self):
+        self.ensure_one()
+        printer_obj = self.env['printing.printer']
+        user = self.env.user
+        printer = user.printing_printer_id or printer_obj.get_default()
+        tray = str(user.printer_tray_id.system_name) if user.printer_tray_id else False
+        if not printer:
+            message = "No printer configured to print %s" % self.name
+            user.notify_warning(message=message, title="Print Attachment", sticky=False)
+            return {}
+
+        attachment = self.env['ir.attachment'].search(
+            [('mimetype', '=', 'application/pdf'),
+             ('res_model', '=', 'product.product'),
+             ('priority', '>', 0),
+             ('res_id', '=', self.product_id.id)],
+            order='priority desc, name', limit=1)
+        if not attachment:
+            attachment = self.env['ir.attachment'].search(
+                [('mimetype', '=', 'application/pdf'),
+                 ('res_model', '=', 'product.template'),
+                 ('priority', '>', 0),
+                 ('res_id', '=', self.product_id.product_tmpl_id.id)],
+                order='priority desc, name', limit=1)
+        if not attachment:
+            message = "No prioritized attachment found for product %s" % self.product_id.display_name
+            user.notify_warning(message=message, title="Print Attachment", sticky=False)
+            return {}
+
+        with open(attachment._full_path(attachment.store_fname), 'rb') as f:
+            printer.print_document(
+                self,
+                f.read(),
+                doc_format='pdf',
+                action='print',
+                # tray=tray,
+                tray=False,
+            )
+        message = "Product attachment sent to printer %s" % printer.name
+        user.notify_success(message=message, title="Print Attachment", sticky=False)
+        return {}

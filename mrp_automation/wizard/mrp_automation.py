@@ -68,6 +68,7 @@ class MrpAutomation(models.TransientModel):
 
         production.action_assign()
         production.button_plan()
+        production.direct_print_azi_report()
         return production
 
 

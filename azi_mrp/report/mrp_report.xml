@@ -2,7 +2,7 @@
 <odoo>
 
     <report
-        string="Azi Production Order"
+        string="AZI Production Order"
         id="action_report_production_order_azi"
         model="mrp.production"
         name="azi_mrp.report_mrporder_azi"
@@ -12,7 +12,7 @@
     />
 
     <report
-        string="Production Picking"
+        string="Picking Images"
         id="action_report_production_order_pick"
         model="mrp.production"
         name="azi_mrp.report_mrporder_pick"
