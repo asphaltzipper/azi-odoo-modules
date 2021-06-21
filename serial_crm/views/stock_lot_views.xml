@@ -1,6 +1,12 @@
 <?xml version="1.0"?>
 
 <odoo>
+    <record id="action_report_bom_combined" model="ir.actions.client">
+        <field name="name">CS Combined BOM Report</field>
+        <field name="tag">combined_bom_report</field>
+        <field name="context" eval="{'model': 'report.serial_crm.report_combined_bom'}" />
+        <field name="binding_model_id" ref="stock.model_stock_production_lot"/>
+    </record>
 
     <record id="production_lot_crm_search_view" model="ir.ui.view">
         <field name="name">lot.production.search.view</field>
@@ -25,6 +31,10 @@
         <field name="model">stock.production.lot</field>
         <field name="inherit_id" ref="stock.view_production_lot_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="%(action_report_bom_combined)d" icon="fa-arrow-down" class="oe_stat_button"
+                        string="CS Combined Report" type="action"/>
+            </xpath>
             <xpath expr="//group[@name='main_group']/group" position="inside">
                 <field name="state"/>
                 <field name="partner_id" options="{'no_create': True, 'no_create_edit': True}"/>
@@ -257,5 +267,7 @@
             </xpath>
         </field>
     </record>
+
+
 
 </odoo>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="report_combined_bom">
+        <div class="container o_mrp_bom_report_page">
+            <t t-if="data">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1>CS Combined BOM</h1>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="mt16">
+                            <table width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Reference</th>
+                                        <th>Product</th>
+                                        <th>Date</th>
+                                        <th>Lot/Serial</th>
+                                        <th>Quantity</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="data" t-as="line">
+                                        <tr>
+                                            <t t-if="line['repair']">
+                                                <td>
+                                                    <a href="#" t-att-data-res-id="line['repair']" t-att-data-model="'repair.order'" class="o_combined_bom_action">
+                                                        <t t-esc="line['reference']"/>
+                                                    </a>
+                                                </td>
+                                            </t>
+                                            <t t-else="">
+                                                <td><t t-esc="line['reference']"/></td>
+                                            </t>
+                                            <td>
+                                                <span>
+                                                    <a href="#" t-att-data-res-id="line['product'].id" t-att-data-model="'product.product'" class="o_combined_bom_action">
+                                                        <t t-esc="line['product'].display_name"/>
+                                                    </a>
+                                                </span>
+                                            </td>
+                                            <td><t t-esc="line['date']"/></td>
+                                            <td>
+                                                <a href="#" t-att-data-res-id="line['lot'].id" t-att-data-model="'stock.production.lot'" class="o_combined_bom_action">
+                                                    <t t-esc="line['lot'].display_name"/>
+                                                </a>
+                                            </td>
+                                            <td><t t-esc="line['quantity']"/> </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </t>
+            <t t-else="">
+                <h1 class="text-center">No data available.</h1>
+            </t>
+        </div>
+    </template>
+
+
+</odoo>

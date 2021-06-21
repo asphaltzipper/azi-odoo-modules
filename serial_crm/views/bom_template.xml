@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="combined_bom_inherit" inherit_id="web.assets_backend" active="True">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/serial_crm/static/src/js/combined_bom_report.js"></script>
+            </xpath>
+        </template>
+    </data>
+</odoo>
