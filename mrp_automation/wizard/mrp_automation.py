@@ -102,6 +102,9 @@ class MrpAutomation(models.TransientModel):
                 'views': [[view_id, 'form']],
             }
         elif product:
+            if product.deprecated:
+                raise UserError(_("This kit is obsolete. If you really want to produce an obsolete part, create the "
+                                  "MO manually."))
             production = self.convert_kit(product, kit_count)
             view_id = self.env.ref('mrp.mrp_production_form_view').id
             return {
