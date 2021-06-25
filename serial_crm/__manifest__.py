@@ -18,7 +18,7 @@
     ],
     "data": [
         'security/ir.model.access.csv',
-        'report/combined_bom_Report.xml',
+        'report/combined_bom_report.xml',
         'views/bom_template.xml',
         'views/stock_lot_views.xml',
         'views/res_partner_views.xml',
