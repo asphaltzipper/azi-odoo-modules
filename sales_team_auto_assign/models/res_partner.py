@@ -138,9 +138,10 @@ class Partner(models.Model):
 
     @api.multi
     def write(self, vals):
-        if (vals.get('auto_assign_team') or self.auto_assign_team and
-                'auto_assign_team' not in vals):
-            vals['team_ids'] = self._ensure_team(vals)
+        for partner in self:
+            if (vals.get('auto_assign_team') or partner.auto_assign_team and
+                    'auto_assign_team' not in vals):
+                vals['team_ids'] = partner._ensure_team(vals)
         return super(Partner, self).write(vals)
 
     @api.model
