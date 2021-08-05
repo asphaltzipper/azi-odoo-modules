@@ -78,8 +78,27 @@ class StockQuant(models.Model):
 class StockMoveLine(models.Model):
     _inherit = 'stock.move.line'
 
+    lot_temp_id = fields.Many2one('stock.production.lot', 'Lot/Serial Number')
+    lot_temp_ids = fields.Many2many('stock.production.lot', compute='_compute_lot_temp_ids')
+
+    def _compute_lot_temp_ids(self):
+        for record in self:
+            quants = self.env['stock.quant'].search([('location_id', '=', record.location_id.id),
+                                                     ('product_id', '=', record.move_id.product_id.id),
+                                                     ('lot_id', '!=', False), ('quantity', '>', 0)])
+            if quants:
+                record.lot_temp_ids = quants.mapped('lot_id').ids
+
+    @api.onchange('lot_temp_id')
+    def _onchange_lot_temp(self):
+        self.lot_id = self.lot_temp_id
+
     def _action_done(self):
         for record in self:
+            if record.product_id.tracking == 'serial' and record.picking_id.picking_type_id.code == 'outgoing' and\
+                    not record.lot_temp_id:
+                raise ValidationError('You need to supply a Lot/Serial number '
+                                      'for product %s.' % record.product_id.display_name)
             if record.picking_id.picking_type_id.code == 'internal' and record.product_id.tracking == 'serial':
                 if record.lot_id:
                     location = record.lot_id.quant_ids.filtered(lambda q: q.location_id == record.location_id)
@@ -88,3 +107,12 @@ class StockMoveLine(models.Model):
                                               (record.lot_id.name, record.location_id.display_name))
         return super(StockMoveLine,self)._action_done()
 
+
+class StockMove(models.Model):
+    _inherit = 'stock.move'
+
+    def action_show_details(self):
+        res = super(StockMove, self).action_show_details()
+        if self.has_tracking == 'serial':
+            res['context']['show_lots_m2o'] = False
+        return res

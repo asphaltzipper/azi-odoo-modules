@@ -27,6 +27,7 @@ AZI Specialized Customizations to Stock
     ],
     'data': [
         'views/stock_view_changes.xml',
+        'views/stock_move_line_views.xml',
         'report/transfer_slip_template.xml',
         'report/transfer_slip.xml',
         'report/product_labels.xml',
