@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="leave_type_sick" model="ir.sequence">
+            <field name="name">Sick</field>
+            <field name="leave_unit">hour</field>
+        </record>
+        <record id="leave_type_vacation" model="ir.sequence">
+            <field name="name">Vacation</field>
+            <field name="leave_unit">hour</field>
+        </record>
+
+    </data>
+</odoo>

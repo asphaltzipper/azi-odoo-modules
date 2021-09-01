@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="leave_type_view_form" model="ir.ui.view">
+        <field name="name">leave.type.view.form</field>
+        <field name="model">leave.type</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="leave_unit"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_leave_type_tree" model="ir.actions.act_window">
+        <field name="name">Leave Types</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">leave.type</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="leave_policy_assign_view_form" model="ir.ui.view">
+        <field name="name">leave.policy_assign.view.form</field>
+        <field name="model">leave.policy.assign</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="employee_id"/>
+                        <field name="policy_id"/>
+                        <field name="start_date"/>
+                        <field name="end_date"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_leave_policy_assign_tree" model="ir.actions.act_window">
+        <field name="name">Leave Types</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">leave.policy.assign</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="leave_accrual_policy_view_form" model="ir.ui.view">
+        <field name="name">leave.accrual.policy.view.form</field>
+        <field name="model">leave.accrual.policy</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="type_id"/>
+                        <field name="rate"/>
+                        <field name="rate_unit"/>
+                        <field name="period_duration"/>
+                        <field name="period_unit"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_leave_accrual_policy_tree" model="ir.actions.act_window">
+        <field name="name">Accrual Policies</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">leave.accrual.policy</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="leave_allocation_view_form" model="ir.ui.view">
+        <field name="name">leave.allocation.view.form</field>
+        <field name="model">leave.allocation</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="employee_id"/>
+                        <field name="type_id"/>
+                        <field name="alloc_amount"/>
+                        <field name="alloc_unit"/>
+                        <field name="start_date"/>
+                        <field name="end_date"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_leave_allocation_tree" model="ir.actions.act_window">
+        <field name="name">Allocations</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">leave.allocation</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="leave_menu"
+        name="Leaves"
+        action="action_allocation_tree"
+        groups="hr.group_hr_manager"
+        sequence="45"
+        web_icon="hr_leave_accrual,static/description/icon.png"/>
+
+    <menuitem id="leave_operations_menu"
+        name="Operations"
+        parent="hr_leave_accrual.leave_menu"
+        sequence="10"/>
+
+    <menuitem id="leave_allocations_menu"
+        name="Allocations"
+        parent="hr_leave_accrual.leave_operations_menu"
+        action="action_leave_allocations_tree"
+        sequence="10"/>
+
+    <menuitem id="leave_assignments_menu"
+        name="Employee Policies"
+        parent="hr_leave_accrual.leave_operations_menu"
+        action="action_leave_assignments_tree"
+        sequence="20"/>
+
+    <menuitem id="leave_config_menu"
+        name="Configuration"
+        parent="hr_leave_accrual.leave_menu"
+        sequence="20"/>
+
+    <menuitem id="leave_type_menu"
+        name="Leave Types"
+        parent="hr_leave_accrual.leave_config_menu"
+        action="action_leave_type_tree"
+        sequence="10"/>
+
+    <menuitem id="leave_policy_menu"
+        name="Accrual Policies"
+        parent="hr_leave_accrual.leave_config_menu"
+        action="action_leave_accrual_policy_tree"
+        sequence="20"/>
+
+</odoo>
