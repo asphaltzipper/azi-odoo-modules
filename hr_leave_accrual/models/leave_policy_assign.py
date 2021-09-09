@@ -32,8 +32,8 @@ class LeavePolicyAssign(models.Model):
     @api.constrains('employee_id', 'policy_id', 'start_date', 'end_date')
     def _constrain_dates(self):
         overlapping = self.search([
-            ('employee_id', '=', self.employee_id),
-            ('policy_id', '=', self.policy_id),
+            ('employee_id', '=', self.employee_id.id),
+            ('policy_id', '=', self.policy_id.id),
             '|',
             ('start_date', '>=', self.start_date),
             ('start_date', '<=', self.end_date),

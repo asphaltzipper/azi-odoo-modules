@@ -105,7 +105,6 @@
 
     <menuitem id="leave_menu"
         name="Leaves"
-        action="action_allocation_tree"
         groups="hr.group_hr_manager"
         sequence="45"
         web_icon="hr_leave_accrual,static/description/icon.png"/>
@@ -118,13 +117,13 @@
     <menuitem id="leave_allocations_menu"
         name="Allocations"
         parent="hr_leave_accrual.leave_operations_menu"
-        action="action_leave_allocations_tree"
+        action="action_leave_allocation_tree"
         sequence="10"/>
 
     <menuitem id="leave_assignments_menu"
         name="Employee Policies"
         parent="hr_leave_accrual.leave_operations_menu"
-        action="action_leave_assignments_tree"
+        action="action_leave_policy_assign_tree"
         sequence="20"/>
 
     <menuitem id="leave_config_menu"

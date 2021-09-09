@@ -43,22 +43,21 @@ class LeaveAccrualAvail(models.Model):
                         lap.type_id,
                         lpa.employee_id,
                         min(lpa.start_date) as start_date,
-                        max(coalesce(lpa.end_date, today())) as end_date,
+                        max(coalesce(lpa.end_date, current_date)) as end_date,
                         sum(FLOOR(lap.rate * (
                             case
                             when lap.period_unit='week' then
-                                EXTRACT(day FROM age(coalesce(lpa.end_date, today()), lpa.start_date))/7
+                                EXTRACT(day FROM age(coalesce(lpa.end_date, current_date), lpa.start_date))/7
                             when lap.period_unit='half_month' then
-                                EXTRACT(year FROM age(coalesce(lpa.end_date, today()), lpa.start_date))*24 +
-                                EXTRACT(month FROM age(coalesce(lpa.end_date, today()), lpa.start_date)*2 +
-                                EXTRACT(day FROM age(coalesce(lpa.end_date, today()), lpa.start_date))/15
+                                EXTRACT(year FROM age(coalesce(lpa.end_date, current_date), lpa.start_date))*24 +
+                                EXTRACT(month FROM age(coalesce(lpa.end_date, current_date), lpa.start_date))*2 +
+                                EXTRACT(day FROM age(coalesce(lpa.end_date, current_date), lpa.start_date))/15
                             when lap.period_unit='month' then
-                                EXTRACT(year FROM age(coalesce(lpa.end_date, today()), lpa.start_date))*12 +
-                                EXTRACT(month FROM age(coalesce(lpa.end_date, today()), lpa.start_date)
-                            end)/lap.period_duration
-                        ) as accrue_amount,
+                                EXTRACT(year FROM age(coalesce(lpa.end_date, current_date), lpa.start_date))*12 +
+                                EXTRACT(month FROM age(coalesce(lpa.end_date, current_date), lpa.start_date))/lap.period_duration
+                        end))) as accrue_amount
                     from leave_policy_assign as lpa
-                    left join leave_accrual_policy as lap on lap.policy_id=lpa.policy_id
+                    left join leave_accrual_policy as lap on lap.id=lpa.policy_id
                     group by lap.type_id, lpa.employee_id
                 ) as acr
                 left join (
