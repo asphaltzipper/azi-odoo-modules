@@ -97,3 +97,13 @@ class RepairLine(models.Model):
             'origin': self.repair_id.name,
         }
         return res
+
+    @api.onchange('type', 'repair_id')
+    def onchange_operation_type_azi(self):
+        if self.type == 'remove':
+            self.price_unit = 0.0
+            self.tax_id = False
+            args = self.repair_id.company_id and [('company_id', '=', self.repair_id.company_id.id)] or []
+            warehouse = self.env['stock.warehouse'].search(args, limit=1)
+            self.location_dest_id = warehouse.lot_stock_id
+            self.location_id = self.env['stock.location'].search([('usage', '=', 'production')], limit=1).id
