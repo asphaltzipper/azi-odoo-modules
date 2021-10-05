@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <report id="leave_accrual_xlsx" model="leave.accrual.policy" string="Accrual Report"  report_type="xlsx"
+            name="hr_leave_accrual.leave_accrual_report" file="leave_accrual_report" menu="False"/>
+</odoo>

@@ -1,4 +1,4 @@
-from odoo import models, fields
+from odoo import models, fields, api
 
 
 class LeaveAllocation(models.Model):
@@ -20,7 +20,6 @@ class LeaveAllocation(models.Model):
 
     alloc_amount = fields.Float(
         string="Allocation Amount",
-        required=True,
     )
 
     alloc_unit = fields.Selection(
@@ -38,3 +37,14 @@ class LeaveAllocation(models.Model):
         string="End Date",
         required=True,
     )
+    allocation_type = fields.Selection([('add', 'Add'), ('remove', 'Remove')],
+                                       'Allocation Type', default='add')
+    used_amount = fields.Float('Used Amount')
+
+    @api.multi
+    def name_get(self):
+        result = []
+        for record in self:
+            name = record.type_id.name + '-' + str(record.start_date)
+            result.append((record.id, name))
+        return result

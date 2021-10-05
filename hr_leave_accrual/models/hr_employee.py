@@ -9,3 +9,6 @@ class Employee(models.Model):
         inverse_name='employee_id',
         string='Available Leave',
     )
+
+    leave_accrual_allocated_ids = fields.One2many('leave.accrual.allocated', 'employee_id', 'Leave Allocations')
+    hire_date = fields.Date('Hiring Date')

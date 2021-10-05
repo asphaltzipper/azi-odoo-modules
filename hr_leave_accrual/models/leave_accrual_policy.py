@@ -1,4 +1,4 @@
-from odoo import models, fields
+from odoo import models, fields, api
 
 
 class LeaveAccrualPolicy(models.Model):
@@ -41,3 +41,10 @@ class LeaveAccrualPolicy(models.Model):
         string='Period Unit',
         help="Units of accrual period",
     )
+    policy_assign_ids = fields.One2many('leave.policy.assign', 'policy_id', 'Assigned Policies')
+    policy_count = fields.Integer('Policy Counts', compute='_compute_policy_count')
+
+    @api.depends('policy_assign_ids')
+    def _compute_policy_count(self):
+        for record in self:
+            record.policy_count = len(record.policy_assign_ids)

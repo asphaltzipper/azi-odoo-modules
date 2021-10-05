@@ -20,13 +20,18 @@ Employee Leave Accrual
     """,
     "depends": [
         'hr',
+        'report_xlsx',
     ],
     'data': [
         'data/leave_type.xml',
         'data/leave_accrual_policy.xml',
+        'data/leave_cron.xml',
+        'security/leave_accrual_security.xml',
         'security/ir.model.access.csv',
+        'wizards/leave_policy_views.xml',
         'views/leave_accrual_views.xml',
         'views/hr_employee_views.xml',
+        'reports/leave_accrual_report.xml',
     ],
     "installable": True,
     "auto_install": False,

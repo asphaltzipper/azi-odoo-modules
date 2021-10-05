@@ -2,5 +2,7 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 manager_leave_type,manager_leave_type,model_leave_type,hr.group_hr_manager,1,1,1,1
 manager_leave_accrual_policy,manager_leave_accrual_policy,model_leave_accrual_policy,hr.group_hr_manager,1,1,1,1
 manager_leave_policy_assign,manager_leave_policy_assign,model_leave_policy_assign,hr.group_hr_manager,1,1,1,1
+manager_leave_policy_assign_line,manager_leave_policy_assign_line,model_leave_policy_assign_line,hr.group_hr_manager,1,1,1,1
 manager_leave_allocation,manager_leave_allocation,model_leave_allocation,hr.group_hr_manager,1,1,1,1
 manager_leave_accrual_avail,manager_leave_accrual_avail,model_leave_accrual_avail,hr.group_hr_manager,1,1,1,1
+leave_accrual_allocated_user,leave_accrual_allocated_user,model_leave_accrual_allocated,base.group_user,1,1,1,1

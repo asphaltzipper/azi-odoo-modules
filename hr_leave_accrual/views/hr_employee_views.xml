@@ -6,12 +6,26 @@
         <field name="model">hr.employee</field>
         <field name="inherit_id" ref="hr.view_employee_form"/>
         <field name="arch" type="xml">
+            <field name="job_title" position="after">
+                <field name="hire_date"/>
+            </field>
             <page name="hr_settings" position="after">
-                <page name="leave" string="Leave" groups="hr.group_hr_manager">
+                <page name="leave" string="Leave">
                     <group>
-                        <field name="leave_avail_ids"/>
+                        <field name="leave_accrual_allocated_ids">
+                            <tree>
+                                <field name="type_id"/>
+                                <field name="unit"/>
+                                <field name="opening_balance"/>
+                                <field name="adjust"/>
+                                <field name="allocated_amount"/>
+                                <field name="used_amount"/>
+                                <field name="balance"/>
+                            </tree>
+                        </field>
                     </group>
                 </page>
+
             </page>
         </field>
     </record>
