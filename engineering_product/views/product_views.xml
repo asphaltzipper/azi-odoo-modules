@@ -213,6 +213,7 @@
         <field name="arch" type="xml">
             <field name="categ_id" position="before">
                 <field name="eng_categ_id"/>
+                <field name="description" string="Notes"/>
             </field>
             <filter name="consumable" position="after">
                 <separator/>
