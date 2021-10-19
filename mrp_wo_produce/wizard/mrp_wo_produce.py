@@ -559,6 +559,7 @@ class MrpWoProduceWorkLine(models.TransientModel):
     produce_id = fields.Many2one(
         comodel_name='mrp.wo.produce',
         required=True,
+        ondelete='cascade',
     )
     production_id = fields.Many2one(
         comodel_name='mrp.production',
@@ -568,15 +569,18 @@ class MrpWoProduceWorkLine(models.TransientModel):
         comodel_name='mrp.workorder',
         string="Work Order",
         required=True,
+        ondelete='cascade',
     )
     user_id = fields.Many2one(
         comodel_name='res.users',
         string="User",
+        ondelete='cascade',
     )
     user_ids = fields.Many2many(
         comodel_name='res.users',
         string='Users',
         compute='_compute_user_ids',
+        ondelete='cascade',
     )
     labor_date = fields.Datetime(
         string="Date", default=fields.Datetime.now()
