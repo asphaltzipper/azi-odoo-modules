@@ -1,1 +1,1 @@
-from . import account_regitser_payment
+from . import account_register_payment
