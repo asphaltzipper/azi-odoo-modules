@@ -37,8 +37,12 @@ class LeaveAllocation(models.Model):
         string="End Date",
         required=True,
     )
-    allocation_type = fields.Selection([('add', 'Add'), ('remove', 'Remove')],
-                                       'Allocation Type', default='add')
+    allocation_type = fields.Selection(
+        selection=[('add', 'Add'), ('remove', 'Remove')],
+        string='Allocation Type',
+        default='add',
+        required=True,
+    )
     used_amount = fields.Float('Used Amount')
 
     @api.multi

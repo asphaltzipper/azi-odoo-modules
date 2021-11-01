@@ -5,6 +5,7 @@ from odoo.exceptions import ValidationError
 
 class LeavePolicy(models.TransientModel):
     _name = 'leave.policy'
+    _description = "Leave Policy Report Wizard"
 
     def get_year(self):
         return [(num, num) for num in range((datetime.date.today().year - 10), (datetime.date.today().year + 1))]
