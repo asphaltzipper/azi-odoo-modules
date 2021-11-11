@@ -34,3 +34,11 @@ class StockLotChange(models.Model):
     component_lot_id = fields.Many2one(
         comodel_name='stock.production.lot',
         string='Component Serial')
+
+    has_child = fields.Boolean(string='Has Child', compute='_compute_has_child', store=True)
+
+    @api.depends('component_lot_id.change_ids')
+    def _compute_has_child(self):
+        for record in self:
+            record.has_child = record.component_lot_id.change_ids and True or False
+
