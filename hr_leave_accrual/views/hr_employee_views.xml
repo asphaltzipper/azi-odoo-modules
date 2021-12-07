@@ -18,7 +18,7 @@
                                 <field name="unit"/>
                                 <field name="opening_balance" string="Opening"/>
                                 <field name="adjust" string="Opening Adj."/>
-                                <field name="allocated_amount" string="YTD"/>
+                                <field name="allocated_amount" string="YTD Accrual"/>
                                 <field name="used_amount" string="Used"/>
                                 <field name="adjusted_amount" string="Adjusted"/>
                                 <field name="balance" string="Current Bal."/>
