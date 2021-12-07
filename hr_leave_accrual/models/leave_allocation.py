@@ -1,4 +1,5 @@
 from odoo import models, fields, api
+from odoo.exceptions import ValidationError
 
 
 class LeaveAllocation(models.Model):
@@ -38,12 +39,27 @@ class LeaveAllocation(models.Model):
         required=True,
     )
     allocation_type = fields.Selection(
-        selection=[('add', 'Add'), ('remove', 'Remove')],
+        selection=[('accrued', 'Accrued'), ('adjusted', 'Adjusted'), ('consumed', 'Consumed')],
         string='Allocation Type',
-        default='add',
+        default='accrued',
         required=True,
     )
+    balance = fields.Float('Balance', compute='_compute_balance', store=True)
     used_amount = fields.Float('Used Amount')
+
+    @api.depends('allocation_type', 'alloc_amount')
+    def _compute_balance(self):
+        for record in self:
+            record.balance = record.allocation_type == 'consumed' and -record.alloc_amount or record.alloc_amount
+
+    @api.constrains('allocation_type', 'alloc_amount')
+    def _check_amount_per_type(self):
+        for record in self:
+            if record.allocation_type == 'accrued' and not self.env.user.has_group('hr.group_hr_manager'):
+                raise ValidationError('You are not allowed to create or edit accrual allocation, please '
+                                      'contact HR manager')
+            if record.allocation_type == 'consumed' and record.alloc_amount < 0:
+                raise ValidationError('Consumed allocation should have positive values')
 
     @api.multi
     def name_get(self):

@@ -11,4 +11,5 @@ class Employee(models.Model):
     )
 
     leave_accrual_allocated_ids = fields.One2many('leave.accrual.allocated', 'employee_id', 'Leave Allocations')
+    leave_allocation_ids = fields.One2many('leave.allocation', 'employee_id', 'Allocation Details')
     hire_date = fields.Date('Hiring Date')

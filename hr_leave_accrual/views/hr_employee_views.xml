@@ -12,15 +12,29 @@
             <page name="hr_settings" position="after">
                 <page name="leave" string="Leave">
                     <group>
-                        <field name="leave_accrual_allocated_ids">
+                        <field name="leave_accrual_allocated_ids" string="Allocations Summary">
                             <tree>
                                 <field name="type_id"/>
                                 <field name="unit"/>
-                                <field name="opening_balance"/>
-                                <field name="adjust"/>
-                                <field name="allocated_amount"/>
-                                <field name="used_amount"/>
-                                <field name="balance"/>
+                                <field name="opening_balance" string="Opening"/>
+                                <field name="adjust" string="Opening Adj."/>
+                                <field name="allocated_amount" string="YTD"/>
+                                <field name="used_amount" string="Used"/>
+                                <field name="adjusted_amount" string="Adjusted"/>
+                                <field name="balance" string="Current Bal."/>
+                                <field name="year_balance"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <group>
+                        <field name="leave_allocation_ids">
+                            <tree create="false" delete="false" edit="false">
+                                <field name="type_id"/>
+                                <field name="allocation_type"/>
+                                <field name="start_date"/>
+                                <field name="end_date"/>
+                                <field name="alloc_amount"/>
+                                <field name="balance" sum="Running Balance"/>
                             </tree>
                         </field>
                     </group>

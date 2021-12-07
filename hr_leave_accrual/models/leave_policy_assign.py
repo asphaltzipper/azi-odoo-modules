@@ -122,7 +122,7 @@ class LeavePolicyAssign(models.Model):
         # we do nothing in the case where a policy is assigned for less than a whole period
         while end_date_period <= end_date:
             vals = {
-                'allocation_type': 'add',
+                'allocation_type': 'accrued',
                 'employee_id': self.employee_id.id,
                 'alloc_amount': self.policy_id.rate,
                 'type_id': self.policy_id.type_id.id,
