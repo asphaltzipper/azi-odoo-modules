@@ -173,7 +173,7 @@ class EngBomLineDiff(models.Model):
         string='Action',
         readonly=True,
         required=True,
-        help="+ + + Add\n- - - Remove\n~ ~ ~ Change\n- o - Option")
+        help="+ + + Add\n- - - Remove\n~ ~ ~ Change Qty\n- o - Option Break")
     state = fields.Selection(
         related='batch_id.state',
         readonly=True)

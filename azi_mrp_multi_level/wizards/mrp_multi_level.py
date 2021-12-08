@@ -88,6 +88,14 @@ class MultiLevelMrp(models.TransientModel):
                 self.env['material.plan.log'].create({'type': 'warning', 'message': message})
             self.env.cr.commit()
 
+        # report product templates having multiple BOMs with the same sequence
+        tmpl_bom_ambiguity = self._get_tmpl_bom_ambiguity()
+        if tmpl_bom_ambiguity:
+            for tmpl in tmpl_bom_ambiguity:
+                message = "Multiple BOMs for product %s" % tmpl.display_name
+                self.env['material.plan.log'].create({'type': 'warning', 'message': message})
+            self.env.cr.commit()
+
         result = super(MultiLevelMrp, self).run_mrp_multi_level()
 
         exec_stop = time.time()
@@ -101,6 +109,19 @@ class MultiLevelMrp(models.TransientModel):
         return result
 
     @api.model
+    def explode_action(
+            self, product_mrp_area_id, mrp_action_date, name, qty, action
+    ):
+        if not product_mrp_area_id.product_id.bom_ids:
+            log_msg = 'bom not found for product %s' % \
+                      product_mrp_area_id.product_id.display_name
+            logger.warning(log_msg)
+            self.env['material.plan.log'].create({'type': 'warning', 'message': log_msg})
+            self.env.cr.commit()
+        return super(MultiLevelMrp, self).explode_action(
+            product_mrp_area_id, mrp_action_date, name, qty, action)
+
+    @api.model
     def _get_products_missing_pma(self):
         pmas = self.env['product.mrp.area'].search([])
         pma_prod_ids = pmas.mapped('product_id').ids
@@ -110,6 +131,20 @@ class MultiLevelMrp(models.TransientModel):
             ('eng_management', '=', True),
         ]
         return self.env['product.product'].search(domain)
+
+    @api.model
+    def _get_tmpl_bom_ambiguity(self):
+        sql = """
+            select product_tmpl_id
+            from mrp_bom
+            where active=true
+            group by product_tmpl_id, sequence
+            having count(*)>1
+            order by product_tmpl_id
+        """
+        self.env.cr.execute(sql)
+        tmpl_ids = [x[0] for x in self.env.cr.fetchall()]
+        return self.env['product.template'].browse(tmpl_ids)
 
     def process_mrp(self):
         with api.Environment.manage():

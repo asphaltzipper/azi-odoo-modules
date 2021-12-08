@@ -171,6 +171,7 @@ class EngBomBatch(models.Model):
         # get configurator options
         # TODO: check against all product versions
         # TODO: automatically get configurator templates based on imported products
+        # TODO: use the BOM to get option components, not attr value products
         domain = [('product_tmpl_id', 'in', self.configurator_ids.ids)]
         option_values = attr_line_obj.search(domain).mapped('value_ids')
         option_parents = option_values.mapped('product_id')
