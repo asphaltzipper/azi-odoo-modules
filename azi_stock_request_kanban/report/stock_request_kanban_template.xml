@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- label formatted for the old brother p-touch printer -->
     <template id="report_simple_label">
         <div class="col-xs-3" style="padding:20;height:100px;">
             <div class="container">
@@ -44,7 +45,6 @@
             </div>
         </div>
     </template>
-
     <template id="report_kanban">
         <t t-call="web.basic_layout">
             <t t-foreach="docs" t-as="o">
@@ -64,7 +64,7 @@
             paperformat="azi_stock.paperformat_barcode"
             menu="True"/>
 
-
+    <!-- 2x1 label -->
     <template id="report_kanban_label_2x1_body">
         <div class="row no-gutters">
             <div class="col-9" style="text-align:left; vertical-align:top; margin:-7px -18px -12px -12px;">
@@ -72,7 +72,8 @@
             </div>
             <div class="col-3" style="text-align:right; vertical-align:top; font-size:10px; margin-top:6px;">
                 <span style="text-align:right;" t-field="o.name"/><br/>
-                <span style="white-space:nowrap;" t-esc="'%s %s' % (float(o.product_uom_qty), o.product_uom_id.name)"/>
+                <span style="white-space:nowrap;" t-esc="'%s %s' % (float(o.product_uom_qty), o.product_uom_id.name)"/><br/>
+                <span style="text-align:right;" t-if="o.product_id.type == 'consu'">DNI</span>
             </div>
         </div>
         <div class="row no-gutters" t-if="o.product_id.default_code">
@@ -88,11 +89,15 @@
                 <div style="text-align:left; line-height:14px; font-size:12px;" t-field="o.product_id.name"/>
             </div>
         </div>
+        <t t-if="o.product_id.type == 'consu'">
+            <div
+                    style="position: absolute; top: 3px; left: -10px; bottom: 2px; right: -12px; border: 3px solid black;"/>
+        </t>
     </template>
     <template id="report_kanban_label_2x1">
         <t t-call="web.basic_layout">
             <t t-foreach="docs" t-as="o">
-                <div class="page">
+                <div class="page" style="position: relative;">
                     <t t-call="azi_stock_request_kanban.report_kanban_label_2x1_body">
                         <t t-set="o" t-value="o"/>
                     </t>

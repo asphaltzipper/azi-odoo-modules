@@ -20,3 +20,8 @@ class StockRequest(models.AbstractModel):
         related='product_id.responsible_id',
         readonly=True,
         store=True)
+
+    product_type = fields.Selection(
+        related='product_id.type',
+        readonly=True,
+        store=True)

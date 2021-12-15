@@ -41,6 +41,8 @@ Shelf Location
         'views/stock_request_views.xml',
         'views/stock_request_order_views.xml',
         'views/stock_request_kanban_views.xml',
+        'wizard/wizard_stock_kanban_inventory_product_views.xml',
+        'views/stock_inventory_kanban_views.xml',
     ],
     "installable": True,
     "auto_install": False,

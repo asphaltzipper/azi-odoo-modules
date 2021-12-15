@@ -12,6 +12,7 @@
                 <field name="product_active"/>
                 <field name="product_deprecated"/>
                 <field name="product_responsible_id"/>
+                <field name="product_type"/>
             </field>
         </field>
     </record>
@@ -40,6 +41,7 @@
                 <field name="product_active"/>
                 <field name="product_deprecated"/>
                 <field name="product_responsible_id"/>
+                <field name="product_type"/>
             </field>
         </field>
     </record>
