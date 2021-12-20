@@ -23,6 +23,11 @@
                         class="oe_read_only"
                 />
             </div>
+            <notebook position="inside">
+                <page string="Un-Configured Products" id="unconfigured_product">
+                    <field name="unconfigured_product_ids"/>
+                </page>
+            </notebook>
         </field>
     </record>
 
