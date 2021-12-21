@@ -1,3 +1,4 @@
+from datetime import date
 from odoo import fields, models, _
 
 
@@ -16,4 +17,5 @@ class WizardShelfProductScan(models.TransientModel):
             ])
             if kanban:
                 product = kanban.product_id.product_tmpl_id
+                kanban.write({'verify_date': date.today()})
         return product

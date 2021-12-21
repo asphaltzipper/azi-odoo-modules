@@ -9,20 +9,21 @@
         <field name="inherit_id" ref="stock.view_template_property_form"/>
         <field name="arch" type="xml">
             <div name="button_box" position="inside">
-                <button string="Kanban Cards" type="object"
+                <button string="Kanbans" type="object"
                     name="action_kanban_cards"
                     attrs="{'invisible':[('type', 'not in', ['consu','product'])]}"
                     class="oe_stat_button" icon="fa-tags"
                     groups="stock.group_stock_user">
-                        <field name="e_kanban_count" widget="statinfo" string="Kanban Cards"/>
+                        <field name="e_kanban_actual" widget="statinfo" string="Kanban Cards"/>
                 </button>
             </div>
             <group name="traceability" position="after">
                 <group string="Kanban Card Summary" name="e_kanban_property">
                     <field name="e_kanban"/>
+                    <field name="e_kanban_required"/>
+                    <field name="e_kanban_actual"/>
                     <field name="e_kanban_avg_qty"/>
                     <field name="e_kanban_verified"/>
-                    <field name="e_kanban_count"/>
                 </group>
             </group>
         </field>

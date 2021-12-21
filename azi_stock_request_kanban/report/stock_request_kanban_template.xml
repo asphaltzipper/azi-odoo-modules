@@ -96,7 +96,7 @@
     </template>
     <template id="report_kanban_label_2x1">
         <t t-call="web.basic_layout">
-            <t t-foreach="docs.sorted(key=lambda x: (x.product_id.display_name))" t-as="o">
+            <t t-foreach="docs.sorted(key=lambda x: (x.product_id.display_name, x.verify_date or datetime.date(1970, 1, 1), x.name))" t-as="o">
                 <div class="page" style="position: relative;">
                     <t t-call="azi_stock_request_kanban.report_kanban_label_2x1_body">
                         <t t-set="o" t-value="o"/>

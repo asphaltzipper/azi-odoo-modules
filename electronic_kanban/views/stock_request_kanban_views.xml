@@ -13,6 +13,10 @@
                 <field name="product_deprecated"/>
                 <field name="product_responsible_id"/>
                 <field name="product_type"/>
+                <field name="verify_date"/>
+            </field>
+            <field name="product_uom_id" position="attributes">
+                <attribute name="string">UOM</attribute>
             </field>
         </field>
     </record>
@@ -24,7 +28,10 @@
         <field name="arch" type="xml">
             <filter name="inactive" position="after">
                 <filter string="Obsolete" name="deprecated" domain="[('product_deprecated','=',True)]"/>
+                <filter string="Verified" name="verified" domain="[('verify_date','!=',False)]"/>
+                <separator />
                 <filter string="Current" name="non_deprecated" domain="[('product_deprecated','=',False)]"/>
+                <filter string="Un-Verified" name="unverified" domain="[('verify_date','=',False)]"/>
             </filter>
             <filter name="location" position="after">
                 <filter name="responsible" string="Manager" domain="[]" context="{'group_by':'product_responsible_id'}"/>
@@ -42,6 +49,9 @@
                 <field name="product_deprecated"/>
                 <field name="product_responsible_id"/>
                 <field name="product_type"/>
+            </field>
+            <field name="procurement_group_id" position="after">
+                <field name="verify_date"/>
             </field>
         </field>
     </record>
