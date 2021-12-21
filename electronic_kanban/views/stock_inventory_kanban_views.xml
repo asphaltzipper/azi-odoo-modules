@@ -25,7 +25,16 @@
             </div>
             <notebook position="inside">
                 <page string="Un-Configured Products" id="unconfigured_product">
-                    <field name="unconfigured_product_ids"/>
+                    <field name="unconfigured_product_ids">
+                        <tree>
+                            <field name="display_name"/>
+                            <field name="route_ids" widget="many2many_tags"/>
+                            <field name="uom_id"/>
+                            <field name="e_kanban"/>
+                            <field name="e_kanban_required"/>
+                            <field name="e_kanban_actual"/>
+                        </tree>
+                    </field>
                 </page>
             </notebook>
         </field>

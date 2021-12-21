@@ -25,7 +25,7 @@ class StockInventoryKanban(models.Model):
     def _compute_unconfigured_product(self):
         for rec in self:
             rec.unconfigured_product_ids = rec.product_ids.filtered(
-                lambda r: not r.e_kanban_verified
+                lambda r: not r.e_kanban or not r.e_kanban_actual or r.e_kanban_actual != r.e_kanban_required
             )
             rec.count_unconfigured_products = len(rec.unconfigured_product_ids)
 
