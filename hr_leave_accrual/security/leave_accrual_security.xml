@@ -14,15 +14,15 @@
             <field name="domain_force">[(1,'=', 1)]</field>
             <field name="groups" eval="[(4, ref('hr.group_hr_manager'))]"/>
         </record>
-        <record id="leave_accrual_allocated_employee_rule" model="ir.rule">
+        <record id="leave_allocation_summary_employee_rule" model="ir.rule">
             <field name="name">Employee: sees his own accrual allocations</field>
-            <field name="model_id" ref="model_leave_accrual_allocated" />
+            <field name="model_id" ref="model_leave_allocation_summary" />
             <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
             <field name="groups" eval="[(4, ref('base.group_user'))]"/>
         </record>
         <record id="eave_accrual_allocated_manager_rule" model="ir.rule">
             <field name="name">Leave Accrual Allocations</field>
-            <field name="model_id" ref="model_leave_accrual_allocated"/>
+            <field name="model_id" ref="model_leave_allocation_summary"/>
             <field name="domain_force">[(1,'=', 1)]</field>
             <field name="groups" eval="[(4, ref('hr.group_hr_manager'))]"/>
         </record>

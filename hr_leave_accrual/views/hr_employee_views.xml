@@ -1,46 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <record id="action_employee_leave_alloc_tree" model="ir.actions.act_window">
+        <field name="name">Allocations</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">leave.allocation</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_employee_id': active_id, 'search_default_current_year': 1, 'search_default_group_type': 1, 'search_default_group_end_date': 1}</field>
+    </record>
+
     <record id="view_employee_form" model="ir.ui.view">
         <field name="name">hr.employee.form</field>
         <field name="model">hr.employee</field>
         <field name="inherit_id" ref="hr.view_employee_form"/>
         <field name="arch" type="xml">
+			<button name="toggle_active" position="before">
+                <button class="oe_stat_button" type="action"
+                        name="%(hr_leave_accrual.action_employee_leave_alloc_tree)d"
+                        icon="fa-plane" modifiers="{}" options="{}">
+                    <div class="o_stat_info" modifiers="{}">
+                        <span class="o_stat_text" modifiers="{}">
+                            Leaves
+                        </span>
+                    </div>
+                </button>
+			</button>
             <field name="job_title" position="after">
                 <field name="hire_date"/>
             </field>
             <page name="hr_settings" position="after">
-                <page name="leave" string="Leave">
+                <page name="leave" string="Leave Summary">
                     <group>
-                        <field name="leave_accrual_allocated_ids" string="Allocations Summary">
+                        <field name="leave_policy_ids" string="Policies"
+                               context="{'default_employee_id': context.get('employee_id', active_id)}">
                             <tree>
+                                <field name="employee_id" invisible="1"/>
+                                <field name="policy_id"/>
                                 <field name="type_id"/>
-                                <field name="unit"/>
-                                <field name="opening_balance" string="Opening"/>
-                                <field name="adjust" string="Opening Adj."/>
-                                <field name="allocated_amount" string="YTD Accrual"/>
-                                <field name="used_amount" string="Used"/>
-                                <field name="adjusted_amount" string="Adjusted"/>
-                                <field name="balance" string="Current Bal."/>
-                                <field name="year_balance"/>
+                                <field name="start_date"/>
+                                <field name="end_date"/>
                             </tree>
                         </field>
                     </group>
                     <group>
-                        <field name="leave_allocation_ids">
+                        <field name="leave_summary_ids" string="Summary">
                             <tree create="false" delete="false" edit="false">
+                                <field name="year"/>
                                 <field name="type_id"/>
-                                <field name="allocation_type"/>
-                                <field name="start_date"/>
-                                <field name="end_date"/>
-                                <field name="alloc_amount"/>
-                                <field name="balance" sum="Running Balance"/>
+                                <field name="unit"/>
+                                <field name="lost"/>
+                                <field name="rollover"/>
+                                <field name="td_adjust"/>
+                                <field name="td_accrue"/>
+                                <field name="td_consume"/>
+                                <field name="ye_adjust"/>
+                                <field name="ye_accrue"/>
+                                <field name="ye_consume"/>
+                                <field name="to_date_balance"/>
+                                <field name="year_end_balance"/>
                             </tree>
                         </field>
                     </group>
                 </page>
-
             </page>
         </field>
     </record>
+
 </odoo>

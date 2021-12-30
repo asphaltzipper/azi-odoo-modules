@@ -1,15 +1,22 @@
+import datetime
 from odoo import models, fields, api
 
 
 class Employee(models.Model):
     _inherit = 'hr.employee'
 
-    leave_avail_ids = fields.One2many(
-        comodel_name='leave.accrual.avail',
+    leave_policy_ids = fields.One2many(
+        comodel_name='leave.policy.assign',
         inverse_name='employee_id',
-        string='Available Leave',
+        string="Leave Policies",
     )
 
-    leave_accrual_allocated_ids = fields.One2many('leave.accrual.allocated', 'employee_id', 'Leave Allocations')
-    leave_allocation_ids = fields.One2many('leave.allocation', 'employee_id', 'Allocation Details')
-    hire_date = fields.Date('Hiring Date')
+    leave_summary_ids = fields.One2many(
+        comodel_name='leave.allocation.summary',
+        inverse_name='employee_id',
+        string='Leave Summary',
+    )
+
+    hire_date = fields.Date(
+        string='Hiring Date',
+    )

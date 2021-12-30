@@ -5,6 +5,7 @@ from odoo.exceptions import ValidationError
 class LeaveAllocation(models.Model):
     _name = 'leave.allocation'
     _description = 'Leave Allocation'
+    _order = 'employee_id, type_id, start_date, allocation_type'
 
     employee_id = fields.Many2one(
         comodel_name='hr.employee',
@@ -38,28 +39,40 @@ class LeaveAllocation(models.Model):
         string="End Date",
         required=True,
     )
+
     allocation_type = fields.Selection(
-        selection=[('accrued', 'Accrued'), ('adjusted', 'Adjusted'), ('consumed', 'Consumed')],
+        selection=[
+            ('accrued', 'Accrued'),
+            ('adjusted', 'Adjusted'),
+            ('consumed', 'Consumed'),
+            ('rollover', 'Rollover'),
+            ('lost', 'Lost'),
+        ],
         string='Allocation Type',
         default='accrued',
         required=True,
+        help=""
+             "Accrued: Leave time accruals by period."
+             "Adjusted: Manual adjustments to leave time."
+             "Consumed: Leave time taken by the employee."
+             "Rollover: Balance rolled over from the previous year.\n"
+             "Lost: Leave time lost to rollover limit from previous year balance.",
     )
-    balance = fields.Float('Balance', compute='_compute_balance', store=True)
-    used_amount = fields.Float('Used Amount')
-
-    @api.depends('allocation_type', 'alloc_amount')
-    def _compute_balance(self):
-        for record in self:
-            record.balance = record.allocation_type == 'consumed' and -record.alloc_amount or record.alloc_amount
 
     @api.constrains('allocation_type', 'alloc_amount')
     def _check_amount_per_type(self):
         for record in self:
+            if record.allocation_type == 'accrued' and record.alloc_amount <= 0:
+                raise ValidationError('Accruing must be positive')
+            if record.allocation_type == 'consumed' and record.alloc_amount >= 0:
+                raise ValidationError('Consuming must be negative')
+            if record.allocation_type == 'lost' and record.alloc_amount >= 0:
+                raise ValidationError('Losing must be negative')
+
+            # TODO: this appears to serve no purpose - remove it
             if record.allocation_type == 'accrued' and not self.env.user.has_group('hr.group_hr_manager'):
                 raise ValidationError('You are not allowed to create or edit accrual allocation, please '
                                       'contact HR manager')
-            if record.allocation_type == 'consumed' and record.alloc_amount < 0:
-                raise ValidationError('Consumed allocation should have positive values')
 
     @api.multi
     def name_get(self):

@@ -15,5 +15,18 @@ class LeaveType(models.Model):
             ('hour', 'Hour'),
             ('day', 'Day'),
         ],
-        string="Unit"
+        string="Unit",
+    )
+
+    limit_rollover = fields.Boolean(
+        string="Limit Rollover",
+        required=True,
+        default=False,
+        help="Has a limit on year-end balance rollover",
+    )
+
+    rollover_limit = fields.Float(
+        string="Rollover Limit",
+        required=True,
+        help="Allow this amount of leave time to roll over at year-end",
     )

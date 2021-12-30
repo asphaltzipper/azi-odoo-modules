@@ -1,1 +1,1 @@
-from . import leave_accrual_report
+from . import leave_allocations_yearly_report

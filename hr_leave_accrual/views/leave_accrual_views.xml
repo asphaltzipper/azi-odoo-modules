@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <!-- leave type -->
     <record id="leave_type_view_form" model="ir.ui.view">
         <field name="name">leave.type.view.form</field>
         <field name="model">leave.type</field>
@@ -10,6 +11,8 @@
                     <group>
                         <field name="name"/>
                         <field name="leave_unit"/>
+                        <field name="limit_rollover"/>
+                        <field name="rollover_limit"/>
                     </group>
                 </sheet>
             </form>
@@ -22,10 +25,11 @@
             <tree>
                 <field name="name"/>
                 <field name="leave_unit"/>
+                <field name="limit_rollover"/>
+                <field name="rollover_limit"/>
             </tree>
         </field>
     </record>
-
     <record id="action_leave_type_tree" model="ir.actions.act_window">
         <field name="name">Leave Types</field>
         <field name="type">ir.actions.act_window</field>
@@ -34,6 +38,7 @@
         <field name="view_mode">tree,form</field>
     </record>
 
+    <!-- policy assign -->
     <record id="leave_policy_assign_view_form" model="ir.ui.view">
         <field name="name">leave.policy_assign.view.form</field>
         <field name="model">leave.policy.assign</field>
@@ -46,38 +51,10 @@
                     <group>
                         <field name="employee_id"/>
                         <field name="policy_id"/>
+                        <field name="type_id"/>
                         <field name="start_date"/>
                         <field name="end_date"/>
                     </group>
-                    <notebook>
-                        <page string="Generated Allocations">
-                            <field name="policy_line_ids">
-                                <tree create="false" delete="false" editable="top">
-                                    <field name="year_char" readonly="1"/>
-                                    <field name="start_date" readonly="1"/>
-                                    <field name="end_date" readonly="1"/>
-                                    <field name="balance"/>
-                                    <field name="adjust"/>
-                                    <field name="leave_allocation_ids" invisible="1" readonly="1" widget="many2many_tags"/>
-                                </tree>
-                                <form>
-                                    <sheet>
-                                        <group>
-                                            <group>
-                                                <field name="year_char"/>
-                                                <field name="start_date"/>
-                                                <field name="end_date"/>
-                                            </group>
-                                            <group>
-                                                <field name="balance"/>
-                                                <field name="adjust"/>
-                                            </group>
-                                        </group>
-                                    </sheet>
-                                </form>
-                            </field>
-                        </page>
-                    </notebook>
                 </sheet>
             </form>
         </field>
@@ -89,6 +66,7 @@
             <tree>
                 <field name="employee_id"/>
                 <field name="policy_id"/>
+                <field name="type_id"/>
                 <field name="start_date"/>
                 <field name="end_date"/>
             </tree>
@@ -99,14 +77,15 @@
         <field name="model">leave.policy.assign</field>
         <field name="arch" type="xml">
             <search>
-                <field name="policy_id" />
+                <field name="employee_id"/>
+                <field name="policy_id"/>
+                <field name="type_id"/>
                 <group expand="1" string="Group By">
                     <filter name="group_policy" context="{'group_by' : 'policy_id'}" string="Policy"/>
                 </group>
             </search>
         </field>
     </record>
-
     <record id="action_leave_policy_assign_tree" model="ir.actions.act_window">
         <field name="name">Assign Policy</field>
         <field name="type">ir.actions.act_window</field>
@@ -115,6 +94,7 @@
         <field name="view_mode">tree,form</field>
     </record>
 
+    <!-- leave policy -->
     <record id="leave_accrual_policy_view_form" model="ir.ui.view">
         <field name="name">leave.accrual.policy.view.form</field>
         <field name="model">leave.accrual.policy</field>
@@ -163,6 +143,7 @@
         <field name="view_mode">tree,form</field>
     </record>
 
+    <!-- leave allocation -->
     <record id="leave_allocation_view_form" model="ir.ui.view">
         <field name="name">leave.allocation.view.form</field>
         <field name="model">leave.allocation</field>
@@ -190,12 +171,31 @@
                 <field name="employee_id"/>
                 <field name="type_id"/>
                 <field name="alloc_unit"/>
+                <field name="allocation_type"/>
                 <field name="start_date"/>
                 <field name="end_date"/>
+                <field name="alloc_amount"/>
             </tree>
         </field>
     </record>
-
+    <record id='leave_allocation_view_search' model='ir.ui.view'>
+        <field name="name">leave.allocation.view.search</field>
+        <field name="model">leave.allocation</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="employee_id"/>
+                <field name="type_id"/>
+                <filter name="current_year" string="Current Year"
+                        domain="['&amp;', ('start_date', '&gt;=', (datetime.date(context_today().year, 1, 1)).strftime('%Y-%m-%d')), ('end_date', '&lt;=', (datetime.date(context_today().year, 12, 31)).strftime('%Y-%m-%d'))]"/>
+                <group expand="1" string="Group By">
+                    <filter name="group_policy" context="{'group_by' : 'employee_id'}" string="Policy"/>
+                    <filter name="group_type" context="{'group_by' : 'type_id'}" string="Leave Type"/>
+                    <filter name="group_alloc_type" context="{'group_by' : 'allocation_type'}" string="Alloc Type"/>
+                    <filter name="group_end_date" context="{'group_by' : 'end_date:month'}" string="End Date"/>
+                </group>
+            </search>
+        </field>
+    </record>
     <record id="action_leave_allocation_tree" model="ir.actions.act_window">
         <field name="name">Allocations</field>
         <field name="type">ir.actions.act_window</field>
@@ -204,38 +204,32 @@
         <field name="view_mode">tree,form</field>
     </record>
 
-    <record id="leave_accrual_avail_view_tree" model="ir.ui.view">
-        <field name="name">leave.accrual.avail.tree</field>
-        <field name="model">leave.accrual.avail</field>
-        <field name="arch" type="xml">
-            <tree>
-                <field name="employee_id"/>
-                <field name="type_id"/>
-                <field name="amount"/>
-                <field name="unit"/>
-            </tree>
-        </field>
-    </record>
-    <record id="leave_accrual_allocated_tree" model="ir.ui.view">
+    <!-- leave allocation summary -->
+    <record id="leave_allocation_summary_tree" model="ir.ui.view">
         <field name="name">leave.accrual.allocated.tree</field>
-        <field name="model">leave.accrual.allocated</field>
+        <field name="model">leave.allocation.summary</field>
         <field name="arch" type="xml">
             <tree>
+                <field name="year"/>
                 <field name="employee_id"/>
                 <field name="type_id"/>
                 <field name="unit"/>
-                <field name="opening_balance"/>
-                <field name="adjust"/>
-                <field name="allocated_amount"/>
-                <field name="used_amount"/>
-                <field name="adjusted_amount"/>
-                <field name="balance"/>
+                <field name="lost"/>
+                <field name="rollover"/>
+                <field name="td_adjust"/>
+                <field name="td_accrue"/>
+                <field name="td_consume"/>
+                <field name="ye_adjust"/>
+                <field name="ye_accrue"/>
+                <field name="ye_consume"/>
+                <field name="to_date_balance"/>
+                <field name="year_end_balance"/>
             </tree>
         </field>
     </record>
-    <record id="leave_accrual_allocated_action" model="ir.actions.act_window">
+    <record id="leave_allocation_summary_action" model="ir.actions.act_window">
         <field name="name">Allocations Summary</field>
-        <field name="res_model">leave.accrual.allocated</field>
+        <field name="res_model">leave.allocation.summary</field>
         <field name="view_mode">tree</field>
     </record>
 
@@ -250,6 +244,16 @@
         parent="hr_leave_accrual.leave_menu"
         sequence="10"/>
 
+    <menuitem id="leave_control_menu"
+        name="Control"
+        parent="hr_leave_accrual.leave_menu"
+        sequence="20"/>
+
+    <menuitem id="leave_reporting_menu"
+        name="Reporting"
+        parent="hr_leave_accrual.leave_menu"
+        sequence="30"/>
+
     <menuitem id="leave_allocations_menu"
         name="Allocations"
         parent="hr_leave_accrual.leave_operations_menu"
@@ -258,14 +262,14 @@
 
     <menuitem id="leave_assignments_menu"
         name="Employee Policies"
-        parent="hr_leave_accrual.leave_operations_menu"
+        parent="hr_leave_accrual.leave_control_menu"
         action="action_leave_policy_assign_tree"
-        sequence="20"/>
+        sequence="10"/>
 
     <menuitem id="leave_config_menu"
         name="Configuration"
         parent="hr_leave_accrual.leave_menu"
-        sequence="20"/>
+        sequence="50"/>
 
     <menuitem id="leave_type_menu"
         name="Leave Types"
@@ -279,8 +283,8 @@
         action="action_leave_accrual_policy_tree"
         sequence="20"/>
 
-    <menuitem id="leave_accrual_allocated_menu"
-        parent="hr_leave_accrual.leave_operations_menu"
-        action="leave_accrual_allocated_action"
-        sequence="30"/>
+    <menuitem id="leave_allocation_summary_menu"
+        parent="hr_leave_accrual.leave_reporting_menu"
+        action="leave_allocation_summary_action"
+        sequence="10"/>
 </odoo>

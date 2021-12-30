@@ -5,10 +5,14 @@
         <record id="leave_type_sick" model="ir.sequence">
             <field name="name">Sick</field>
             <field name="leave_unit">hour</field>
+            <field name="limit_rollover" eval="False"/>
+            <field name="rollover_limit">0.0</field>
         </record>
         <record id="leave_type_vacation" model="ir.sequence">
             <field name="name">Vacation</field>
             <field name="leave_unit">hour</field>
+            <field name="limit_rollover" eval="True"/>
+            <field name="rollover_limit">40.0</field>
         </record>
 
     </data>

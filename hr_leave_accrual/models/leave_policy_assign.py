@@ -8,6 +8,7 @@ from odoo.exceptions import ValidationError
 class LeavePolicyAssign(models.Model):
     _name = 'leave.policy.assign'
     _description = 'Leave Policy Assign'
+    _order = 'type_id, start_date'
 
     employee_id = fields.Many2one(
         comodel_name='hr.employee',
@@ -24,6 +25,8 @@ class LeavePolicyAssign(models.Model):
     type_id = fields.Many2one(
         related='policy_id.type_id',
         string='Type',
+        readonly=True,
+        store=True,
     )
     start_date = fields.Date(
         string="Start Date",
@@ -32,15 +35,12 @@ class LeavePolicyAssign(models.Model):
     end_date = fields.Date(
         string="End Date",
     )
-    policy_line_ids = fields.One2many(
-        comodel_name='leave.policy.assign.line',
-        inverse_name='policy_assign_id',
-        string='Policy Lines',
-    )
 
     @api.constrains('employee_id', 'policy_id', 'start_date', 'end_date')
     def _constrain_dates(self):
         # don't allow policies for the same leave type to have overlapping date ranges
+        # TODO: check for policies starting/ending in same period, but not overlapping
+        # policies should end on the last day of a period, and start on the first
         # http://mysirg.org/convert-infix-to-prefix-notation
         # infix notation: a&b&c&((d&e)|(f&g)|(h&i))
         # prefix notation: &&&abc||&de&fg&hi
@@ -82,27 +82,37 @@ class LeavePolicyAssign(models.Model):
             result.append((record.id, name))
         return result
 
-    @staticmethod
-    def get_end_date(year, end_date):
-        end_of_year = datetime.date(year, 12, 31)
-        if end_date and end_date > end_of_year:
-            return end_of_year
-        if not end_date:
-            return end_of_year
-        return end_date
+    def generate_accruals(self, year):
+        # This method does not check for duplicate accrual entries.
+        # You should perform your own check before calling this method.
+        default_start_date = datetime.date(int(year), 1, 1)
+        default_end_date = datetime.date(int(year), 12, 31)
+        for record in self:
+            if record.start_date > default_end_date or (record.end_date and record.end_date < default_start_date):
+                # skip assigned policies not applicable in this year
+                continue
+            start_date = default_start_date
+            if record.start_date > default_start_date:
+                start_date = record.start_date
+            end_date = default_end_date
+            if record.end_date and record.end_date < default_end_date:
+                end_date = record.end_date
+            period_unit = record.policy_id.period_unit
+            period_duration = record.policy_id.period_duration
+            record.generate_accrual_lines(start_date, end_date, period_unit, period_duration)
 
-    def generate_policy_line(self, start_date, end_date, period_unit, period_duration):
+    def generate_accrual_lines(self, start_date, end_date, period_unit, period_duration):
         allocation_ids = []
         if period_unit == 'week':
             # start on the monday before
             start_date_period = start_date - datetime.timedelta(days=start_date.weekday() % 7)
             # end on the sunday after
-            end_date_period = start_date_period + datetime.timedelta(days=6)
+            end_date_period = start_date_period + datetime.timedelta(days=6 + 7*period_duration)
         elif period_unit == 'month':
             # start on the first of the given month
             start_date_period = datetime.date(start_date.year, start_date.month, 1)
             # end on the last day of the given month
-            end_date_period = start_date_period + relativedelta(months=1) - datetime.timedelta(days=1)
+            end_date_period = start_date_period + relativedelta(months=period_duration) - datetime.timedelta(days=1)
         elif period_unit == 'half_month':
             if start_date.day < 16:
                 # start on the first of the given month
@@ -113,8 +123,6 @@ class LeavePolicyAssign(models.Model):
                 # start on the 16th of the given month
                 start_date_period = datetime.date(start_date.year, start_date.month, 16)
                 # end on the last day of the given month
-                # end_date_period = datetime.date(start_date.year, start_date.month, 1) + \
-                #                   relativedelta(months=1) - datetime.timedelta(days=1)
                 last_day = calendar.monthrange(start_date_period.year, start_date_period.month)[1]
                 end_date_period = datetime.date(start_date.year, start_date.month, last_day)
         else:
@@ -142,64 +150,5 @@ class LeavePolicyAssign(models.Model):
                     end_date_period = start_date_period + datetime.timedelta(days=14)
                 else:
                     # end on the last day of the given month
-                    # end_date_period = datetime.date(start_date_period.year, start_date_period.month, 1) + \
-                    #                   relativedelta(months=1) - datetime.timedelta(days=1)
                     last_day = calendar.monthrange(start_date_period.year, start_date_period.month)[1]
                     end_date_period = datetime.date(start_date_period.year, start_date_period.month, last_day)
-        vals = {
-            'year': start_date.year,
-            'start_date': start_date,
-            'end_date': end_date,
-            'leave_allocation_ids': [(6, 0, allocation_ids)],
-            'policy_assign_id': self.id,
-        }
-        self.env['leave.policy.assign.line'].create(vals)
-
-    def generate_allocation(self):
-        for record in self:
-            start_year = record.start_date.year
-            start_date = record.start_date
-            period_unit = record.policy_id.period_unit
-            period_duration = record.policy_id.period_duration
-            policy_line = record.policy_line_ids.filtered(lambda l: l.year == start_year)
-            end_date = self.get_end_date(start_year, record.end_date)
-            half_month = period_unit == 'half_month' and period_duration == 1
-            if policy_line and record.policy_line_ids[0].year+1 <= datetime.date.today().year:
-                # a line for the starting year of this policy assignment already exists
-                # but a line for the current year does not exist
-                # set the start date for the new line to the end date of the latest allocation, plus one
-                # this will break if the users has deleted all allocations, and wants to regenerate them
-                start_date = record.policy_line_ids[0].leave_allocation_ids.sorted(
-                    lambda p: p.end_date, reverse=True)[0].end_date + datetime.timedelta(days=1)
-                # if half_month, set start_date to the first day of the year after the latest allocation end date
-                # this can skip periods if the latest allocation doesn't end on 12/31
-                start_date = half_month and datetime.date(start_date.year+1, 1, 1) or start_date
-                end_date = self.get_end_date(start_date.year, record.end_date)
-                record.generate_policy_line(start_date, end_date, period_unit, period_duration)
-            elif not policy_line and start_date.year <= datetime.date.today().year:
-                record.generate_policy_line(start_date, end_date, period_unit, period_duration)
-
-    @api.model
-    def create_allocation_per_policy(self):
-        for policy_assign in self.search([]):
-            policy_assign.generate_allocation()
-
-
-class LeavePolicyAssignLine(models.Model):
-    _name = 'leave.policy.assign.line'
-    _description = "Leave Policy Assignment Detail Line"
-    _order = 'year DESC'
-
-    year = fields.Integer('Year')
-    year_char = fields.Char('Year', compute='_compute_year', store=True)
-    start_date = fields.Date('Start Date')
-    end_date = fields.Date('End Date')
-    balance = fields.Float('Opening Balance')
-    adjust = fields.Float('Adjust')
-    leave_allocation_ids = fields.Many2many('leave.allocation', string='Accrual Allocated')
-    policy_assign_id = fields.Many2one('leave.policy.assign', 'Employee Policy')
-
-    @api.depends('year')
-    def _compute_year(self):
-        for record in self:
-            record.year_char = str(record.year)

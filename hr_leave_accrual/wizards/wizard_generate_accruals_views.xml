@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wizard_leave_generate_accruals_view_form" model="ir.ui.view">
+        <field name="name">wizard.leave.generate.accruals.view.form</field>
+        <field name="model">wizard.leave.generate.accruals</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="year" required="1"/>
+                            <field name="leave_type_id"/>
+                            <field name="employee_id"/>
+                            <field name="department_id"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="generate_accruals" string="Generate Accruals"
+                                type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="wizard_leave_generate_accruals_action" model="ir.actions.act_window">
+        <field name="name">Generate Accruals</field>
+        <field name="res_model">wizard.leave.generate.accruals</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="leave_generate_accruals_menu"
+        name="Generate Accruals"
+        parent="hr_leave_accrual.leave_operations_menu"
+        action="wizard_leave_generate_accruals_action"
+        sequence="50"/>
+
+</odoo>
