@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <odoo>
+
     <record id="view_purchase_requisition_custom_form" model="ir.ui.view">
         <field name="name">purchase.requisition.custom.form</field>
         <field name="model">purchase.requisition</field>
@@ -11,4 +11,34 @@
             </xpath>
         </field>
     </record>
+
+    <record model="ir.ui.view" id="view_purchase_requisition_custom_tree">
+        <field name="name">purchase.requisition.tree</field>
+        <field name="model">purchase.requisition</field>
+        <field name="inherit_id" ref="purchase_requisition.view_purchase_requisition_tree"/>
+        <field name="arch" type="xml">
+            <field name="user_id" position="attributes">
+                <attribute name="string">Purchaser</attribute>
+            </field>
+            <field name="user_id" position="after">
+                <field name="vendor_id"/>
+                <field name="order_count" string="Order Count"/>
+            </field>
+      </field>
+    </record>
+
+    <record id="view_purchase_requisition_custom_filter" model="ir.ui.view">
+        <field name="name">purchase.requisition.list.select</field>
+        <field name="model">purchase.requisition</field>
+        <field name="inherit_id" ref="purchase_requisition.view_purchase_requisition_filter"/>
+        <field name="arch" type="xml">
+            <filter name="draft" position="after">
+                <filter name="ongoing" string="Ongoing" domain="[('state','=','ongoing')]" help="Ongoing Blanket Orders"/>
+            </filter>
+            <filter name="representative" position="after">
+                <filter string="Vendor" name="group_vendor" domain="[]" context="{'group_by':'vendor_id'}"/>
+            </filter>
+        </field>
+    </record>
+
 </odoo>
