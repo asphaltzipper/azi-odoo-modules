@@ -8,6 +8,11 @@ class MrpInventory(models.Model):
         related='product_id.e_kanban',
         store=True,
     )
+    deprecated = fields.Boolean(
+        related='product_id.deprecated',
+        string="Obsolete",
+        store=True,
+    )
     routing_detail = fields.Char(
         string='Routing Detail',
         compute='_compute_routing_detail',

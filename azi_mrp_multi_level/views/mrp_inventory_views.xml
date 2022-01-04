@@ -28,6 +28,7 @@
         <field name="inherit_id" ref="mrp_multi_level.mrp_inventory_tree"/>
         <field name="arch" type="xml">
             <field name="product_id" position="after">
+                <field name="deprecated"/>
                 <field name="e_kanban"/>
                 <field name="routing_detail"/>
                 <field name="main_supplier_id"/>
