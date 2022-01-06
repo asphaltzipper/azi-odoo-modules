@@ -25,3 +25,28 @@ class StockRequest(models.AbstractModel):
         related='product_id.type',
         readonly=True,
         store=True)
+
+
+class StockRequestOrder(models.Model):
+    _inherit = 'stock.request'
+
+    @api.multi
+    def action_confirm(self):
+        res = super(StockRequestOrder, self).action_confirm()
+        for record in self:
+            if record.kanban_id:
+                kanban_qty = record.product_id.e_kanban_avg_qty
+                qty_available = record.product_id.qty_available
+                real_quantity = kanban_qty - qty_available
+                location_id = record.kanban_id.location_id.id
+                if real_quantity:
+                    stock_inventory = self.env['stock.inventory'].create({'name': '%s - adjustment' % record.product_id.name,
+                                                                          'filter': 'product',
+                                                                          'product_id': record.product_id.id,
+                                                                          'location_id': location_id})
+                    stock_inventory.action_start()
+                    stock_inventory.write({'line_ids': [(0, _, {'product_id': record.product_id.id,
+                                                                'product_qty': real_quantity,
+                                                                'location_id': location_id})]})
+                    stock_inventory.action_validate()
+        return res
