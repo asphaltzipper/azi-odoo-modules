@@ -19,6 +19,10 @@ class RepairLine(models.Model):
     @api.depends('lot_id.repair_ids.operations')
     def _compute_has_child(self):
         for record in self:
-            record.has_child = (record.type == 'add' and record.lot_id.mapped('repair_ids.operations')) \
-                               and True or False
-
+            if record.type == 'add':
+                move_lines = record.lot_id.move_line_ids.filtered(lambda l: l.move_id.production_id)
+                if move_lines:
+                    record.has_child = True
+                else:
+                    record.has_child = self.env['mrp.bom'].search([('product_id', '=', record.product_id.id)])\
+                                       and True or False

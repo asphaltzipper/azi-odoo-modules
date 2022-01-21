@@ -58,6 +58,27 @@ var CombinedBomReport = stock_report_generic.extend({
         return self.render_html(event_target, $parent, result);
 
     },
+    get_bom_line: async function(event) {
+        var self = this;
+        var event_target = event.currentTarget ? event.currentTarget: event
+        var $parent = $(event_target).closest('tr');
+        var activeID = $parent.data('id');
+        if(typeof(activeID) === 'string' && activeID.startsWith('r_')){
+            activeID = activeID.replace('r_', '')
+        }
+        var level = $parent.data('level') || 1;
+        var repair = $parent.data('repair');
+        var result = await this._rpc({
+              model: 'report.serial_crm.report_combined_bom',
+              method: 'get_bom_line',
+              args: [
+                  activeID,
+                  level+1,
+                  repair
+              ]});
+        return self.render_html(event_target, $parent, result);
+
+    },
     get_repair_order: async function(event){
         var self = this;
         var event_target = event.currentTarget ? event.currentTarget: event
@@ -65,6 +86,7 @@ var CombinedBomReport = stock_report_generic.extend({
         var activeID = $parent.data('id');
         var lot_id = $parent.data('child_component_id');
         var level = $parent.data('level') || 0;
+        var product = $parent.data('product');
         var result = await this._rpc({
               model: 'report.serial_crm.report_combined_bom',
               method: 'get_repair_order',
@@ -72,6 +94,7 @@ var CombinedBomReport = stock_report_generic.extend({
                   lot_id,
                   activeID,
                   level+1,
+                  product,
               ]
           })
         return self.render_html(event_target, $parent, result);
@@ -81,13 +104,18 @@ var CombinedBomReport = stock_report_generic.extend({
         var event_target = event.currentTarget ? event.currentTarget: event
         var $parent = $(event_target).closest('tr');
         var activeID = $parent.data('id');
+        if(typeof(activeID) === 'string' && activeID.startsWith('r_')){
+            activeID = activeID.replace('r_', '')
+        }
         var level = $parent.data('level') || 0;
+        var repair = $parent.data('repair');
         var result = await this._rpc({
               model: 'report.serial_crm.report_combined_bom',
               method: 'get_mo_component',
               args: [
                   activeID,
                   level+1,
+                  repair
               ]
           })
         return self.render_html(event_target, $parent, result);
@@ -133,6 +161,9 @@ var CombinedBomReport = stock_report_generic.extend({
         }
         if(redirect_function === 'get_mo_component'){
             await self.get_mo_component(item_to_expand);
+        }
+        if(redirect_function === 'get_bom_line'){
+            await self.get_bom_line(item_to_expand);
         }
 
     },
