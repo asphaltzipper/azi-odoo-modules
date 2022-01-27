@@ -11,6 +11,11 @@
                 <field name="product_deprecated"/>
                 <field name="product_responsible_id"/>
             </xpath>
+            <page name="items" position="after">
+                <page string="Ordered">
+                    <field name="request_ids" widget="one2many_list"/>
+                </page>
+            </page>
         </field>
     </record>
 

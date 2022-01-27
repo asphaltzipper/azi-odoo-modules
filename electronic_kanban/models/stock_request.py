@@ -27,12 +27,12 @@ class StockRequest(models.AbstractModel):
         store=True)
 
 
-class StockRequestOrder(models.Model):
+class StockRequest(models.Model):
     _inherit = 'stock.request'
 
     @api.multi
     def action_confirm(self):
-        res = super(StockRequestOrder, self).action_confirm()
+        res = super(StockRequest, self).action_confirm()
         for record in self:
             if record.kanban_id:
                 kanban_qty = record.product_id.e_kanban_avg_qty
@@ -50,3 +50,9 @@ class StockRequestOrder(models.Model):
                                                                 'location_id': location_id})]})
                     stock_inventory.action_validate()
         return res
+
+
+class StockRequestOrder(models.Model):
+    _inherit = 'stock.request.order'
+
+    request_ids = fields.Many2many('stock.request', string='Stock Requests')
