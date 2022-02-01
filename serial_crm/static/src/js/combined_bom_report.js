@@ -63,6 +63,7 @@ var CombinedBomReport = stock_report_generic.extend({
         var event_target = event.currentTarget ? event.currentTarget: event
         var $parent = $(event_target).closest('tr');
         var activeID = $parent.data('id');
+        var bom_child = $parent.data('bom_child');
         if(typeof(activeID) === 'string' && activeID.startsWith('r_')){
             activeID = activeID.replace('r_', '')
         }
@@ -74,6 +75,7 @@ var CombinedBomReport = stock_report_generic.extend({
               args: [
                   activeID,
                   level+1,
+                  bom_child,
                   repair
               ]});
         return self.render_html(event_target, $parent, result);

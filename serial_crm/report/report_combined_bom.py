@@ -1,3 +1,4 @@
+from datetime import datetime
 from odoo import api, models, _
 
 
@@ -11,22 +12,50 @@ class ReportCombinedBOM(models.AbstractModel):
         res['lines'] = self.env.ref('serial_crm.report_combined_bom').render({'data': res})
         return res
 
+    def get_current_bom(self, bom):
+        self._cr.execute("""
+            select 
+                line.id, line.product_id, line.product_qty, line.bom_id, uom.name,
+                (case 
+                    when bom.product_id = line.product_id then True
+                    else False
+                end) as child_bom_id, bom.type
+            from mrp_bom_line as line
+            left join mrp_bom as bom  on line.product_id  =  bom.product_id 
+            left join uom_uom as uom on line.product_uom_id = uom.id
+            where line.bom_id = %s
+            group by line.id, bom.product_id, uom.name, bom.type
+        """, (bom,))
+        return self._cr.fetchall()
+
+    def get_bom_id(self, product):
+        self._cr.execute("""
+            select bom.id 
+            from mrp_bom as bom, mrp_bom_line as line 
+            where bom.product_id = %s and bom.id = line.bom_id limit 1""", (product,))
+        return self._cr.fetchall()[0][0]
+
     @api.model
     def _get_report_data(self, lot_id):
         lot = self.env['stock.production.lot'].browse(lot_id)
         move_lines = lot.move_line_ids.filtered(lambda l: l.move_id.production_id)
         lines = []
+        bom_lines = []
         bom_changes = self._get_bom_change_child(lot_id)
         repair_orders = self._get_repair_parts(lot_id)
         if move_lines:
             current_bom = lot.move_line_ids.mapped('move_id.production_id.bom_id')[0]
         else:
             current_bom = lot.product_id.bom_ids and lot.product_id.bom_ids[0]
+        if current_bom:
+            bom_lines = self.get_current_bom(current_bom.id)
         return {
             'lines': lines,
             'bom_changes': bom_changes,
             'repair_orders': repair_orders,
             'get_product_display_name': self.get_product_display_name,
+            'bom_lines': bom_lines,
+            'get_bom_id': self.get_bom_id,
             'mo': move_lines,
             'mo_lot': lot.name,
             'current_bom': current_bom,
@@ -51,7 +80,7 @@ class ReportCombinedBOM(models.AbstractModel):
         return self._cr.fetchall()
 
     def get_product_display_name(self, product_id):
-        return self.env['product.product'].browse(product_id).display_name[:100]
+        return self.env['product.product'].browse(product_id).display_name
 
     def get_child_mo(self, move_line):
         mo_lines = move_line.consume_line_ids
@@ -109,16 +138,17 @@ class ReportCombinedBOM(models.AbstractModel):
         return self.env.ref('serial_crm.report_bom_change_line').render({'data': lines})
 
     @api.model
-    def get_bom_line(self, bom_line_id=False, level=False, repair=False):
-        bom_line_child = self.env['mrp.bom.line'].browse([bom_line_id])
+    def get_bom_line(self, bom_line_id=False, level=False, bom_child=False, repair=False):
+        bom_line_child = self.get_current_bom(bom_child)
         if repair:
             level = level and level + 1
         lines = {
-            'bom_child': bom_line_child.child_bom_id.bom_line_ids,
-            'parent_id': bom_line_child.id,
+            'bom_child': bom_line_child,
+            'parent_id': bom_line_id,
             'level': level or 0,
-            'repair': bool(repair)
-
+            'repair': bool(repair),
+            'get_bom_id': self.get_bom_id,
+            'get_product_display_name': self.get_product_display_name,
         }
         return self.env.ref('serial_crm.report_bom_child_line').render({'data': lines})
 
@@ -132,12 +162,17 @@ class ReportCombinedBOM(models.AbstractModel):
             move_lines = move_lines and move_lines[0]
         if not move_lines and product_id:
             bom = self.env['mrp.bom'].search([('product_id', '=', product_id)])
-
+        child_boms = []
+        if bom:
+            child_boms = self.get_current_bom(bom.id)
         lines = {
             'boms': bom,
+            'child_boms': child_boms,
             'parent': line_id,
             'level': level or 0,
             'mrp': move_lines,
             'repair': True,
+            'get_bom_id': self.get_bom_id,
+            'get_product_display_name': self.get_product_display_name,
         }
         return self.env.ref('serial_crm.report_repair_order_line').render({'data': lines})
