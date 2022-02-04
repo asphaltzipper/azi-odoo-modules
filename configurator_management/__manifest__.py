@@ -19,6 +19,7 @@
     "data": [
         "views/product_views.xml",
         "views/mrp_bom_views.xml",
+        "views/product_attribute_views.xml",
         'security/ir.model.access.csv',
     ],
     "installable": True,

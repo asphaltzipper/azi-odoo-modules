@@ -17,6 +17,7 @@ a master production schedule.
         'stock_request_mrp',
         'sale',
         'azi_mrp',
+        'configurator_management',
     ],
     "data": [
         'security/ir.model.access.csv',

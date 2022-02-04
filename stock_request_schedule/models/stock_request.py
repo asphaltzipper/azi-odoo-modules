@@ -12,6 +12,18 @@ class StockRequest(models.Model):
         string='Template',
         store=True)
 
+    default_code = fields.Char(
+        related='product_id.default_code',
+        string="PN",
+        store=True,
+    )
+
+    config_code = fields.Char(
+        related='product_id.config_code',
+        string="Config",
+        store=False,
+    )
+
     note = fields.Char(
         string='Note',
         copy=False)
@@ -44,6 +56,12 @@ class StockRequest(models.Model):
         copy=False)
 
     production_ids = fields.Many2many(copy=False)
+
+    lot_id = fields.Many2one(
+        comodel_name='stock.production.lot',
+        string="Serial",
+        copy=False,
+    )
 
     @api.depends('sale_order_line_id')
     def _compute_sold(self):

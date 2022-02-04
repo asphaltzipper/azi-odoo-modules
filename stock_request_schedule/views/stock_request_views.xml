@@ -10,6 +10,7 @@
                 <field name="sale_order_line_id" domain="[('product_id', '=' , product_id)]" attrs="{'invisible':[('scheduled','=',False)]}"/>
                 <field name="sale_partner_id" attrs="{'invisible':[('scheduled','=',False)]}"/>
                 <field name="sold" attrs="{'invisible':[('scheduled','=',False)]}"/>
+                <field name="lot_id" attrs="{'invisible':[('scheduled','=',False)]}"/>
             </field>
             <xpath expr="//group[1]" position="before">
                 <b/>
@@ -53,9 +54,13 @@
                 <field name="name"/>
                 <field name="expected_date" widget="date"/>
                 <field name="allow_virtual_location" invisible="1"/>
-                <field name="product_tmpl_id"/>
+                <field name="product_tmpl_id" invisible="1"/>
+                <field name="product_id" invisible="1"/>
+                <field name="default_code"/>
+                <field name="config_code"/>
                 <field name="note"/>
                 <field name="sale_partner_id"/>
+                <field name="lot_id"/>
                 <field name="state"/>
             </tree>
         </field>
@@ -103,6 +108,7 @@
                 <field name="sold"/>
                 <field name="expected_date"/>
                 <field name="state"/>
+                <field name="name"/>
                 <templates>
                     <t t-name="kanban-box">
                         <div t-attf-class="oe_kanban_card oe_kanban_global_click">
@@ -123,7 +129,10 @@
                                 </div>
                             </div>
                             <div>
-                                <strong><span><t t-esc="record.product_tmpl_id.value"/></span></strong>
+                                <strong><span><t t-esc="record.name.value"/></span></strong>
+                            </div>
+                            <div>
+                                <strong><field name="config_code"/></strong>
                             </div>
                             <div class="text-muted">
                                 <span><t t-esc="record.note.value"/></span>
