@@ -1,12 +1,35 @@
 # -*- coding: utf-8 -*-
-
+from dateutil.relativedelta import relativedelta
 from odoo import models, fields, api
 from datetime import datetime
-from dateutil.relativedelta import relativedelta
+from odoo.exceptions import ValidationError
 
 
 class PurchaseRequisitionLine(models.Model):
     _inherit = "purchase.requisition.line"
+
+    estimated_take_down_rate = fields.Float('Estimated Take Down Rate')
+    projected_reorder_date = fields.Date('Projected Reorder Date', compute='_compute_projected_reorder_date')
+
+    @api.depends('estimated_take_down_rate', 'product_qty', 'requisition_id.ordering_date')
+    def _compute_projected_reorder_date(self):
+        for record in self:
+            if record.requisition_id.ordering_date and record.estimated_take_down_rate:
+                number_of_days = int(record.product_qty/record.estimated_take_down_rate)
+                record.projected_reorder_date = record.requisition_id.ordering_date + relativedelta(days=number_of_days)
+
+    @api.onchange('requisition_id.date_end', 'product_id', 'product_qty', 'requisition_id.first_article_lead_time', 'product_id')
+    def _onchange_estimated_take_down(self):
+        quantity_per_period = 0
+        if self.product_id:
+            end_date = datetime.now()
+            start_date = end_date - relativedelta(months=12)
+            moves = self.env['stock.move'].search([('product_id', '=', self.product_id.id),
+                                                   ('location_dest_id.usage', '=', 'internal'),
+                                                   ('date', '>=', start_date), ('date', '<=', end_date)])
+            quantity_per_period = sum(moves.mapped('product_uom_qty'))
+        self.estimated_take_down_rate = quantity_per_period
+
 
     @api.model
     def _get_release_date_planned(self, po=False):
@@ -40,6 +63,13 @@ class PurchaseRequisition(models.Model):
     _inherit = "purchase.requisition"
 
     lead_time = fields.Integer(string='Lead Time', required=False)
+    first_article_lead_time = fields.Integer('First-Article Lead Time')
+    actual_take_down_rate = fields.Float('Actual Take Down Rate', compute='_compute_actual_take_down')
+
+    @api.depends('line_ids.qty_ordered')
+    def _compute_actual_take_down(self):
+        for record in self:
+            record.actual_take_down_rate = sum(record.line_ids.mapped('qty_ordered'))
 
 
 class PurchaseOrder(models.Model):
@@ -81,7 +111,7 @@ class PurchaseOrder(models.Model):
             else:
                 self.origin = requisition.name
         self.notes = requisition.description
-        self.date_order = requisition.date_end or fields.Datetime.now()
+        self.date_order = fields.Datetime.now()
         self.picking_type_id = requisition.picking_type_id.id
 
         if requisition.type_id.line_copy != 'copy':
@@ -121,3 +151,20 @@ class PurchaseOrder(models.Model):
                 taxes_ids=taxes_ids, po=self)
             order_lines.append((0, 0, order_line_values))
         self.order_line = order_lines
+
+
+class PurchaseOrderLine(models.Model):
+    _inherit = 'purchase.order.line'
+
+    @api.constrains('order_id.requisition_id', 'product_id')
+    def _check_product_not_in_blanket(self):
+        for record in self:
+            if not record.order_id.requisition_id:
+                blanket_line = self.env['purchase.requisition.line'].search([
+                    ('product_id', '=', record.product_id.id),
+                    ('requisition_id.state', 'not in', ('cancel', 'done')),
+                    ('requisition_id.vendor_id', '=', record.order_id.partner_id.id)], limit=1)
+                if blanket_line:
+                    raise ValidationError('There is a blanket order %s for this product, '
+                                          'please try to link the PO to this '
+                                          'Blanket order' % blanket_line.requisition_id.name)

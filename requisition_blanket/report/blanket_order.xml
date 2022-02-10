@@ -4,7 +4,7 @@
         <template id="blanket_order">
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">
-                    <t t-call="web.basic_layout">
+                    <t t-call="web.external_layout">
                         <div class="page">
                             <div class="oe_structure"/>
 
@@ -44,6 +44,8 @@
                                             <th>
                                                 <strong>Description</strong>
                                             </th>
+                                            <th>Vendor Product Code</th>
+                                            <th>Vendor Product Name</th>
                                             <th class="text-right">
                                                 <strong>Qty</strong>
                                             </th>
@@ -54,11 +56,19 @@
                                     </thead>
                                     <tbody>
                                         <tr t-foreach="o.line_ids" t-as="line_ids">
+                                            <t t-set="supplier_info"
+                                               t-value="o.env['product.supplierinfo'].search([('purchase_requisition_line_id', '=', line_ids.id)], limit=1)"/>
                                             <td>
                                                 [
                                                 <span t-field="line_ids.product_id.code"/>
                                                 ]
                                                 <span t-field="line_ids.product_id.name"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="supplier_info.product_name"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="supplier_info.product_code"/>
                                             </td>
                                             <td class="text-right">
                                                 <span t-field="line_ids.product_qty"/>
@@ -82,7 +92,10 @@
                                                 <strong>Reference</strong>
                                             </th>
                                             <th>
-                                                <strong>Vendor</strong>
+                                                <strong>Product</strong>
+                                            </th>
+                                            <th>
+                                                <strong>Quantity</strong>
                                             </th>
                                             <th class="text-center">
                                                 <strong>Date</strong>
@@ -96,24 +109,28 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr t-foreach="o.purchase_ids.sorted(key=lambda b: b.date_planned)"
-                                            t-as="purchase_id">
+                                        <t t-set="purchases" t-value="o.purchase_ids.sorted(key=lambda b: b.date_planned)"/>
+                                        <tr t-foreach="purchases.mapped('order_line').sorted(key=lambda l: (l.order_id, l.product_id.id, l.date_order))"
+                                            t-as="purchase_line_id">
+
                                             <td class="text-left">
-                                                <span t-field="purchase_id.name"/>
+                                                <span t-field="purchase_line_id.order_id.name"/>
                                             </td>
                                             <td>
-                                                <span t-field="purchase_id.partner_id.name"/>
+                                                <span t-field="purchase_line_id.product_id.display_name"/>
+                                            </td>
+                                            <td>
+                                                <span t-field="purchase_line_id.product_qty"/>
                                             </td>
                                             <td class="text-center">
-                                                <span t-field="purchase_id.date_planned"
-                                                      t-field-options='{"format": "MM/dd/y"}'/>
-                                                <!--<span t-field="purchase_id.short_local_date"/>-->
+                                                <span t-field="purchase_line_id.date_planned"
+                                                      t-options ='{"format": "MM/dd/yyyy"}'/>
                                             </td>
                                             <td class="text-center">
-                                                <span t-field="purchase_id.amount_total"/>
+                                                <span t-field="purchase_line_id.price_subtotal"/>
                                             </td>
                                             <td class="text-right">
-                                                <span t-field="purchase_id.invoice_status"/>
+                                                <span t-field="purchase_line_id.order_id.invoice_status"/>
                                             </td>
                                         </tr>
                                     </tbody>

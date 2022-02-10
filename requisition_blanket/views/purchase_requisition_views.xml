@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
 
+<odoo>
     <record id="view_purchase_requisition_custom_form" model="ir.ui.view">
         <field name="name">purchase.requisition.custom.form</field>
         <field name="model">purchase.requisition</field>
@@ -8,37 +8,20 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='vendor_id']" position="after">
                 <field name="lead_time" string="Lead Time (days)"/>
+                <field name="first_article_lead_time"/>
+                <field name="actual_take_down_rate"/>
+            </xpath>
+            <field name="date_end" position="attributes">
+                <attribute name="required">1</attribute>
+            </field>
+            <xpath expr="//field[@name='line_ids']/tree/field[@name='schedule_date']" position="before">
+                <field name="estimated_take_down_rate"/>
+                <field name="projected_reorder_date"/>
+            </xpath>
+            <xpath expr="//field[@name='line_ids']/form/group/field[@name='schedule_date']" position="before">
+                <field name="estimated_take_down_rate"/>
+                <field name="projected_reorder_date"/>
             </xpath>
         </field>
     </record>
-
-    <record model="ir.ui.view" id="view_purchase_requisition_custom_tree">
-        <field name="name">purchase.requisition.tree</field>
-        <field name="model">purchase.requisition</field>
-        <field name="inherit_id" ref="purchase_requisition.view_purchase_requisition_tree"/>
-        <field name="arch" type="xml">
-            <field name="user_id" position="attributes">
-                <attribute name="string">Purchaser</attribute>
-            </field>
-            <field name="user_id" position="after">
-                <field name="vendor_id"/>
-                <field name="order_count" string="Order Count"/>
-            </field>
-      </field>
-    </record>
-
-    <record id="view_purchase_requisition_custom_filter" model="ir.ui.view">
-        <field name="name">purchase.requisition.list.select</field>
-        <field name="model">purchase.requisition</field>
-        <field name="inherit_id" ref="purchase_requisition.view_purchase_requisition_filter"/>
-        <field name="arch" type="xml">
-            <filter name="draft" position="after">
-                <filter name="ongoing" string="Ongoing" domain="[('state','=','ongoing')]" help="Ongoing Blanket Orders"/>
-            </filter>
-            <filter name="representative" position="after">
-                <filter string="Vendor" name="group_vendor" domain="[]" context="{'group_by':'vendor_id'}"/>
-            </filter>
-        </field>
-    </record>
-
 </odoo>
