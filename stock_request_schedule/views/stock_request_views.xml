@@ -10,7 +10,7 @@
                 <field name="sale_order_line_id" domain="[('product_id', '=' , product_id)]" attrs="{'invisible':[('scheduled','=',False)]}"/>
                 <field name="sale_partner_id" attrs="{'invisible':[('scheduled','=',False)]}"/>
                 <field name="sold" attrs="{'invisible':[('scheduled','=',False)]}"/>
-                <field name="lot_id" attrs="{'invisible':[('scheduled','=',False)]}"/>
+                <field name="serial" attrs="{'invisible':[('scheduled','=',False)]}"/>
             </field>
             <xpath expr="//group[1]" position="before">
                 <b/>
@@ -60,7 +60,7 @@
                 <field name="config_code"/>
                 <field name="note"/>
                 <field name="sale_partner_id"/>
-                <field name="lot_id"/>
+                <field name="serial"/>
                 <field name="state"/>
             </tree>
         </field>

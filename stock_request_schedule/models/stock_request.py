@@ -57,8 +57,7 @@ class StockRequest(models.Model):
 
     production_ids = fields.Many2many(copy=False)
 
-    lot_id = fields.Many2one(
-        comodel_name='stock.production.lot',
+    serial = fields.Char(
         string="Serial",
         copy=False,
     )
