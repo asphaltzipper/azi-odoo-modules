@@ -8,7 +8,7 @@ from odoo.exceptions import ValidationError
 class PurchaseRequisitionLine(models.Model):
     _inherit = "purchase.requisition.line"
 
-    estimated_take_down_rate = fields.Float('Estimated Take Down Rate')
+    estimated_take_down_rate = fields.Float('Est. Qty/Month')
     projected_reorder_date = fields.Date('Projected Reorder Date', compute='_compute_projected_reorder_date')
 
     @api.depends('estimated_take_down_rate', 'product_qty', 'requisition_id.ordering_date')
@@ -62,14 +62,33 @@ class PurchaseRequisitionLine(models.Model):
 class PurchaseRequisition(models.Model):
     _inherit = "purchase.requisition"
 
-    lead_time = fields.Integer(string='Lead Time', required=False)
+    lead_time = fields.Integer(string='Lead Time', required=True)
     first_article_lead_time = fields.Integer('First-Article Lead Time')
     actual_take_down_rate = fields.Float('Actual Take Down Rate', compute='_compute_actual_take_down')
+    projected_reorder_date = fields.Date('Projected Reorder Date', compute='_compute_projected_reorder_date')
+    is_blanket = fields.Boolean('Is Blanket Order?', compute='_compute_is_blanket')
 
-    @api.depends('line_ids.qty_ordered')
+    @api.depends('line_ids.qty_ordered', 'date_end', 'ordering_date', 'first_article_lead_time')
     def _compute_actual_take_down(self):
         for record in self:
-            record.actual_take_down_rate = sum(record.line_ids.mapped('qty_ordered'))
+            if record.date_end and record.ordering_date:
+                date_end = min(datetime.now(), record.date_end).date() - \
+                           (record.ordering_date + relativedelta(days=record.first_article_lead_time))
+                no_of_days = date_end.days or 1
+                record.actual_take_down_rate = sum(record.line_ids.mapped('qty_ordered')) / no_of_days
+
+    @api.depends('line_ids.projected_reorder_date')
+    def _compute_projected_reorder_date(self):
+        for record in self:
+            projected_reorder_date = record.line_ids.mapped('projected_reorder_date')
+            if projected_reorder_date:
+                record.projected_reorder_date = min(projected_reorder_date)
+
+    @api.depends('type_id')
+    def _compute_is_blanket(self):
+        for record in self:
+            if record.type_id and record.type_id.name == 'Blanket Order':
+                record.is_blanket = True
 
 
 class PurchaseOrder(models.Model):
