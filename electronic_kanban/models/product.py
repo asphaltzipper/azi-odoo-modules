@@ -101,6 +101,7 @@ class ProductProduct(models.Model):
 
     @api.multi
     def _search_e_kanban_verified(self, operator, value):
+        # enable search by computed field
         if operator == '!=':
             recs = self.search([]).filtered(lambda x: x.e_kanban_verified != value)
         elif operator == '=':

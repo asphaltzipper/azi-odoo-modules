@@ -5,6 +5,9 @@
         <field name="model">stock.request</field>
         <field name="inherit_id" ref="stock_request.view_stock_request_form"/>
         <field name="arch" type="xml">
+            <field name="product_id" position="before">
+                <field name="config_code" attrs="{'invisible':[('scheduled','=',False)]}"/>
+            </field>
             <field name="procurement_group_id" position="after">
                 <field name="scheduled"/>
                 <field name="sale_order_line_id" domain="[('product_id', '=' , product_id)]" attrs="{'invisible':[('scheduled','=',False)]}"/>
@@ -101,7 +104,7 @@
         <field name="model">stock.request</field>
         <field name="arch" type="xml">
             <kanban class="o_kanban_small_column"
-                    default_order="product_tmpl_id, expected_date"
+                    default_order="expected_date, product_tmpl_id"
                     default_group_by="expected_date:week">
                 <field name="note"/>
                 <field name="product_tmpl_id"/>
@@ -109,6 +112,7 @@
                 <field name="expected_date"/>
                 <field name="state"/>
                 <field name="name"/>
+                <field name="serial"/>
                 <templates>
                     <t t-name="kanban-box">
                         <div t-attf-class="oe_kanban_card oe_kanban_global_click">
@@ -128,8 +132,15 @@
                                     <strong><div class="pull-right text-right"><field name="expected_date" widget="date"/></div></strong>
                                 </div>
                             </div>
-                            <div>
-                                <strong><span><t t-esc="record.name.value"/></span></strong>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div>
+                                        <strong><span><t t-esc="record.name.value"/></span></strong>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="pull-right text-right"><field name="serial"/></div>
+                                </div>
                             </div>
                             <div>
                                 <strong><field name="config_code"/></strong>
