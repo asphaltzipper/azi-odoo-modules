@@ -43,12 +43,11 @@ class ReportCombinedBOM(models.AbstractModel):
         bom_lines = []
         bom_changes = self._get_bom_change_child(lot_id)
         repair_orders = self._get_repair_parts(lot_id)
-        if move_lines:
-            current_bom = lot.move_line_ids.mapped('move_id.production_id.bom_id')[0]
-        else:
-            current_bom = lot.product_id.bom_ids and lot.product_id.bom_ids[0]
-        if current_bom:
-            bom_lines = self.get_current_bom(current_bom.id)
+        current_boms = lot.product_id.bom_ids
+        if current_boms:
+            current_bom = self.env['mrp.bom'].search([('id', 'in', current_boms.ids)], order='version desc, sequence', limit=1)
+            if current_bom:
+                bom_lines = self.get_current_bom(current_bom.id)
         return {
             'lines': lines,
             'bom_changes': bom_changes,
@@ -83,13 +82,12 @@ class ReportCombinedBOM(models.AbstractModel):
         return self.env['product.product'].browse(product_id).display_name
 
     def get_child_mo(self, move_line):
-        mo_lines = move_line.consume_line_ids
-        if not mo_lines:
-            if move_line.move_id.move_orig_ids:
-                mo_lines = move_line.move_id.move_orig_ids.mapped('move_line_ids').filtered(
-                    lambda m: m.lot_id == move_line.lot_id and m.state == 'done'
-                )
-        return mo_lines and True or False
+        mo_lines = False
+        if move_line.lot_id:
+            mrp = move_line.lot_id.move_line_ids.filtered(lambda l: l.move_id.production_id)
+            if mrp:
+                mo_lines = True
+        return mo_lines
 
     @api.model
     def get_mo_component(self, move_line_id, level=False, repair=False):
@@ -105,6 +103,10 @@ class ReportCombinedBOM(models.AbstractModel):
                 mo_lines = move_line.move_id.move_orig_ids.mapped('move_line_ids').filtered(
                     lambda m: m.lot_id == move_line.lot_id and m.state == 'done'
                 )
+        if not mo_lines and move_line.lot_id:
+            mrp_production = move_line.lot_id.move_line_ids.filtered(lambda l: l.move_id.production_id)
+            if mrp_production:
+                mo_lines = mrp_production[0].consume_line_ids
         for line in mo_lines:
             reference = line.move_id.production_id and line.move_id.production_id or \
                         (line.move_id.raw_material_production_id and line.move_id.raw_material_production_id)
@@ -161,7 +163,7 @@ class ReportCombinedBOM(models.AbstractModel):
             move_lines = lot.move_line_ids.filtered(lambda l: l.move_id.production_id)
             move_lines = move_lines and move_lines[0]
         if not move_lines and product_id:
-            bom = self.env['mrp.bom'].search([('product_id', '=', product_id)])
+            bom = self.env['mrp.bom'].search([('product_id', '=', product_id)], order='version desc, sequence', limit=1)
         child_boms = []
         if bom:
             child_boms = self.get_current_bom(bom.id)

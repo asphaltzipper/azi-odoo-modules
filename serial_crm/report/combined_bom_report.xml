@@ -353,7 +353,7 @@
                                             t-att-data-child_component_id="repair_order[1]"
                                             t-att-data-product="repair_order[4]">
                                             <td>
-                                                <t t-if="repair_order[1] and repair_order[3] == 'add'">
+                                                <t t-if="repair_order[9]">
                                                     <span t-att-data-function="'get_repair_order'"
                                                           class="o_combined_bom_unfoldable fa fa-fw fa-caret-right" role="img" aria-label="Unfold" title="Unfold"/>
                                                 </t>

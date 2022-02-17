@@ -12,9 +12,9 @@
     """,
     "depends": [
         "repair",
-        "mrp",
         "stock_inventory_revaluation",
         "attachment_priority",
+        "mrp_plm",
     ],
     "data": [
         'security/ir.model.access.csv',
