@@ -7,10 +7,9 @@
         <field name="inherit_id" ref="purchase_requisition.view_purchase_requisition_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='vendor_id']" position="after">
-                <field name="lead_time" string="Lead Time (days)"/>
+                <field name="lead_time" attrs="{'required': [('is_blanket', '=', True)]}"/>
                 <field name="is_blanket" invisible="1"/>
-                <field name="first_article_lead_time" attrs="{'required': [('is_blanket', '=', True)]}"/>
-                <field name="actual_take_down_rate"/>
+                <field name="release_lead_time" attrs="{'required': [('is_blanket', '=', True)]}"/>
             </xpath>
             <field name="date_end" position="attributes">
                 <attribute name="required">1</attribute>
@@ -20,10 +19,15 @@
             </field>
             <xpath expr="//field[@name='line_ids']/tree/field[@name='schedule_date']" position="before">
                 <field name="estimated_take_down_rate"/>
-                <field name="projected_reorder_date"/>
+                <field name="actual_take_down_rate"/>
+                <field name="projected_reorder_date" string="Reorder Date"/>
             </xpath>
+            <field name="product_uom_id" position="attributes">
+                <attribute name="string">UOM</attribute>
+            </field>
             <xpath expr="//field[@name='line_ids']/form/group/field[@name='schedule_date']" position="before">
                 <field name="estimated_take_down_rate"/>
+                <field name="actual_take_down_rate"/>
                 <field name="projected_reorder_date"/>
             </xpath>
         </field>
@@ -41,6 +45,15 @@
                 <field name="vendor_id"/>
                 <field name="order_count" string="Order Count"/>
             </field>
+            <field name="date_end" position="attributes">
+                <attribute name="string">Deadline</attribute>
+            </field>
+            <field name="ordering_date" position="attributes">
+                <attribute name="string">Order Date</attribute>
+            </field>
+            <field name="ordering_date" position="after">
+                <field name="projected_reorder_date" string="Reorder Date"/>
+            </field>
       </field>
     </record>
 
@@ -57,4 +70,17 @@
             </filter>
         </field>
     </record>
+
+    <record id="blanket_purchase_requisition_search" model="ir.ui.view">
+        <field name="name">blanket.purchase.requisition.search</field>
+        <field name="model">purchase.requisition</field>
+        <field name="inherit_id" ref="purchase_requisition.view_purchase_requisition_filter"/>
+        <field name="arch" type="xml">
+            <field name="name" position="before">
+                <field name="vendor_id"/>
+                <field name="line_ids"/>
+            </field>
+        </field>
+    </record>
+
 </odoo>
