@@ -12,20 +12,37 @@ class ReportCombinedBOM(models.AbstractModel):
         res['lines'] = self.env.ref('serial_crm.report_combined_bom').render({'data': res})
         return res
 
-    def get_current_bom(self, bom):
+    def get_current_bom(self, product_id, bom):
         self._cr.execute("""
-            select 
-                line.id, line.product_id, line.product_qty, line.bom_id, uom.name,
-                (case 
-                    when bom.product_id = line.product_id then True
-                    else False
-                end) as child_bom_id, bom.type
-            from mrp_bom_line as line
-            left join mrp_bom as bom  on line.product_id  =  bom.product_id 
-            left join uom_uom as uom on line.product_uom_id = uom.id
-            where line.bom_id = %s
-            group by line.id, bom.product_id, uom.name, bom.type
-        """, (bom,))
+            select
+                mbl.id as mbl_id,
+                mbl.product_id,
+                mbl.product_qty,
+                mbl.bom_id,
+                uu.name as uom_name,
+                dcb.id as child_bom_id,
+                dcb.type
+            from mrp_bom_line as mbl
+            left join mrp_bom as mb on mb.id=mbl.bom_id
+            left join mrp_bom_line_product_attribute_value_rel as mblpavr
+                on mblpavr.mrp_bom_line_id=mbl.id
+            left join product_attribute_value_product_product_rel as pavppr
+                on pavppr.product_attribute_value_id=mblpavr.product_attribute_value_id
+                and pavppr.product_product_id=%s
+            left join product_product as cp on cp.id=mbl.product_id
+            left join product_template as ct on ct.id=cp.product_tmpl_id
+            left join uom_uom as uu on uu.id=ct.uom_id
+            left join (
+                select distinct on (product_tmpl_id) *
+                from mrp_bom
+                where active=true
+                order by product_tmpl_id, version desc, sequence
+            ) as dcb on dcb.product_tmpl_id=cp.product_tmpl_id
+            where mbl.bom_id=%s
+            and (mb.config_ok=false or
+                (mb.config_ok=true and pavppr.product_product_id is not null))
+            order by coalesce(cp.default_code, ct.name)
+        """, (product_id, bom,))
         return self._cr.fetchall()
 
     def get_bom_id(self, product):
@@ -33,7 +50,8 @@ class ReportCombinedBOM(models.AbstractModel):
             select bom.id 
             from mrp_bom as bom, mrp_bom_line as line 
             where bom.product_id = %s and bom.id = line.bom_id limit 1""", (product,))
-        return self._cr.fetchall()[0][0]
+        data = self._cr.fetchall()
+        return data and data[0][0]
 
     @api.model
     def _get_report_data(self, lot_id):
@@ -45,9 +63,9 @@ class ReportCombinedBOM(models.AbstractModel):
         repair_orders = self._get_repair_parts(lot_id)
         current_boms = lot.product_id.bom_ids
         if current_boms:
-            current_bom = self.env['mrp.bom'].search([('id', 'in', current_boms.ids)], order='version desc, sequence', limit=1)
+            current_bom = self.env['mrp.bom'].search([('id', 'in', current_boms.ids)], order='version, sequence', limit=1)
             if current_bom:
-                bom_lines = self.get_current_bom(current_bom.id)
+                bom_lines = self.get_current_bom(current_bom.product_id.id, current_bom.id)
         return {
             'lines': lines,
             'bom_changes': bom_changes,
@@ -141,7 +159,10 @@ class ReportCombinedBOM(models.AbstractModel):
 
     @api.model
     def get_bom_line(self, bom_line_id=False, level=False, bom_child=False, repair=False):
-        bom_line_child = self.get_current_bom(bom_child)
+        bom = self.env['mrp.bom'].browse(bom_child)
+        bom_line_child = []
+        if bom:
+            bom_line_child = self.get_current_bom(bom.product_id.id, bom_child)
         if repair:
             level = level and level + 1
         lines = {
@@ -163,10 +184,10 @@ class ReportCombinedBOM(models.AbstractModel):
             move_lines = lot.move_line_ids.filtered(lambda l: l.move_id.production_id)
             move_lines = move_lines and move_lines[0]
         if not move_lines and product_id:
-            bom = self.env['mrp.bom'].search([('product_id', '=', product_id)], order='version desc, sequence', limit=1)
+            bom = self.env['mrp.bom'].search([('product_id', '=', product_id)], order='version, sequence', limit=1)
         child_boms = []
         if bom:
-            child_boms = self.get_current_bom(bom.id)
+            child_boms = self.get_current_bom(bom.product_id.id, bom.id)
         lines = {
             'boms': bom,
             'child_boms': child_boms,
