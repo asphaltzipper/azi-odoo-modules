@@ -651,7 +651,7 @@ class EngBomBatch(models.Model):
                             mrp_line.product_uom_id = eng_line.uom_id
 
             # delete bom lines
-            del_products = set(mrp_lines.mapped('product_id').ids) - set(eng_lines.mapped('name').ids)
+            del_products = set(eng_bom.bom_id.bom_line_ids.mapped('product_id').ids) - set(eng_lines.mapped('name').ids)
             del_lines = mrp_lines.search([('id', 'in', mrp_lines.ids), ('product_id', 'in', list(del_products))])
             del_lines.unlink()
 
