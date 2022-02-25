@@ -63,7 +63,7 @@ class ReportCombinedBOM(models.AbstractModel):
         repair_orders = self._get_repair_parts(lot_id)
         current_boms = lot.product_id.bom_ids
         if current_boms:
-            current_bom = self.env['mrp.bom'].search([('id', 'in', current_boms.ids)], order='version, sequence', limit=1)
+            current_bom = self.env['mrp.bom'].search([('id', 'in', current_boms.ids)], order='version desc, sequence', limit=1)
             if current_bom:
                 bom_lines = self.get_current_bom(current_bom.product_id.id, current_bom.id)
         return {
@@ -184,7 +184,7 @@ class ReportCombinedBOM(models.AbstractModel):
             move_lines = lot.move_line_ids.filtered(lambda l: l.move_id.production_id)
             move_lines = move_lines and move_lines[0]
         if not move_lines and product_id:
-            bom = self.env['mrp.bom'].search([('product_id', '=', product_id)], order='version, sequence', limit=1)
+            bom = self.env['mrp.bom'].search([('product_id', '=', product_id)], order='version desc, sequence', limit=1)
         child_boms = []
         if bom:
             child_boms = self.get_current_bom(bom.product_id.id, bom.id)
