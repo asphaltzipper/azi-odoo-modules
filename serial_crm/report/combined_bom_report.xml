@@ -22,27 +22,35 @@
                             <t t-esc="data['get_product_display_name'](line[0])"/>
                         </a>
                     </td>
-                    <td><t t-esc="line[1]"/></td>
+                    <td>
+                        <t t-esc="line[1]"/>
+                    </td>
                     <td>
                         <a href="#" t-att-data-res-id="line[2]"
                            t-att-data-model="'stock.production.lot'" class="o_combined_bom_action">
                             <t t-esc="line[6]"/>
                         </a>
                     </td>
-                    <td><t t-esc="line[3]"/></td>
-                    <td><t t-esc="line[4]"/></td>
+                    <td>
+                        <t t-esc="line[3]"/>
+                    </td>
+                    <td>
+                        <t t-esc="line[4]"/>
+                    </td>
                 </tr>
             </t>
         </t>
     </template>
     <template id="report_repair_order_line">
         <t t-if="'mrp' in data and data['mrp'].id != False">
-            <tr class="o_mrp_order_line" t-att-parent_id="data['parent']" t-att-data-repair="true" t-att-data-id="'r_'+str(data['mrp'].id)">
+            <tr class="o_mrp_order_line" t-att-parent_id="data['parent']" t-att-data-repair="true"
+                t-att-data-id="'r_'+str(data['mrp'].id)">
                 <td>
                     <span style="margin-left: 20px;"/>
                     <t t-if="data['mrp'].consume_line_ids">
                         <span t-att-data-function="'get_mo_component'"
-                              class="o_combined_bom_unfoldable fa fa-fw fa-caret-right" role="img" aria-label="Unfold" title="Unfold"/>
+                              class="o_combined_bom_unfoldable fa fa-fw fa-caret-right" role="img" aria-label="Unfold"
+                              title="Unfold"/>
                     </t>
                     <t t-else="">
                         <span style="margin-left: 20px;"/>
@@ -59,10 +67,16 @@
                         <t t-esc="data['mrp'].product_id.display_name"/>
                     </a>
                 </td>
-                <td><t t-esc="data['mrp'].qty_done"/></td>
-                <td><t t-esc="data['mrp'].lot_id.name"/></td>
+                <td>
+                    <t t-esc="data['mrp'].qty_done"/>
+                </td>
+                <td>
+                    <t t-esc="data['mrp'].lot_id.name"/>
+                </td>
                 <td></td>
-                <td><t t-esc="data['mrp'].date" t-options='{"widget": "date"}'/></td>
+                <td>
+                    <t t-esc="data['mrp'].date" t-options='{"widget": "date"}'/>
+                </td>
             </tr>
         </t>
         <t t-if="'boms' in data and data['boms'].id != False">
@@ -81,7 +95,9 @@
                         <t t-esc="current_bom.product_id.display_name"/>
                     </a>
                 </td>
-                <td><t t-esc="current_bom.product_qty"/></td>
+                <td>
+                    <t t-esc="current_bom.product_qty"/>
+                </td>
             </tr>
             <t t-call="serial_crm.report_bom_line"/>
         </t>
@@ -90,15 +106,17 @@
         <t t-if="'mo_lines' in data">
             <t t-foreach="data['mo_lines']" t-as="line">
                 <t t-set="space_td" t-value="'margin-left: '+ str(line['level'] * 20) + 'px;'"/>
+
                 <t t-if="'repair' in data and data['repair']">
                     <t t-set="data_parent" t-value="'r_'+str(line['parent'])"/>
-                    <tr class="o_mrp_order_line" t-att-data-id="line['id']"
+                    <tr class="o_mrp_order_line" t-att-data-id="line['id']" t-att-data-repair="true"
                         t-att-parent_id="data_parent" t-att-data-level="line['level']">
                         <td>
                             <span t-att-style="space_td"/>
                             <t t-if="line['has_child']">
                                 <span t-att-data-function="'get_mo_component'"
-                                      class="o_combined_bom_unfoldable fa fa-fw fa-caret-right" role="img" aria-label="Unfold" title="Unfold"/>
+                                      class="o_combined_bom_unfoldable fa fa-fw fa-caret-right" role="img"
+                                      aria-label="Unfold" title="Unfold"/>
                             </t>
                             <t t-else="">
                                 <span style="margin-left: 20px;"></span>
@@ -116,38 +134,47 @@
                                 <t t-esc="line['product_id'].display_name"/>
                             </a>
                         </td>
-                        <td><t t-esc="line['product_qty']"/></td>
-                        <td><t t-esc="line['lot_name']"/></td>
+                        <td>
+                            <t t-esc="line['product_qty']"/>
+                        </td>
+                        <td>
+                            <t t-esc="line['lot_name']"/>
+                        </td>
                     </tr>
                 </t>
                 <t t-else="">
                     <tr class="o_mrp_order_line" t-att-data-id="line['id']"
-                    t-att-parent_id="line['parent']" t-att-data-level="line['level']">
-                    <td>
-                        <span t-att-style="space_td"/>
-                        <t t-if="line['has_child']">
-                            <span t-att-data-function="'get_mo_component'"
-                                  class="o_combined_bom_unfoldable fa fa-fw fa-caret-right" role="img" aria-label="Unfold" title="Unfold"/>
-                        </t>
-                        <t t-else="">
-                            <span style="margin-left: 20px;"></span>
-                        </t>
-                        <a href="#" t-att-data-res-id="line['product_id'].id"
-                           t-att-data-model="'product.product'" class="o_combined_bom_action">
-                            <t t-esc="line['product_id'].display_name"/>
-                        </a>
-                    </td>
-                    <td><t t-esc="line['product_qty']"/></td>
-                    <td><t t-esc="line['lot_name']"/></td>
-                    <td>
-                        <t t-if="line['reference']">
-                          <a href="#" t-att-data-res-id="line['reference'].id"
-                               t-att-data-model="'mrp.production'" class="o_combined_bom_action">
-                                <t t-esc="line['reference'].name"/>
+                        t-att-parent_id="line['parent']" t-att-data-level="line['level']">
+                        <td>
+                            <span t-att-style="space_td"/>
+                            <t t-if="line['has_child']">
+                                <span t-att-data-function="'get_mo_component'"
+                                      class="o_combined_bom_unfoldable fa fa-fw fa-caret-right" role="img"
+                                      aria-label="Unfold" title="Unfold"/>
+                            </t>
+                            <t t-else="">
+                                <span style="margin-left: 20px;"></span>
+                            </t>
+                            <a href="#" t-att-data-res-id="line['product_id'].id"
+                               t-att-data-model="'product.product'" class="o_combined_bom_action">
+                                <t t-esc="line['product_id'].display_name"/>
                             </a>
-                        </t>
-                    </td>
-                </tr>
+                        </td>
+                        <td>
+                            <t t-esc="line['product_qty']"/>
+                        </td>
+                        <td>
+                            <t t-esc="line['lot_name']"/>
+                        </td>
+                        <td>
+                            <t t-if="line['reference']">
+                                <a href="#" t-att-data-res-id="line['reference'].id"
+                                   t-att-data-model="'mrp.production'" class="o_combined_bom_action">
+                                    <t t-esc="line['reference'].name"/>
+                                </a>
+                            </t>
+                        </td>
+                    </tr>
                 </t>
             </t>
         </t>
@@ -161,31 +188,38 @@
                 <t t-if="l[5]">
                     <t t-set="bom_id" t-value="data['get_bom_id'](l[1])"/>
                 </t>
-                <tr class="o_bom_report_line" t-att-data-id="l[0]" t-att-data-bom_child="bom_id" t-att-parent_id="data['parent']"
+                <tr class="o_bom_report_line" t-att-data-id="l[0]" t-att-data-bom_child="bom_id" t-att-data-repair="true"
+                    t-att-parent_id="data['parent']"
                     t-att-data-level="2">
                     <td>
                         <span t-att-style="space_td"/>
                         <t t-if="l[5]">
-                            <span t-att-data-function="'get_bom_line'" class="o_combined_bom_unfoldable fa fa-fw fa-caret-right" role="img" aria-label="Unfold" title="Unfold"/>
+                            <span t-att-data-function="'get_bom_line'"
+                                  class="o_combined_bom_unfoldable fa fa-fw fa-caret-right" role="img"
+                                  aria-label="Unfold" title="Unfold"/>
                         </t>
                         <span>
-                            <a href="#" t-att-data-res-id="l[1]" t-att-data-model="'product.product'" class="o_combined_bom_action">
+                            <a href="#" t-att-data-res-id="l[1]" t-att-data-model="'product.product'"
+                               class="o_combined_bom_action">
                                 <t t-esc="data['get_product_display_name'](l[1])"/>
                             </a>
                         </span>
                         <t t-if="l[5] and l[6] == 'phantom'">
-                            <span class="fa fa-dropbox" title="This is a BoM of type Kit!" role="img" aria-label="This is a BoM of type Kit!"/>
+                            <span class="fa fa-dropbox" title="This is a BoM of type Kit!" role="img"
+                                  aria-label="This is a BoM of type Kit!"/>
                         </t>
                     </td>
                     <td>
                         <span>
-                            <a href="#" t-att-data-res-id="bom_id" t-att-data-model="'mrp.bom'" class="o_combined_bom_action">
+                            <a href="#" t-att-data-res-id="bom_id" t-att-data-model="'mrp.bom'"
+                               class="o_combined_bom_action">
                                 <t t-esc="data['get_product_display_name'](l[1])"/>
                             </a>
-                      </span>
+                        </span>
                     </td>
                     <td>
-                        <t t-esc="l[2]" t-options='{"widget": "float", "decimal_precision": "Product Unit of Measure"}'/>
+                        <t t-esc="l[2]"
+                           t-options='{"widget": "float", "decimal_precision": "Product Unit of Measure"}'/>
                     </td>
 
                 </tr>
@@ -198,34 +232,44 @@
                 <t t-if="l[5]">
                     <t t-set="bom_id" t-value="data['get_bom_id'](l[1])"/>
                 </t>
-                <tr class="o_bom_report_line" t-att-data-id="l[0]"  t-att-data-bom_child="bom_id" t-att-data-level="2">
+                <tr class="o_bom_report_line" t-att-data-id="l[0]" t-att-data-bom_child="bom_id" t-att-data-level="2">
                     <td>
                         <span style="margin-left:20px"/>
                         <t t-if="l[5]">
-                            <span t-att-data-function="'get_bom_line'" class="o_combined_bom_unfoldable fa fa-fw fa-caret-right" role="img" aria-label="Unfold" title="Unfold"/>
+                            <span t-att-data-function="'get_bom_line'"
+                                  class="o_combined_bom_unfoldable fa fa-fw fa-caret-right" role="img"
+                                  aria-label="Unfold" title="Unfold"/>
                         </t>
                         <span>
-                            <a href="#" t-att-data-res-id="l[1]" t-att-data-model="'product.product'" class="o_combined_bom_action">
+                            <a href="#" t-att-data-res-id="l[1]" t-att-data-model="'product.product'"
+                               class="o_combined_bom_action">
                                 <t t-esc="data['get_product_display_name'](l[1])"/>
                             </a>
                         </span>
                         <t t-if="l[5] and l[6] == 'phantom'">
-                            <span class="fa fa-dropbox" title="This is a BoM of type Kit!" role="img" aria-label="This is a BoM of type Kit!"/>
+                            <span class="fa fa-dropbox" title="This is a BoM of type Kit!" role="img"
+                                  aria-label="This is a BoM of type Kit!"/>
                         </t>
                     </td>
                     <td>
                         <t t-if="l[5]">
                             <span>
-                                <a href="#" t-att-data-res-id="bom_id" t-att-data-model="'mrp.bom'" class="o_combined_bom_action">
+                                <a href="#" t-att-data-res-id="bom_id" t-att-data-model="'mrp.bom'"
+                                   class="o_combined_bom_action">
                                     <t t-esc="data['get_product_display_name'](l[1])"/>
                                 </a>
                             </span>
                         </t>
                     </td>
                     <td>
-                        <t t-esc="l[2]" t-options='{"widget": "float", "decimal_precision": "Product Unit of Measure"}'/>
+                        <t t-esc="l[2]"
+                           t-options='{"widget": "float", "decimal_precision": "Product Unit of Measure"}'/>
                     </td>
-                    <td><span><t t-esc="l[4]"/></span></td>
+                    <td>
+                        <span>
+                            <t t-esc="l[4]"/>
+                        </span>
+                    </td>
                 </tr>
                 <t t-call="serial_crm.report_bom_child_line"/>
             </t>
@@ -233,41 +277,97 @@
     </template>
     <template id="report_bom_child_line">
         <t t-if="'bom_child' in data">
-            <t t-foreach="data['bom_child']" t-as="l">
-                <t t-set="bom_id" t-value="False"/>
-                <t t-if="l[5]">
-                    <t t-set="bom_id" t-value="data['get_bom_id'](l[1])"/>
-                </t>
-                <t t-set="space_td" t-value="'margin-left:'+str(data['level'] * 20)+'px;'"/>
-                <tr class="o_bom_report_line" t-att-data-id="l[0]" t-att-data-bom_child="bom_id" t-att-parent_id="data['parent_id']"  t-att-data-level="data['level']">
-                <td>
-                    <span t-att-style="space_td"/>
+            <t t-if="'repair' in data and data['repair']">
+                <t t-foreach="data['bom_child']" t-as="l">
+                    <t t-set="bom_id" t-value="False"/>
                     <t t-if="l[5]">
-                        <span t-att-data-function="'get_bom_line'" class="o_combined_bom_unfoldable fa fa-fw fa-caret-right" role="img" aria-label="Unfold" title="Unfold"/>
+                        <t t-set="bom_id" t-value="data['get_bom_id'](l[1])"/>
                     </t>
-                    <span>
-                        <a href="#" t-att-data-res-id="l[1]" t-att-data-model="'product.product'" class="o_combined_bom_action">
-                            <t t-esc="data['get_product_display_name'](l[1])"/></a>
-                    </span>
-                    <t t-if="l[5] and l[6] == 'phantom'">
-                        <span class="fa fa-dropbox" title="This is a BoM of type Kit!" role="img" aria-label="This is a BoM of type Kit!"/>
-                    </t>
-                </td>
-                <td>
-                    <t t-if="l[5]">
-                        <span>
-                            <a href="#" t-att-data-res-id="bom_id" t-att-data-model="'mrp.bom'" class="o_combined_bom_action">
-                                <t t-esc="data['get_product_display_name'](l[1])"/>
-                            </a>
-                        </span>
-                    </t>
+                    <t t-set="space_td" t-value="'margin-left:'+str(data['level'] * 20)+'px;'"/>
+                    <tr class="o_bom_report_line" t-att-data-id="l[0]" t-att-data-bom_child="bom_id" t-att-data-repair="true"
+                        t-att-parent_id="data['parent_id']" t-att-data-level="data['level']">
+                        <td>
+                            <span t-att-style="space_td"/>
+                            <t t-if="l[5]">
+                                <span t-att-data-function="'get_bom_line'"
+                                      class="o_combined_bom_unfoldable fa fa-fw fa-caret-right" role="img"
+                                      aria-label="Unfold" title="Unfold"/>
+                            </t>
+                            <span>
+                                <a href="#" t-att-data-res-id="l[1]" t-att-data-model="'product.product'"
+                                   class="o_combined_bom_action">
+                                    <t t-esc="data['get_product_display_name'](l[1])"/>
+                                </a>
+                            </span>
+                            <t t-if="l[5] and l[6] == 'phantom'">
+                                <span class="fa fa-dropbox" title="This is a BoM of type Kit!" role="img"
+                                      aria-label="This is a BoM of type Kit!"/>
+                            </t>
+                        </td>
+                        <td>
+                            <span>
+                                <a href="#" t-att-data-res-id="bom_id" t-att-data-model="'mrp.bom'"
+                                   class="o_combined_bom_action">
+                                    <t t-esc="data['get_product_display_name'](l[1])"/>
+                                </a>
+                            </span>
 
-                </td>
-                <td>
-                    <t t-esc="l[2]" t-options='{"widget": "float", "decimal_precision": "Product Unit of Measure"}'/>
-                </td>
-                <td><span><t t-esc="l[4]"/></span></td>
-            </tr>
+                        </td>
+                        <td>
+                            <t t-esc="l[2]"/>
+                        </td>
+                    </tr>
+                </t>
+            </t>
+            <t t-else="">
+                <t t-foreach="data['bom_child']" t-as="l">
+                    <t t-set="bom_id" t-value="False"/>
+                    <t t-if="l[5]">
+                        <t t-set="bom_id" t-value="data['get_bom_id'](l[1])"/>
+                    </t>
+                    <t t-set="space_td" t-value="'margin-left:'+str(data['level'] * 20)+'px;'"/>
+                    <tr class="o_bom_report_line" t-att-data-id="l[0]" t-att-data-bom_child="bom_id"
+                        t-att-parent_id="data['parent_id']" t-att-data-level="data['level']">
+                        <td>
+                            <span t-att-style="space_td"/>
+                            <t t-if="l[5]">
+                                <span t-att-data-function="'get_bom_line'"
+                                      class="o_combined_bom_unfoldable fa fa-fw fa-caret-right" role="img"
+                                      aria-label="Unfold" title="Unfold"/>
+                            </t>
+                            <span>
+                                <a href="#" t-att-data-res-id="l[1]" t-att-data-model="'product.product'"
+                                   class="o_combined_bom_action">
+                                    <t t-esc="data['get_product_display_name'](l[1])"/>
+                                </a>
+                            </span>
+                            <t t-if="l[5] and l[6] == 'phantom'">
+                                <span class="fa fa-dropbox" title="This is a BoM of type Kit!" role="img"
+                                      aria-label="This is a BoM of type Kit!"/>
+                            </t>
+                        </td>
+                        <td>
+                            <t t-if="l[5]">
+                                <span>
+                                    <a href="#" t-att-data-res-id="bom_id" t-att-data-model="'mrp.bom'"
+                                       class="o_combined_bom_action">
+                                        <t t-esc="data['get_product_display_name'](l[1])"/>
+                                    </a>
+                                </span>
+                            </t>
+
+                        </td>
+                        <td>
+                            <t t-esc="l[2]"
+                               t-options='{"widget": "float", "decimal_precision": "Product Unit of Measure"}'/>
+                        </td>
+                        <td>
+                            <span>
+                                <t t-esc="l[4]"/>
+                            </span>
+                        </td>
+                    </tr>
+                </t>
             </t>
         </t>
     </template>
@@ -277,7 +377,8 @@
                 <div class="col-lg-12">
                     <h1>CS Combined BOM</h1>
                 </div>
-                <button style="margin-left:20px;" type="button" class="expand_all_action btn btn-primary">Expand All</button>
+                <button style="margin-left:20px;" type="button" class="expand_all_action btn btn-primary">Expand All
+                </button>
             </div>
             <div class="row">
                 <div class="col-lg-12">
@@ -296,12 +397,14 @@
                             <tbody>
                                 <t t-if="'bom_changes' in data and data['bom_changes']">
                                     <t t-foreach="data['bom_changes']" t-as="bom_change">
-                                        <tr class="o_bom_change_line" t-att-data-id="bom_change[7]" t-att-data-child_component_id="bom_change[2]">
+                                        <tr class="o_bom_change_line" t-att-data-id="bom_change[7]"
+                                            t-att-data-child_component_id="bom_change[2]">
                                             <td>
                                                 <t t-set="has_bom" t-value="bom_change[5] and bom_change[3] == 'add'"/>
                                                 <t t-if="has_bom">
                                                     <span t-att-data-function="'get_bom_change'"
-                                                          class="o_combined_bom_unfoldable fa fa-fw fa-caret-right" role="img" aria-label="Unfold" title="Unfold"/>
+                                                          class="o_combined_bom_unfoldable fa fa-fw fa-caret-right"
+                                                          role="img" aria-label="Unfold" title="Unfold"/>
                                                 </t>
                                                 <t t-else="">
                                                     <span style="margin-left: 20px;"></span>
@@ -311,15 +414,22 @@
                                                     <t t-esc="data['get_product_display_name'](bom_change[0])"/>
                                                 </a>
                                             </td>
-                                            <td><t t-esc="bom_change[1]"/></td>
+                                            <td>
+                                                <t t-esc="bom_change[1]"/>
+                                            </td>
                                             <td>
                                                 <a href="#" t-att-data-res-id="bom_change[2]"
-                                                   t-att-data-model="'stock.production.lot'" class="o_combined_bom_action">
+                                                   t-att-data-model="'stock.production.lot'"
+                                                   class="o_combined_bom_action">
                                                     <t t-esc="bom_change[6]"/>
                                                 </a>
                                             </td>
-                                            <td><t t-esc="bom_change[3]"/></td>
-                                            <td><t t-esc="bom_change[4]"/></td>
+                                            <td>
+                                                <t t-esc="bom_change[3]"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="bom_change[4]"/>
+                                            </td>
                                         </tr>
                                         <t t-call="serial_crm.report_bom_change_line"/>
                                     </t>
@@ -356,7 +466,8 @@
                                             <td>
                                                 <t t-if="repair_order[9]">
                                                     <span t-att-data-function="'get_repair_order'"
-                                                          class="o_combined_bom_unfoldable fa fa-fw fa-caret-right" role="img" aria-label="Unfold" title="Unfold"/>
+                                                          class="o_combined_bom_unfoldable fa fa-fw fa-caret-right"
+                                                          role="img" aria-label="Unfold" title="Unfold"/>
                                                 </t>
                                                 <t t-else="">
                                                     <span style="margin-left: 20px;"></span>
@@ -372,15 +483,22 @@
                                                     <t t-esc="repair_order[2]"/>
                                                 </a>
                                             </td>
-                                            <td><t t-esc="repair_order[5]"/></td>
+                                            <td>
+                                                <t t-esc="repair_order[5]"/>
+                                            </td>
                                             <td>
                                                 <a href="#" t-att-data-res-id="repair_order[1]"
-                                                   t-att-data-model="'stock.production.lot'" class="o_combined_bom_action">
+                                                   t-att-data-model="'stock.production.lot'"
+                                                   class="o_combined_bom_action">
                                                     <t t-esc="repair_order[6]"/>
                                                 </a>
                                             </td>
-                                            <td><t t-esc="repair_order[3]"/></td>
-                                            <td><t t-esc="repair_order[10]" t-options="{'widget': 'date'}"/></td>
+                                            <td>
+                                                <t t-esc="repair_order[3]"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="repair_order[10]" t-options="{'widget': 'date'}"/>
+                                            </td>
                                         </tr>
                                         <t t-call="serial_crm.report_repair_order_line"/>
                                     </t>
@@ -412,7 +530,8 @@
                                             <td>
                                                 <t t-if="mo.consume_line_ids">
                                                     <span t-att-data-function="'get_mo_component'"
-                                                          class="o_combined_bom_unfoldable fa fa-fw fa-caret-right" role="img" aria-label="Unfold" title="Unfold"/>
+                                                          class="o_combined_bom_unfoldable fa fa-fw fa-caret-right"
+                                                          role="img" aria-label="Unfold" title="Unfold"/>
                                                 </t>
                                                 <t t-else="">
                                                     <span style="margin-left: 20px;"></span>
@@ -422,8 +541,12 @@
                                                     <t t-esc="mo.product_id.display_name"/>
                                                 </a>
                                             </td>
-                                            <td><t t-esc="mo.qty_done"/></td>
-                                            <td><t t-esc="mo.lot_id.name"/></td>
+                                            <td>
+                                                <t t-esc="mo.qty_done"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="mo.lot_id.name"/>
+                                            </td>
                                             <td>
                                                 <a href="#" t-att-data-res-id="mo.move_id.production_id.id"
                                                    t-att-data-model="'mrp.production'" class="o_combined_bom_action">
@@ -471,8 +594,12 @@
                                                     <t t-esc="current_bom.display_name"/>
                                                 </a>
                                             </td>
-                                            <td><t t-esc="current_bom.product_qty"/></td>
-                                            <td><t t-esc="current_bom.product_uom_id.display_name"/></td>
+                                            <td>
+                                                <t t-esc="current_bom.product_qty"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="current_bom.product_uom_id.display_name"/>
+                                            </td>
                                         </tr>
                                         <t t-call="serial_crm.report_bom_line"/>
                                     </t>

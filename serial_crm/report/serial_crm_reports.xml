@@ -5,5 +5,7 @@
         <report id="action_serial_lot_report"  string="Lots/Serial (HTML)" model="stock.production.lot"
                 report_type="qweb-html" name="serial_crm.azi_lot_serial_report"
                 file="serial_crm.lot_serial_report"/>
+        <report id="action_combined_bom_report" string="Combined BOM" model="stock.production.lot"
+                report_type="qweb-html" name="serial_crm.combined_bom" file="serial_crm.combined_bom"/>
     </data>
 </odoo>

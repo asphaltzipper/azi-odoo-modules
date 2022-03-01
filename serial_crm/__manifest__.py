@@ -23,6 +23,7 @@
         'views/stock_lot_views.xml',
         'views/res_partner_views.xml',
         'views/sale_order_views.xml',
+        'report/combined_bom_template.xml',
         'report/lot_serial_report.xml',
         'report/serial_crm_reports.xml',
         'data/serial_crm_data.xml',
