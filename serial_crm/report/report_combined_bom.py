@@ -65,7 +65,7 @@ class ReportCombinedBOM(models.AbstractModel):
         if current_boms:
             current_bom = self.env['mrp.bom'].search([('id', 'in', current_boms.ids)], order='version desc, sequence', limit=1)
             if current_bom:
-                bom_lines = self.get_current_bom(current_bom.product_id.id, current_bom.id)
+                bom_lines = self.get_current_bom(lot.product_id.id, current_bom.id)
         return {
             'lines': lines,
             'bom_changes': bom_changes,
