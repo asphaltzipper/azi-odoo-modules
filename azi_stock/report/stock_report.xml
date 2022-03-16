@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <report id="action_stock_quant_report" string="FG Stock Valuation Report"
+                model="stock.quant" paperformat="shelf_location.paperformat_landscape_us"
+                report_type="qweb-pdf" name="azi_stock.report_stock_quant"
+                file="azi_stock.report_stock_quant"/>
+    </data>
+</odoo>

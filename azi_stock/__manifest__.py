@@ -37,6 +37,8 @@ AZI Specialized Customizations to Stock
         # 'report/location_labels.xml',
         # 'report/location_report.xml',
         'report/transfer_slip_template.xml',
+        'report/stock_quant_report.xml',
+        'report/stock_report.xml',
     ],
     "installable": True,
     "auto_install": False,

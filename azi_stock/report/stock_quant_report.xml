@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_stock_quant">
+        <t t-call="web.basic_layout">
+            <div class="row">
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Product</th>
+                        <th>Location</th>
+                        <th>Lot/Serial Number</th>
+                        <th>Reserved</th>
+                        <th>On Hand</th>
+                        <th>Value</th>
+                        <th>Unit of Measure</th>
+                    </tr>
+                    <t t-foreach="docs" t-as="o">
+                        <tr>
+                            <td><span t-field="o.product_id.display_name"/></td>
+                            <td><span t-field="o.location_id.display_name"/></td>
+                            <td><span t-field="o.lot_id.name"/></td>
+                            <td><span t-field="o.reserved_quantity"/></td>
+                            <td><span t-field="o.quantity"/></td>
+                            <td><span t-field="o.value"/></td>
+                            <td><span t-field="o.product_uom_id.name"/></td>
+                        </tr>
+                    </t>
+                </table>
+            </div>
+        </t>
+    </template>
+</odoo>
