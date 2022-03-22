@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="stock_request_view_sale_line_tree" model="ir.ui.view">
+        <field name="name">stock.request.sale.line.tree</field>
+        <field name="model">sale.order.line</field>
+        <field name="inherit_id" ref="sale.view_order_line_tree"/>
+        <field name="arch" type="xml">
+            <field name="price_subtotal" position="before">
+                <field name="is_scheduled" invisible="1"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>
