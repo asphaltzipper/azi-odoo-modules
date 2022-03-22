@@ -1,5 +1,4 @@
 from odoo import models, fields, api, _
-from odoo.exceptions import UserError, ValidationError
 
 
 class SaleOrderLine(models.Model):
@@ -14,13 +13,18 @@ class SaleOrderLine(models.Model):
 
     is_scheduled = fields.Boolean(
         string='Scheduled',
-        compute='_compute_is_scheduled',
+        compute='_compute_scheduled',
         store=True,
     )
 
+    scheduled_date = fields.Datetime(
+        string='Scheduled Date',
+        compute='_compute_scheduled',
+    )
+
     @api.depends('stock_request_ids')
-    def _compute_is_scheduled(self):
+    def _compute_scheduled(self):
         for line in self:
-            line.is_scheduled = line.stock_request_ids and\
-                                line.stock_request_ids.filtered(lambda x: x.state in ['draft', 'submitted', 'open']) or\
-                                False
+            stock_request = line.stock_request_ids.filtered(lambda x: x.state in ['draft', 'submitted', 'open'])
+            line.is_scheduled = len(stock_request) and True or False
+            line.scheduled_date = stock_request and stock_request[0].expected_date
