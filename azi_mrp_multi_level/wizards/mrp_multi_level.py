@@ -96,6 +96,33 @@ class MultiLevelMrp(models.TransientModel):
                 self.env['material.plan.log'].create({'type': 'warning', 'message': message})
             self.env.cr.commit()
 
+        # report unscheduled sale order lines without reserved serial numbers
+        sol_not_reserved = self._get_sol_not_reserved()
+        if sol_not_reserved:
+            for sol in sol_not_reserved:
+                message = "Unscheduled and Unreserved: %s [%s] %s" % (
+                    sol['so_name'], sol['default_code'], sol['prod_name'])
+                self.env['material.plan.log'].create({'type': 'warning', 'message': message})
+            self.env.cr.commit()
+
+        # report scheduled sale order lines with reserved serial numbers
+        sol_sched_reserved = self._get_sol_sched_reserved()
+        if sol_sched_reserved:
+            for sol in sol_sched_reserved:
+                message = "Scheduled and Reserved, Serial %s: %s [%s] %s" % (
+                    sol['serial_num'], sol['so_name'], sol['default_code'], sol['prod_name'])
+                self.env['material.plan.log'].create({'type': 'warning', 'message': message})
+            self.env.cr.commit()
+
+        # report scheduled sale order lines with different date
+        sol_sched_date_diff = self._get_sol_sched_date_diff()
+        if sol_sched_date_diff:
+            for sol in sol_sched_date_diff:
+                message = "SO and Schedule dates differ by %s days: %s [%s] %s" % (
+                    sol['day_diff'], sol['so_name'], sol['default_code'], sol['prod_name'])
+                self.env['material.plan.log'].create({'type': 'warning', 'message': message})
+            self.env.cr.commit()
+
         result = super(MultiLevelMrp, self).run_mrp_multi_level()
 
         exec_stop = time.time()
@@ -145,6 +172,117 @@ class MultiLevelMrp(models.TransientModel):
         self.env.cr.execute(sql)
         tmpl_ids = [x[0] for x in self.env.cr.fetchall()]
         return self.env['product.template'].browse(tmpl_ids)
+
+    def _get_sol_not_reserved(self):
+        sql = """
+            select
+                so.name as so_name,
+                pp.default_code,
+                pt.name as prod_name
+            from sale_order_line sol
+            left join sale_order so on so.id=sol.order_id
+            left join product_product pp on pp.id=sol.product_id
+            left join product_template pt on pt.id=pp.product_tmpl_id
+            left join product_category pc on pc.id=pt.categ_id
+            left join (
+                select *
+                from stock_request
+                where state in ('submitted', 'draft', 'open')
+            ) sr on sr.sale_order_line_id=sol.id
+            left join (
+                select *
+                from stock_move
+                where state not in ('cancel')
+            ) sm on sm.sale_line_id=sol.id
+            left join stock_move_line sml on sml.move_id=sm.id
+            where sol.delivery_remaining_qty>0
+            and so.state='sale'
+            and pc.name ilike 'FG - %'
+            and sml.lot_id is null
+            and sr.id is null
+        """
+        self.env.cr.execute(sql)
+        sol_non_resv = [{'so_name': x[0], 'default_code': x[1], 'prod_name': x[2]} for x in self.env.cr.fetchall()]
+        return sol_non_resv
+
+    def _get_sol_sched_reserved(self):
+        sql = """
+            select
+                so.name as so_name,
+                pp.default_code,
+                pt.name as prod_name,
+                spl.name as serial_num
+            from sale_order_line sol
+            left join sale_order so on so.id=sol.order_id
+            left join product_product pp on pp.id=sol.product_id
+            left join product_template pt on pt.id=pp.product_tmpl_id
+            left join product_category pc on pc.id=pt.categ_id
+            left join (
+                select *
+                from stock_request
+                where state in ('submitted', 'draft', 'open')
+            ) sr on sr.sale_order_line_id=sol.id
+            left join (
+                select *
+                from stock_move
+                where state not in ('cancel')
+            ) sm on sm.sale_line_id=sol.id
+            left join stock_move_line sml on sml.move_id=sm.id
+            left join stock_production_lot spl on spl.id=sml.lot_id
+            where sol.delivery_remaining_qty>0
+            and so.state='sale'
+            and pc.name ilike 'FG - %'
+            and sml.lot_id is not null
+            and sr.id is not null
+        """
+        self.env.cr.execute(sql)
+        sol_sched_resv = [{
+                'so_name': x[0], 'default_code': x[1], 'prod_name': x[2], 'serial_num': x[3]
+            } for x in self.env.cr.fetchall()]
+        return sol_sched_resv
+
+    def _get_sol_sched_date_diff(self):
+        sql = """
+            select
+                so.name as so_name,
+                pp.default_code,
+                pt.name as prod_name,
+                sm.date::date as so_date,
+                sr.expected_date::date as sr_date,
+                round((extract(epoch from sm.date)/86400 - extract(epoch from sr.expected_date)/86400)::decimal, 0) as day_diff
+            from sale_order_line sol
+            left join sale_order so on so.id=sol.order_id
+            left join product_product pp on pp.id=sol.product_id
+            left join product_template pt on pt.id=pp.product_tmpl_id
+            left join product_category pc on pc.id=pt.categ_id
+            left join (
+                select *
+                from stock_request
+                where state in ('submitted', 'draft', 'open')
+            ) sr on sr.sale_order_line_id=sol.id
+            left join (
+                select *
+                from stock_move
+                where state not in ('cancel')
+            ) sm on sm.sale_line_id=sol.id
+            left join stock_move_line sml on sml.move_id=sm.id
+            left join stock_production_lot spl on spl.id=sml.lot_id
+            where sol.delivery_remaining_qty>0
+            and so.state='sale'
+            and pc.name ilike 'FG - %'
+            and sr.id is not null
+            and abs(round((extract(epoch from sm.date)/86400 - extract(epoch from sr.expected_date)/86400)::decimal, 0))>1
+        """
+        self.env.cr.execute(sql)
+        sol_sched_diff = [{
+                'so_name': x[0],
+                'default_code': x[1],
+                'prod_name': x[2],
+                'so_date': x[3],
+                'sr_date': x[4],
+                'day_diff': x[5],
+            } for x in self.env.cr.fetchall()]
+        return sol_sched_diff
 
     def process_mrp(self):
         with api.Environment.manage():
