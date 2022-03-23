@@ -74,6 +74,14 @@ class StockQuant(models.Model):
                 if quant.quantity > 0:
                     quant.value = (product_valuation[prod.id] * quant.quantity)
 
+    @api.multi
+    def action_print_report(self):
+        records = self
+        if 'active_domain' in self.env.context:
+            records = self.search(self.env.context['active_domain'])
+        return self.env['ir.actions.report'].search(
+            [('report_name', '=', 'azi_stock.report_stock_quant')]).report_action(records, config=False)
+
 
 class StockMoveLine(models.Model):
     _inherit = 'stock.move.line'
