@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="report_schedule_so">
+        <div style="margin-left:20px;">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="mt16">
+                        <h4>UnScheduled SO without Reserved Serial</h4>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Sale Order</th>
+                                    <th>Product</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="data['unschedule_without_reserved']" t-as="unschedule_without_reserved">
+                                    <tr>
+                                        <td>
+                                            <a href="#" t-att-data-res-id="unschedule_without_reserved[3]" t-att-data-model="'sale.order'"
+                                               class="o_schedule_so_action">
+                                                <t t-esc="unschedule_without_reserved[0]"/>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <span>
+                                                [<t t-esc="unschedule_without_reserved[1]"/>]
+                                                <t t-esc="unschedule_without_reserved[2]"/>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                        <br/>
+                        <h4>Scheduled SO with Reserved Serial</h4>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Sale Order</th>
+                                    <th>Product</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="data['schedule_so_with_reserved']" t-as="schedule_so_with_reserved">
+                                    <tr>
+                                        <td>
+                                            <a href="#" t-att-data-res-id="schedule_so_with_reserved[3]" t-att-data-model="'sale.order'"
+                                               class="o_schedule_so_action">
+                                                <t t-esc="schedule_so_with_reserved[0]"/>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <span>
+                                                [<t t-esc="schedule_so_with_reserved[1]"/>]
+                                                <t t-esc="schedule_so_with_reserved[2]"/>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                        <br/>
+                        <h4>Scheduled SO with Different Dates</h4>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Sale Order</th>
+                                    <th>Product</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="data['schedule_so_with_diff_date']" t-as="schedule_so_with_diff_date">
+                                    <tr>
+                                        <td>
+                                            <a href="#" t-att-data-res-id="schedule_so_with_diff_date[3]" t-att-data-model="'sale.order'"
+                                               class="o_schedule_so_action">
+                                                <t t-esc="schedule_so_with_diff_date[0]"/>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <span>
+                                                [<t t-esc="schedule_so_with_diff_date[1]"/>]
+                                                <t t-esc="schedule_so_with_diff_date[2]"/>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+</odoo>
