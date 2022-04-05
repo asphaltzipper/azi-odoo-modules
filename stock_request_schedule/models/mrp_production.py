@@ -9,5 +9,5 @@ class MrpProduction(models.Model):
         res = super(MrpProduction, self).action_cancel()
         for production in self:
             if production.stock_request_ids:
-                production.stock_request_ids.action_cancel()
+                production.stock_request_ids.action_draft()
         return res
