@@ -38,6 +38,7 @@
             <xpath expr="//group[@name='main_group']/group" position="inside">
                 <field name="state"/>
                 <field name="partner_id" options="{'no_create': True, 'no_create_edit': True}"/>
+                <field name="mfg_date"/>
                 <field name="current_hours"/>
                 <button string="Next Serial" class="oe_edit_only oe_highlight" name="get_next_serial"
                         help="Add Next Serial Number" type="object"
@@ -263,8 +264,16 @@
         <field name="inherit_id" ref="stock.view_production_lot_tree"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='product_id']" position="before">
+                <field name="mfg_date"/>
                 <field name="current_hours"/>
+                <field name="partner_id"/>
             </xpath>
+            <field name="create_date" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+            <field name="ref" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
         </field>
     </record>
 

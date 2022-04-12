@@ -1,4 +1,4 @@
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 
 
@@ -89,6 +89,12 @@ class ProductionLot(models.Model):
          comodel_name='stock.lot.hour.log',
          inverse_name='lot_id',
          string='Hours')
+
+    mfg_date = fields.Date(
+        string="Mfg Date",
+        required=True,
+        default=fields.Date.today,
+    )
 
     @api.depends('owner_ids')
     def _compute_current_owner(self):
