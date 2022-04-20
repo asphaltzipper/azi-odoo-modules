@@ -57,7 +57,7 @@
                                     <tbody>
                                         <tr t-foreach="o.line_ids" t-as="line_ids">
                                             <t t-set="supplier_info"
-                                               t-value="o.env['product.supplierinfo'].search([('purchase_requisition_line_id', '=', line_ids.id)], limit=1)"/>
+                                               t-value="o.env['product.supplierinfo'].search([('product_tmpl_id', '=', line_ids.product_id.id), ('name', '=', o.vendor_id.id)], limit=1)"/>
                                             <td>
                                                 [
                                                 <span t-field="line_ids.product_id.code"/>
@@ -65,10 +65,10 @@
                                                 <span t-field="line_ids.product_id.name"/>
                                             </td>
                                             <td>
-                                                <t t-esc="supplier_info.product_name"/>
+                                                <t t-esc="supplier_info.product_code"/>
                                             </td>
                                             <td>
-                                                <t t-esc="supplier_info.product_code"/>
+                                                <t t-esc="supplier_info.product_name"/>
                                             </td>
                                             <td class="text-right">
                                                 <span t-field="line_ids.product_qty"/>
