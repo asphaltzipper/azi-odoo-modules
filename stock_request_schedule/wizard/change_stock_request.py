@@ -15,7 +15,10 @@ class ChangeStockRequest(models.TransientModel):
         for request in requests:
             request.expected_date = self.expected_date
             # update manufacturing order dates
-            order = self.env['mrp.production'].search([('origin', '=', request.name)])
+            order = self.env['mrp.production'].search([
+                ('origin', '=', request.name),
+                ('state', 'not in', ('done', 'cancel')),
+            ], limit=1)
             if order:
                 order.date_planned_finished = self.expected_date
             # update sale order dates
