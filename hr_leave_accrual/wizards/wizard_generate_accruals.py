@@ -44,10 +44,7 @@ class WizardHrLeaveGenerateAccruals(models.TransientModel):
         previous_year_start_date = datetime.date(int(self.year) - 1, 1, 1)
 
         # unless leave type specified, get all
-        if self.leave_type_id:
-            leave_types = self.env['leave.type']
-        else:
-            leave_types = self.env['leave.type'].search([])
+        leave_types = self.leave_type_id or self.env['leave.type'].search([])
 
         # unless employee specified, get all
         if self.employee_id:
@@ -67,10 +64,23 @@ class WizardHrLeaveGenerateAccruals(models.TransientModel):
             ('employee_id', 'in', employees.ids),
             ('type_id', 'in', leave_types.ids),
         ]):
-            raise ValidationError("Accruals already exist for %s.\n"
-                                  "First, delete allocations of type Accrued, Rollover or Lost./n"
-                                  "Then run the wizard again" %
+            raise ValidationError("Automatic allocation entries already exist for %s.\n"
+                                  "First, delete allocations of type Accrued or Rollover.\n"
+                                  "Then, run the wizard again." %
                                   self.year)
+
+        # check for existing lost adjustment
+        if self.env['leave.allocation'].search_count([
+            ('end_date', '>=', previous_year_start_date),
+            ('end_date', '<', start_date),
+            ('allocation_type', 'in', ['lost']),
+            ('employee_id', 'in', employees.ids),
+            ('type_id', 'in', leave_types.ids),
+        ]):
+            raise ValidationError("Lost adjustment already exists for year transition %s - %s.\n"
+                                  "First, delete the Lost allocation.\n"
+                                  "Then, run the wizard again." %
+                                  (previous_year_start_date.year, self.year))
 
         # get previous year ending balances
         previous_balances = self.env['leave.allocation'].read_group(
