@@ -45,7 +45,7 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="generate_allocation" type="object" string="Generate Allocations" class="btn-primary"/>
+                    <button name="generate_accrual_wizard" type="object" string="Generate Accruals" class="btn-primary"/>
                 </header>
                 <sheet>
                     <group>

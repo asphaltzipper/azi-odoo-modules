@@ -83,6 +83,7 @@ class LeavePolicyAssign(models.Model):
         return result
 
     def generate_accruals(self, year):
+        # Called from the generate accruals wizard
         # This method does not check for duplicate accrual entries.
         # You should perform your own check before calling this method.
         default_start_date = datetime.date(int(year), 1, 1)
@@ -152,3 +153,15 @@ class LeavePolicyAssign(models.Model):
                     # end on the last day of the given month
                     last_day = calendar.monthrange(start_date_period.year, start_date_period.month)[1]
                     end_date_period = datetime.date(start_date_period.year, start_date_period.month, last_day)
+
+    @api.multi
+    def generate_accrual_wizard(self):
+        self.ensure_one()
+        values = {
+            'leave_type_id': self.type_id.id,
+            'employee_id': self.employee_id.id,
+        }
+        wizard = self.env['wizard.leave.generate.accruals'].create(values)
+        action = self.env.ref('hr_leave_accrual.wizard_leave_generate_accruals_action').read()[0]
+        action['res_id'] = wizard.id
+        return action
