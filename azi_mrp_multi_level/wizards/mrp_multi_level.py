@@ -85,7 +85,7 @@ class MultiLevelMrp(models.TransientModel):
         if no_pma_products:
             for product in no_pma_products:
                 message = "Missing parameters for %s" % product.display_name
-                self.env['material.plan.log'].create({'type': 'warning', 'message': message})
+                self.env['material.plan.log'].create({'type': 'error', 'message': message})
             self.env.cr.commit()
 
         # report product templates having multiple BOMs with the same sequence
@@ -102,7 +102,7 @@ class MultiLevelMrp(models.TransientModel):
             for sol in sol_not_reserved:
                 message = "Unscheduled and Unreserved: %s [%s] %s" % (
                     sol['so_name'], sol['default_code'], sol['prod_name'])
-                self.env['material.plan.log'].create({'type': 'warning', 'message': message})
+                self.env['material.plan.log'].create({'type': 'error', 'message': message})
             self.env.cr.commit()
 
         # report scheduled sale order lines with reserved serial numbers
@@ -111,16 +111,34 @@ class MultiLevelMrp(models.TransientModel):
             for sol in sol_sched_reserved:
                 message = "Scheduled and Reserved, Serial %s: %s [%s] %s" % (
                     sol['serial_num'], sol['so_name'], sol['default_code'], sol['prod_name'])
+                self.env['material.plan.log'].create({'type': 'error', 'message': message})
+            self.env.cr.commit()
+
+        # report scheduled sale order lines with earlier date
+        sol_sched_date_early = self._get_sol_sched_date_early()
+        if sol_sched_date_early:
+            for sol in sol_sched_date_early:
+                message = "SO date earlier than schedule date by %s days: %s / %s -- [%s] %s" % (
+                    sol['day_diff'], sol['so_name'], sol['sr_name'], sol['default_code'], sol['prod_name'])
+                self.env['material.plan.log'].create({'type': 'error', 'message': message})
+            self.env.cr.commit()
+
+        # report scheduled sale order lines with later date
+        sol_sched_date_late = self._get_sol_sched_date_late()
+        if sol_sched_date_late:
+            for sol in sol_sched_date_late:
+                message = "SO date later than schedule date by %s days: %s / %s -- [%s] %s" % (
+                    sol['day_diff'], sol['so_name'], sol['sr_name'], sol['default_code'], sol['prod_name'])
                 self.env['material.plan.log'].create({'type': 'warning', 'message': message})
             self.env.cr.commit()
 
-        # report scheduled sale order lines with different date
-        sol_sched_date_diff = self._get_sol_sched_date_diff()
-        if sol_sched_date_diff:
-            for sol in sol_sched_date_diff:
-                message = "SO and Schedule dates differ by %s days: %s [%s] %s" % (
-                    sol['day_diff'], sol['so_name'], sol['default_code'], sol['prod_name'])
-                self.env['material.plan.log'].create({'type': 'warning', 'message': message})
+        # report sale order lines with different product from stock request
+        sol_diff_prod = self._get_sol_sched_product_diff()
+        if sol_diff_prod:
+            for sol in sol_diff_prod:
+                message = "SO and Schedule products differ: %s / %s -- [%s] %s" % (
+                    sol['so_name'], sol['sr_name'], sol['default_code'], sol['prod_name'])
+                self.env['material.plan.log'].create({'type': 'error', 'message': message})
             self.env.cr.commit()
 
         result = super(MultiLevelMrp, self).run_mrp_multi_level()
@@ -143,7 +161,7 @@ class MultiLevelMrp(models.TransientModel):
             log_msg = 'bom not found for product %s' % \
                       product_mrp_area_id.product_id.display_name
             logger.warning(log_msg)
-            self.env['material.plan.log'].create({'type': 'warning', 'message': log_msg})
+            self.env['material.plan.log'].create({'type': 'error', 'message': log_msg})
             self.env.cr.commit()
         return super(MultiLevelMrp, self).explode_action(
             product_mrp_area_id, mrp_action_date, name, qty, action)
@@ -211,7 +229,8 @@ class MultiLevelMrp(models.TransientModel):
                 so.name as so_name,
                 pp.default_code,
                 pt.name as prod_name,
-                spl.name as serial_num
+                spl.name as serial_num,
+                sr.name as sr_name
             from sale_order_line sol
             left join sale_order so on so.id=sol.order_id
             left join product_product pp on pp.id=sol.product_id
@@ -237,19 +256,20 @@ class MultiLevelMrp(models.TransientModel):
         """
         self.env.cr.execute(sql)
         sol_sched_resv = [{
-                'so_name': x[0], 'default_code': x[1], 'prod_name': x[2], 'serial_num': x[3]
+                'so_name': x[0], 'default_code': x[1], 'prod_name': x[2], 'serial_num': x[3], 'sr_name': x[4]
             } for x in self.env.cr.fetchall()]
         return sol_sched_resv
 
-    def _get_sol_sched_date_diff(self):
+    def _get_sol_sched_date_early(self):
         sql = """
             select
                 so.name as so_name,
+                sr.name as sr_name,
                 pp.default_code,
                 pt.name as prod_name,
-                sm.date::date as so_date,
+                sm.date_expected::date as so_date,
                 sr.expected_date::date as sr_date,
-                round((extract(epoch from sm.date)/86400 - extract(epoch from sr.expected_date)/86400)::decimal, 0) as day_diff
+                abs(round((extract(epoch from sm.date_expected::date) / 86400 - extract(epoch from sr.expected_date::date) / 86400)::decimal, 0)) as day_diff
             from sale_order_line sol
             left join sale_order so on so.id=sol.order_id
             left join product_product pp on pp.id=sol.product_id
@@ -271,18 +291,100 @@ class MultiLevelMrp(models.TransientModel):
             and so.state='sale'
             and pc.name ilike 'FG - %'
             and sr.id is not null
-            and abs(round((extract(epoch from sm.date)/86400 - extract(epoch from sr.expected_date)/86400)::decimal, 0))>1
+            and round((extract(epoch from sm.date_expected::date) / 86400 - extract(epoch from sr.expected_date::date) / 86400)::decimal, 0)<0
         """
         self.env.cr.execute(sql)
         sol_sched_diff = [{
                 'so_name': x[0],
-                'default_code': x[1],
-                'prod_name': x[2],
-                'so_date': x[3],
-                'sr_date': x[4],
-                'day_diff': x[5],
+                'sr_name': x[1],
+                'default_code': x[2],
+                'prod_name': x[3],
+                'so_date': x[4],
+                'sr_date': x[5],
+                'day_diff': x[6],
             } for x in self.env.cr.fetchall()]
         return sol_sched_diff
+
+    def _get_sol_sched_date_late(self):
+        sql = """
+            select
+                so.name as so_name,
+                sr.name as sr_name,
+                pp.default_code,
+                pt.name as prod_name,
+                sm.date_expected::date as so_date,
+                sr.expected_date::date as sr_date,
+                abs(round((extract(epoch from sm.date_expected::date) / 86400 - extract(epoch from sr.expected_date::date) / 86400)::decimal, 0)) as day_diff
+            from sale_order_line sol
+            left join sale_order so on so.id=sol.order_id
+            left join product_product pp on pp.id=sol.product_id
+            left join product_template pt on pt.id=pp.product_tmpl_id
+            left join product_category pc on pc.id=pt.categ_id
+            left join (
+                select *
+                from stock_request
+                where state in ('submitted', 'draft', 'open')
+            ) sr on sr.sale_order_line_id=sol.id
+            left join (
+                select *
+                from stock_move
+                where state not in ('cancel')
+            ) sm on sm.sale_line_id=sol.id
+            left join stock_move_line sml on sml.move_id=sm.id
+            left join stock_production_lot spl on spl.id=sml.lot_id
+            where sol.delivery_remaining_qty>0
+            and so.state='sale'
+            and pc.name ilike 'FG - %'
+            and sr.id is not null
+            and round((extract(epoch from sm.date_expected::date) / 86400 - extract(epoch from sr.expected_date::date) / 86400)::decimal, 0)>0
+        """
+        self.env.cr.execute(sql)
+        sol_sched_diff = [{
+                'so_name': x[0],
+                'sr_name': x[1],
+                'default_code': x[2],
+                'prod_name': x[3],
+                'so_date': x[4],
+                'sr_date': x[5],
+                'day_diff': x[6],
+            } for x in self.env.cr.fetchall()]
+        return sol_sched_diff
+
+    def _get_sol_sched_product_diff(self):
+        sql = """
+            select
+                so.name as so_name,
+                pp.default_code,
+                pt.name as prod_name,
+                sr.name as sr_name
+            from sale_order_line sol
+            left join sale_order so on so.id=sol.order_id
+            left join product_product pp on pp.id=sol.product_id
+            left join product_template pt on pt.id=pp.product_tmpl_id
+            left join product_category pc on pc.id=pt.categ_id
+            left join (
+                select *
+                from stock_request
+                where state in ('submitted', 'draft', 'open')
+            ) sr on sr.sale_order_line_id=sol.id
+            left join (
+                select *
+                from stock_move
+                where state not in ('cancel')
+            ) sm on sm.sale_line_id=sol.id
+            left join stock_move_line sml on sml.move_id=sm.id
+            where sol.delivery_remaining_qty>0
+            and so.state='sale'
+            and pc.name ilike 'FG - %'
+            and sr.id is not null
+            and sol.product_id<>sr.product_id
+        """
+        self.env.cr.execute(sql)
+        sol_diff_prod = [
+            {'so_name': x[0], 'default_code': x[1], 'prod_name': x[2], 'sr_name': x[3]}
+            for x in self.env.cr.fetchall()
+        ]
+        return sol_diff_prod
 
     def process_mrp(self):
         with api.Environment.manage():

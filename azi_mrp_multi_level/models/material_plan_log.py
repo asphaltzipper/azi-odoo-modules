@@ -6,6 +6,20 @@ class MaterialPlanLog(models.Model):
     _description = 'Plan Material Log'
     _order = 'create_date desc'
 
-    type = fields.Selection([('info', 'Info'), ('debug', 'Debug'), ('warning', 'Warning')], 'Type', required=True,
-                            readonly=True)
-    message = fields.Char('Message', required=True, readonly=True)
+    type = fields.Selection(
+        selection=[
+            ('info', 'Info'),
+            ('debug', 'Debug'),
+            ('warning', 'Warning'),
+            ('error', 'Error'),
+        ],
+        string='Type',
+        required=True,
+        readonly=True,
+    )
+
+    message = fields.Char(
+        string='Message',
+        required=True,
+        readonly=True,
+    )
