@@ -5,8 +5,8 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="mt16">
+                        <h4>UnScheduled SO without Reserved Serial</h4>
                         <t t-if="data['unschedule_without_reserved']">
-                            <h4>UnScheduled SO without Reserved Serial</h4>
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
@@ -33,10 +33,12 @@
                                     </t>
                                 </tbody>
                             </table>
-                            <br/>
                         </t>
+                        <t t-else="">None</t>
+                        <br/>
+                        <br/>
+                        <h4>Scheduled SO with Reserved Serial</h4>
                         <t t-if="data['schedule_so_with_reserved']">
-                            <h4>Scheduled SO with Reserved Serial</h4>
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
@@ -63,10 +65,12 @@
                                     </t>
                                 </tbody>
                             </table>
-                            <br/>
                         </t>
+                        <t t-else="">None</t>
+                        <br/>
+                        <br/>
+                        <h4>Scheduled SO with Different Product</h4>
                         <t t-if="data['schedule_so_with_diff_product']">
-                            <h4>Scheduled SO with Different Product</h4>
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
@@ -109,10 +113,12 @@
                                     </t>
                                 </tbody>
                             </table>
-                            <br/>
                         </t>
+                        <t t-else="">None</t>
+                        <br/>
+                        <br/>
+                        <h4>Scheduled SO with Earlier Date</h4>
                         <t t-if="data['schedule_so_with_early_date']">
-                            <h4>Scheduled SO with Earlier Date</h4>
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
@@ -156,10 +162,12 @@
                                     </t>
                                 </tbody>
                             </table>
-                            <br/>
                         </t>
+                        <t t-else="">None</t>
+                        <br/>
+                        <br/>
+                        <h4>Scheduled SO with Later Date</h4>
                         <t t-if="data['schedule_so_with_late_date']">
-                            <h4>Scheduled SO with Later Date</h4>
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
@@ -204,6 +212,7 @@
                                 </tbody>
                             </table>
                         </t>
+                        <t t-else="">None</t>
                     </div>
                 </div>
             </div>
