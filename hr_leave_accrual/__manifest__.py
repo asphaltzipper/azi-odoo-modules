@@ -32,6 +32,7 @@ Employee Leave Accrual
         'reports/leave_allocations_yearly_report.xml',
         'wizards/wizard_generate_accruals_views.xml',
         'wizards/wizard_leave_allocations_yearly_report.xml',
+        'wizards/leave_allocation_employee_views.xml',
     ],
     'demo': [
         'demo/leave_type.xml',

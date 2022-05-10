@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="leave_allocation_employee_view_form" model="ir.ui.view">
+        <field name="name">leave.allocation.employee.view.form</field>
+        <field name="model">leave.allocation.employee</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="employee_id" required="1"/>
+                        </group>
+                        <group>
+                            <field name="year" required="1"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="get_employee_allocations" string="Leave Balance"
+                                type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="leave_allocation_employee_action" model="ir.actions.act_window">
+        <field name="name">Leave Running Balance by Employee</field>
+        <field name="res_model">leave.allocation.employee</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="leave_allocation_employee_menu" parent="hr_leave_accrual.leave_operations_menu"
+              action="leave_allocation_employee_action"/>
+
+</odoo>
