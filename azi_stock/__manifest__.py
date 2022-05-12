@@ -40,6 +40,7 @@ AZI Specialized Customizations to Stock
         'report/stock_quant_report.xml',
         'report/stock_report.xml',
         'views/stock_quant_views.xml',
+        'views/stock_inventory_views.xml',
     ],
     "installable": True,
     "auto_install": False,
