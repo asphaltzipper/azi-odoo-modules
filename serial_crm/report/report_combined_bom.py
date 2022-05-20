@@ -62,6 +62,7 @@ class ReportCombinedBOM(models.AbstractModel):
         bom_changes = self._get_bom_change_child(lot_id)
         repair_orders = self._get_repair_parts(lot_id)
         current_boms = lot.product_id.bom_ids
+        current_bom = self.env['mrp.bom']
         if current_boms:
             current_bom = self.env['mrp.bom'].search([('id', 'in', current_boms.ids)], order='version desc, sequence', limit=1)
             if current_bom:

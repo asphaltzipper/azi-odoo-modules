@@ -132,3 +132,17 @@ class ProductionLot(models.Model):
                 continue
             last_move = moves_in_out.sorted(lambda x: x.date)[-1]
             serial.state = last_move.location_dest_id.usage
+
+    @api.model
+    def _search(self, args, offset=0, limit=None, order=None, count=False, access_rights_uid=None):
+        res = super(ProductionLot, self)._search(args, offset=offset, limit=limit, order=order,
+                                                 count=count, access_rights_uid=access_rights_uid)
+        search_by_name = list(filter(lambda a: a[0] == 'name', args))
+        if search_by_name and res:
+            move_lot_ids = self.env['stock.move.line'].search([('lot_id', 'in', res),
+                                                               ('lot_produced_id', '!=', False)]).mapped('lot_produced_id')
+            move_lot_ids and res.extend(move_lot_ids.ids)
+            args = [('id', 'in', res)]
+            res = super(ProductionLot, self)._search(args, offset=offset, limit=limit, order=order,
+                                                     count=count, access_rights_uid=access_rights_uid)
+        return res
