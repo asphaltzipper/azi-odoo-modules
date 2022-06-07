@@ -30,6 +30,7 @@
             <field name="product_id" position="after">
                 <field name="deprecated"/>
                 <field name="e_kanban"/>
+                <field name="on_blanket"/>
                 <field name="routing_detail"/>
                 <field name="main_supplier_id"/>
             </field>
@@ -49,6 +50,9 @@
                 <separator />
                 <filter string="Non-Kanban" name="filter_non_kanban" domain="[('e_kanban','=',False)]"/>
                 <filter string="Kanban" name="filter_kanban" domain="[('e_kanban','=',True)]"/>
+                <separator />
+                <filter string="Blanket" name="filter_on_blanket" domain="[('on_blanket','=',True)]"/>
+                <filter string="Non-Blanket" name="filter_non_blanket" domain="[('on_blanket','=',False)]"/>
                 <separator />
                 <filter string="Buy" name="filter_buy" domain="[('supply_method','=','buy')]"/>
                 <filter string="Make" name="filter_produce" domain="[('supply_method','=','manufacture')]"/>

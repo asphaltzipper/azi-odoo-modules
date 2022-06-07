@@ -17,6 +17,7 @@ AZI MRP Multi Level
         'stock_request_schedule',
         'electronic_kanban',
         'mfg_integration',
+        'purchase_requisition',
     ],
     "data": [
         'security/ir.model.access.csv',

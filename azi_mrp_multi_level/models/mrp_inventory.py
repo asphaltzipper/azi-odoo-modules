@@ -24,6 +24,11 @@ class MrpInventory(models.Model):
         related='product_mrp_area_id.main_supplier_id',
         store=True,
     )
+    on_blanket = fields.Boolean(
+        string='Blanket',
+        compute='_compute_on_blanket',
+        store=True,
+    )
 
     @api.depends('product_id')
     def _compute_routing_detail(self):
@@ -34,3 +39,19 @@ class MrpInventory(models.Model):
                 if operations:
                     work_center_codes = [code for code in operations.mapped('workcenter_id.code') if code]
                     record.routing_detail = ", ".join(work_center_codes)
+
+    @api.depends('product_id')
+    def _compute_on_blanket(self):
+        buy_id = self.env.ref('purchase_stock.route_warehouse0_buy').id
+        blanket_orders = self.env['purchase.requisition'].search([
+            ('state', 'in', ['ongoing', 'in_progress', 'open']),
+            ('type_id', '=', self.env.ref('purchase_requisition.type_single').id),
+        ])
+        blanket_products = self.env['purchase.requisition.line'].search(
+            [('requisition_id', 'in', blanket_orders.ids)]).mapped('product_id')
+        for record in self:
+            if buy_id in record.product_id.route_ids.ids and \
+                    record.product_id in blanket_products:
+                self.on_blanket = True
+            else:
+                self.on_blanket = False
