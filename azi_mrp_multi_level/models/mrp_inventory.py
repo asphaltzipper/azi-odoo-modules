@@ -52,6 +52,6 @@ class MrpInventory(models.Model):
         for record in self:
             if buy_id in record.product_id.route_ids.ids and \
                     record.product_id in blanket_products:
-                self.on_blanket = True
+                record.on_blanket = True
             else:
-                self.on_blanket = False
+                record.on_blanket = False
