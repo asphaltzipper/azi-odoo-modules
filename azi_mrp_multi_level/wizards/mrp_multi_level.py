@@ -14,6 +14,15 @@ class MultiLevelMrp(models.TransientModel):
     _inherit = 'mrp.multi.level'
 
     @api.model
+    def _exclude_from_mrp(self, product, mrp_area):
+        res = super(MultiLevelMrp, self)._exclude_from_mrp(product, mrp_area)
+        if res and self._context.get('mrp_explosion'):
+            log_msg = 'required, but excluded from mrp: %s' % product.display_name
+            self.env['material.plan.log'].create({'type': 'warning', 'message': log_msg})
+            self.env.cr.commit()
+        return res
+
+    @api.model
     def _init_mrp_move_from_forecast(self, product_mrp_area):
         super(MultiLevelMrp, self)._init_mrp_move_from_forecast(product_mrp_area)
         requests = self.env['stock.request'].search([
