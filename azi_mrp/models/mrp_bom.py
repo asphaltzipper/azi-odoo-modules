@@ -12,6 +12,17 @@ class MrpBom(models.Model):
     # okay, make the default one
     sequence = fields.Integer(default=1)
 
+    def rpc_explode(self, product_id, quantity, picking_type_id=False):
+        product = self.env['product.product'].browse(product_id)
+        if picking_type_id:
+            picking_type = self.env['picking.type'].browse(picking_type_id)
+        else:
+            picking_type = False
+        boms, lines = self.explode(product, quantity, picking_type)
+        boms_done = [(x[0].id, x[1]) for x in boms]
+        lines_done = [(x[0].id, x[1]) for x in lines]
+        return boms_done, lines_done
+
 
 class MrpBomLine(models.Model):
     _inherit = 'mrp.bom.line'
