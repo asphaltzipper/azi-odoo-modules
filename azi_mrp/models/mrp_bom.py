@@ -1,6 +1,8 @@
-# -*- coding: utf-8 -*-
-
 from odoo import fields, models, api, _
+import logging
+
+
+_logger = logging.getLogger(__name__)
 
 
 class MrpBom(models.Model):
@@ -12,13 +14,49 @@ class MrpBom(models.Model):
     # okay, make the default one
     sequence = fields.Integer(default=1)
 
-    def rpc_explode(self, product_id, quantity, picking_type_id=False):
+    def ext_explode(self, product_id, quantity, deep=False):
+        """
+            Explode the BOM
+            Callable from OdooRPC
+            Will do a full depth explode when deep=True
+            Deep explode stops descending into the BOM when purchased items are encountered
+        """
         product = self.env['product.product'].browse(product_id)
-        if picking_type_id:
-            picking_type = self.env['picking.type'].browse(picking_type_id)
-        else:
-            picking_type = False
-        boms, lines = self.explode(product, quantity, picking_type)
+        # import pdb
+        # pdb.set_trace()
+        boms, lines = self.explode(product, quantity)
+
+        if deep:
+            comp_boms = []
+            for line in lines:
+                prod = line[0].product_id
+                # if prod.display_name == '[X015788.-0] Wing Nut Weldment, 3/8':
+                #     import pdb
+                #     pdb.set_trace()
+                if prod.mrp_area_ids and prod.mrp_area_ids[0].supply_method in ['manufacture', 'phantom']:
+                    bom = self._bom_find(product=prod)
+                    if bom:
+                        comp_boms.append((bom, prod, line[1]['qty']))
+            while comp_boms:
+                current_bom, current_prod, current_qty = comp_boms[0]
+                comp_boms = comp_boms[1:]
+                _logger.info("Exploding component BOM for %s" % current_prod.display_name)
+                # if current_prod.display_name == '[X015788.-0] Wing Nut Weldment, 3/8':
+                #     import pdb
+                #     pdb.set_trace()
+                new_boms, new_lines = current_bom.explode(current_prod, current_qty)
+                boms += new_boms
+                lines += new_lines
+                for line in new_lines:
+                    prod = line[0].product_id
+                    # if prod.display_name == '[X015788.-0] Wing Nut Weldment, 3/8':
+                    #     import pdb
+                    #     pdb.set_trace()
+                    if prod.mrp_area_ids and prod.mrp_area_ids[0].supply_method in ['manufacture', 'phantom']:
+                        bom = self._bom_find(product=prod)
+                        if bom:
+                            comp_boms.append((bom, prod, line[1]['qty']))
+
         boms_done = []
         for bom in boms:
             bom_row = (bom[0].id, {

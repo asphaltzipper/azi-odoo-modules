@@ -64,6 +64,15 @@ class MultiLevelMrp(models.TransientModel):
 
         super(MultiLevelMrp, self)._mrp_final_process(mrp_areas)
 
+        # populate expedite field
+        message = 'Marking Expedite Orders'
+        self.env['material.plan.log'].create({'type': 'info', 'message': message})
+        self.env.cr.commit()
+        inv_ids = self._get_expedite_mrp_inv()
+        if inv_ids:
+            invs = self.env['mrp.inventory'].browse(inv_ids)
+            invs.update({'to_expedite': True})
+
         message = 'End MRP finalization'
         logger.info(message)
         self.env['material.plan.log'].create({'type': 'info', 'message': message})
@@ -394,6 +403,26 @@ class MultiLevelMrp(models.TransientModel):
             for x in self.env.cr.fetchall()
         ]
         return sol_diff_prod
+
+    def _get_expedite_mrp_inv(self):
+        sql = """
+            select
+                mi.id as mrp_inv_id
+            from mrp_inventory as mi
+            left join (
+                -- real orders
+                select distinct on (mi.product_mrp_area_id)
+                    mi.product_mrp_area_id,
+                    mi.date
+                from mrp_inventory mi
+                where mi.supply_qty<>0
+                order by mi.product_mrp_area_id, mi.date
+            ) as ro on ro.product_mrp_area_id=mi.product_mrp_area_id
+            where mi.to_procure<>0
+            and mi.order_release_date<ro.date
+        """
+        self.env.cr.execute(sql)
+        return [x[0] for x in self.env.cr.fetchall()]
 
     def process_mrp(self):
         with api.Environment.manage():

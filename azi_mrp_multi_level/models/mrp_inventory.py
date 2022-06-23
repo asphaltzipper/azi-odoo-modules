@@ -29,6 +29,11 @@ class MrpInventory(models.Model):
         compute='_compute_on_blanket',
         store=True,
     )
+    to_expedite = fields.Boolean(
+        string='Expedite',
+        required=True,
+        default=False,
+    )
 
     @api.depends('product_id')
     def _compute_routing_detail(self):

@@ -19,6 +19,10 @@
                 <field name="routing_detail"/>
                 <field name="main_supplier_id"/>
             </field>
+            <field name="uom_id" position="after">
+                <field name="order_release_date"/>
+                <field name="to_expedite"/>
+            </field>
         </field>
     </record>
 
@@ -33,6 +37,7 @@
                 <field name="on_blanket"/>
                 <field name="routing_detail"/>
                 <field name="main_supplier_id"/>
+                <field name="to_expedite"/>
             </field>
         </field>
     </record>
@@ -56,6 +61,9 @@
                 <separator />
                 <filter string="Buy" name="filter_buy" domain="[('supply_method','=','buy')]"/>
                 <filter string="Make" name="filter_produce" domain="[('supply_method','=','manufacture')]"/>
+                <separator />
+                <filter string="Expedite" name="filter_expedite" domain="[('to_expedite','=',True)]"/>
+                <filter string="Non-Expedite" name="filter_non_expedite" domain="[('to_expedite','=',False)]"/>
             </filter>
             <filter name='group_release_date' position="after">
                 <filter name='group_routing_detail'
