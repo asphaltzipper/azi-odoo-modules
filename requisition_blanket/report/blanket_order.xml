@@ -45,7 +45,7 @@
                                                 <strong>Description</strong>
                                             </th>
                                             <th>Vendor Product Code</th>
-                                            <th>Vendor Product Name</th>
+                                            <th>Unit Price</th>
                                             <th class="text-right">
                                                 <strong>Qty</strong>
                                             </th>
@@ -68,7 +68,7 @@
                                                 <t t-esc="supplier_info.product_code"/>
                                             </td>
                                             <td>
-                                                <t t-esc="supplier_info.product_name"/>
+                                                <t t-esc="line_ids.price_unit"/>
                                             </td>
                                             <td class="text-right">
                                                 <span t-field="line_ids.product_qty"/>
