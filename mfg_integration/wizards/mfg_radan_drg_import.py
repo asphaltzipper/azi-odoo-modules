@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
-
 from lxml import etree
 import base64
 import io
 from PIL import Image, ImageChops
-
+import re
 from odoo import api, models, fields, _
 from odoo.exceptions import UserError
 
@@ -73,9 +71,13 @@ class MfgRadanDrgImport(models.TransientModel):
 
             sheet_count = e_number_sheets is not None and int(e_number_sheets.text) or 1
 
+            r = re.compile(r'^P(\d+) (\d+-\d+-\d+)\.drg$')
+            m = re.match(r, drg.name)
             header = work_header_obj.create({
-                'name': drg.name,
+                'name': m and f"{m.group(2)} [{int(m.group(1)):02d}]" or drg.name,
                 'file_name': drg.name,
+                'project_name': m and m.group(2) or False,
+                'sheet_number': m and int(m.group(1)) or False,
                 'state': 'imported',
                 'work_user_id': self.env.user.id,
                 'total_hours': 0.0,

@@ -7,6 +7,7 @@
         <field name="arch" type="xml">
             <tree>
                 <field name="name"/>
+                <field name="product_error"/>
                 <field name="work_date"/>
                 <field name="work_user_id"/>
                 <field name="total_hours"/>
@@ -51,6 +52,7 @@
                             <field name="misc_hours" attrs="{'readonly': [('state', '=', 'closed')]}"/>
                             <field name="detail_time"/>
                             <field name="time_match"/>
+                            <field name="product_error"/>
                         </group>
                         <group>
                             <field name="thumbnail" widget="image" nolabel="1" style="max-height:90px"/>

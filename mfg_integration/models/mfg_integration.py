@@ -56,6 +56,14 @@ class MfgWorkHeader(models.Model):
         string="File Name",
         readonly=True)
 
+    project_name = fields.Char(
+        string="Project Name",
+        readonly=True)
+
+    sheet_number = fields.Integer(
+        string="Sheet Num",
+        readonly=True)
+
     state = fields.Selection(
         selection=[('draft', 'New'),
                    ('imported', 'Imported'),
@@ -97,6 +105,14 @@ class MfgWorkHeader(models.Model):
     time_match = fields.Boolean(
         compute='_compute_time_match',
         readonly=True)
+    product_error = fields.Boolean(
+        string='Error',
+        compute='_compute_error',
+        store=True,
+        required=True,
+        default=False,
+        help="Product parameters are missing/incomplete/invalid. "
+             "Check the BOM, Routing, and Fabrication Info.")
 
     material = fields.Char(
         string='Material',
@@ -132,9 +148,14 @@ class MfgWorkHeader(models.Model):
     def _compute_time_match(self):
         for rec in self:
             detail_time = sum(rec.detail_ids.mapped('minutes_assigned')) / 60 or 0.0
-            rounded_detail_time = float_round(detail_time, precision_digits=2)
-            rounded_total_time = float_round(rec.total_hours, precision_digits=2)
+            rounded_detail_time = float_round(detail_time, precision_digits=1)
+            rounded_total_time = float_round(rec.total_hours, precision_digits=1)
             rec.time_match = rounded_detail_time == rounded_total_time
+
+    @api.depends('detail_ids')
+    def _compute_error(self):
+        for rec in self:
+            rec.product_error = rec.detail_ids.filtered(lambda x: x.product_error)
 
     @api.depends('detail_ids')
     def _compute_detail_time(self):
