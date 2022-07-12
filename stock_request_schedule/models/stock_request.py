@@ -69,8 +69,7 @@ class StockRequest(models.Model):
                        rec.sale_order_line_id.state != 'cancel' or False
 
     def action_cancel(self):
-        states = self.production_ids.mapped('state')
-        if any([x != 'cancel' for x in states]):
+        if any([x != 'cancel' for x in self.sudo().mapped('production_ids.state')]):
             raise UserError(_("Cancel all Manufacturing Orders before canceling this Stock Request."))
         return super(StockRequest, self).action_cancel()
 
