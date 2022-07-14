@@ -116,7 +116,7 @@ class MrpWoProduce(models.TransientModel):
             'product_qty': todo_quantity,
         })
 
-    @api.model
+    @api.multi
     def load_lines(self):
         """
         We only display and process moves for tracked products.

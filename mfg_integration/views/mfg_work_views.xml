@@ -35,7 +35,7 @@
                     <field name="state" widget="statusbar"/>
                 </header>
                 <sheet>
-                    <group col="5">
+                    <group col="3">
                         <group>
                             <field name="name" attrs="{'readonly': [('state', '=', 'closed')]}"/>
                             <field name="file_name" string="Filename"/>
@@ -54,11 +54,11 @@
                             <field name="time_match"/>
                             <field name="product_error"/>
                         </group>
-                        <group>
+                        <group col="1">
                             <field name="thumbnail" widget="image" nolabel="1" style="max-height:90px"/>
                         </group>
                     </group>
-                    <group col="5">
+                    <group col="3">
                         <group>
                             <field name="material"/>
                             <field name="thickness"/>
@@ -68,6 +68,8 @@
                             <field name="sheet_x"/>
                             <field name="sheet_y"/>
                             <field name="utilization"/>
+                        </group>
+                        <group col="1">
                         </group>
                     </group>
                     <group>
