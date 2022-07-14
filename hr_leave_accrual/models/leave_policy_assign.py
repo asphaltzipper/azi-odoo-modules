@@ -45,34 +45,35 @@ class LeavePolicyAssign(models.Model):
         # infix notation: a&b&c&((d&e)|(f&g)|(h&i))
         # prefix notation: &&&abc||&de&fg&hi
         # since & is the default operator, simplify: abc||&de&fg&hi
-        end_date = self.end_date or datetime.date.today() + relativedelta(years=100)
-        dom = [
-            ('id', '!=', self.id),
-            ('employee_id', '=', self.employee_id.id),
-            ('type_id', '=', self.policy_id.type_id.id),
-            '|',
-            '|',
-            '|',
-            '&',
-            # others with start_date bracketed by this start/end
-            ('start_date', '>=', self.start_date),
-            ('start_date', '<=', end_date),
-            '&',
-            # others with end_date bracketed by this start/end
-            ('end_date', '>=', self.start_date),
-            ('end_date', '<=', end_date),
-            '&',
-            # others open ended and starting before this ends
-            ('end_date', '=', False),
-            ('start_date', '<=', end_date),
-            '&',
-            # others completely containing this range
-            ('end_date', '>=', end_date),
-            ('start_date', '<=', self.start_date),
-        ]
-        overlapping = self.search(dom)
-        if overlapping:
-            raise ValidationError("The dates for this policy overlap another.")
+        for rec in self:
+            end_date = rec.end_date or datetime.date.today() + relativedelta(years=100)
+            dom = [
+                ('id', '!=', rec.id),
+                ('employee_id', '=', rec.employee_id.id),
+                ('type_id', '=', rec.policy_id.type_id.id),
+                '|',
+                '|',
+                '|',
+                '&',
+                # others with start_date bracketed by this start/end
+                ('start_date', '>=', rec.start_date),
+                ('start_date', '<=', end_date),
+                '&',
+                # others with end_date bracketed by this start/end
+                ('end_date', '>=', rec.start_date),
+                ('end_date', '<=', end_date),
+                '&',
+                # others open ended and starting before this ends
+                ('end_date', '=', False),
+                ('start_date', '<=', end_date),
+                '&',
+                # others completely containing this range
+                ('end_date', '>=', end_date),
+                ('start_date', '<=', rec.start_date),
+            ]
+            overlapping = rec.search(dom)
+            if overlapping:
+                raise ValidationError("The dates for this policy overlap another.")
 
     @api.multi
     def name_get(self):
