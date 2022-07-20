@@ -148,9 +148,7 @@ class MfgWorkHeader(models.Model):
     def _compute_time_match(self):
         for rec in self:
             detail_time = sum(rec.detail_ids.mapped('minutes_assigned')) / 60 or 0.0
-            rounded_detail_time = float_round(detail_time, precision_digits=1)
-            rounded_total_time = float_round(rec.total_hours, precision_digits=1)
-            rec.time_match = rounded_detail_time == rounded_total_time
+            rec.time_match = abs(detail_time - rec.total_hours) < 0.1
 
     @api.depends('detail_ids')
     def _compute_error(self):
@@ -210,7 +208,7 @@ class MfgWorkHeader(models.Model):
         detail_time = sum(self.detail_ids.mapped('minutes_assigned')) / 60 or 0.0
         rounded_detail_time = float_round(detail_time, precision_digits=2)
         rounded_total_time = float_round(self.total_hours, precision_digits=2)
-        if rounded_detail_time != rounded_total_time:
+        if abs(detail_time - self.total_hours) > 0.1:
             raise UserError(
                 "Time assigned on detail lines ({} hours) doesn't sum to the "
                 "total time on the batch ({} hours)".format(
