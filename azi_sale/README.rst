@@ -8,6 +8,8 @@ AZI Sale
 * Modify form view of `res.partner` to add some attributes on fields and change kanaban view of contacts, also modify tree view
 * Modify form view of `sale.order` and `account.invoice`
 * Modify tree and search view for `sale.order.line` and display menuitem for `sale.order.line`
+* Add unreserved qty available field to sale order line
+* Change sale order line product availability warning to show unreserved qty available
 
 Installation
 ============

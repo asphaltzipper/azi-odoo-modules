@@ -43,6 +43,9 @@
             <field name="confirmation_date" position="before">
                 <field name="commitment_date" groups="sale.group_sale_order_dates"/>
             </field>
+            <xpath expr="//tree/field[@name='product_uom']" position="before">
+                <field name="qty_available_not_res" string="Avail Qty"/>
+            </xpath>
         </field>
     </record>
 

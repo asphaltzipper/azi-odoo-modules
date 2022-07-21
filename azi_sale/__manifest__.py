@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright 2017 Scott Saunders
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 {
@@ -19,7 +18,14 @@ AZI Specialized Customizations to Sales
 * Prevent Children of Children
 * Add priority to Contact Addresses
     """,
-    "depends": ['sale', 'crm', 'sales_team_industry', 'delivery', 'sale_stock'],
+    "depends": [
+        'sale',
+        'crm',
+        'sales_team_industry',
+        'delivery',
+        'sale_stock',
+        'stock_available_unreserved',
+    ],
     'data': [
         'views/crm_team_view.xml',
         'views/res_partner_views.xml',

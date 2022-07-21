@@ -69,6 +69,10 @@ class SaleOrderLine(models.Model):
         readonly=True,
         compute='_compute_delivery_remaining_qty',
         store=True)
+    qty_available_not_res = fields.Float(
+        related='product_id.qty_available_not_res',
+        store=False,
+    )
 
     @api.depends('product_uom_qty', 'qty_delivered')
     def _compute_delivery_remaining_qty(self):
@@ -91,3 +95,11 @@ class SaleOrderLine(models.Model):
                                                         ('type', '=', 'phantom')]):
                 raise ValidationError(_('You can not choose %s because it has a '
                                         'phantom BOM') % record.product_id.display_name)
+
+    @api.onchange('product_uom_qty', 'product_uom', 'route_id')
+    def _onchange_product_id_check_availability(self):
+        res = super(SaleOrderLine, self)._onchange_product_id_check_availability()
+        if res.get('warning'):
+            res['warning']['message'] += f"\n\nThere are {self.qty_available_not_res} " \
+                                         f"{self.product_id.uom_id.name} of unreserved product available\n"
+        return res
