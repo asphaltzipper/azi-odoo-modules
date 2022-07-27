@@ -94,9 +94,16 @@
                     t-field="o.default_code"/>
                 <div name="lower" style="clear:both; float:left; width:100%">
                     <div name="image" style="clear:left; float:left; width:120px; height:120px;">
-                        <img
-                            style="max-width:120px; max-height:120px; width:auto; height:auto;"
-                            t-attf-src="/web/image/product.product/#{o.id}/image"/>
+                        <t t-if="o._name == 'product.template'">
+                            <img
+                                style="max-width:120px; max-height:120px; width:auto; height:auto;"
+                                t-attf-src="/web/image/product.template/#{o.id}/image"/>
+                        </t>
+                        <t t-else="">
+                            <img
+                                style="max-width:120px; max-height:120px; width:auto; height:auto;"
+                                t-attf-src="/web/image/product.product/#{o.id}/image"/>
+                        </t>
                     </div>
                     <div name="name"
                          style="float:left; font-size:0.9em; width:1.75in; max-height:120px; overflow:hidden;"
@@ -134,8 +141,15 @@
                     <div name="barcode" t-att-style="code_style" t-field="o.code128"/>
                     <div name="lower" style="display:block; clear:both; float:left; width:4.0in; height:1.5in">
                         <div name="image" style="clear:left; float:left; width:1.5in; height:1.5in;">
-                            <img style="max-width:1.5in; max-height:1.5in; width:auto; height:auto;"
-                                 t-attf-src="/web/image/product.product/#{o.id}/image"/>
+                            <t t-if="o._name == 'product.template'">
+                                <img style="max-width:1.5in; max-height:1.5in; width:auto; height:auto;"
+                                     t-attf-src="/web/image/product.template/#{o.id}/image"/>
+                            </t>
+                            <t t-else="">
+                                <img
+                                    style="max-width:120px; max-height:120px; width:auto; height:auto;"
+                                    t-attf-src="/web/image/product.product/#{o.id}/image"/>
+                            </t>
                         </div>
                         <div name="lower_right" style="float:left; width:2.5in; height:1.5:">
                             <div name="pn"
@@ -171,8 +185,15 @@
                     <div name="barcode" t-att-style="code_style" t-field="o.code128"/>
                     <div name="lower" style="display:block; clear:both; float:left; width:4.0in; height:1.5in">
                         <div name="image" style="clear:left; float:left; width:1.5in; height:1.5in;">
-                            <img style="max-width:1.5in; max-height:1.5in; width:auto; height:auto;"
-                                 t-attf-src="/web/image/product.product/#{o.id}/image"/>
+                            <t t-if="o._name == 'product.template'">
+                                <img style="max-width:1.5in; max-height:1.5in; width:auto; height:auto;"
+                                     t-attf-src="/web/image/product.template/#{o.id}/image"/>
+                            </t>
+                            <t t-else="">
+                                <img
+                                    style="max-width:120px; max-height:120px; width:auto; height:auto;"
+                                    t-attf-src="/web/image/product.product/#{o.id}/image"/>
+                            </t>
                         </div>
                         <div name="lower_right" style="float:left; width:2.5in; height:1.5:">
                             <div name="pn"
@@ -212,8 +233,15 @@
                     </div>
                     <div name="lower" style="clear:both; float:left; width:4in; height:1.75in">
                         <div name="image" style="clear:left; float:left; width:1.75in; height:1.75in;">
-                            <img style="max-width:1.75in; max-height:1.75in; width:auto; height:auto;"
-                                 t-attf-src="/web/image/product.product/#{o.id}/image"/>
+                            <t t-if="o._name == 'product.template'">
+                                <img style="max-width:1.75in; max-height:1.75in; width:auto; height:auto;"
+                                     t-attf-src="/web/image/product.template/#{o.id}/image"/>
+                            </t>
+                            <t t-else="">
+                                <img
+                                    style="max-width:120px; max-height:120px; width:auto; height:auto;"
+                                    t-attf-src="/web/image/product.product/#{o.id}/image"/>
+                            </t>
                         </div>
                         <div name="name"
                              t-field="o.name"
@@ -247,8 +275,15 @@
                     </div>
                     <div name="lower" style="clear:both; float:left; width:4in; height:1.75in">
                         <div name="image" style="clear:left; float:left; width:1.75in; height:1.75in;">
-                            <img style="max-width:1.75in; max-height:1.75in; width:auto; height:auto;"
-                                 t-attf-src="/web/image/product.product/#{o.id}/image"/>
+                            <t t-if="o._name == 'product.template'">
+                                <img style="max-width:1.75in; max-height:1.75in; width:auto; height:auto;"
+                                     t-attf-src="/web/image/product.template/#{o.id}/image"/>
+                            </t>
+                            <t t-else="">
+                                <img
+                                    style="max-width:120px; max-height:120px; width:auto; height:auto;"
+                                    t-attf-src="/web/image/product.product/#{o.id}/image"/>
+                            </t>
                         </div>
                         <div name="name"
                              t-field="o.name"

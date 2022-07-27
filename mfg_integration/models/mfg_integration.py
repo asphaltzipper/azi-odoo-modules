@@ -163,11 +163,22 @@ class MfgWorkHeader(models.Model):
     def button_reassign_orders(self):
         self.ensure_one()
         self.detail_ids._compute_error()
+        self._compute_error()
         self.detail_ids.reassign_orders()
         self.write({'state': 'assigned'})
 
     def button_distribute_time(self):
         self.ensure_one()
+
+        # warn the user about products with errors
+        self._compute_error()
+        self.detail_ids._compute_error()
+        error_products = self.detail_ids.filtered(lambda x: x.product_error).mapped('product_id')
+        if error_products:
+            message = "The following products are missing BOMs or Routings " \
+                      "or MFG data:\n {}".format(",".join(error_products.mapped('default_code')))
+            self.env.user.notify_warning(message=message, title="Distributing Time", sticky=True)
+
         # split and assign time to detail lines
         factor_sum = 0.0
         misc_count = 0
@@ -354,10 +365,11 @@ class MfgWorkDetail(models.Model):
     @api.depends('product_id')
     def _compute_error(self):
         for rec in self:
-
             rec.product_error = rec.product_id and (
                         not rec.product_id.bom_ids
                         or not rec.product_id.bom_ids[0].routing_id
+                        or not rec.product_id.rm_product_id
+                        or not rec.product_id.rm_product_id.gauge_id
                         or not rec.product_id.cutting_length_outer +
                                rec.product_id.cutting_length_inner +
                                rec.product_id.cut_out_count +
