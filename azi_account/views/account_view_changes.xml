@@ -91,5 +91,15 @@
             </xpath>
         </field>
     </record>
+    <record id="view_tax_form" model="ir.ui.view">
+        <field name="name">account.tax.form</field>
+        <field name="model">account.tax</field>
+        <field name="inherit_id" ref="account.view_tax_form"/>
+        <field name="arch" type="xml">
+            <field name="type_tax_use" position="after">
+                <field name="retail_tax"/>
+            </field>
+        </field>
+    </record>
 
 </odoo>
