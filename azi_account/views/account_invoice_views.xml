@@ -9,7 +9,8 @@
                 <field name="retail_delivery_fees"/>
             </field>
             <xpath expr="//page[@name='other_info']/group/group/field[@name='company_id']" position="before">
-                <field name="retail_account_tax_id"/>
+                <field name="retail_account_tax_id" domain="[('retail_tax', '=', True)]"
+                       context="{'default_retail_tax':True}"/>
             </xpath>
         </field>
     </record>

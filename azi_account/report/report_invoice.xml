@@ -74,6 +74,12 @@
                         </td>
                     </t>
                 </tr>
+                <tr>
+                    <td>Retail Delivery Fees</td>
+                    <td class="text-right o_price_total">
+                        <span t-esc="o.retail_delivery_fees" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                    </td>
+                </tr>
             </xpath>
             <xpath expr="//p[@t-if='o.reference']" position="replace"/>
         </template>

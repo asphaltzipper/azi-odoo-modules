@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+from functools import partial
 
 from odoo import models, fields, api
+from odoo.tools.misc import formatLang
 
 
 class AccountTax(models.Model):
@@ -58,3 +60,22 @@ class AccountInvoice(models.Model):
         self.amount_total_company_signed = amount_total_company_signed * sign
         self.amount_total_signed = self.amount_total * sign
         self.amount_untaxed_signed = amount_untaxed_signed * sign
+
+    def _amount_by_group(self):
+        for invoice in self:
+            currency = invoice.currency_id or invoice.company_id.currency_id
+            fmt = partial(formatLang, invoice.with_context(lang=invoice.partner_id.lang).env, currency_obj=currency)
+            res = {}
+            for line in invoice.tax_line_ids:
+                if not line.tax_id.retail_tax:
+                    tax = line.tax_id
+                    group_key = (tax.tax_group_id, tax.amount_type, tax.amount)
+                    res.setdefault(group_key, {'base': 0.0, 'amount': 0.0})
+                    res[group_key]['amount'] += line.amount_total
+                    res[group_key]['base'] += line.base
+            res = sorted(res.items(), key=lambda l: l[0][0].sequence)
+            invoice.amount_by_group = [(
+                r[0][0].name, r[1]['amount'], r[1]['base'],
+                fmt(r[1]['amount']), fmt(r[1]['base']),
+                len(res),
+            ) for r in res]
