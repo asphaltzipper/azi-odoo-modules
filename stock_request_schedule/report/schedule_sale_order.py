@@ -19,12 +19,14 @@ class ScheduleSaleOrder(models.AbstractModel):
         schedule_so_with_diff_product = self.get_schedule_so_with_diff_product()
         schedule_so_with_early_date = self.get_schedule_so_with_early_date()
         schedule_so_with_late_date = self.get_schedule_so_with_late_date()
+        schedule_so_not_confirmed = self.get_schedule_so_not_confirmed()
         return {
             'unschedule_without_reserved': unschedule_so_without_reserved,
             'schedule_so_with_reserved': schedule_so_with_reserved,
             'schedule_so_with_diff_product': schedule_so_with_diff_product,
             'schedule_so_with_early_date': schedule_so_with_early_date,
             'schedule_so_with_late_date': schedule_so_with_late_date,
+            'schedule_so_not_confirmed': schedule_so_not_confirmed,
         }
 
     def get_unschedule_so_without_reserved(self):
@@ -198,5 +200,28 @@ class ScheduleSaleOrder(models.AbstractModel):
             and pc.name ilike 'FG - %'
             and sr.id is not null
             and round((extract(epoch from sm.date_expected::date) / 86400 - extract(epoch from sr.expected_date::date) / 86400)::decimal, 0)>0
+        """)
+        return self._cr.fetchall()
+
+    def get_schedule_so_not_confirmed(self):
+        self._cr.execute("""
+            select
+                so.id as so_id,
+                so.name as so_name,
+                so.state as so_state,
+                sr.id as sr_id,
+                sr.name as sr_name
+            from sale_order_line sol
+            left join sale_order so on so.id=sol.order_id
+            left join product_product pp on pp.id=sol.product_id
+            left join product_template pt on pt.id=pp.product_tmpl_id left join product_category pc on pc.id=pt.categ_id
+            left join (
+                select *
+                from stock_request
+                where state in ('submitted', 'draft', 'open')
+            ) sr on sr.sale_order_line_id=sol.id
+            where so.state<>'sale'
+            and pc.name ilike 'FG - %'
+            and sr.id is not null
         """)
         return self._cr.fetchall()

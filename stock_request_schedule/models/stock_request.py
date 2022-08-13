@@ -65,8 +65,9 @@ class StockRequest(models.Model):
     @api.depends('sale_order_line_id')
     def _compute_sold(self):
         for rec in self:
-            rec.sold = rec.sale_order_line_id and \
-                       rec.sale_order_line_id.state != 'cancel' or False
+            rec.sold = rec.sale_order_line_id \
+                       and rec.sale_order_line_id.state in ('sale', 'done') \
+                       or False
 
     def action_cancel(self):
         if any([x != 'cancel' for x in self.sudo().mapped('production_ids.state')]):

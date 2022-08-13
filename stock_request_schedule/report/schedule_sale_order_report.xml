@@ -213,6 +213,46 @@
                             </table>
                         </t>
                         <t t-else="">None</t>
+                        <br/>
+                        <br/>
+                        <h4>Scheduled SO Not Confirmed</h4>
+                        <t t-if="data['schedule_so_not_confirmed']">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Sale Order</th>
+                                        <th>SO State</th>
+                                        <th>Stock Request</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="data['schedule_so_not_confirmed']" t-as="schedule_so_not_confirmed">
+                                        <tr>
+                                            <td>
+                                                <a href="#" t-att-data-res-id="schedule_so_not_confirmed[0]"
+                                                   t-att-data-model="'sale.order'"
+                                                   class="o_schedule_so_action">
+                                                    <t t-esc="schedule_so_not_confirmed[1]"/>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <span>
+                                                    <t t-esc="schedule_so_not_confirmed[2]"/>
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <a href="#" t-att-data-res-id="schedule_so_not_confirmed[3]"
+                                                   t-att-data-model="'stock.request'"
+                                                   class="o_schedule_so_action">
+                                                    <t t-esc="schedule_so_not_confirmed[4]"/>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </t>
+                        <t t-else="">None</t>
                     </div>
                 </div>
             </div>

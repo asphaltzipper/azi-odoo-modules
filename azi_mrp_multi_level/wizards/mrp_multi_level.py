@@ -159,6 +159,15 @@ class MultiLevelMrp(models.TransientModel):
                 self.env['material.plan.log'].create({'type': 'error', 'message': message})
             self.env.cr.commit()
 
+        # report scheduled sale order not confirmed
+        sol_sched_not_confirmed = self._get_sol_sched_not_confirmed()
+        if sol_sched_not_confirmed:
+            for sol in sol_sched_not_confirmed:
+                message = "SO linked to SR, but not confirmed: %s (%s) -- %s" % (
+                    sol['so_name'], sol['so_state'], sol['sr_name'])
+                self.env['material.plan.log'].create({'type': 'warning', 'message': message})
+            self.env.cr.commit()
+
         result = super(MultiLevelMrp, self).run_mrp_multi_level()
 
         exec_stop = time.time()
@@ -400,6 +409,32 @@ class MultiLevelMrp(models.TransientModel):
         self.env.cr.execute(sql)
         sol_diff_prod = [
             {'so_name': x[0], 'default_code': x[1], 'prod_name': x[2], 'sr_name': x[3]}
+            for x in self.env.cr.fetchall()
+        ]
+        return sol_diff_prod
+
+    def _get_sol_sched_not_confirmed(self):
+        sql = """
+            select
+                so.name as so_name,
+                so.state as so_state,
+                sr.name as sr_name
+            from sale_order_line sol
+            left join sale_order so on so.id=sol.order_id
+            left join product_product pp on pp.id=sol.product_id
+            left join product_template pt on pt.id=pp.product_tmpl_id left join product_category pc on pc.id=pt.categ_id
+            left join (
+                select *
+                from stock_request
+                where state in ('submitted', 'draft', 'open')
+            ) sr on sr.sale_order_line_id=sol.id
+            where so.state<>'sale'
+            and pc.name ilike 'FG - %'
+            and sr.id is not null
+        """
+        self.env.cr.execute(sql)
+        sol_diff_prod = [
+            {'so_name': x[0], 'so_state': x[1], 'sr_name': x[2]}
             for x in self.env.cr.fetchall()
         ]
         return sol_diff_prod
