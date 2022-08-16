@@ -26,6 +26,7 @@ AZI Specialized Customizations to Stock
         'barcode_font',
     ],
     'data': [
+        'security/ir.model.access.csv',
         'views/stock_view_changes.xml',
         'views/stock_move_line_views.xml',
         'report/transfer_slip_template.xml',
@@ -39,6 +40,7 @@ AZI Specialized Customizations to Stock
         'report/transfer_slip_template.xml',
         'report/stock_quant_report.xml',
         'report/stock_report.xml',
+        'report/monthly_inventory_views.xml',
         'views/stock_quant_views.xml',
         'views/stock_inventory_views.xml',
     ],

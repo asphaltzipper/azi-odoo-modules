@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="monthly_inventory_tree_view" model="ir.ui.view">
+        <field name="name">monthly.inventory.tree.view</field>
+        <field name="model">monthly.inventory.report</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="serial"/>
+                <field name="partnum"/>
+                <field name="model"/>
+                <field name="category"/>
+                <field name="build_date"/>
+                <field name="reference"/>
+                <field name="curr_loc"/>
+                <field name="customer"/>
+                <field name="orig_build"/>
+                <field name="wa_unit"/>
+            </tree>
+        </field>
+    </record>
+    <record id="monthly_inventory_action" model="ir.actions.act_window">
+        <field name="name">Monthly Builds Report</field>
+        <field name="res_model">monthly.inventory.report</field>
+        <field name="view_mode">tree</field>
+    </record>
+    <menuitem id="menu_monthly_inventory_report" parent="stock.menu_warehouse_report"
+              action="monthly_inventory_action"/>
+
+</odoo>
