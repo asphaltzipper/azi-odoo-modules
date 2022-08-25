@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="azi_view_mrp_bom_filter" model="ir.ui.view">
-        <field name="name">azi.mrp.bom.select</field>
+
+    <!-- increase pagination limit -->
+    <record id="azi_mrp_bom_form_view" model="ir.ui.view">
+        <field name="name">azi.mrp.bom.form.view</field>
         <field name="model">mrp.bom</field>
-        <field name="inherit_id" ref="mrp.view_mrp_bom_filter"/>
+        <field name="inherit_id" ref="mrp.mrp_bom_form_view"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='product_tmpl_id']" position="attributes">
-                <attribute name="string">Template Name</attribute>
+            <xpath expr="//field[@name='bom_line_ids']/tree" position="attributes">
+                <attribute name="limit">500</attribute>
             </xpath>
-            <field name="code" position="before">
-                <field name="product_id" string="Product" filter_domain="['|',('product_id.default_code','ilike',self),('product_id.name','ilike',self)]"/>
-            </field>
         </field>
     </record>
 

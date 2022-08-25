@@ -29,8 +29,6 @@ class MultiLevelMrp(models.TransientModel):
             ('product_id', '=', product_mrp_area.product_id.id),
             ('state', '=', 'submitted'),
             ('scheduled', '=', True),
-            ('allocation_ids', '=', False),
-            ('sold', '=', False),
         ])
         for request in requests:
             mrp_date = date.today()
@@ -42,6 +40,30 @@ class MultiLevelMrp(models.TransientModel):
                 request.product_uom_qty,
                 request.name
             )
+            # The _mrp_calculation method doesn't check existing planned orders.
+            # Even though we create planned orders for the scheduled builds, the
+            # algorithm creates more planned orders to satisfy any real demand.
+            # The _mrp_calculation method does check the mrp.move records, so we
+            # add an mrp.move record to show the scheduled build as a supply.
+            vals = {
+                'product_id': request.product_id.id,
+                'product_mrp_area_id': product_mrp_area.id,
+                'production_id': False,
+                'purchase_order_id': False,
+                'purchase_line_id': False,
+                'stock_move_id': False,
+                'mrp_qty': request.product_uom_qty,
+                'current_qty': request.product_uom_qty,
+                'mrp_date': mrp_date,
+                'current_date': mrp_date,
+                'mrp_type': 's',
+                'mrp_origin': 'fc',
+                'mrp_order_number': request.name,
+                'parent_product_id': False,
+                'name': request.name,
+                'state': 'confirmed',
+            }
+            self.env['mrp.move'].create(vals)
 
     @api.model
     def _mrp_initialisation(self, mrp_areas):
