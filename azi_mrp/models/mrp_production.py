@@ -177,3 +177,72 @@ class MrpProduction(models.Model):
         message = "Product attachment sent to printer %s" % printer.name
         user.notify_success(message=message, title="Print Attachment", sticky=False)
         return {}
+
+    @api.multi
+    def _generate_moves(self):
+        res = super(MrpProduction, self)._generate_moves()
+        for production in self:
+            bom_lines = self.get_bom_lines(production.product_qty, production.bom_id.id)
+            bom_history_lines = []
+            for line in bom_lines:
+                bom_history_lines.append((0, 0, {'sequence': line[0], 'product_id': line[1], 'product_qty': line[6]}))
+            self.env['mrp.bom.history'].create({'mrp_production_id': production.id, 'bom_id': production.bom_id.id,
+                                                'bom_history_line_ids': bom_history_lines})
+        return res
+
+    def get_bom_lines(self, quantity, bom_id):
+        self._cr.execute("""
+            with recursive bom_tree (parent_prod_id, comp_prod_id, level, name_path, bom_id, bom_line_id, bom_type, qty) as (
+            select
+                b.product_id as parent_id,
+                l.product_id as comp_id,
+                0 as level,
+                coalesce(pp.default_code, t.name, '') as name_path,
+                b.id as bom_id,
+                l.id as line_id,
+                b.type as bom_type,
+                (l.product_qty * %s) as qty
+            from mrp_bom_line as l
+            left join mrp_bom as b on b.id=l.bom_id
+            left join product_product as pp on pp.id=l.product_id
+            left join product_template as t on t.id=pp.product_tmpl_id
+            where bom_id= %s
+            union select
+                b.product_id as parent_id,
+                l.product_id as comp_id,
+                p.level + 1 as level,
+                p.name_path || ' | ' || coalesce(pp.default_code, t.name, '') as name_path,
+                b.id as bom_id,
+                l.id as line_id,
+                b.type as bom_type,
+                (p.qty * l.product_qty)
+            from mrp_bom_line as l
+            left join (
+                select distinct on (product_id)
+                id,
+                product_tmpl_id,
+                product_id,
+                type
+                from mrp_bom
+                where active=true
+                order by product_id, sequence
+            ) as b on b.id=l.bom_id
+            left join product_product as pp on pp.id=l.product_id
+            left join product_template as t on t.id=pp.product_tmpl_id
+            inner join bom_tree as p on b.product_id=p.comp_prod_id
+            )
+            select
+                level,
+                comp_prod_id,
+                bom_id,
+                bom_type,
+                bom_line_id,
+                name_path,
+                qty
+    
+            from bom_tree as t
+            left join mrp_bom as b on b.id = t.bom_id
+            order by name_path
+        """, (quantity, bom_id)
+        )
+        return self._cr.fetchall()

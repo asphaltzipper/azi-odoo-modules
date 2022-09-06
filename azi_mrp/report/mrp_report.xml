@@ -20,5 +20,13 @@
         paperformat="base.paperformat_us"
         report_type="qweb-pdf"
     />
+    <report
+        string="BOM History"
+        id="action_mrp_bom_history_report"
+        model="mrp.bom.history"
+        name="azi_mrp.report_bom_history"
+        file="azi_mrp.mrp_bom_history_report"
+        report_type="qweb-html"
+    />
 
 </odoo>

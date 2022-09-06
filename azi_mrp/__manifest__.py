@@ -30,6 +30,8 @@ AZI Specialized Customizations to MRP
         'views/report_bom_template.xml',
         'views/mrp_view_changes.xml',
         'views/mrp_bom_views.xml',
+        'views/mrp_bom_history_views.xml',
+        'report/mrp_bom_history_report.xml',
         'report/mrp_report.xml',
         'report/mrp_production_templates.xml',
         'report/product_report_bom_structure.xml',

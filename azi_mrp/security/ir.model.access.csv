@@ -1,4 +1,7 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_production_move_analysis_users,production.move.analysis.users,model_production_move_analysis,mrp.group_mrp_user,1,0,0,0
+access_mrp_bom_history_user,access.mrp.bom.history.user,model_mrp_bom_history,mrp.group_mrp_user,1,1,1,0
+access_mrp_bom_history_line_user,access.mrp.bom.history.line.user,model_mrp_bom_history_line,mrp.group_mrp_user,1,1,1,0
+
 
 
