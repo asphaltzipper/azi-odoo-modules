@@ -53,7 +53,9 @@ class StockQuant(models.Model):
                                                                 ('lot_id', '=', quant.lot_id.id), '|',
                                                                 ('package_id', '=', quant.package_id.id),
                                                                 ('result_package_id', '=', quant.package_id.id)])
-                move_ids = move_lines.mapped('move_id')
+                move_ids = self.env['stock.move'].search(
+                    [('id', 'in', move_lines.mapped('move_id').ids), ('remaining_value', '>', 0)],
+                    order='date desc', limit=1)
                 if quant.product_id.cost_method != 'fifo':
                     product_valuation[quant.product_id.id] = quant.product_id.standard_price
                 else:
