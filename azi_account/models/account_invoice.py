@@ -21,13 +21,13 @@ class AccountInvoice(models.Model):
                                             default=_default_retail_tax)
     retail_delivery_fees = fields.Monetary('Retail Delivery Fees', compute='_compute_amount', store=True)
 
-    @api.onchange('invoice_line_ids', 'retail_account_tax_id')
+    @api.onchange('invoice_line_ids', 'retail_account_tax_id', 'partner_id')
     def _onchange_invoice_line_ids(self):
         taxes_grouped = self.get_taxes_values()
         tax_lines = self.tax_line_ids.filtered('manual')
         for tax in taxes_grouped.values():
             tax_lines += tax_lines.new(tax)
-        if self.retail_account_tax_id:
+        if self.retail_account_tax_id and self.partner_id.state_id.code == 'CO':
             account_id = self.type in ('out_invoice', 'in_invoice') and self.retail_account_tax_id.account_id.id or \
                          self.retail_account_tax_id.refund_account_id.id
             amount = self.retail_account_tax_id._compute_amount(self.amount_untaxed, self.amount_untaxed)
