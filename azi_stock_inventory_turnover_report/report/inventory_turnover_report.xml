@@ -7,12 +7,13 @@
             <tree>
                 <field name="category_id"/>
                 <field name="product_id"/>
+                <field name="current_balance"/>
                 <field name="avg_6_balance"/>
                 <field name="avg_12_balance"/>
                 <field name="consumed_6_cost"/>
                 <field name="consumed_12_cost"/>
-                <field name="turns_6m"/>
-                <field name="turns_12m"/>
+                <field name="turns_6m" avg="Avg 6mo Turns"/>
+                <field name="turns_12m" avg="Avg 12mo Turns"/>
             </tree>
         </field>
     </record>
@@ -23,6 +24,17 @@
         <field name="arch" type="xml">
             <search>
                 <field name="product_id"/>
+                <field name="category_id"/>
+                <group>
+                    <filter string='RM' name="rm_filter" domain="[('category_id.name', 'ilike', 'RM - %s')]" />
+                    <filter string='FG' name="fg_filter" domain="[('category_id.name', 'ilike', 'FG - %s')]" />
+                <group>
+                </group>
+                    <filter string='6mo Turns &lt; 2' name="6mo_turns_under_2" domain="[('turns_6m', '&lt;', 2)]" />
+                <group>
+                </group>
+                    <filter string='Curr Balance &gt; 1000' name="curr_bal_over_1000" domain="[('current_balance', '&gt;', 1000)]" />
+                </group>
                 <group expand="0" string="Group By">
                     <filter name="category" string="Category" domain="[]" context="{'group_by':'category_id'}"/>
                 </group>
