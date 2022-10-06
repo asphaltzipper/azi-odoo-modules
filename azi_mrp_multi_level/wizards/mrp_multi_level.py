@@ -473,7 +473,7 @@ class MultiLevelMrp(models.TransientModel):
                     mi.date
                 from mrp_inventory mi
                 where mi.supply_qty<>0
-                order by mi.product_mrp_area_id, mi.date
+                order by mi.product_mrp_area_id, mi.date desc
             ) as ro on ro.product_mrp_area_id=mi.product_mrp_area_id
             where mi.to_procure<>0
             and mi.order_release_date<ro.date
