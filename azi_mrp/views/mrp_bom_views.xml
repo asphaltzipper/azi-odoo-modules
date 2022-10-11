@@ -12,5 +12,38 @@
             </xpath>
         </field>
     </record>
-
+    <record id="mrp_bom_line_tree_view" model="ir.ui.view">
+        <field name="name">mrp.bom.line.tree.view</field>
+        <field name="model">mrp.bom.line</field>
+        <field name="arch" type="xml">
+            <tree create="false" editable="bottom">
+                <field name="product_id" readonly="1"/>
+                <field name="product_qty" readonly="1"/>
+                <field name="product_uom_id" readonly="1"/>
+                <field name="bom_id" readonly="1"/>
+                <field name="parent_product_tmpl_id" readonly="1"/>
+                <field name="deprecated" invisible="1"/>
+                <field name="product_tmpl_id" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+    <record id="mrp_bom_line_filter_view" model="ir.ui.view">
+        <field name="name">mrp.bom.line.filter.view</field>
+        <field name="model">mrp.bom.line</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="product_tmpl_id" filter_domain="[('product_tmpl_id', '=', self)]"
+                       string="Product"/>
+                <field name="product_id" filter_domain="[('product_id', '=', self)]"
+                       string="Product Variants"/>
+            </search>
+        </field>
+    </record>
+    <record id="mrp_bom_line_action" model="ir.actions.act_window">
+        <field name="name">Used In Quantity</field>
+        <field name="res_model">mrp.bom.line</field>
+        <field name="domain">[('deprecated', '=', False)]</field>
+        <field name="view_mode">tree</field>
+    </record>
+    <menuitem id="mrp_bom_line_menu" action="mrp_bom_line_action" parent="mrp.menu_mrp_reporting"/>
 </odoo>

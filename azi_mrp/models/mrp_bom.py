@@ -81,6 +81,9 @@ class MrpBom(models.Model):
 class MrpBomLine(models.Model):
     _inherit = 'mrp.bom.line'
 
+    deprecated = fields.Boolean('Deprecated', related='parent_product_tmpl_id.deprecated', store=True)
+    product_tmpl_id = fields.Many2one('product.template', 'Product Template', related='product_id.product_tmpl_id', store=True)
+
     @api.one
     @api.depends('product_id')
     def _compute_has_attachments(self):

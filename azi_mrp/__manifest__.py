@@ -25,6 +25,7 @@ AZI Specialized Customizations to MRP
         'attachment_priority',
         'electronic_kanban',
         'base_report_to_printer',
+        'engineering_product',
     ],
     'data': [
         'views/report_bom_template.xml',
