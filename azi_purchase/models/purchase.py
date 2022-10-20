@@ -12,6 +12,18 @@ class PurchaseOrder(models.Model):
         string='Date Sent'
     )
 
+    @api.multi
+    def button_confirm(self):
+        res = super(PurchaseOrder, self).button_confirm()
+        for line in self.mapped('order_line'):
+            seller = line.product_id.seller_ids.filtered(lambda s: s.name == line.order_id.partner_id)
+            if seller and seller.price != line.price_unit:
+                message = "Purchase price changed from %s to %s for vendor %s" % (seller.price, line.price_unit,
+                                                                                  seller.name.display_name)
+                seller.price = line.price_unit
+                line.product_id.message_post(body=message)
+        return res
+
 
 class ProductProduct(models.Model):
     _inherit = 'product.product'
