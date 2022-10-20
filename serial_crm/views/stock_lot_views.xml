@@ -106,8 +106,8 @@
                         </field>
                     </page>
                     <page name="notes" string="Notes">
+                        <field name="description" placeholder="Description"/>
                         <group col="1">
-                            <field name="description"/>
                             <field name="note_ids" nolabel="1" context="{'default_lot_id': active_id}">
                                 <tree editable="top">
                                     <field name="create_uid" readonly="1"/>

@@ -18,6 +18,22 @@
             <field name="dpi">96</field>
         </record>
 
+        <record id="paperformat_label_225x075" model="report.paperformat">
+            <field name="name">Label 2.25x0.75</field>
+            <field name="default" eval="True" />
+            <field name="format">custom</field>
+            <field name="page_height">19</field>
+            <field name="page_width">57</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">0</field>
+            <field name="margin_bottom">0</field>
+            <field name="margin_left">0</field>
+            <field name="margin_right">0</field>
+            <field name="header_line" eval="False" />
+            <field name="header_spacing">0</field>
+            <field name="dpi">96</field>
+        </record>
+
         <record id="paperformat_label_3x2" model="report.paperformat">
             <field name="name">Label 3x2</field>
             <field name="default" eval="True" />

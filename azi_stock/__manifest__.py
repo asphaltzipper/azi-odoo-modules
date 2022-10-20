@@ -24,6 +24,7 @@ AZI Specialized Customizations to Stock
         'shelf_location',
         'stock_inventory_valuation_location',
         'barcode_font',
+        'serial_crm',
     ],
     'data': [
         'security/ir.model.access.csv',
@@ -41,6 +42,7 @@ AZI Specialized Customizations to Stock
         'report/stock_quant_report.xml',
         'report/stock_report.xml',
         'report/monthly_inventory_views.xml',
+        'report/report_serial_plc_label.xml',
         'views/stock_quant_views.xml',
         'views/stock_inventory_views.xml',
     ],
