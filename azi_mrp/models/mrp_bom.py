@@ -14,6 +14,11 @@ class MrpBom(models.Model):
     # okay, make the default one
     sequence = fields.Integer(default=1)
 
+    type = fields.Selection(
+        track_visibility='onchange',
+    )
+
+
     def ext_explode(self, product_id, quantity, deep=False):
         """
             Explode the BOM
