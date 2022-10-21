@@ -8,8 +8,6 @@ class ReportBomStructure(models.AbstractModel):
 
     @api.model
     def _get_report_values(self, docids, data=None):
-        import pdb
-        pdb.set_trace()
         docs = []
         label_re = re.compile(r'(PROGRAM)[\r\n]+DESC\:\W*(.*)[\r\n]+CONFIG\:\W*(.+)')
         for lot_id in docids:
