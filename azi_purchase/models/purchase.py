@@ -16,7 +16,8 @@ class PurchaseOrder(models.Model):
     def button_confirm(self):
         res = super(PurchaseOrder, self).button_confirm()
         for line in self.mapped('order_line'):
-            seller = line.product_id.seller_ids.filtered(lambda s: s.name == line.order_id.partner_id)
+            seller = line.product_id.seller_ids.filtered(lambda s: s.name == line.order_id.partner_id and
+                                                                   s.product_code == line.vendor_product_code)
             if seller:
                 seller = seller.sorted(key=lambda x: x.sequence)[0]
                 if seller.price != line.price_unit:
@@ -104,3 +105,24 @@ class MailComposeMessage(models.TransientModel):
                 order = self.env['purchase.order'].browse([self._context['default_res_id']])
                 order.send_date = fields.datetime.now()
         return super(MailComposeMessage, self.with_context(mail_post_autofollow=True)).send_mail(auto_commit=auto_commit)
+
+
+class PurchaseOrderLine(models.Model):
+    _inherit = 'purchase.order.line'
+
+    vendor_product_code = fields.Char('Vendor Product Code')
+
+    @api.onchange('product_qty', 'product_uom')
+    def _onchange_quantity(self):
+        super(PurchaseOrderLine, self)._onchange_quantity()
+        if not self.product_id:
+            return
+        params = {'order_id': self.order_id}
+        seller = self.product_id._select_seller(
+            partner_id=self.partner_id,
+            quantity=self.product_qty,
+            date=self.order_id.date_order and self.order_id.date_order.date(),
+            uom_id=self.product_uom,
+            params=params)
+        if seller:
+            self.vendor_product_code = seller.product_code
