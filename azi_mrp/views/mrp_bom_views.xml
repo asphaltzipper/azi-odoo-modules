@@ -22,7 +22,7 @@
                 <field name="product_uom_id" readonly="1"/>
                 <field name="bom_id" readonly="1"/>
                 <field name="parent_product_tmpl_id" readonly="1"/>
-                <field name="deprecated" invisible="1"/>
+                <field name="deprecated" string="Obsolete"/>
                 <field name="product_tmpl_id" invisible="1"/>
             </tree>
         </field>
@@ -36,7 +36,7 @@
                        string="Product"/>
                 <field name="product_id" filter_domain="[('product_id', '=', self)]"
                        string="Product Variants"/>
-                <filter string="Non Deprecated" name="deprecated" domain="[('deprecated', '=', False)]"/>
+                <filter string="Current" name="deprecated" domain="[('deprecated', '=', False)]"/>
             </search>
         </field>
     </record>
