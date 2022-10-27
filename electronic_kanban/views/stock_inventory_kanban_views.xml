@@ -11,6 +11,11 @@
                         states="in_progress,finished"
                         />
             </button>
+            <button name="print_missing_kanbans" position="after">
+                <button name="print_missing_kanbans_24x70" type="object" string="Print 24x70"
+                        states="in_progress,finished"
+                        />
+            </button>
             <button name="print_missing_kanbans" position="attributes">
                 <attribute name="states">in_progress,finished</attribute>
             </button>
