@@ -36,13 +36,14 @@
                        string="Product"/>
                 <field name="product_id" filter_domain="[('product_id', '=', self)]"
                        string="Product Variants"/>
+                <filter string="Non Deprecated" name="deprecated" domain="[('deprecated', '=', False)]"/>
             </search>
         </field>
     </record>
     <record id="mrp_bom_line_action" model="ir.actions.act_window">
         <field name="name">Used In Quantity</field>
         <field name="res_model">mrp.bom.line</field>
-        <field name="domain">[('deprecated', '=', False)]</field>
+        <field name="context">{'search_default_deprecated': 1}</field>
         <field name="view_mode">tree</field>
     </record>
     <menuitem id="mrp_bom_line_menu" action="mrp_bom_line_action" parent="mrp.menu_mrp_reporting"/>
