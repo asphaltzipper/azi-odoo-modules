@@ -64,6 +64,11 @@
                 <separator />
                 <filter string="Expedite" name="filter_expedite" domain="[('to_expedite','=',True)]"/>
                 <filter string="Non-Expedite" name="filter_non_expedite" domain="[('to_expedite','=',False)]"/>
+                <separator />
+                <filter string="1 Week" name="one_week" domain="[('order_release_date', '&lt;=', (context_today()-relativedelta(weeks=1)).strftime('%Y-%m-%d'))]"/>
+                <filter string="2 Week" name="two_week" domain="[('order_release_date', '&lt;=', (context_today()-relativedelta(weeks=2)).strftime('%Y-%m-%d'))]"/>
+                <filter string="1 Month" name="one_month" domain="[('order_release_date', '&lt;=', (context_today()-relativedelta(months=1)).strftime('%Y-%m-%d'))]"/>
+                <filter string="2 Month" name="two_month" domain="[('order_release_date', '&lt;=', (context_today()-relativedelta(months=2)).strftime('%Y-%m-%d'))]"/>
             </filter>
             <filter name='group_release_date' position="after">
                 <filter name='group_routing_detail'
