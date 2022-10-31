@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
     <!-- label formatted for the brother p-touch printer -->
     <template id="report_kanban_label_24x70_body">
         <div class="row no-gutters">
@@ -28,13 +29,13 @@
         </div>
         <t t-if="o.product_id.type == 'consu'">
             <div
-                    style="position: absolute; top: 2px; left: 2px; bottom: 2px; right: 2px; border: 1px solid black;"/>
+                    style="position: absolute; top: 2px; right: -12px; bottom: 2px; left: -12px; border: 2px solid black;"/>
         </t>
     </template>
     <template id="report_kanban_label_24x70">
         <t t-call="web.basic_layout">
-            <t t-foreach="docs" t-as="o">
-                <div class="page text-center">
+            <t t-foreach="docs.sorted(key=lambda x: (x.product_id.display_name, x.verify_date or datetime.date(1970, 1, 1), x.name))" t-as="o">
+                <div class="page" style="position: relative;">
                     <t t-call="azi_stock_request_kanban.report_kanban_label_24x70_body">
                         <t t-set="o" t-value="o"/>
                     </t>
@@ -44,12 +45,12 @@
         </t>
     </template>
     <report
-        id="report_kanban_label_24x70"
+        id="action_report_kanban_label_24x70"
         string="AZI Label 24x70mm"
         model="stock.request.kanban"
         report_type="qweb-pdf"
         name="azi_stock_request_kanban.report_kanban_label_24x70"
-        file="azi_stock_request_kanban.report_kanban_label_24x70"
+        file="azi_stock_request_kanban.report.stock_request_kanban_template"
         paperformat="azi_stock.paperformat_label_24x70mm"
         menu="True"/>
 
