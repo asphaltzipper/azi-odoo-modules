@@ -36,6 +36,11 @@
                                 </div>
                             </div>
 
+                            <h3>Terms and Conditions</h3>
+                            <span t-field="o.description"/>
+                            <br />
+                            <br />
+
                             <t t-if="o.line_ids">
                                 <h3>Products</h3>
                                 <table class="table table-condensed">
