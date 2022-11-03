@@ -278,6 +278,16 @@ class MfgWorkHeader(models.Model):
             detail.actual_quantity = detail.import_quantity * new_count
         self.number_sheets = new_count
 
+    def action_automate_batch(self):
+        mfg_to_automate = self.filtered(lambda m: not m.product_error and
+                                                  m.state not in ('draft', 'cancel') and m.time_match
+                                                  and m.total_hours > 0 and m.detail_time > 0)
+        for mfg in mfg_to_automate:
+            mfg.button_reassign_orders()
+            mfg.button_distribute_time()
+            mfg.button_apply_work()
+
+
 
 class MfgWorkDetail(models.Model):
     _name = 'mfg.work.detail'

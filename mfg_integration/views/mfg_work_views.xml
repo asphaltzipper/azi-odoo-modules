@@ -101,6 +101,14 @@
         <field name="view_id" ref="mfg_integration.mfg_work_header_tree_view"/>
     </record>
 
+    <record id="mfg_batch_action" model="ir.actions.server">
+        <field name="name">Automate MFG</field>
+        <field name="model_id" ref="mfg_integration.model_mfg_work_header"/>
+        <field name="state">code</field>
+        <field name="code">records.action_automate_batch()</field>
+        <field name="binding_model_id" ref="mfg_integration.model_mfg_work_header"/>
+    </record>
+
     <menuitem id="menu_mrp_mfg_work_header"
             name="MFG Work Imports"
             action="action_mfg_work_header"
