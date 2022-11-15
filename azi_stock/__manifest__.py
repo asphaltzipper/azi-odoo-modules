@@ -45,6 +45,7 @@ AZI Specialized Customizations to Stock
         'report/report_serial_plc_label.xml',
         'views/stock_quant_views.xml',
         'views/stock_inventory_views.xml',
+        'wizards/inventory_import_views.xml',
     ],
     "installable": True,
     "auto_install": False,

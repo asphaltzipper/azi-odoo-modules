@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_inventory_import_form" model="ir.ui.view">
+        <field name="name">inventory.import.form</field>
+        <field name="model">inventory.import</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="location_id" required="1"/>
+                        <field name="filename" invisible="1"/>
+                        <field name="data_file" filename="filename" required="1"/>
+
+                    </group>
+                </group>
+                <footer>
+                    <button name="import_inventory_adjustment" string="Import" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="inventory_import_action" model="ir.actions.act_window">
+        <field name="name">Inventory Import</field>
+        <field name="res_model">inventory.import</field>
+        <field name="view_mode">form</field>
+       <field name="target">new</field>
+    </record>
+    <menuitem id="menu_inventory_import" action="inventory_import_action" parent="stock.menu_stock_warehouse_mgmt"/>
+</odoo>
