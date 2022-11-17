@@ -128,39 +128,76 @@
     <template id="report_prod_tmpl_4x2_label">
         <t t-call="web.basic_layout">
             <t t-foreach="docs" t-as="o">
-                <t t-set="pn_font_size"
-                   t-value="len(o.default_code)&lt;11 and 1.8 or 1.8*12/len(o.default_code)"/>
-                <t t-set="code_style"
-                   t-value="'display:block; clear:both; float:left; width:4.0in; height:0.5in; overflow:hidden; font-family:\'Code 128\',sans-serif; text-align:center; font-size: %.2fem' % (2.9*pn_font_size,)"/>
-                <t t-set="pn_style"
-                   t-value="'display:block; clear:both; float:left; width:2.5in; height:0.5in; text-align:center; font-weight: bold; margin-top: -4px; margin-bottom: -0.3em; font-size: %.2fem' % (pn_font_size,)"/>
-                <t t-set="name_style"
-                   t-value="'display:block; float:left; font-size:0.9em; width:2.5in; height:1.0in; max-height:1.0in; overflow:hidden;'"/>
 
-                <div name="label" style="display:block; clear:both; float:left; width:4.0in; height:2.0in;">
-                    <div name="barcode" t-att-style="code_style" t-field="o.code128"/>
-                    <div name="lower" style="display:block; clear:both; float:left; width:4.0in; height:1.5in">
-                        <div name="image" style="clear:left; float:left; width:1.5in; height:1.5in;">
+                <t t-if="len(o.default_code)>10">
+                    <t t-set="pn_font_size"
+                       t-value="len(o.default_code)&lt;11 and 1.8 or 1.8*12/len(o.default_code)"/>
+                    <t t-set="code_style"
+                       t-value="'display:block; clear:both; float:left; width:4.0in; height:0.5in; font-family:\'Code 128\',sans-serif; text-align:center; font-size: %.2fem' % (2.9*pn_font_size,)"/>
+                    <t t-set="pn_style"
+                       t-value="'display:block; clear:both; float:left; width:2.5in; height:0.5in; text-align:center; font-weight: bold; margin-top: -4px; margin-bottom: -0.3em; font-size: %.2fem' % (pn_font_size,)"/>
+                    <t t-set="name_style"
+                       t-value="'display:block; float:left; font-size:0.9em; width:2.5in; height:1.0in; max-height:1.0in; overflow:hidden;'"/>
+
+                    <div name="label" style="display:block; clear:both; float:left; width:4.0in; height:2.0in;">
+                        <div t-att-style="code_style" t-field="o.code128"/>
+                        <div name="lower" style="display:block; clear:both; float:left; width:4.0in; height:1.5in">
+                            <div name="image" style="clear:left; float:left; width:1.5in; height:1.5in;">
+                                <t t-if="o._name == 'product.template'">
+                                    <img style="max-width:1.5in; max-height:1.5in; width:auto; height:auto;"
+                                         t-attf-src="/web/image/product.template/#{o.id}/image"/>
+                                </t>
+                                <t t-else="">
+                                    <img style="max-width:1.5in; max-height:1.5in; width:auto; height:auto;"
+                                        t-attf-src="/web/image/product.product/#{o.id}/image"/>
+                                </t>
+                            </div>
+                            <div name="lower_right" style="float:left; width:2.5in; height:1.5:">
+                                <div name="pn"
+                                     t-att-style="pn_style"
+                                     t-field="o.default_code"/>
+                                <div name="name"
+                                     t-att-style="name_style"
+                                     t-field="o.name"/>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+
+                <t t-else="">
+                    <t t-set="pn_font_size"
+                       t-value="len(o.default_code)&lt;11 and 1.8 or 1.8*12/len(o.default_code)"/>
+                    <t t-set="code_style"
+                       t-value="'display:block; clear:both; float:left; width:2.0in; height:0.5in; overflow:hidden; font-family:\'Code 128\',sans-serif; text-align:center; font-size: %.2fem' % (1.5*pn_font_size,)"/>
+                    <t t-set="pn_style"
+                       t-value="'display:block; clear:both; float:left; width:2.0in; height:0.5in; text-align:center; font-weight: bold; margin-top: -4px; margin-bottom: -0.3em; font-size: %.2fem' % (pn_font_size,)"/>
+                    <t t-set="name_style"
+                       t-value="'display:block; float:left; font-size:0.9em; width:2.0in; height:1.0in; max-height:1.0in; overflow:hidden;'"/>
+
+                    <div name="label" style="display:block; clear:both; float:left; width:4.0in; height:2.0in;">
+                        <div name="image" style="clear:left; float:left; width:2.0in; height:2.0in;">
                             <t t-if="o._name == 'product.template'">
-                                <img style="max-width:1.5in; max-height:1.5in; width:auto; height:auto;"
+                                <img style="max-width:2.0in; max-height:2.0in; width:auto; height:auto;"
                                      t-attf-src="/web/image/product.template/#{o.id}/image"/>
                             </t>
                             <t t-else="">
-                                <img
-                                    style="max-width:120px; max-height:120px; width:auto; height:auto;"
+                                <img style="max-width:2.0in; max-height:2.0in; width:auto; height:auto;"
                                     t-attf-src="/web/image/product.product/#{o.id}/image"/>
                             </t>
                         </div>
-                        <div name="lower_right" style="float:left; width:2.5in; height:1.5:">
-                            <div name="pn"
-                                 t-att-style="pn_style"
-                                 t-field="o.default_code"/>
-                            <div name="name"
-                                 t-att-style="name_style"
-                                 t-field="o.name"/>
+                        <div name="right" style="display:block; clear:none; float:left; width:2.0in; height:2.0in">
+                            <div t-att-style="code_style" t-field="o.code128"/>
+                            <div name="lower_right" style="float:left; width:2.0in; height:1.5:">
+                                <div name="pn"
+                                     t-att-style="pn_style"
+                                     t-field="o.default_code"/>
+                                <div name="name"
+                                     t-att-style="name_style"
+                                     t-field="o.name"/>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </t>
 
                 <t t-if="not o_last">
                     <p style="page-break-after: always;"/>
@@ -172,39 +209,76 @@
     <template id="report_prod_prod_4x2_label">
         <t t-call="web.basic_layout">
             <t t-foreach="docs" t-as="o">
-                <t t-set="pn_font_size"
-                   t-value="len(o.default_code)&lt;11 and 1.8 or 1.8*12/len(o.default_code)"/>
-                <t t-set="code_style"
-                   t-value="'display:block; clear:both; float:left; width:4.0in; height:0.5in; overflow:hidden; font-family:\'Code 128\',sans-serif; text-align:center; font-size: %.2fem' % (2.9*pn_font_size,)"/>
-                <t t-set="pn_style"
-                   t-value="'display:block; clear:both; float:left; width:2.5in; height:0.5in; text-align:center; font-weight: bold; margin-top: -4px; margin-bottom: -0.3em; font-size: %.2fem' % (pn_font_size,)"/>
-                <t t-set="name_style"
-                   t-value="'display:block; float:left; font-size:0.9em; width:2.5in; height:1.0in; max-height:1.0in; overflow:hidden;'"/>
 
-                <div name="label" style="display:block; clear:both; float:left; width:4.0in; height:2.0in;">
-                    <div name="barcode" t-att-style="code_style" t-field="o.code128"/>
-                    <div name="lower" style="display:block; clear:both; float:left; width:4.0in; height:1.5in">
-                        <div name="image" style="clear:left; float:left; width:1.5in; height:1.5in;">
+                <t t-if="len(o.default_code)>10">
+                    <t t-set="pn_font_size"
+                       t-value="len(o.default_code)&lt;11 and 1.8 or 1.8*12/len(o.default_code)"/>
+                    <t t-set="code_style"
+                       t-value="'display:block; clear:both; float:left; width:4.0in; height:0.5in; font-family:\'Code 128\',sans-serif; text-align:center; font-size: %.2fem' % (2.9*pn_font_size,)"/>
+                    <t t-set="pn_style"
+                       t-value="'display:block; clear:both; float:left; width:2.5in; height:0.5in; text-align:center; font-weight: bold; margin-top: -4px; margin-bottom: -0.3em; font-size: %.2fem' % (pn_font_size,)"/>
+                    <t t-set="name_style"
+                       t-value="'display:block; float:left; font-size:0.9em; width:2.5in; height:1.0in; max-height:1.0in; overflow:hidden;'"/>
+
+                    <div name="label" style="display:block; clear:both; float:left; width:4.0in; height:2.0in;">
+                        <div t-att-style="code_style" t-field="o.code128"/>
+                        <div name="lower" style="display:block; clear:both; float:left; width:4.0in; height:1.5in">
+                            <div name="image" style="clear:left; float:left; width:1.5in; height:1.5in;">
+                                <t t-if="o._name == 'product.template'">
+                                    <img style="max-width:1.5in; max-height:1.5in; width:auto; height:auto;"
+                                         t-attf-src="/web/image/product.template/#{o.id}/image"/>
+                                </t>
+                                <t t-else="">
+                                    <img style="max-width:1.5in; max-height:1.5in; width:auto; height:auto;"
+                                        t-attf-src="/web/image/product.product/#{o.id}/image"/>
+                                </t>
+                            </div>
+                            <div name="lower_right" style="float:left; width:2.5in; height:1.5:">
+                                <div name="pn"
+                                     t-att-style="pn_style"
+                                     t-field="o.default_code"/>
+                                <div name="name"
+                                     t-att-style="name_style"
+                                     t-field="o.name"/>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+
+                <t t-else="">
+                    <t t-set="pn_font_size"
+                       t-value="len(o.default_code)&lt;11 and 1.8 or 1.8*12/len(o.default_code)"/>
+                    <t t-set="code_style"
+                       t-value="'display:block; clear:both; float:left; width:2.0in; height:0.5in; overflow:hidden; font-family:\'Code 128\',sans-serif; text-align:center; font-size: %.2fem' % (1.5*pn_font_size,)"/>
+                    <t t-set="pn_style"
+                       t-value="'display:block; clear:both; float:left; width:2.0in; height:0.5in; text-align:center; font-weight: bold; margin-top: -4px; margin-bottom: -0.3em; font-size: %.2fem' % (pn_font_size,)"/>
+                    <t t-set="name_style"
+                       t-value="'display:block; float:left; font-size:0.9em; width:2.0in; height:1.0in; max-height:1.0in; overflow:hidden;'"/>
+
+                    <div name="label" style="display:block; clear:both; float:left; width:4.0in; height:2.0in;">
+                        <div name="image" style="clear:left; float:left; width:2.0in; height:2.0in;">
                             <t t-if="o._name == 'product.template'">
-                                <img style="max-width:1.5in; max-height:1.5in; width:auto; height:auto;"
+                                <img style="max-width:2.0in; max-height:2.0in; width:auto; height:auto;"
                                      t-attf-src="/web/image/product.template/#{o.id}/image"/>
                             </t>
                             <t t-else="">
-                                <img
-                                    style="max-width:120px; max-height:120px; width:auto; height:auto;"
+                                <img style="max-width:2.0in; max-height:2.0in; width:auto; height:auto;"
                                     t-attf-src="/web/image/product.product/#{o.id}/image"/>
                             </t>
                         </div>
-                        <div name="lower_right" style="float:left; width:2.5in; height:1.5:">
-                            <div name="pn"
-                                 t-att-style="pn_style"
-                                 t-field="o.default_code"/>
-                            <div name="name"
-                                 t-att-style="name_style"
-                                 t-field="o.name"/>
+                        <div name="right" style="display:block; clear:none; float:left; width:2.0in; height:2.0in">
+                            <div t-att-style="code_style" t-field="o.code128"/>
+                            <div name="lower_right" style="float:left; width:2.0in; height:1.5:">
+                                <div name="pn"
+                                     t-att-style="pn_style"
+                                     t-field="o.default_code"/>
+                                <div name="name"
+                                     t-att-style="name_style"
+                                     t-field="o.name"/>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </t>
 
                 <t t-if="not o_last">
                     <p style="page-break-after: always;"/>
