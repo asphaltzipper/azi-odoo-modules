@@ -24,21 +24,20 @@ class InventoryImport(models.TransientModel):
         wb = open_workbook(file_contents=base64.decodebytes(self.data_file))
         sheet = wb.sheets()[0]
         column_pos = dict([(sheet.cell(0, i).value, i) for i in range(sheet.ncols)
-                      if sheet.cell(0, i).value in ('product_id', 'counted_qty')])
-        if 'product_id'not in column_pos or 'counted_qty' not in column_pos:
+                          if sheet.cell(0, i).value in ('product_id', 'counted_qty')])
+        if 'product_id' not in column_pos or 'counted_qty' not in column_pos:
             raise ValidationError('Sorry, make sure to have `product_id` and `counted_qty` in xlsx header')
         product_col = column_pos['product_id']
         qty_col = column_pos['counted_qty']
         inventory_lines = []
         for row in range(1, sheet.nrows):
-            product = sheet.cell(row, product_col).value
+            product_id = sheet.cell(row, product_col).value
             qty = sheet.cell(row, qty_col).value
-            if product and qty:
-                inventory_lines.append((0, _, {'product_id': int(product), 'location_id': self.location_id.id,
+            if product_id and qty:
+                inventory_lines.append((0, _, {'product_id': int(product_id), 'location_id': self.location_id.id,
                                                'product_qty': float(qty)}))
         if inventory_lines:
             inventory = self.env['stock.inventory'].create({'location_id': self.location_id.id, 'name': self.filename,
                                                             'imported': True, 'filter': 'partial'})
             inventory.action_start()
             inventory.update({'line_ids': inventory_lines})
-            inventory.action_validate()

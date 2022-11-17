@@ -5,6 +5,9 @@
         <field name="model">inventory.import</field>
         <field name="arch" type="xml">
             <form>
+                <group col="2">
+                    <h2>Excel file must at least contain columns labeled "product_id" and "counted_qty"</h2>
+                </group>
                 <group>
                     <group>
                         <field name="location_id" required="1"/>
