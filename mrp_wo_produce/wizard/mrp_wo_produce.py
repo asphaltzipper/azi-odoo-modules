@@ -598,7 +598,7 @@ class MrpWoProduceWorkLine(models.TransientModel):
     @api.depends('workorder_id')
     def _compute_hours_expected(self):
         for rec in self:
-            rec.hours_expected = rec.produce_id.product_qty * rec.workorder_id.duration_expected / 60
+            rec.hours_expected = rec.workorder_id.duration_expected / 60
 
     @api.multi
     @api.depends('workorder_id')
