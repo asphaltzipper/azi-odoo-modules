@@ -8,16 +8,19 @@ from odoo.tools import float_compare
 class Repair(models.Model):
     _inherit = 'repair.order'
 
-    def _prepare_stock_move(self, owner_id=None):
+    def _prepare_stock_move(self, owner_id=None, set_dest_location=False):
         self.ensure_one()
+        location_id = self.location_id.id
+        location_dest_id = set_dest_location and self.env['stock.location'].search(
+                [('usage', '=', 'production')], limit=1).id or location_id
         res = {
             'name': self.name,
             'product_id': self.product_id.id,
             'product_uom': self.product_uom.id or self.product_id.uom_id.id,
             'product_uom_qty': self.product_qty,
             'partner_id': self.address_id.id,
-            'location_id': self.location_id.id,
-            'location_dest_id': self.location_id.id,
+            'location_id': location_id,
+            'location_dest_id': location_dest_id,
             'move_line_ids': [(0, 0, {'product_id': self.product_id.id,
                                       'lot_id': self.lot_id.id,
                                       'product_uom_qty': 0,  # bypass reservation here
@@ -26,8 +29,8 @@ class Repair(models.Model):
                                       'package_id': False,
                                       'result_package_id': False,
                                       'owner_id': owner_id,
-                                      'location_id': self.location_id.id,  # TODO: owner stuff
-                                      'location_dest_id': self.location_id.id, })],
+                                      'location_id': location_id,  # TODO: owner stuff
+                                      'location_dest_id': location_dest_id, })],
             'repair_id': self.id,
             'origin': self.name,
         }
@@ -58,12 +61,12 @@ class Repair(models.Model):
                 move = Move.create(operation._prepare_stock_move(owner_id))
                 moves |= move
                 operation.write({'move_id': move.id, 'state': 'done'})
-            move = Move.create(repair._prepare_stock_move(owner_id))
+            move = Move.create(repair._prepare_stock_move(owner_id, set_dest_location=True))
             consumed_lines = moves.mapped('move_line_ids')
             produced_lines = move.move_line_ids
+            produced_lines.write({'consume_line_ids': [(6, 0, consumed_lines.ids)]})
             moves |= move
             moves._action_done()
-            produced_lines.write({'consume_line_ids': [(6, 0, consumed_lines.ids)]})
             res[repair.id] = move.id
         return res
 
@@ -107,3 +110,4 @@ class RepairLine(models.Model):
             warehouse = self.env['stock.warehouse'].search(args, limit=1)
             self.location_dest_id = warehouse.lot_stock_id
             self.location_id = self.env['stock.location'].search([('usage', '=', 'production')], limit=1).id
+
