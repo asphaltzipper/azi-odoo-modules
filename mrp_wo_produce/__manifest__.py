@@ -27,7 +27,7 @@ Steps for processing manufacturing order:
 #. Click Done to complete all work orders and the manufacturing order
 """,
     "depends": [
-        "stock",
+        "stock_account",
         "mrp",
     ],
     "data": [
