@@ -12,4 +12,4 @@ Configuration
 
 Usage
 =====
-* Set `user_id`: Inventory > Operations > Run Scheduler
+* Set `user_id`: Manufacturing > Operations > MRP Inventory > Select `buy` method > Procure

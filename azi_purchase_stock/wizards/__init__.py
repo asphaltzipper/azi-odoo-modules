@@ -1,1 +1,1 @@
-from . import stock_scheduler_compute
+from . import mrp_inventory_procure
