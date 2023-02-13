@@ -61,8 +61,7 @@ class ProductTemplate(models.Model):
         if image == False:
             vals['image'] = False
 
-        if vals['categ_id']:
-            if vals['categ_id'] != self.categ_id.id and self.env.user.id != 1:
+        if vals.get('categ_id') and vals['categ_id'] != self.categ_id.id and self.env.user.id != 1:
                 raise ValidationError("Only the administrator can change product category")
 
         res = super(ProductTemplate, self).write(vals)
