@@ -2,6 +2,7 @@
 
 from odoo import models, fields, api, tools
 from odoo.tools import pycompat
+from odoo.exceptions import ValidationError
 
 
 class ProductTemplate(models.Model):
@@ -59,6 +60,11 @@ class ProductTemplate(models.Model):
                 avoid_if_small=True)
         if image == False:
             vals['image'] = False
+
+        if vals['categ_id']:
+            if vals['categ_id'] != self.categ_id.id and self.env.user.id != 1:
+                raise ValidationError("Only the administrator can change product category")
+
         res = super(ProductTemplate, self).write(vals)
         return res
 
