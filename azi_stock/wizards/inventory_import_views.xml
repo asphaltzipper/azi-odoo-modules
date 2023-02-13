@@ -6,14 +6,16 @@
         <field name="arch" type="xml">
             <form>
                 <group col="2">
-                    <h2>Excel file must at least contain columns labeled "product_id" and "counted_qty"</h2>
+                    <div>
+                        <h2>Excel file containing columns labeled "product_id" and "counted_qty"</h2>
+                        <h3>product_id = Internal Reference (X000000.-0)</h3>
+                    </div>
                 </group>
                 <group>
                     <group>
                         <field name="location_id" required="1"/>
                         <field name="filename" invisible="1"/>
                         <field name="data_file" filename="filename" required="1"/>
-
                     </group>
                 </group>
                 <footer>

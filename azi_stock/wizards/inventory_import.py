@@ -31,13 +31,29 @@ class InventoryImport(models.TransientModel):
         qty_col = column_pos['counted_qty']
         inventory_lines = []
         for row in range(1, sheet.nrows):
-            product_id = sheet.cell(row, product_col).value
+            prod_ref = sheet.cell(row, product_col).value
             qty = sheet.cell(row, qty_col).value
-            if product_id and qty:
-                inventory_lines.append((0, _, {'product_id': int(product_id), 'location_id': self.location_id.id,
+            product = self.env['product.product'].search([('default_code', '=', prod_ref)], limit=1)
+            if product and qty is not None:
+                inventory_lines.append((0, _, {'product_id': product.id, 'location_id': self.location_id.id,
                                                'product_qty': float(qty)}))
+            else:
+                raise ValidationError(f"Bad Part Number or Quantity: {prod_ref}, {qty}")
         if inventory_lines:
             inventory = self.env['stock.inventory'].create({'location_id': self.location_id.id, 'name': self.filename,
                                                             'imported': True, 'filter': 'partial'})
             inventory.action_start()
             inventory.update({'line_ids': inventory_lines})
+
+        view_id = self.env.ref('stock.view_inventory_form').id
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Inventory Adjustments',
+            'res_model': 'stock.inventory',
+            'target': 'current',
+            'view_mode': 'form',
+            'view_type': 'form',
+            'res_id': inventory.id,
+            'view_id': view_id,
+            'views': [[view_id, 'form']],
+        }
