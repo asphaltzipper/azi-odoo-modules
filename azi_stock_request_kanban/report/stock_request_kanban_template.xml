@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
+<odoo><data>
 
     <!-- label formatted for the brother p-touch printer -->
     <template id="report_kanban_label_24x70_body">
@@ -106,4 +106,4 @@
         file="azi_stock_request_kanban.report.stock_request_kanban_template"
         menu="True"/>
 
-</odoo>
+</data></odoo>
