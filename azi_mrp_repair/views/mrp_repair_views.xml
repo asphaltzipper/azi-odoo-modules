@@ -19,5 +19,14 @@
             </field>
         </field>
     </record>
-
+    <record id="view_repair_order_form" model="ir.ui.view">
+        <field name="name">repair.order.form</field>
+        <field name="model">repair.order</field>
+        <field name="inherit_id" ref="repair.view_repair_order_form"/>
+        <field name="arch" type="xml">
+            <field name="lot_id" position="after">
+                <field name="inventory_revaluation_id" readonly="1"/>
+            </field>
+        </field>
+    </record>
 </odoo>

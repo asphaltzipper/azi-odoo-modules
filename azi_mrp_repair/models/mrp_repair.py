@@ -8,6 +8,8 @@ from odoo.tools import float_compare
 class Repair(models.Model):
     _inherit = 'repair.order'
 
+    inventory_revaluation_id = fields.Many2one('stock.inventory.revaluation', 'Inventory Revaluation')
+
     def _prepare_stock_move(self, owner_id=None):
         self.ensure_one()
         res = {
@@ -54,17 +56,33 @@ class Repair(models.Model):
             if float_compare(available_qty_owner, repair.product_qty, precision_digits=precision) >= 0:
                 owner_id = repair.partner_id.id
             moves = self.env['stock.move']
+            produced_lines = self.env['stock.move.line']
             for operation in repair.operations:
                 move = Move.create(operation._prepare_stock_move(owner_id))
                 moves |= move
                 operation.write({'move_id': move.id, 'state': 'done'})
             move = Move.create(repair._prepare_stock_move(owner_id))
             consumed_lines = moves.mapped('move_line_ids')
-            produced_lines = move.move_line_ids
+            produced_lines |= move.move_line_ids
             moves |= move
             moves._action_done()
             produced_lines.write({'consume_line_ids': [(6, 0, consumed_lines.ids)]})
             res[repair.id] = move.id
+            if not repair.partner_id and repair.location_id.usage == 'internal':
+                product_values = sum(repair.operations.filtered(lambda o: o.move_id.account_move_ids).mapped('move_id.value'))
+                if product_values:
+                    new_value = repair.product_id.stock_value + product_values
+                    valuation_account_id = repair.product_id.categ_id.property_stock_valuation_account_id.id
+                    revaluation = self.env['stock.inventory.revaluation'].create({
+                        'revaluation_type': 'inventory_value',
+                        'product_id': repair.product_id.id,
+                        'new_value': new_value,
+                        'journal_id': self.env['account.journal'].search([('type', '=', 'general')], limit=1).id,
+                        'increase_account_id': valuation_account_id,
+                        'decrease_account_id': valuation_account_id,
+                    })
+                    repair.inventory_revaluation_id = revaluation
+                    revaluation.button_post()
         return res
 
 
