@@ -16,4 +16,8 @@ class StockMove(models.Model):
             if by_product_moves and finished_mo_product:
                 finished_mo_product.value = finished_mo_product.value - sum(by_product_moves)
                 finished_mo_product.remaining_value = finished_mo_product.remaining_value - sum(by_product_moves)
+                # don't update the price_unit field
+                # see comments in OCA stock_inventory_revaluation module
+                # finished_mo_product.price_unit = (finished_mo_product.price_unit - sum(by_product_moves)) \
+                #     / finished_mo_product.product_qty
         return res

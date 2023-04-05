@@ -59,7 +59,7 @@ class StockQuant(models.Model):
                 if quant.product_id.cost_method != 'fifo':
                     product_valuation[quant.product_id.id] = quant.product_id.standard_price
                 else:
-                    product_valuation[quant.product_id.id] = sum(map(abs, move_ids.mapped('price_unit')))
+                    product_valuation[quant.product_id.id] = sum(map(abs, move_ids.mapped('account_cost_unit')))
                 prod = quant.product_id
                 quant.value = 0.0
 
