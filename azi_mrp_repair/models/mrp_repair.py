@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import datetime
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
@@ -73,15 +74,21 @@ class Repair(models.Model):
                 if product_values:
                     new_value = repair.product_id.stock_value + product_values
                     valuation_account_id = repair.product_id.categ_id.property_stock_valuation_account_id.id
-                    revaluation = self.env['stock.inventory.revaluation'].create({
+                    revaluation_vals = {
                         'revaluation_type': 'inventory_value',
                         'product_id': repair.product_id.id,
                         'new_value': new_value,
                         'journal_id': self.env['account.journal'].search([('type', '=', 'general')], limit=1).id,
                         'increase_account_id': valuation_account_id,
                         'decrease_account_id': valuation_account_id,
-                    })
+                    }
+                    revaluation = self.env['stock.inventory.revaluation'].create(revaluation_vals)
                     repair.inventory_revaluation_id = revaluation
+                    if repair.product_id.categ_id.property_cost_method == 'fifo':
+                        product_move = moves.filtered(lambda m: m.product_id == repair.product_id)
+                        if product_move:
+                            revaluation.reval_move_ids = [(0, _, {'move_id': product_move[0].id,
+                                                                  'new_value': new_value})]
                     revaluation.button_post()
         return res
 
