@@ -2,7 +2,7 @@
 
 {
     "name": "Attachment Priority",
-    "version": "12.0.1.0.0",
+    "version": "1.0",
     "summary": "Add Priority field to attached documents",
     "category": "Document Management",
     "author": "Matt Taylor",
@@ -12,7 +12,7 @@
         Add Priority field to attached documents
     """,
     "depends": [
-        "base",
+        "mail",
     ],
     "data": [
         "views/ir_attachment_views.xml",
