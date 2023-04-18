@@ -3,7 +3,7 @@
 
 {
     "name": "Account Location Tax",
-    "version": "12.0.1.0",
+    "version": "1.0",
     "summary": "Display sales revenue by zip code",
     "category": "Accounting",
     "author": "John Welch",
@@ -13,11 +13,11 @@ Sales Tax By Location
 =====================
 * Breakdown sales tax collection details by zip + 4
     """,
-    'depends': ['sale_management', 'account'],
+    'depends': ['sale_management', 'account_reports'],
     "data": [
         'views/account_location_sales_tax_views.xml',
-        'security/ir.model.access.csv',
     ],
     "installable": True,
     "auto_install": False,
+    'license': 'LGPL-3',
 }
