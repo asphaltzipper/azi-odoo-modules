@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- 2.25 x 0.75 barcoded label -->
+    <template id="report_azi_lot_label_body">
+        <div class="row no-gutters">
+            <div class="col-12"
+                 style="text-align:left; vertical-align:top; margin:0px 0px 0px -10px; font-size:20px; font-family: sans-serif;">
+                <t t-esc="'PN: ' + o.product_id.default_code"/>
+            </div>
+        </div>
+        <div class="row no-gutters">
+            <div class="col-12"
+                 style="text-align:left; vertical-align:top; margin:-5px 0px 0px -10px; font-size:20px; font-family: sans-serif;">
+                <t t-esc="'SN: ' + o.name"/>
+            </div>
+        </div>
+        <div class="row no-gutters">
+<!--            <div class="col-12"-->
+<!--                 style="text-align:left; vertical-align:top; margin:-10px 0px 0px -10px; font-size:20px; font-family: sans-serif;">-->
+<!--                <div style="text-align:left; font-size:46px; font-family:'Code 128';" t-field="o.code128"/>-->
+<!--            </div>-->
+            <div class="col-12" style="text-align:left; vertical-align:top; margin:-25px -18px -12px -20px;">
+                <div style="text-align:left; font-size:75px; font-family:'Code 128';" t-field="o.code128"/>
+            </div>
+        </div>
+    </template>
+
+    <template id="report_azi_lot_label">
+        <t t-call="web.basic_layout">
+            <t t-foreach="docs" t-as="o">
+                <!--<div class="page" style="position: relative;">-->
+                <div class="page">
+                    <t t-call="azi_stock.report_azi_lot_label_body">
+                        <!--<t t-set="o" t-value="o"/>-->
+                    </t>
+                    <p style="page-break-before: always"></p>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <report
+        id="action_azi_lot_label"
+        string="AZI Label"
+        model="stock.production.lot"
+        paperformat="azi_stock.paperformat_label_225x075"
+        report_type="qweb-pdf"
+        name="azi_stock.report_azi_lot_label"
+        file="azi_stock.report_azi_lot_label"/>
+
+</odoo>

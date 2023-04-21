@@ -43,6 +43,7 @@ AZI Specialized Customizations to Stock
         'report/stock_report.xml',
         'report/monthly_inventory_views.xml',
         'report/report_serial_plc_label.xml',
+        'report/report_azi_lot_label.xml',
         'views/stock_quant_views.xml',
         'views/stock_inventory_views.xml',
         'wizards/inventory_import_views.xml',
