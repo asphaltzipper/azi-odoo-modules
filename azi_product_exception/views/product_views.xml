@@ -7,8 +7,8 @@
         <field name="arch" type="xml">
             <page name="inventory" position="inside">
                 <group string="Receipt Warning" name="receipt">
-                    <field name="receipt_line_warn" nolabel="1"/>
-                    <field name="receipt_line_warn_msg" colspan="3" nolabel="1"
+                    <field name="receipt_line_warn" nolabel="1" colspan="2"/>
+                    <field name="receipt_line_warn_msg" colspan="2" nolabel="1"
                             attrs="{'required':[('receipt_line_warn','!=','no-message')],
                                     'readonly':[('receipt_line_warn','=','no-message')],
                                     'invisible':[('receipt_line_warn','=','no-message')]}"/>

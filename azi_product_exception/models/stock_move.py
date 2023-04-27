@@ -9,8 +9,6 @@ class StockMove(models.Model):
         if not self.product_id:
             return
         warning = {}
-        title = False
-        message = False
         product_info = self.product_id
         if self.picking_id.picking_type_code == 'outgoing' and product_info.receipt_line_warn != 'no-message':
             title = _("Warning for %s") % product_info.name
@@ -19,5 +17,6 @@ class StockMove(models.Model):
             warning['message'] = message
             if product_info.receipt_line_warn == 'block':
                 self.product_id = False
+                self.product_uom = False
             return {'warning': warning}
         return {}
