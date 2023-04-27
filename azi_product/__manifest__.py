@@ -3,7 +3,7 @@
 
 {
     "name": "azi_product",
-    "version": "12.0.1.0.0",
+    "version": "1.0",
     "summary": "AZI Product Customizations",
     "category": "Inventory Control",
     "author": "Matt Taylor",

@@ -8,13 +8,11 @@ class ProductUomCategory(models.Model):
 
     _sql_constraints = [('name_uniq', 'unique (name)', """Category name must be unique."""), ]
 
-    @api.multi
     def copy(self, default=None):
         if not default:
             default = {}
         default = default.copy()
         default['name'] = self.name + _(' (copy)')
-
         return super(ProductUomCategory, self).copy(default=default)
 
 
@@ -29,7 +27,6 @@ class ProductUom(models.Model):
         string='Code',
         help="Short code to be used externally. e.g. for unit Inch, use code IN.")
 
-    @api.multi
     def copy(self, default=None):
         if not default:
             default = {}
