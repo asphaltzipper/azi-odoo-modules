@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <odoo>
-    <template id="assets_backend" name="partner code assets" inherit_id="web.assets_backend">
-        <xpath expr="." position="inside">
-            <link rel="stylesheet" href="/partner_code/static/src/css/partner.css"/>
-        </xpath>
-    </template>
+    <record id="partner_code.partner_code_css" model="ir.asset">
+        <field name="name">Partner Code CSS</field>
+        <field name="bundle">web.assets_backend</field>
+        <field name="path">partner_code/static/src/css/partner.css</field>
+    </record>
     <record id="view_partner_tree_inherited" model="ir.ui.view">
         <field name="name">view.res.partner.tree.inherited</field>
         <field name="model">res.partner</field>
@@ -31,7 +31,6 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_res_partner_filter" />
         <field name="arch" type="xml">
-            <!--https://doc.odoo.com/v6.1/developer/03_modules_3.html/#inheritance-in-views-->
             <xpath expr="//search/field[@name='name']" position="attributes">
                 <attribute name="filter_domain">['|','|','|',('display_name','ilike',self),('ref','=',self),('email','ilike',self),('code','ilike',self)]</attribute>
             </xpath>
@@ -45,7 +44,7 @@
             <xpath expr="//kanban/field[@name='display_name']" position="after">
                 <field name="code"/>
             </xpath>
-            <xpath expr="//kanban/templates/t/div/div/strong" position="after">
+            <xpath expr="//kanban/templates/t/div/div[hasclass('oe_kanban_details')]/div/strong" position="after">
                 <ul>
                     <li t-if="record.code.raw_value"><field name="code" /></li>
                 </ul>

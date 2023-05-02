@@ -20,21 +20,20 @@ class ResPartner(models.Model):
             self.code = self.code.replace(' ', '').upper()
 
     # force uppercase for code field on res_partner record create
-    @api.model
-    def create(self, vals):
-        if 'code' in vals and vals['code']:
-            vals['code'] = vals['code'].replace(' ', '').upper()
-        return super(ResPartner, self).create(vals)
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if 'code' in vals and vals['code']:
+                vals['code'] = vals['code'].replace(' ', '').upper()
+        return super(ResPartner, self).create(vals_list)
 
     # force uppercase for code field on res_partner record write
-    @api.multi
     def write(self, vals):
         if vals.get('code'):
             vals['code'] = vals['code'].replace(' ', '').upper()
         return super(ResPartner, self).write(vals)
 
     # on copy, append to the partner code to maintain uniqueness
-    @api.multi
     def copy(self, default=None):
         if not default:
             default = {}
