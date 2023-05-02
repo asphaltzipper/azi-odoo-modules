@@ -8,8 +8,12 @@ from odoo.exceptions import ValidationError
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
-    categ_id = fields.Many2one(track_visibility='onchange')
-    image_320 = fields.Image("Image 320", related="image_1920", max_width=320, max_height=320, store=True)
+    categ_id = fields.Many2one(tracking=True)
+    image_medium_big = fields.Image("Medium-big-sized image", related="image_1920", max_width=320, max_height=320,
+                                    store=True, help="Medium-big-sized image of the product. It is automatically "
+                                    "resized as a 320x320px image, with aspect ratio preserved, "
+                                    "only when the image exceeds one of those sizes. Use this field "
+                                    "in form views or some kanban views.")
 
     def write(self, vals):
         if vals.get('categ_id') and vals['categ_id'] != self.categ_id.id and \
@@ -18,7 +22,7 @@ class ProductTemplate(models.Model):
         res = super(ProductTemplate, self).write(vals)
         if 'image_1920' in vals:
             self.env['product.product'].invalidate_model([
-                'image_320',
+                'image_medium_big',
                 'image_1024',
                 'image_512',
                 'image_256',
@@ -33,11 +37,11 @@ class ProductProduct(models.Model):
 
     image_variant_320 = fields.Image("Variant Image 320", related="image_variant_1920", max_width=320, max_height=320,
                                      store=True)
-    image_320 = fields.Image("Image 320", compute='_compute_image_320')
+    image_medium_big = fields.Image("Medium-big-sized image", compute='_compute_image_320')
 
     def _compute_image_320(self):
         for record in self:
-            record.image_320 = record.image_variant_320 or record.product_tmpl_id.image_320
+            record.image_medium_big = record.image_variant_320 or record.product_tmpl_id.image_medium_big
 
     def name_get(self):
         # TDE: this could be cleaned a bit I think
