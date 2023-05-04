@@ -22,7 +22,7 @@ AZI Specialized Customizations to account
 * Add menu item for account types
 * Reformat check
     """,
-    "depends": ['account_check_printing', 'account_move_line_product'],
+    "depends": ['account_check_printing', 'account_move_line_product', 'taxjar_integration_ts'],
     'data': [
         'views/account.xml',
         'views/account_view_changes.xml',

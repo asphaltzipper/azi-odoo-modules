@@ -27,7 +27,8 @@ class AccountInvoice(models.Model):
         tax_lines = self.tax_line_ids.filtered('manual')
         for tax in taxes_grouped.values():
             tax_lines += tax_lines.new(tax)
-        if self.retail_account_tax_id and self.partner_id.state_id.code == 'CO':
+        if self.retail_account_tax_id and self.partner_id.state_id.code == 'CO' and\
+                self.partner_id.ts_exemption_type != 'government':
             account_id = self.type in ('out_invoice', 'in_invoice') and self.retail_account_tax_id.account_id.id or \
                          self.retail_account_tax_id.refund_account_id.id
             amount = self.retail_account_tax_id._compute_amount(self.amount_untaxed, self.amount_untaxed)
