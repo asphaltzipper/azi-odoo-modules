@@ -8,6 +8,11 @@ from odoo.tools import float_compare
 class Repair(models.Model):
     _inherit = 'repair.order'
 
+    do_revaluation = fields.Boolean(
+        string='Do Revaluation',
+        copy=False,
+        default=True,
+    )
     inventory_revaluation_id = fields.Many2one(
         comodel_name='stock.inventory.revaluation',
         string='Inventory Revaluation',
@@ -24,7 +29,9 @@ class Repair(models.Model):
         valuation_out_account = production_loc.valuation_out_account_id
 
         for repair in self:
-            # skip this repair order if the following conditions are not met
+            # skip this repair order if the following conditions are met
+            if not repair.do_revaluation:
+                continue
             if repair.partner_id:
                 continue
             if repair.location_id.usage != 'internal':
@@ -67,6 +74,8 @@ class Repair(models.Model):
             # set new value
             if repair.product_id.tracking == 'serial':
                 if len(reval.reval_move_ids) == 1:
+                    if reval.reval_move_ids[0].current_value + value_change < 0:
+                        raise UserError("Can't create revaluation because the new value would be less than zero")
                     reval.reval_move_ids[0].new_value = reval.reval_move_ids[0].current_value + value_change
                 else:
                     raise UserError("Multiple inbound moves to revalue:\n"
@@ -78,11 +87,15 @@ class Repair(models.Model):
                 amt_to_assign = value_change
                 for move in reval.reval_move_ids.sorted(key=lambda x: x.in_date):
                     if qty_to_assign <= move.qty:
+                        if move.current_value + amt_to_assign < 0:
+                            raise UserError("Can't create revaluation because the new value would be less than zero")
                         move.new_value = move.current_value + amt_to_assign
                         qty_to_assign = 0
                         amt_to_assign = 0
                         break
                     else:
+                        if move.current_value + amt_to_assign * move.qty / qty_to_assign < 0:
+                            raise UserError("Can't create revaluation because the new value would be less than zero")
                         move.new_value = move.current_value + amt_to_assign * move.qty / qty_to_assign
                         qty_to_assign -= move.qty
                         amt_to_assign -= amt_to_assign * move.qty / qty_to_assign
@@ -92,7 +105,7 @@ class Repair(models.Model):
 
             # post the revaluation
             repair.inventory_revaluation_id = reval
-            reval.button_post()
+            #reval.button_post()
 
         return res
 
