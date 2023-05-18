@@ -9,8 +9,8 @@ class ResConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
 
     require_industry = fields.Selection(
-        [(0, "Don't require industry"),
-         (1, 'Require industry on a customer and a team')],
+        [("0", "Don't require industry"),
+         ("1", 'Require industry on a customer and a team')],
         string='Require Industry',
         help='Partner must reference an industry, sales team must reference'
         ' one or more')
@@ -18,12 +18,10 @@ class ResConfigSettings(models.TransientModel):
     @api.model
     def get_values(self):
         res = super(ResConfigSettings, self).get_values()
-        res.update(require_industry=int(
-            self.env['ir.config_parameter'].sudo().get_param(
-                'sales_team_industry.require_industry', default=0)))
+        res.update(require_industry=self.env['ir.config_parameter'].sudo().get_param(
+                'sales_team_industry.require_industry', default="0"))
         return res
 
-    @api.multi
     def set_values(self):
         super(ResConfigSettings, self).set_values()
         self.env['ir.config_parameter'].set_param(

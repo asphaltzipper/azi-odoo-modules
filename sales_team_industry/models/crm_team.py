@@ -22,9 +22,8 @@ class CrmTeam(models.Model):
         " associated with this team. Disables manual assignment on teams.",
         default=False)
 
-    @api.multi
     def write(self, vals):
-        if self.env['ir.config_parameter'].sudo().get_param('sales_team_industry.require_industry'):
+        if int(self.env['ir.config_parameter'].sudo().get_param('sales_team_industry.require_industry')):
             if (not ((vals.get('partner_industries') or
                     vals.get('all_industries')) or
                     (self.partner_industries and 'partner_industries' not in
@@ -33,10 +32,11 @@ class CrmTeam(models.Model):
                 raise ValidationError(_("Teams require a valid Industry."))
         return super(CrmTeam, self).write(vals)
 
-    @api.model
-    def create(self, vals):
-        if self.env['ir.config_parameter'].sudo().get_param('sales_team_industry.require_industry'):
-            if not (vals.get('partner_industries') or
-                    vals.get('all_industries')):
-                raise ValidationError(_("Teams require a valid Industry."))
-        return super(CrmTeam, self).create(vals)
+    @api.model_create_multi
+    def create(self, vals_list):
+        if int(self.env['ir.config_parameter'].sudo().get_param('sales_team_industry.require_industry')):
+            for vals in vals_list:
+                if not (vals.get('partner_industries') or
+                        vals.get('all_industries')):
+                    raise ValidationError(_("Teams require a valid Industry."))
+        return super(CrmTeam, self).create(vals_list)

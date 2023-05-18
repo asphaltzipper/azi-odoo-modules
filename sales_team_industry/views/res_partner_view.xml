@@ -11,7 +11,7 @@
             <field name="arch" type="xml">
                 <field name="industry_id" position="replace"/>
                 <field name="team_ids" position="before">
-                    <field name="industry_id" completion="1" options="{'no_create': True}"/>
+                    <field name="industry_id" options="{'no_create': True}"/>
                 </field>
                 <!--https://doc.odoo.com/v6.1/developer/03_modules_3.html/#inheritance-in-views-->
                 <field name="team_ids" position="attributes">

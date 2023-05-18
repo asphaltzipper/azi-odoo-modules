@@ -25,11 +25,11 @@
             </field>
         </record>
 
-        <act_window name="Partner Industries"
-                    res_model="res.partner.industry"
-                    view_mode="tree,form"
-                    target="current"
-                    id="res_partner_industry_act_window"/>
+        <record id="res_partner_industry_act_window" model="ir.actions.act_window">
+            <field name="name">Partner Industries</field>
+            <field name="res_model">res.partner.industry</field>
+            <field name="view_mode">tree,form</field>
+        </record>
 
         <menuitem action="res_partner_industry_act_window"
                   id="menu_res_partner_industry_act"
