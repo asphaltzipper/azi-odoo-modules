@@ -4,12 +4,11 @@
 
 <odoo>
     <data>
-
-        <act_window name="Sales Region Types"
-                    res_model="crm.team.region.type"
-                    view_mode="tree,form"
-                    target="current"
-                    id="crm_team_type_act_window"/>
+        <record id="crm_team_type_act_window" model="ir.actions.act_window">
+            <field name="name">Sales Region Types</field>
+            <field name="res_model">crm.team.region.type</field>
+            <field name="view_mode">tree,form</field>
+        </record>
 
         <menuitem action="crm_team_type_act_window"
                   id="menu_crm_team_type_act"

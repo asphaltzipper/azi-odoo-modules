@@ -34,7 +34,7 @@
         <record id="crm_team_view_search" model="ir.ui.view">
             <field name="name">crm.team.search</field>
             <field name="model">crm.team</field>
-            <field name="inherit_id" ref="sales_team.crm_team_salesteams_search"/>
+            <field name="inherit_id" ref="sales_team.crm_team_view_search"/>
             <field name="arch" type="xml">
                 <xpath expr="//search/field[@name='user_id']" position="after">
                     <field name="region_id"/>
@@ -48,7 +48,7 @@
                   sequence="7"
                   groups="sales_team.group_sale_manager"/>
 
-        <menuitem action="sales_team.sales_team_config_action"
+        <menuitem action="sales_team.crm_team_action_sales"
                   id="crm.crm_team_config"
                   parent="menu_crm_team_region_config"
                   sequence="4"

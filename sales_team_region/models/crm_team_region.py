@@ -46,7 +46,6 @@ class CrmTeamRegion(models.Model):
     # https://www.odoo.com/fr_FR/forum/aide-1/question/how-to-apply-domain-filter-on-many2many-field-28988
     # workaround to filter sub-region lists on form view load as follows
     # note: domain fields parameter must not be defined for this to work
-    @api.multi
     def _compute_dom(self):
         for record in self:
             record.s_dom = self._region_domain(1)
