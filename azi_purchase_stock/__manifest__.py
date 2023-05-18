@@ -3,8 +3,9 @@
 {
     'license': 'LGPL-3',
     "name": "AZI Purchase Stock",
-    "version": "12.0.1.1.0",
+    "version": "1.1",
     "author": "Asphalt Zipper",
+    "license": "AGPL-3",
     "category": "Purchases",
     "summary": "Modify PO user",
     'description': """
