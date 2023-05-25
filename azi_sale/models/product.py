@@ -6,7 +6,6 @@ class ProductProduct(models.Model):
 
     sales_order_count = fields.Integer(compute='_sales_order_count', string='Sales')
 
-    @api.multi
     def _sales_order_count(self):
         sales_lines = self.env['sale.order.line'].search([('state', '!=', 'cancel'),
                                                           ('product_id', 'in', self.mapped('id'))])
@@ -19,7 +18,6 @@ class ProductTemplate(models.Model):
 
     sales_order_count = fields.Integer(compute='_sales_order_count', string='Sales')
 
-    @api.multi
     def _sales_order_count(self):
         for template in self:
             template.sales_order_count = sum([p.sales_order_count for p in template.product_variant_ids])

@@ -10,7 +10,7 @@ class SaleOrder(models.Model):
     bypass_warning = fields.Boolean(string='Bypass Warning')
     partner_warn = fields.Selection(related='partner_id.sale_warn')
     partner_warn_msg = fields.Text(string='Partner Warning', related='partner_id.sale_warn_msg', readonly=True)
-    partner_comment = fields.Text(string='Partner Comment', related='partner_id.comment', readonly=True)
+    partner_comment = fields.Html(string='Partner Comment', related='partner_id.comment', readonly=True)
     user_id = fields.Many2one(
         domain=['|', ('active', '=', True), ('active', '=', False)])
 
@@ -29,7 +29,6 @@ class SaleOrder(models.Model):
             if partner.sale_warn == 'block' or not self.bypass_warning:
                 raise UserError("%s:\n%s" % (title, partner.sale_warn_msg))
 
-    @api.multi
     def action_confirm(self):
         for order in self:
             order.confirm_warning()
@@ -53,7 +52,6 @@ class SaleOrder(models.Model):
                 'message': partner.sale_warn_msg,
             }}
 
-    @api.multi
     def action_cancel(self):
         for order in self:
             if order.order_line.filtered(lambda x: x.qty_delivered):
@@ -95,11 +93,3 @@ class SaleOrderLine(models.Model):
                                                         ('type', '=', 'phantom')]):
                 raise ValidationError(_('You can not choose %s because it has a '
                                         'phantom BOM') % record.product_id.display_name)
-
-    @api.onchange('product_uom_qty', 'product_uom', 'route_id')
-    def _onchange_product_id_check_availability(self):
-        res = super(SaleOrderLine, self)._onchange_product_id_check_availability()
-        if res.get('warning'):
-            res['warning']['message'] += f"\n\nThere are {self.qty_available_not_res} " \
-                                         f"{self.product_id.uom_id.name} of unreserved product available\n"
-        return res

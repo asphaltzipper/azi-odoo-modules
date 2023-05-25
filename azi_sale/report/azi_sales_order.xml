@@ -6,27 +6,28 @@
             <attribute name="class">col-xs-2</attribute>
         </xpath>
         <xpath expr="//div[@id='informations']/div[2]" position="replace">
-            <div t-if="doc.confirmation_date and doc.state not in ['draft','sent']" class="col-xs-2">
+            <div t-if="doc.date_order and doc.state not in ['draft','sent']" class="col-2">
                 <strong>Date Ordered:</strong>
-                <p class="m-0" t-field="doc.confirmation_date" t-options="{'format': 'yyyy-MM-dd'}"/>
+                <p class="m-0" t-field="doc.date_order" t-options="{'format': 'yyyy-MM-dd'}"/>
             </div>
         </xpath>
         <xpath expr="//div[@id='informations']/div[3]" position="replace">
-            <div  t-if="doc.date_order and doc.state in ['draft','sent']" class="col-xs-2">
+            <div  t-if="doc.date_order and doc.state in ['draft','sent']" class="col-2">
                 <strong>Quotation Date:</strong>
                     <p class="m-0" t-field="doc.date_order" t-options="{'format': 'yyyy-MM-dd'}"/>
             </div>
         </xpath>
         <xpath expr="//div[@t-if='doc.user_id.name']" position="attributes">
-            <attribute name="class">col-xs-2</attribute>
+            <attribute name="class">col-2</attribute>
         </xpath>
-        <xpath expr="//div[@name='payment_term']" position="attributes">
-            <attribute name="class">col-xs-2</attribute>
-        </xpath>
-        <xpath expr="//div[@name='payment_term']" position="after">
-            <div name="carrier_id" t-if="doc.carrier_id" class="col-xs-3">
+        <xpath expr="//div[@t-if='doc.user_id.name']" position="after">
+            <div t-if="not is_html_empty(doc.payment_term_id.note)" class="col-2">
+                <strong>Payment Terms:</strong>
+                <p class="m-0" t-field="doc.payment_term_id.note"/>
+            </div>
+            <div name="carrier_id" t-if="doc.carrier_id" class="col-3">
                 <strong>Shipping:</strong>
-                <p t-field="doc.carrier_id"/>
+                <p class="m-0" t-field="doc.carrier_id"/>
             </div>
         </xpath>
         <xpath expr="//table/thead/tr/th[5]" position="replace">

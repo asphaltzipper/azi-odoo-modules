@@ -23,7 +23,6 @@ class ResPartner(models.Model):
         related='state_id.code',
         required=True)
 
-    @api.multi
     def _flat_address(self):
         address_format = "%(street)s, %(city)s, %(state_code)s"
         args = {
@@ -33,7 +32,6 @@ class ResPartner(models.Model):
         }
         return address_format % args
 
-    @api.multi
     def name_get(self):
         if not self._context.get('override_display_name'):
             res = super(ResPartner, self).name_get()
