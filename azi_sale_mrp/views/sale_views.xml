@@ -5,7 +5,7 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-            <button name="preview_sale_order" position="after">
+            <button name="action_quotation_send" position="after">
                 <button name="%(azi_sale_mrp.sale_import_phantom_action)d" type="action"
                         string="Import Phantom" context="{'active_id': active_id}"/>
             </button>
