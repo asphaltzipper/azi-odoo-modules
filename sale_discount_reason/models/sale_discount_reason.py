@@ -20,15 +20,14 @@ class SaleOrderLine(models.Model):
         comodel_name='sale.discount.reason',
         string='Discount Reason')
 
-    @api.multi
-    def _prepare_invoice_line(self, qty):
-        res = super(SaleOrderLine, self)._prepare_invoice_line(qty)
+    def _prepare_invoice_line(self, **optional_values):
+        res = super(SaleOrderLine, self)._prepare_invoice_line(**optional_values)
         res.update({'discount_reason_id': self.discount_reason_id.id})
         return res
 
 
-class AccountInvoiceLine(models.Model):
-    _inherit = "account.invoice.line"
+class AccountMoveLine(models.Model):
+    _inherit = "account.move.line"
 
     discount_reason_id = fields.Many2one(
         comodel_name='sale.discount.reason',

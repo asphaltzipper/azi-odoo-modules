@@ -4,10 +4,11 @@
 
 {
     "name": "sale_discount_reason",
-    "version": "12.0.1.0.0",
+    "version": "1.0",
     "summary": "Sale Discount Reason",
     "category": "Sales",
     "author": "Matt Taylor",
+    "license": "AGPL-3",
     "website": "http://www.asphaltzipper.com",
     "description": """
 Explanations For Sales Discounts
