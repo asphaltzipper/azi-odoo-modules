@@ -14,12 +14,16 @@
 
     <record id="account_invoice_view_form_credit_app" model="ir.ui.view">
         <field name="name">azi.account.invoice.form.credit.app</field>
-        <field name="model">account.invoice</field>
+        <field name="model">account.move</field>
         <field name="inherit_id" ref="sale.account_invoice_form"/>
         <field name="arch" type="xml">
-            <field name="payment_term_id" position="replace"/>
-            <field name="date_invoice" position="after">
-                <field name="payment_term_id"/>
+            <xpath expr="//label[@for='invoice_payment_term_id']" position="replace"/>
+            <xpath expr="//field[@name='invoice_payment_term_id']" position="replace"/>
+            <field name="invoice_date" position="after">
+                <field name="invoice_payment_term_id"
+                       attrs="{'invisible': [('move_type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'out_receipt', 'in_receipt'))]}"
+                       context="{'example_date': invoice_date, 'example_amount': tax_totals['amount_total']}"
+                       placeholder="Terms"/>
                 <field name="credit_app_date"/>
             </field>
         </field>
