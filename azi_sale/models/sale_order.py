@@ -60,6 +60,14 @@ class SaleOrder(models.Model):
                 raise UserError("Can't cancel orders with lines that have been delivered")
         return super(SaleOrder, self).action_cancel()
 
+    @api.multi
+    @api.returns('self', lambda value: value.id)
+    def copy(self, default=None):
+        res = super(SaleOrder, self).copy(default=default)
+        for line in res.order_line:
+            line.price_unit = 0
+        return res
+
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
