@@ -3,7 +3,6 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import api, fields, models
-from odoo.tools.safe_eval import safe_eval
 
 
 class ResConfigSettings(models.TransientModel):
@@ -22,7 +21,6 @@ class ResConfigSettings(models.TransientModel):
         res.update(po_carrier_id=po_carrier and int(po_carrier) or False)
         return res
 
-    @api.multi
     def set_values(self):
         super(ResConfigSettings, self).set_values()
         self.env['ir.config_parameter'].set_param('purchase_line_delivery.po_carrier_id', self.po_carrier_id.id)

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# See __openerp__.py file for full copyright and licensing details.
 
 from odoo import api, fields, models
 
@@ -29,7 +28,6 @@ class PurchaseOrder(models.Model):
         else:
             self.default_carrier_id = self._get_default_carrier()
 
-    @api.multi
     def action_set_shipping(self):
         for purchase_order in self:
             purchase_order.order_line.update({'carrier_id': purchase_order.default_carrier_id})

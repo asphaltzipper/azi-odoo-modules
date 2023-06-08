@@ -4,4 +4,3 @@
 
 from . import purchase_config_settings
 from . import purchase
-
