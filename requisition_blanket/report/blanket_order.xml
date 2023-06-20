@@ -62,7 +62,7 @@
                                     <tbody>
                                         <tr t-foreach="o.line_ids" t-as="line_ids">
                                             <t t-set="supplier_info"
-                                               t-value="o.env['product.supplierinfo'].search([('product_tmpl_id', '=', line_ids.product_id.product_tmpl_id.id), ('name', '=', o.vendor_id.id)], limit=1)"/>
+                                               t-value="o.env['product.supplierinfo'].search([('product_tmpl_id', '=', line_ids.product_id.product_tmpl_id.id), ('partner_id', '=', o.vendor_id.id)], limit=1)"/>
                                             <td>
                                                 [
                                                 <span t-field="line_ids.product_id.code"/>

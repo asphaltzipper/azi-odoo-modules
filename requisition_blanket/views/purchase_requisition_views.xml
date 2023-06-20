@@ -14,7 +14,7 @@
             <field name="date_end" position="attributes">
                 <attribute name="required">1</attribute>
             </field>
-            <field name="ordering_date">
+            <field name="ordering_date" position="after">
                 <field name="projected_reorder_date"/>
             </field>
             <xpath expr="//field[@name='line_ids']/tree/field[@name='schedule_date']" position="before">

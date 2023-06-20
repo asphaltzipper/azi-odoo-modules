@@ -3,7 +3,7 @@
 
 {
     "name": "requisition_blanket",
-    "version": "12.0.1.0.0",
+    "version": "1.0",
     "summary": "Improve Blanket PO Behavior",
     "category": "Purchases",
     "author": "Chris Emigh",
@@ -20,7 +20,6 @@ Improve Blanket PO Behavior
     """,
     "depends": ['purchase_requisition'],
     'data': [
-        'data/purchase_requisition_data.xml',
         'report/purchase_agreement_layout.xml',
         'report/blanket_order.xml',
         'views/purchase_requisition_views.xml',

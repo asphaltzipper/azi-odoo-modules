@@ -1,7 +1,6 @@
 from dateutil.relativedelta import relativedelta
 from odoo import models, fields, api
 from datetime import datetime, date
-from odoo.exceptions import ValidationError
 
 
 class PurchaseRequisitionLine(models.Model):
@@ -42,6 +41,8 @@ class PurchaseRequisitionLine(models.Model):
                 else:
                     number_of_days = int(record.product_qty/rate)
                     record.projected_reorder_date = record.ordering_date + relativedelta(days=number_of_days)
+            else:
+                record.projected_reorder_date = False
 
     @api.onchange('date_end', 'product_id', 'product_qty', 'lead_time', 'product_id')
     def _onchange_estimated_take_down(self):
@@ -72,6 +73,8 @@ class PurchaseRequisitionLine(models.Model):
                     record.actual_take_down_rate = 0
                 else:
                     record.actual_take_down_rate = 30 * record.qty_ordered / no_of_days
+            else:
+                record.actual_take_down_rate = 0
 
     @api.model
     def _get_release_date_planned(self, po=False):
@@ -82,7 +85,6 @@ class PurchaseRequisitionLine(models.Model):
         else:
             return datetime.today() + relativedelta(days=self.requisition_id.release_lead_time or 0)
 
-    @api.multi
     def _prepare_purchase_order_line(self, name, product_qty=0.0, price_unit=0.0, taxes_ids=False, po=False):
         self.ensure_one()
         requisition = self.requisition_id
@@ -122,8 +124,10 @@ class PurchaseRequisition(models.Model):
         for record in self:
             projected_reorder_date = record.line_ids.filtered(lambda x: x.projected_reorder_date).mapped(
                 'projected_reorder_date')
-            if len(projected_reorder_date):
+            if projected_reorder_date and len(projected_reorder_date):
                 record.projected_reorder_date = min(projected_reorder_date)
+            else:
+                record.projected_reorder_date = False
 
     @api.depends('type_id')
     def _compute_is_blanket(self):

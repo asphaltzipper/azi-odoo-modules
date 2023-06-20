@@ -1,7 +1,0 @@
--
-  !python {model: ir.model.data}: |
-      # get model objects and set settings
-      res = ref('purchase_requisition.seq_purchase_requisition')
-      sequence = self.env['ir.sequence']
-      sequence_rows = sequence.browse(res)
-      sequence_rows[0].prefix = 'PA'
