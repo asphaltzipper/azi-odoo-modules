@@ -15,17 +15,5 @@
         </t>
     </template>
 
-<!--    <template id="azi_report_shelflabel">-->
-<!--        <t t-call="web.basic_layout">-->
-<!--            <t t-foreach="docs" t-as="o">-->
-<!--                <div>-->
-<!--                    <img t-att-src="'/report/barcode/%s/%s?width=%s&amp;height=%s' % ('Code128', o.name, 600, 100)"/>-->
-<!--                    <br />-->
-<!--                    <span t-field="o.name"/>-->
-<!--                </div>-->
-<!--            </t>-->
-<!--        </t>-->
-<!--    </template>-->
-
 </data>
 </odoo>

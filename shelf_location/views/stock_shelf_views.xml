@@ -17,7 +17,6 @@
                                 type="action"
                                 icon="fa-barcode"
                                 string="Scan"
-                                class="oe_read_only"
                         />
                     </div>
                     <group>

@@ -35,13 +35,6 @@ class ReportStockShelfProducts(models.Model):
         string='Description',
         related='product_id.name')
 
-    # pretend this is a stored related field so the ORM will provide the alias
-    # caused errors when updating the product type on the product form
-    # product_type = fields.Selection(
-    #     string='Product Type',
-    #     related='product_id.type',
-    #     required=True)
-
     product_type = fields.Selection(
         # selection=dict(self.env['product.template'].fields_get(allfields=['type'])['type']['selection'])['key'],
         selection=[
@@ -140,7 +133,6 @@ class ReportStockShelfProducts(models.Model):
         ]
         return select_fields
 
-    @api.model_cr
     def init(self):
         tools.drop_view_if_exists(self._cr, 'report_stock_shelf_products')
         view_sql = """

@@ -1,3 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_stock_shelf_user,stock.shelf.user,model_stock_shelf,stock.group_stock_user,1,1,1,1
 access_report_stock_shelf_products_user,report.stock.shelf.products.user,model_report_stock_shelf_products,stock.group_stock_user,1,0,0,0
+access_wizard_shelf_product_scan_user,report.wizard.shelf.product.scan.user,model_wizard_shelf_product_scan,stock.group_stock_user,1,1,1,1

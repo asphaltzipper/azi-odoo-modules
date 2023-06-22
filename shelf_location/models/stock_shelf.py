@@ -26,7 +26,7 @@ class StockShelf(models.Model):
     product_ids = fields.Many2many(
         comodel_name='product.template',
         string='Products',
-        domain=['|', ('active', '=', True), ('active', '=', False)])
+        domain=['|', ('active', '=', True), ('active', '=', False)], context={'active_test': False})
 
     _barcode_scanned = fields.Char(
         string="Barcode Scanned",

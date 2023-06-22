@@ -3,7 +3,7 @@ from odoo import fields, models, _
 
 class WizardShelfProductScan(models.TransientModel):
     _name = "wizard.shelf.product.scan"
-    _inherit = ['barcodes.barcode_events_mixin']
+    _inherit = 'barcodes.barcode_events_mixin'
 
     shelf_id = fields.Many2one(
         comodel_name='stock.shelf',
