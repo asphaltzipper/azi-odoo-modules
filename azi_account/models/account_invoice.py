@@ -27,7 +27,8 @@ class AccountInvoice(models.Model):
         tax_lines = self.tax_line_ids.filtered('manual')
         for tax in taxes_grouped.values():
             tax_lines += tax_lines.new(tax)
-        if self.retail_account_tax_id and self.partner_id.state_id.code == 'CO' and\
+        apply_taxes = self.env['ir.config_parameter'].sudo().get_param('azi_account.apply_retail_taxes')
+        if apply_taxes and self.retail_account_tax_id and self.partner_id.state_id.code == 'CO' and\
                 ((self.partner_id.company_type == 'person' and self.partner_id.parent_id and
                   self.partner_id.parent_id.ts_exemption_type != 'government') or
                  (self.partner_id.company_type != 'person' and self.partner_id.ts_exemption_type != 'government')):
@@ -46,7 +47,8 @@ class AccountInvoice(models.Model):
     def _compute_amount(self):
         round_curr = self.currency_id.round
         self.amount_untaxed = sum(line.price_subtotal for line in self.invoice_line_ids)
-        if self.retail_account_tax_id:
+        apply_taxes = self.env['ir.config_parameter'].sudo().get_param('azi_account.apply_retail_taxes')
+        if self.retail_account_tax_id and apply_taxes:
             self.retail_delivery_fees = sum(round_curr(line.amount_total) for line in self.tax_line_ids if line.tax_id.retail_tax)
         self.amount_tax = sum(round_curr(line.amount_total) for line in self.tax_line_ids if not line.tax_id.retail_tax)
         self.amount_total = self.amount_untaxed + self.amount_tax + self.retail_delivery_fees
