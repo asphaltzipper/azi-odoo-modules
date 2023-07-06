@@ -120,6 +120,8 @@ class ProductTemplate(models.Model):
                     '|', ('active', '=', True), ('active', '=', False)]
                 versions = prod.search(domain, order='default_code')
                 prod.version_ids = versions.ids
+            else:
+                prod.version_ids = None
 
     @api.depends('categ_id', 'product_variant_ids', 'product_variant_ids.default_code')
     def _compute_version_doc_ids(self):
@@ -133,6 +135,8 @@ class ProductTemplate(models.Model):
                 versions = prod.search(vers_domain)
                 doc_domain = [('res_model', '=', 'product.template'), ('res_id', 'in', versions.ids)]
                 prod.version_doc_ids = self.env['ir.attachment'].search(doc_domain)
+            else:
+                prod.version_doc_ids = None
 
     @api.constrains('eng_categ_id')
     def _validate_eng_cat(self):
@@ -165,7 +169,6 @@ class ProductTemplate(models.Model):
         for tmpl in self:
             tmpl.deprecated = all([x.deprecated for x in tmpl.product_variant_ids])
 
-    @api.one
     def _set_deprecated(self):
         for variant in self.product_variant_ids:
             variant.deprecated = self.deprecated
@@ -178,7 +181,6 @@ class ProductTemplate(models.Model):
         for tmpl in (self - unique_variants):
             tmpl.eng_notes = ''
 
-    @api.one
     def _set_eng_notes(self):
         if len(self.product_variant_ids) == 1:
             self.product_variant_ids.eng_notes = self.eng_notes
@@ -187,7 +189,6 @@ class ProductTemplate(models.Model):
         if len(self.product_variant_ids) == 1:
             self.product_variant_ids.button_revise(values)
 
-    @api.multi
     def action_open_product_version(self):
         self.ensure_one()
         action = self.env.ref('engineering_product.product_template_action_one').read()[0]
@@ -217,12 +218,12 @@ class ProductProduct(models.Model):
         help="Engineering part type")
     eng_mod_flag = fields.Boolean(
         string="No-ECO Modification",
-        track_visibility='onchange',
+        tracking=True,
         copy=False,
         help="Part changed with no ECO or revision")
     eng_hold_flag = fields.Boolean(
         string="Hold Production",
-        track_visibility='onchange',
+        tracking=True,
         copy=False,
         help="A revision is impending, stop producing/purchasing this part")
     deprecated = fields.Boolean(
@@ -274,7 +275,6 @@ class ProductProduct(models.Model):
         product = super(ProductProduct, self.with_context(create_product_product=True)).create(vals)
         return product
 
-    @api.multi
     def write(self, values):
         if 'default_code' not in values.keys():
             # the user is not changing the default code, so we assume it still passes requirements
@@ -298,7 +298,6 @@ class ProductProduct(models.Model):
         return super(ProductProduct, self).search(args, offset=offset, limit=limit, order=order, count=count)
 
     # TODO: create a revision wizard
-    @api.multi
     def button_revise(self, values=None):
         """
         Best if called by a wizard where the user can specify a new rev
@@ -315,6 +314,8 @@ class ProductProduct(models.Model):
                   "configurable product %s" % (self.product_tmpl_id.name, ))
             )
 
+        if not self.eng_code:
+            raise UserError(_('Please set the `engineering code`'))
         # copy product
         defaults = {
             'name': self.name,

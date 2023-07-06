@@ -21,13 +21,13 @@ class EngineeringCategory(models.Model):
     complete_name = fields.Char(
         string='Complete Name',
         compute='_compute_complete_name',
-        store=True)
+        store=True, recursive=True)
     parent_id = fields.Many2one(
         comodel_name='engineering.category',
         string='Parent Category',
         index=True,
         ondelete='cascade')
-    parent_path = fields.Char(index=True)
+    parent_path = fields.Char(index=True, unaccent=False)
     child_id = fields.One2many(
         comodel_name='engineering.category',
         inverse_name='parent_id',
@@ -64,7 +64,6 @@ class EngineeringCategory(models.Model):
             raise ValidationError(_('Error ! You cannot create recursive categories.'))
         return True
 
-    @api.multi
     def name_get(self):
         def get_names(cat):
             """ Return the list [cat.name, cat.parent_id.name, ...] """

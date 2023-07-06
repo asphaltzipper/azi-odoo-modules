@@ -39,25 +39,22 @@
 
     <record id="eng_type_view_action" model="ir.actions.act_window">
         <field name="name">Part Type</field>
-        <field name="type">ir.actions.act_window</field>
         <field name="res_model">engineering.part.type</field>
-        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
         <field name="view_id" ref="engineering_part_type_tree_view"/>
     </record>
 
     <record id="prep_action_form" model="ir.actions.act_window">
         <field name="name">Preparation</field>
-        <field name="type">ir.actions.act_window</field>
         <field name="res_model">engineering.preparation</field>
-        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
         <field name="view_id" ref="prep_list_view"/>
     </record>
 
     <record id="coat_action_form" model="ir.actions.act_window">
         <field name="name">Coating</field>
-        <field name="type">ir.actions.act_window</field>
         <field name="res_model">engineering.coating</field>
-        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
         <field name="view_id" ref="coat_list_view"/>
     </record>
 

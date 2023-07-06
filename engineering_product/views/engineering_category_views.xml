@@ -57,9 +57,8 @@
 
     <record id="engineering_category_action_form" model="ir.actions.act_window">
         <field name="name">Engineering Categories</field>
-        <field name="type">ir.actions.act_window</field>
         <field name="res_model">engineering.category</field>
-        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
         <field name="search_view_id" ref="engineering_category_search_view"/>
         <field name="view_id" ref="engineering_category_list_view"/>
     </record>

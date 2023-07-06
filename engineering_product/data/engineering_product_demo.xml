@@ -79,42 +79,40 @@
 
         <!-- engineered BOMs -->
         <record id="mrp_bom_asm_1" model="mrp.bom">
-            <field name="product_tmpl_id" eval="env.ref('engineering_product.product_asm_1').product_tmpl_id"/>
+            <field name="product_tmpl_id" model="product.template" eval="obj().env.ref('engineering_product.product_asm_1').product_tmpl_id.id"/>
             <field name="product_id" ref="engineering_product.product_asm_1"/>
             <field name="product_uom_id" ref="uom.product_uom_unit"/>
             <field name="sequence">1</field>
-            <field name="routing_id" ref="mrp_routing_0"/>
         </record>
         <record id="mrp_bom_asm_1_line_1" model="mrp.bom.line">
-            <field name="product_id" ref="product.product_part_1"/>
+            <field name="product_id" ref="engineering_product.product_part_1"/>
             <field name="product_qty">1</field>
             <field name="product_uom_id" ref="uom.product_uom_unit"/>
             <field name="sequence">1</field>
             <field name="bom_id" ref="mrp_bom_asm_1"/>
         </record>
         <record id="mrp_bom_asm_1_line_2" model="mrp.bom.line">
-            <field name="product_id" ref="product.product_part_2"/>
+            <field name="product_id" ref="engineering_product.product_part_2"/>
             <field name="product_qty">1</field>
             <field name="product_uom_id" ref="uom.product_uom_unit"/>
             <field name="sequence">2</field>
             <field name="bom_id" ref="mrp_bom_asm_1"/>
         </record>
         <record id="mrp_bom_asm_2" model="mrp.bom">
-            <field name="product_tmpl_id" eval="env.ref('engineering_product.product_asm_2').product_tmpl_id"/>
+            <field name="product_tmpl_id" model="product.template" eval="obj().env.ref('engineering_product.product_asm_2').product_tmpl_id.id"/>
             <field name="product_id" ref="engineering_product.product_asm_2"/>
             <field name="product_uom_id" ref="uom.product_uom_unit"/>
             <field name="sequence">1</field>
-            <field name="routing_id" ref="mrp_routing_0"/>
         </record>
         <record id="mrp_bom_asm_2_line_1" model="mrp.bom.line">
-            <field name="product_id" ref="product.product_part_3"/>
+            <field name="product_id" ref="engineering_product.product_part_3"/>
             <field name="product_qty">1</field>
             <field name="product_uom_id" ref="uom.product_uom_unit"/>
             <field name="sequence">2</field>
             <field name="bom_id" ref="mrp_bom_asm_2"/>
         </record>
         <record id="mrp_bom_asm_2_line_2" model="mrp.bom.line">
-            <field name="product_id" ref="product.product_asm_1"/>
+            <field name="product_id" ref="engineering_product.product_asm_1"/>
             <field name="product_qty">1</field>
             <field name="product_uom_id" ref="uom.product_uom_unit"/>
             <field name="sequence">2</field>

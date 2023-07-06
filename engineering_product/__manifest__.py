@@ -3,7 +3,7 @@
 
 {
     "name": "engineering_product",
-    "version": "12.0.1.0.0",
+    "version": "16.0.1.0.0",
     "summary": "Engineering Features for Products",
     "category": "Engineering",
     "author": "Matt Taylor",
@@ -23,6 +23,7 @@ Engineering Features for Products
     "depends": [
         'product',
         'stock',
+        'uom',
         'shelf_location',
         'attachment_priority',
     ],

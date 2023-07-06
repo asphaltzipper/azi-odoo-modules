@@ -3,10 +3,8 @@
 
     <record id="product_template_action_one" model="ir.actions.act_window">
         <field name="name">One Product</field>
-        <field name="type">ir.actions.act_window</field>
         <field name="res_model">product.template</field>
         <field name="view_mode">form,kanban,tree</field>
-        <field name="view_type">form</field>
     </record>
 
     <record id="product_template_tree_view" model="ir.ui.view">
@@ -90,7 +88,7 @@
                             <field name="res_id" invisible="1"/>
                             <field name="mimetype"/>
                             <field name="type"/>
-                            <field name="datas_fname"/>
+                            <field name="store_fname"/>
                             <field name="name"/>
                             <field name="priority"/>
                             <templates>
@@ -100,18 +98,18 @@
                                             <div class="oe_attachment">
                                                 <div class="row">
                                                     <div class="col-xs-4 o_kanban_primary_left" t-if="record.type.raw_value == 'binary'">
-                                                        <a t-attf-href="/web/content/#{record.id.raw_value}?download=1">
+                                                        <a t-attf-href="/web/content/#{record.id.raw_value}?download=1" title="download">
                                                             <t t-set="webimage" t-value="new RegExp('image.*(gif|jpeg|jpg|png)').test(record.mimetype.value)"/>
                                                             <div t-if="!webimage" class="o_image" t-att-data-mimetype="record.mimetype.value"/>
                                                             <div t-if="webimage" class="o_kanban_attachment_image">
-                                                                <img t-attf-src="/web/image/#{record.id.raw_value}/64x64?download=1"/>
+                                                                <img t-attf-src="/web/image/#{record.id.raw_value}/64x64?download=1" alt="product"/>
                                                             </div>
                                                         </a>
                                                     </div>
                                                     <div class="col-xs-8">
-                                                        <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right"/>
+                                                        <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right" title="delete"/>
                                                         <strong><field name="name"/></strong><br/>
-                                                        <field name="datas_fname"/><br/>
+                                                        <field name="store_fname"/><br/>
                                                         <div class="mt8">
                                                             <field name="priority" widget="priority"/>
                                                         </div>
@@ -131,7 +129,7 @@
                             <field name="res_id" invisible="1"/>
                             <field name="mimetype"/>
                             <field name="type"/>
-                            <field name="datas_fname"/>
+                            <field name="store_fname"/>
                             <field name="name"/>
                             <field name="priority"/>
                             <templates>
@@ -141,18 +139,18 @@
                                             <div class="oe_attachment">
                                                 <div class="row">
                                                     <div class="col-xs-4 o_kanban_primary_left" t-if="record.type.raw_value == 'binary'">
-                                                        <a t-attf-href="/web/content/#{record.id.raw_value}?download=1">
+                                                        <a t-attf-href="/web/content/#{record.id.raw_value}?download=1" title="download">
                                                             <t t-set="webimage" t-value="new RegExp('image.*(gif|jpeg|jpg|png)').test(record.mimetype.value)"/>
                                                             <div t-if="!webimage" class="o_image" t-att-data-mimetype="record.mimetype.value"/>
                                                             <div t-if="webimage" class="o_kanban_attachment_image">
-                                                                <img t-attf-src="/web/image/#{record.id.raw_value}/64x64?download=1"/>
+                                                                <img t-attf-src="/web/image/#{record.id.raw_value}/64x64?download=1" alt="attachment"/>
                                                             </div>
                                                         </a>
                                                     </div>
                                                     <div class="col-xs-8">
-                                                        <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right"/>
+                                                        <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right" title="delete"/>
                                                         <strong><field name="name"/></strong><br/>
-                                                        <field name="datas_fname"/><br/>
+                                                        <field name="store_fname"/><br/>
                                                         <div class="mt8">
                                                             <field name="priority" widget="priority"/>
                                                         </div>
@@ -200,7 +198,6 @@
 
     <record id="revise_product_action" model="ir.actions.server">
         <field name="name">Create Revision</field>
-        <field name="type">ir.actions.server</field>
         <field name="model_id" ref="engineering_product.model_product_product" />
         <field name="state">code</field>
         <field name="code">self.action_revise()</field>
@@ -245,7 +242,7 @@
             <xpath expr="//div/div[2]" position="before">
                 <div class="pull-right" attrs="{'invisible': [('deprecated', '=', False)]}">
                     <a name="deprecated_product" type="object">
-                        <i class="fa fa-exclamation-triangle fa-lg"/>
+                        <i class="fa fa-exclamation-triangle fa-lg" title="Deprecated Product"/>
                     </a>
                 </div>
             </xpath>
