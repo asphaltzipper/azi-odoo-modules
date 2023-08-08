@@ -1,5 +1,8 @@
 .o_home_menu_background {
-    background: url(/web_enterprise/static/src/img/home-menu-bg-overlay.svg),
-        linear-gradient(to right bottom, #4d8496, #c9a8a9);
-    background-size: cover;
+    &:not(.o_home_menu_background_custom) .o_main_navbar {
+        background: url(/web_enterprise/static/img/home-menu-bg-overlay.svg),
+        linear-gradient(to right bottom, #4d8496, #31758b) !important;
+        border-bottom-color: transparent;
+        background-size: cover;
+    }
 }
