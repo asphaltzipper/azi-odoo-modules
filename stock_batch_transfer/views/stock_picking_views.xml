@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record model="ir.actions.server" id="action_stock_picking_do_batch_transfer">
+    <record id="action_stock_picking_do_batch_transfer" model="ir.actions.server" >
         <field name="name">Validate Transfers</field>
         <field name="model_id" ref="stock.model_stock_picking"/>
         <field name="state">code</field>
@@ -11,6 +11,29 @@
         <field name="binding_model_id" ref="stock.model_stock_picking"/>
     </record>
 
+    <record id="view_stock_move_line_detailed_operation_tree" model="ir.ui.view">
+        <field name="name">stock.move.line.operations.tree</field>
+        <field name="model">stock.move.line</field>
+        <field name="inherit_id" ref="stock.view_stock_move_line_detailed_operation_tree"/>
+        <field name="arch" type="xml">
+            <field name="qty_done" position="after">
+                <button
+                        name="do_complete_qty_line"
+                        type="object"
+                        title="add"
+                        icon="fa-plus-square"
+                        attrs="{'invisible': ['|', ('lots_visible', '=', True), ('state', 'not in', ['confirmed', 'assigned', 'waiting', 'partially_available','done'])]}"/>
+                <button
+                        name="do_empty_qty_line"
+                        type="object"
+                        title="remove"
+                        icon="fa-minus-square"
+                        attrs="{'invisible': ['|', ('lots_visible', '=', True), ('state', 'not in', ['confirmed', 'assigned', 'waiting', 'partially_available','done'])]}"/>
+
+            </field>
+        </field>
+    </record>
+
     <record id="complete_quantity_stock_picking" model="ir.ui.view">
         <field name="name">complete.quantity.stock.picking</field>
         <field name="model">stock.picking</field>
@@ -19,18 +42,6 @@
             <xpath expr="//header/button[@name='do_print_picking']" position="before">
                 <button name="do_complete_qty" type="object" string="Fill Qty" states="draft,partially_available,assigned"/>
                 <button name="do_empty_qty" type="object" string="Empty Qty" states="draft,partially_available,assigned"/>
-            </xpath>
-            <xpath expr="//notebook/page/field/tree/field[@name='qty_done']" position="after">
-                <button
-                        name="do_complete_qty_line"
-                        type="object"
-                        icon="fa-plus-square"
-                        attrs="{'invisible': ['|', ('lots_visible', '=', True), ('state', 'not in', ['confirmed', 'assigned', 'waiting', 'partially_available','done'])]}"/>
-                <button
-                        name="do_empty_qty_line"
-                        type="object"
-                        icon="fa-minus-square"
-                        attrs="{'invisible': ['|', ('lots_visible', '=', True), ('state', 'not in', ['confirmed', 'assigned', 'waiting', 'partially_available','done'])]}"/>
             </xpath>
         </field>
     </record>

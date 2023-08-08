@@ -4,10 +4,11 @@
 
 {
     "name": "stock_batch_transfer",
-    "version": "12.0.1.0.0",
+    "version": "16.0.1.0.0",
     "summary": "Stock Batch Transfer",
     "category": "Inventory Control",
     "author": "Matt Taylor",
+    'license': 'AGPL-3',
     "website": "https://github.com/asphaltzipper",
     'description': """
 Validate a batch of internal transfers

@@ -8,7 +8,6 @@ from odoo.tools.float_utils import float_round
 class StockPicking(models.Model):
     _inherit = "stock.picking"
 
-    @api.multi
     def do_batch_transfer(self):
         """
         Validate a batch of internal transfers.
@@ -37,16 +36,15 @@ class StockPicking(models.Model):
             if pick.quality_check_todo or serials_required:
                 continue
             for pack in pick.move_line_ids_without_package:
-                if pack.product_qty > 0:
+                if pack.reserved_uom_qty > 0:
                     this_qty = float_round(
-                        pack.product_qty,
+                        pack.reserved_uom_qty,
                         precision_rounding=self.product_id.uom_id.rounding)
                     pack.write({'qty_done': this_qty})
                 else:
                     pack.unlink()
-            pick.action_done()
+            pick._action_done()
 
-    @api.multi
     def do_complete_qty(self):
         """
         Only allow totally incomplete picking lines.
@@ -55,10 +53,9 @@ class StockPicking(models.Model):
         for pick in self:
             for pack in pick.move_line_ids_without_package:
                 if pack.qty_done == 0 and not pack.product_id.tracking != 'none':
-                    this_qty = pack.product_qty
+                    this_qty = pack.reserved_uom_qty
                     pack.write({'qty_done': this_qty})
 
-    @api.multi
     def do_empty_qty(self):
         for pick in self:
             for pack in pick.move_line_ids_without_package:
@@ -69,17 +66,15 @@ class StockPicking(models.Model):
 class StockPackOp(models.Model):
     _inherit = "stock.move.line"
 
-    @api.multi
     def do_complete_qty_line(self):
         """
         Only allow totally incomplete picking lines.
         Skip moves requiring serial numbers.
         """
         if self.qty_done == 0 and not self.product_id.tracking != 'none':
-            this_qty = self.product_qty
+            this_qty = self.reserved_uom_qty
             self.write({'qty_done': this_qty})
 
-    @api.multi
     def do_empty_qty_line(self):
         if self.product_id.tracking == 'none':
             self.ensure_one()
