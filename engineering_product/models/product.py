@@ -294,7 +294,7 @@ class ProductProduct(models.Model):
     @api.model
     def search(self, args, offset=0, limit=None, order=None, count=False):
         if self._context.get('search_default_eng_categ_id'):
-            args.append((('eng_categ_id', 'child_of', self._context['search_default_eng_categ_id']), ))
+            args.append(('eng_categ_id', 'child_of', self._context['search_default_eng_categ_id']))
         return super(ProductProduct, self).search(args, offset=offset, limit=limit, order=order, count=count)
 
     # TODO: create a revision wizard
