@@ -53,8 +53,8 @@ class EngineeringCategory(models.Model):
                 category.complete_name = category.name
 
     def _compute_product_count(self):
-        read_group_res = self.env['product.template'].read_group([('categ_id', 'in', self.ids)], ['categ_id'], ['categ_id'])
-        group_data = dict((data['categ_id'][0], data['categ_id_count']) for data in read_group_res)
+        read_group_res = self.env['product.template'].read_group([('eng_categ_id', 'in', self.ids)], ['eng_categ_id'], ['eng_categ_id'])
+        group_data = dict((data['eng_categ_id'][0], data['eng_categ_id_count']) for data in read_group_res)
         for categ in self:
             categ.product_count = group_data.get(categ.id, 0)
 
