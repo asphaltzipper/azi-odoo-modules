@@ -104,6 +104,9 @@ class PurchaseRequisitionLine(models.Model):
 class PurchaseRequisition(models.Model):
     _inherit = "purchase.requisition"
 
+    description = fields.Text(
+        track_visibility='onchange',
+    )
     lead_time = fields.Integer(
         string='First-Article Lead Time',
         required=True,

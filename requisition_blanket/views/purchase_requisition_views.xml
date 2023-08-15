@@ -30,6 +30,9 @@
                 <field name="actual_take_down_rate"/>
                 <field name="projected_reorder_date"/>
             </xpath>
+            <field name="description" position="attributes">
+                <attribute name="attrs">{'readonly': [('state','in',('done', 'cancel'))]}</attribute>
+            </field>
         </field>
     </record>
 
