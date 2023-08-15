@@ -4,6 +4,7 @@ from odoo.exceptions import ValidationError
 
 class SaleImportPhantom(models.TransientModel):
     _name = 'sale.import.phantom'
+    _description = 'Import Phantom'
 
     bom_id = fields.Many2one('mrp.bom', 'BOM', domain=[('type', '=', 'phantom')])
     quantity = fields.Integer('Parent Quantity', default=1)
