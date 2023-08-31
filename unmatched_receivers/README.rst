@@ -14,5 +14,5 @@ Configuration
 
 Usage
 =====
-* Purchase > Control > Unmatched Receivers
+* Purchase > Orders > Unmatched Receivers
 * Purchase > Purchase > Product Variants > "Select a Product" > Unmatched Receivers

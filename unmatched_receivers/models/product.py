@@ -8,7 +8,6 @@ class ProductProduct(models.Model):
     unmatched_receiver_count = fields.Integer(compute='_compute_unmatched_receiver_count',
                                               string='Unmatched Receivers')
 
-    @api.multi
     def _compute_unmatched_receiver_count(self):
         domain = [
             ('state', 'in', ['purchase', 'done']),
@@ -26,7 +25,6 @@ class ProductTemplate(models.Model):
     unmatched_receiver_count = fields.Integer(compute='_compute_unmatched_receiver_count',
                                               string='Unmatched Receivers')
 
-    @api.multi
     def _compute_unmatched_receiver_count(self):
         for template in self:
             template.unmatched_receiver_count = sum([p.unmatched_receiver_count for p in template.product_variant_ids])

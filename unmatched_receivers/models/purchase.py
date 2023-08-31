@@ -18,5 +18,5 @@ class PurchaseOrderLine(models.Model):
 
     def _compute_move_ids(self):
         for record in self:
-            moves = record.invoice_lines.mapped('invoice_id.move_id')
+            moves = record.invoice_lines.mapped('move_id')
             record.account_move_ids = moves

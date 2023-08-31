@@ -3,10 +3,11 @@
 
 {
     "name": "Unmatched Receivers",
-    "version": "12.0.1.1.0",
+    "version": "16.0.1.1.0",
     "summary": "Unmatched Receivers",
     "category": "Purchases",
     "author": "John Welch",
+    "license": "AGPL-3",
     "website": "http://www.github.com/asphaltzipper",
     'description': """
 Unmatched Receivers
