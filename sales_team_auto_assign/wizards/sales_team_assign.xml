@@ -26,7 +26,6 @@
     <record id="sales_team_assign_action" model="ir.actions.act_window">
         <field name="name">Run Auto Assign</field>
         <field name="res_model">sales.team.assign</field>
-        <field name="view_type">form</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
     </record>

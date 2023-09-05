@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Copyright 2016 Scott Saunders
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
-
 <odoo>
     <data>
 
@@ -10,7 +9,7 @@
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="sales_team_region.res_partner_view_form"/>
             <field name="arch" type="xml">
-                <field name="image" position="after">
+                <field name="image_1920" position="after">
                     <field name="state_trigger" invisible="1"/>
                 </field>
                 <field name="team_ids" position="after">

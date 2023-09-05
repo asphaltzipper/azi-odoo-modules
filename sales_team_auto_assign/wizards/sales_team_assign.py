@@ -22,7 +22,6 @@ class SalesTeamAssign(models.TransientModel):
             new_cr.close()
             return {}
 
-    @api.multi
     def sales_team_assignment(self):
         threaded_calculation = threading.Thread(target=self._sales_team_assign, args=())
         threaded_calculation.start()
