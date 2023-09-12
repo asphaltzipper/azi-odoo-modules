@@ -23,15 +23,15 @@
                         <notebook>
                             <page string="Country Groups" name="country_groups">
                                 <field name="cg_dom" invisible="1" widget="many2many_tags"/>
-                                <field name="country_groups" domain="[('id', 'not in', cg_dom)]"/>
+                                <field name="country_groups" domain="[('id', 'in', cg_dom)]"/>
                             </page>
                             <page string="Countries" name="countries">
                                 <field name="c_dom" invisible="1" widget="many2many_tags"/>
-                                <field name="countries" domain="[('id', 'not in', c_dom)]"/>
+                                <field name="countries" domain="[('id', 'in', c_dom)]"/>
                             </page>
                             <page string="States" name="states">
                                 <field name="s_dom" invisible="1" widget="many2many_tags"/>
-                                <field name="states" domain="[('id', 'not in', s_dom)]">
+                                <field name="states" domain="[('id', 'in', s_dom)]">
                                     <tree>
                                         <field name="name"/>
                                         <field name="code"/>
