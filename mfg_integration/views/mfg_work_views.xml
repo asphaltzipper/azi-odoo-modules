@@ -27,8 +27,8 @@
                     <button name="%(mfg_integration.action_mfg_work_import)d" string="Import Work" states="draft" type="action" class="oe_highlight"/>
                     <button name="%(mfg_integration.action_mfg_work_import)d" string="Import Work" states="imported" type="action"/>
                     <button name="button_clear_import" string="Clear Details" states="imported" type="object"/>
-                    <button name="button_reassign_orders" string="Reassign Orders" type="object" class="oe_highlight" attrs="{'invisible': ['|', ('state', '!=', 'imported')]}"/>
-                    <button name="button_reassign_orders" string="Reassign Orders" type="object" attrs="{'invisible': ['|', ('state', '!=', 'assigned')]}"/>
+                    <button name="button_reassign_orders" string="Reassign Orders" type="object" class="oe_highlight" attrs="{'invisible': [('state', '!=', 'imported')]}"/>
+                    <button name="button_reassign_orders" string="Reassign Orders" type="object" attrs="{'invisible': [('state', '!=', 'assigned')]}"/>
                     <button name="button_distribute_time" string="Distribute Time" type="object" class="oe_highlight" attrs="{'invisible': ['|', ('state', '!=', 'assigned'), ('time_match', '=', True)]}"/>
                     <button name="button_distribute_time" string="Distribute Time" type="object" attrs="{'invisible': ['|', ('state', '!=', 'assigned'), ('time_match', '=', False)]}"/>
                     <button name="button_apply_work" string="Apply Work" type="object" class="oe_highlight" attrs="{'invisible': ['|', ('state', '!=', 'assigned'), '|', ('time_match', '=', False), ('detail_time', '=', 0.00)]}"/>
@@ -72,22 +72,24 @@
                         <group col="1">
                         </group>
                     </group>
-                    <group>
-                        <field name="detail_ids" nolabel="1" attrs="{'readonly': [('state', '=', 'closed')]}">
-                            <tree editable="0">
-                                <field name="part_num"/>
-                                <field name="import_mfg_code"/>
-                                <field name="production_id"/>
-                                <field name="production_state"/>
-                                <field name="product_error"/>
-                                <field name="product_id"/>
-                                <field name="order_qty"/>
-                                <field name="import_quantity"/>
-                                <field name="actual_quantity"/>
-                                <field name="minutes_assigned"/>
-                            </tree>
-                        </field>
-                    </group>
+                    <notebook>
+                        <page string="Details">
+                            <field name="detail_ids" nolabel="1" attrs="{'readonly': [('state', '=', 'closed')]}">
+                                <tree editable="0">
+                                    <field name="part_num"/>
+                                    <field name="import_mfg_code"/>
+                                    <field name="production_id"/>
+                                    <field name="production_state"/>
+                                    <field name="product_error"/>
+                                    <field name="product_id"/>
+                                    <field name="order_qty"/>
+                                    <field name="import_quantity"/>
+                                    <field name="actual_quantity"/>
+                                    <field name="minutes_assigned"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
@@ -95,9 +97,8 @@
 
     <record id="action_mfg_work_header" model="ir.actions.act_window">
         <field name="name">MFG Work Batch</field>
-        <field name="type">ir.actions.act_window</field>
         <field name="res_model">mfg.work.header</field>
-        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
         <field name="view_id" ref="mfg_integration.mfg_work_header_tree_view"/>
     </record>
 

@@ -11,9 +11,11 @@ class MrpBom(models.Model):
         compute='_compute_routing_detail',
         store=True)
 
-    @api.depends('routing_id')
+    @api.depends('workorder_ids')
     def _compute_routing_detail(self):
         for mo in self:
-            if mo.routing_id:
-                work_center_codes = [code for code in mo.routing_id.operation_ids.mapped('workcenter_id.code') if code]
+            if mo.workorder_ids:
+                work_center_codes = [code for code in mo.workorder_ids.mapped('workcenter_id.code') if code]
                 mo.routing_detail = ", ".join(work_center_codes)
+            else:
+                mo.routing_detail = None

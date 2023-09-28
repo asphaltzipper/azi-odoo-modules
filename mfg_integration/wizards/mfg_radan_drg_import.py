@@ -35,7 +35,6 @@ class MfgRadanDrgImport(models.TransientModel):
         img_str = base64.b64encode(buf.getvalue())
         return img_str
 
-    @api.multi
     def action_import(self):
         """Load manufacturing work data from the uploaded Radan files."""
 

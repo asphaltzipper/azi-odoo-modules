@@ -11,7 +11,7 @@
                         <field name="rm_product_id"/>
                         <field name="rm_qty"/>
                         <field name="rm_uom_id"/>
-                        <field name="routing_id"/>
+                        <field name="workcenter_ids" widget="many2many_tags" required="true"/>
                     </group>
                 </group>
                 <footer>
@@ -25,7 +25,6 @@
     <record id="action_mfg_create_bom_wizard" model="ir.actions.act_window">
         <field name="name">Create BOM</field>
         <field name="res_model">mfg.create.bom</field>
-        <field name="view_type">form</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
     </record>

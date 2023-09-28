@@ -22,10 +22,9 @@
     <record id="action_work_multiply_sheets" model="ir.actions.act_window">
         <field name="name">Multiply Sheets</field>
         <field name="res_model">mfg.work.multiply.sheets</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-       <field name="view_id" ref="mfg_work_multiply_sheets_view"/>
-       <field name="target">new</field>
+        <field name="view_id" ref="mfg_work_multiply_sheets_view"/>
+        <field name="target">new</field>
     </record>
 
 </odoo>

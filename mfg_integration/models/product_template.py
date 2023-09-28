@@ -29,16 +29,6 @@ class ProductTemplate(models.Model):
         compute='_compute_mfg_code',
         store=True,
         readonly=True)
-    mfg_routing_id = fields.Many2one(
-        comodel_name='mrp.routing',
-        string='Routing',
-        compute='_compute_mfg_properties',
-        readonly=True)
-    routing_tmpl_id = fields.Many2one(
-        comodel_name='mrp.routing',
-        string='Routing Template',
-        compute='_compute_mfg_properties',
-        readonly=True)
     routing_detail = fields.Char(
         string="Routing Detail",
         compute='_compute_mfg_properties')
@@ -115,24 +105,20 @@ class ProductTemplate(models.Model):
     def _compute_mfg_properties(self):
         for rec in self:
             bom = rec.bom_ids and rec.bom_ids[0] or False
-            rec.routing_tmpl_id = bom and rec.get_routing_template(bom[0]) or False
             if rec.bom_ids and rec.bom_ids[0].one_comp_product_id:
                 rec.rm_product_id = bom.one_comp_product_id
-                rec.mfg_routing_id = bom.routing_id
                 rec.raw_material_qty = bom.one_comp_product_qty
-                rec.raw_material_uom_id = bom.one_comp_product_uom_id
+                # rec.raw_material_uom_id = bom.one_comp_product_uom_id
                 rec.rm_material_code = bom.one_comp_product_id.material_id.name
                 rec.rm_gauge_code = bom.one_comp_product_id.gauge_id.name
                 rec.laser_code = bom.one_comp_product_id.gauge_id.laser_code
-                rec.routing_detail = ", ".join(
-                    [x for x in bom.routing_id.operation_ids.mapped('workcenter_id.code') if x])
-
-    def get_routing_template(self, bom_id):
-        op_ids = set(bom_id.routing_id.operation_ids.mapped('workcenter_id').ids)
-        for route in self.env['mrp.routing'].search([('name', 'like', '_template')]):
-            if set(route.operation_ids.mapped('workcenter_id').ids) == op_ids:
-                return route
-        return False
+                rec.routing_detail = ", ".join([x for x in bom.operation_ids.mapped('workcenter_id.code') if x])
+            else:
+                rec.rm_product_id = None
+                rec.raw_material_qty = 0
+                rec.rm_material_code = None
+                rec.rm_gauge_code = None
+                rec.laser_code = None
 
     @api.depends('bend_count')
     def _compute_formed(self):
@@ -145,7 +131,6 @@ class ProductTemplate(models.Model):
          "The number of common cuts must be greater than 1."),
     ]
 
-    @api.multi
     @api.onchange('material_id')
     def onchange_material_id(self):
         """

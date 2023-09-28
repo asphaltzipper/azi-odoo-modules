@@ -67,14 +67,16 @@
                             <field name="bend_count"/>
                         </group>
                     </group>
-                    <group string="Sheet Metal Attributes" class="col-xs-2 pull-right" attrs="{'invisible': [('is_continuous', '=', False)]}">
-                        <field name="is_continuous" invisible="1"/>
-                        <field name="material_id"/>
-                        <field name="gauge_id"/>
+                    <group>
+                        <group string="Sheet Metal Attributes" class="col-xs-2 pull-right" attrs="{'invisible': [('is_continuous', '=', False)]}">
+                            <field name="is_continuous" invisible="1"/>
+                            <field name="material_id"/>
+                            <field name="gauge_id"/>
+                        </group>
                     </group>
                     <group string="Bill of Materials">
                         <field name="default_code" invisible="1"/>
-                        <field name="bom_ids" nolabel="1" context="{'default_product_tmpl_id': id, 'default_code': default_code}">
+                        <field name="bom_ids" colspan="2" nolabel="1" context="{'default_product_tmpl_id': id, 'default_code': default_code}" mode="tree" >
                             <tree>
                                 <field name="one_comp_product_id"/>
                                 <field name="one_comp_product_qty"/>
@@ -117,7 +119,7 @@
         <field name="name">Raw Material Thickness</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">mfg.gauge</field>
-        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
         <field name="view_id" ref="raw_thickness_view"/>
     </record>
 
@@ -125,7 +127,7 @@
         <field name="name">Raw Material</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">mfg.material</field>
-        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
         <field name="view_id" ref="raw_material_view"/>
     </record>
 

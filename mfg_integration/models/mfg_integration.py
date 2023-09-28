@@ -112,7 +112,7 @@ class MfgWorkHeader(models.Model):
         required=True,
         default=False,
         help="Product parameters are missing/incomplete/invalid. "
-             "Check the BOM, Routing, and Fabrication Info.")
+             "Check the BOM, Operations, and Fabrication Info.")
 
     material = fields.Char(
         string='Material',
@@ -175,7 +175,7 @@ class MfgWorkHeader(models.Model):
         self.detail_ids._compute_error()
         error_products = self.detail_ids.filtered(lambda x: x.product_error).mapped('product_id')
         if error_products:
-            message = "The following products are missing BOMs or Routings " \
+            message = "The following products are missing BOMs or Operations " \
                       "or MFG data:\n {}".format(",".join(error_products.mapped('default_code')))
             self.env.user.notify_warning(message=message, title="Distributing Time", sticky=True)
 
@@ -210,7 +210,7 @@ class MfgWorkHeader(models.Model):
         self.ensure_one()
         self.detail_ids.unlink()
         self.state = 'draft'
-        self.name = "Empty: " + fields.Date.today()
+        self.name = "Empty: " + str(fields.Date.today())
         self.file_name = False
 
     def button_apply_work(self):
@@ -288,7 +288,6 @@ class MfgWorkHeader(models.Model):
             mfg.button_apply_work()
 
 
-
 class MfgWorkDetail(models.Model):
     _name = 'mfg.work.detail'
     _description = 'MFG Work Batch Detail Lines'
@@ -325,12 +324,7 @@ class MfgWorkDetail(models.Model):
         string='Mfg Order',
         ondelete='set null')
 
-    production_state = fields.Selection([
-        ('confirmed', 'Confirmed'),
-        ('planned', 'Planned'),
-        ('progress', 'In Progress'),
-        ('done', 'Done'),
-        ('cancel', 'Cancelled')],
+    production_state = fields.Selection(
         string='State',
         related='production_id.state',
         readonly=True,
@@ -358,7 +352,7 @@ class MfgWorkDetail(models.Model):
         required=True,
         default=False,
         help="Product parameters are missing/incomplete/invalid. "
-             "Check the BOM, Routing, and Fabrication Info.")
+             "Check the BOM, Operations, and Fabrication Info.")
 
     bbox_x = fields.Float(
         string="X",
@@ -377,7 +371,7 @@ class MfgWorkDetail(models.Model):
         for rec in self:
             rec.product_error = rec.product_id and (
                         not rec.product_id.bom_ids
-                        or not rec.product_id.bom_ids[0].routing_id
+                        or not rec.product_id.bom_ids[0].operation_ids
                         or not rec.product_id.rm_product_id
                         or not rec.product_id.rm_product_id.gauge_id
                         or not rec.product_id.cutting_length_outer +
@@ -385,14 +379,13 @@ class MfgWorkDetail(models.Model):
                                rec.product_id.cut_out_count +
                                rec.product_id.bend_count > 0.0001)
 
-    @api.multi
     def reassign_orders(self):
         header = self[0].header_id
 
         # warn the user about products with errors
         error_products = self.filtered(lambda x: x.product_error).mapped('product_id')
         if error_products:
-            message = "The following products are missing BOMs or Routings " \
+            message = "The following products are missing BOMs or Operations " \
                       "or MFG data:\n {}".format(",".join(error_products.mapped('default_code')))
             self.env.user.notify_warning(message=message, title="MRP Complete", sticky=True)
 

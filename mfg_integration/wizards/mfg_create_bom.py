@@ -26,12 +26,7 @@ class MfgCreateBom(models.TransientModel):
     rm_qty = fields.Float(
         string="RM Qty",
         required=True)
-    routing_id = fields.Many2one(
-        comodel_name='mrp.routing',
-        string="Routing Template",
-        required=True,
-        domain=[('name', 'like', 'template')],
-        help="Only routings with 'template' in the name will show here.")
+    workcenter_ids = fields.Many2many('mrp.workcenter', string='Work Center')
 
     @api.model
     def default_get(self, fields):
@@ -41,12 +36,11 @@ class MfgCreateBom(models.TransientModel):
             result['product_tmpl_id'] = product_tmpl_id
         return result
 
-    @api.multi
     def button_create_bom(self):
         """
         Modify an old BOM if only the raw material quantity is changing.  That is to say:
             - We are not changing the raw material product
-            - We are not changing the routing workcenters or sequence
+            - We are not changing the workcenters or sequence
         Otherwise, create a new BOM
         """
         self.ensure_one()
@@ -67,8 +61,7 @@ class MfgCreateBom(models.TransientModel):
                     "create the new BOM manually.")
 
             if old_bom.one_comp_product_id.id == self.rm_product_id.id:
-                if old_bom.routing_id and old_bom.routing_id.mapped('operation_ids.workcenter_id') == \
-                        self.routing_id.mapped('operation_ids.workcenter_id'):
+                if old_bom.operation_ids and old_bom.operation_ids.mapped('workcenter_id') == self.workcenter_ids:
                     # don't worry about uom because the old bom probably used the stocking uom
                     old_bom.bom_line_ids[0].product_qty = self.rm_qty
                     return {'type': 'ir.actions.act_window_close'}
@@ -81,7 +74,9 @@ class MfgCreateBom(models.TransientModel):
                 bom.sequence = i
                 i += 1
                 # bom.active = False
-
+        operation_ids = []
+        for workcenter in self.workcenter_ids:
+            operation_ids.append((0, 0, {'name': workcenter.name, 'workcenter_id': workcenter.id}))
         # create bom and component line
         bom_vals = {
             'product_id': self.product_tmpl_id.product_variant_ids[0].id,
@@ -91,6 +86,7 @@ class MfgCreateBom(models.TransientModel):
             'product_qty': '1',
             'product_uom_id': self.product_tmpl_id.uom_id.id,
             'sequence': 1,
+            'operation_ids': operation_ids,
         }
         new_bom = self.env['mrp.bom'].create(bom_vals)
         line_vals = {
@@ -100,15 +96,4 @@ class MfgCreateBom(models.TransientModel):
             'product_uom_id': self.rm_uom_id.id,
         }
         self.env['mrp.bom.line'].create(line_vals)
-
-        if old_bom and old_bom.routing_id and old_bom.routing_id.mapped('operation_ids.workcenter_id') == \
-                self.routing_id.mapped('operation_ids.workcenter_id'):
-            # use the old routing
-            new_bom.routing_id = old_bom.routing_id.id
-        else:
-            # create a new routing
-            new_route = self.routing_id.copy()
-            new_route.name = self.product_tmpl_id.eng_code
-            new_bom.routing_id = new_route.id
-
         return {'type': 'ir.actions.act_window_close'}

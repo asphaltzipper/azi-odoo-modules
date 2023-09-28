@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from odoo import api, models, fields, _
-from odoo.exceptions import UserError
 
 
 class MfgWorkMultiSheets(models.TransientModel):
@@ -26,7 +25,6 @@ class MfgWorkMultiSheets(models.TransientModel):
         res['sheet_count'] = header.number_sheets or 1
         return res
 
-    @api.multi
     def action_multiply(self):
         """Multiply quantity produced by the number of sheets."""
         self.header_id.change_sheets(self.sheet_count)

@@ -2,7 +2,6 @@
 
 import base64
 import csv
-import io
 
 from odoo import api, models, fields, _
 from odoo.exceptions import UserError
@@ -37,7 +36,6 @@ class MfgWorkImport(models.TransientModel):
         res['header_id'] = self._context['active_id']
         return res
 
-    @api.multi
     def action_import(self):
         """Load manufacturing work data from the CSV file."""
 

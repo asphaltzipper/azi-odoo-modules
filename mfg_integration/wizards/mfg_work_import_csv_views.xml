@@ -36,7 +36,6 @@
     <record id="action_mfg_work_import" model="ir.actions.act_window">
         <field name="name">Import Mfg Work</field>
         <field name="res_model">mfg.work.import</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
        <field name="view_id" ref="mfg_work_import_csv_view"/>
        <field name="target">new</field>

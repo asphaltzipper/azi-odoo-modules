@@ -3,10 +3,11 @@
 
 {
     "name": "mfg_integration",
-    "version": "12.0.1.0.0",
+    "version": "16.0.1.0.0",
     "summary": "Integrate with Manufacturing Machine Software",
     "category": "Manufacturing",
     "author": "Chris Emigh",
+    "license": "AGPL-3",
     "website": "http://www.asphaltzipper.com",
     'description': """
 Integrate with Manufacturing Machine Software
@@ -16,6 +17,7 @@ Integrate with Manufacturing Machine Software
     """,
     "depends": [
         'engineering_product',
+        'mrp_wo_produce',
     ],
     'data': [
         'security/ir.model.access.csv',
@@ -28,7 +30,6 @@ Integrate with Manufacturing Machine Software
         'views/workorder_views.xml',
         'views/mfg_work_views.xml',
         'views/mrp_bom_views.xml',
-        'views/mrp_routing_views.xml',
         'data/mfg_integration_data.xml',
     ],
     "installable": True,

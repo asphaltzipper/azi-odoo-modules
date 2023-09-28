@@ -28,7 +28,6 @@
     <record id="action_radan_drg_import" model="ir.actions.act_window">
         <field name="name">Import Radan DRG</field>
         <field name="res_model">mfg.radan.drg.import</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
        <field name="view_id" ref="mfg_radan_drg_import_view"/>
        <field name="target">new</field>
