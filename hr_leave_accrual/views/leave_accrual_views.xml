@@ -32,9 +32,7 @@
     </record>
     <record id="action_leave_type_tree" model="ir.actions.act_window">
         <field name="name">Leave Types</field>
-        <field name="type">ir.actions.act_window</field>
         <field name="res_model">leave.type</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
     </record>
 
@@ -88,9 +86,7 @@
     </record>
     <record id="action_leave_policy_assign_tree" model="ir.actions.act_window">
         <field name="name">Assign Policy</field>
-        <field name="type">ir.actions.act_window</field>
         <field name="res_model">leave.policy.assign</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
     </record>
 
@@ -137,9 +133,7 @@
 
     <record id="action_leave_accrual_policy_tree" model="ir.actions.act_window">
         <field name="name">Accrual Policies</field>
-        <field name="type">ir.actions.act_window</field>
         <field name="res_model">leave.accrual.policy</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
     </record>
 
@@ -198,9 +192,7 @@
     </record>
     <record id="action_leave_allocation_tree" model="ir.actions.act_window">
         <field name="name">Allocations</field>
-        <field name="type">ir.actions.act_window</field>
         <field name="res_model">leave.allocation</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
     </record>
 

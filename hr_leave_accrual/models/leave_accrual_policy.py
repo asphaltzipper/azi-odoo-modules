@@ -23,7 +23,7 @@ class LeaveAccrualPolicy(models.Model):
 
     rate_unit = fields.Selection(
         related='type_id.leave_unit',
-        strirg="Accrual Unit",
+        string="Accrual Unit",
         readonly=True,
     )
 

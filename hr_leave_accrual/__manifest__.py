@@ -4,10 +4,11 @@
 
 {
     "name": "hr_leave_accrual",
-    "version": "12.0.1.0.0",
+    "version": "16.0.1.0.0",
     "summary": "Employee Leave Accrual",
     'category': 'Human Resources',
     "author": "Matt Taylor",
+    "license": "AGPL-3",
     "website": "http://www.asphaltzipper.com",
     'description': """
 Employee Leave Accrual

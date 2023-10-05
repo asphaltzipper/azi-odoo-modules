@@ -9,6 +9,7 @@ from odoo.exceptions import ValidationError
 class LeaveAllocationsYearlyReport(models.AbstractModel):
     _name = 'report.hr_leave_accrual.leave_allocations_yearly_report'
     _inherit = 'report.report_xlsx.abstract'
+    _description = 'Leave Allocations Annual Report'
 
     def generate_xlsx_report(self, workbook, data, allocations):
         """ This report assumes all allocations have the same rate unit, period duration, and period unit

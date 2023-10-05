@@ -22,10 +22,9 @@ class LeaveAllocationSummary(models.Model):
     year_end_balance = fields.Float('YE Balance')
     unit = fields.Selection(related='type_id.leave_unit')
 
-    @api.model_cr
     def init(self):
-        tools.drop_view_if_exists(self._cr, 'leave_allocation_summary')
-        self._cr.execute("""
+        tools.drop_view_if_exists(self.env.cr, 'leave_allocation_summary')
+        self.env.cr.execute("""
 CREATE VIEW leave_allocation_summary AS (
     with full_totals as (
         -- all allocation entries

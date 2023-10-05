@@ -75,7 +75,6 @@ class LeavePolicyAssign(models.Model):
             if overlapping:
                 raise ValidationError("The dates for this policy overlap another.")
 
-    @api.multi
     def name_get(self):
         result = []
         for record in self:
@@ -155,7 +154,6 @@ class LeavePolicyAssign(models.Model):
                     last_day = calendar.monthrange(start_date_period.year, start_date_period.month)[1]
                     end_date_period = datetime.date(start_date_period.year, start_date_period.month, last_day)
 
-    @api.multi
     def generate_accrual_wizard(self):
         self.ensure_one()
         values = {

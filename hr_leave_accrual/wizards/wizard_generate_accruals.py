@@ -38,7 +38,7 @@ class WizardHrLeaveGenerateAccruals(models.TransientModel):
         help="Leave blank to process all employees",
     )
 
-    def generate_accruals(self, year):
+    def generate_accruals(self):
         start_date = datetime.date(int(self.year), 1, 1)
         end_date = datetime.date(int(self.year), 12, 31)
         previous_year_start_date = datetime.date(int(self.year) - 1, 1, 1)

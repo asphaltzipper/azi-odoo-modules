@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <report id="leave_allocations_yearly_xlsx"
-            model="leave.allocation"
-            string="Leave Allocations Yearly Report"
-            report_type="xlsx"
-            name="hr_leave_accrual.leave_allocations_yearly_report"
-            file="leave_allocations_yearly_report"
-            menu="False"/>
+    <record id="leave_allocations_yearly_xlsx" model="ir.actions.report">
+        <field name="name">Leave Allocations Yearly Report</field>
+        <field name="model">leave.allocation</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">hr_leave_accrual.leave_allocations_yearly_report</field>
+        <field name="report_file">leave_allocations_yearly_report</field>
+    </record>
 </odoo>

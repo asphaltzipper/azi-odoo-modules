@@ -2,14 +2,14 @@
 <odoo>
     <data noupdate="1">
 
-        <record id="leave_accrual_policy_vacation_5hr" model="ir.sequence">
+        <record id="leave_accrual_policy_vacation_5hr" model="leave.accrual.policy">
             <field name="name">Vacation 5 hr/period</field>
             <field name="type_id" ref="hr_leave_accrual.leave_type_vacation"/>
             <field name="rate">5</field>
             <field name="period_duration">1</field>
             <field name="period_unit">half_month</field>
         </record>
-        <record id="leave_accrual_policy_sick_1hr" model="ir.sequence">
+        <record id="leave_accrual_policy_sick_1hr" model="leave.accrual.policy">
             <field name="name">Sick 1 hr/period</field>
             <field name="type_id" ref="hr_leave_accrual.leave_type_sick"/>
             <field name="rate">1</field>

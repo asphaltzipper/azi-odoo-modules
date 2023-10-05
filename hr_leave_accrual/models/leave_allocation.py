@@ -26,7 +26,7 @@ class LeaveAllocation(models.Model):
 
     alloc_unit = fields.Selection(
         related='type_id.leave_unit',
-        strirg="Allocation Unit",
+        string="Allocation Unit",
         readonly=True,
     )
 
@@ -74,7 +74,6 @@ class LeaveAllocation(models.Model):
                 raise ValidationError('You are not allowed to create or edit accrual allocation, please '
                                       'contact HR manager')
 
-    @api.multi
     def name_get(self):
         result = []
         for record in self:
