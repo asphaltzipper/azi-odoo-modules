@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 {
     "name": "AZI Stock Inventory Turnover Report",
-    "version": "12.0.1.0.0",
+    "version": "16.0.1.0.0",
     "summary": "turnover report",
     "category": "Warehouse",
     "author": "John Welch",
+    "license": "AGPL-3",
     "website": "http://www.github.com/asphaltzipper",
     'description': """
 AZI Stock Inventory Turnover Report

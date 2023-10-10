@@ -43,10 +43,9 @@ class InventoryProductTurnover(models.Model):
             record.turns_6m = record.avg_6_balance and record.consumed_6_cost / record.avg_6_balance or 0.0
             record.turns_12m = record.avg_12_balance and record.consumed_12_cost / record.avg_12_balance or 0.0
 
-    @api.model_cr
     def init(self):
-        tools.drop_view_if_exists(self._cr, 'inventory_product_turnover')
-        self._cr.execute("""
+        tools.drop_view_if_exists(self.env.cr, 'inventory_product_turnover')
+        self.env.cr.execute("""
             CREATE VIEW inventory_product_turnover AS (
                 with a as (
                     select
