@@ -13,6 +13,7 @@
         <record id="picking_type_transport" model="stock.picking.type">
             <field name="name">Transport</field>
             <field name="sequence_id" ref="stock_internal_transport.seq_picking_transport"/>
+            <field name="sequence_code">TRN</field>
             <field name="code">internal</field>
             <field name="use_create_lots" eval="False"/>
             <field name="transport" eval="True"/>

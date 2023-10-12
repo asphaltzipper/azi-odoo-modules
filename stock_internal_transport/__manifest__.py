@@ -3,7 +3,7 @@
 #
 #    OpenERP Module
 #    
-#    Copyright (C) 2014 Asphalt Zipper, Inc.
+#    Copyright (C) 2023 Asphalt Zipper, Inc.
 #    Author Matt Taylor
 
 #    This program is free software: you can redistribute it and/or modify
@@ -23,10 +23,11 @@
 
 {
     "name": "stock_internal_transport",
-    "version": "12.0.1.1.0",
+    "version": "16.0.1.1.0",
     "summary": "Stock Internal Transport",
     "category": "Inventory Control",
     "author": "Matt Taylor",
+    "license": "AGPL-3",
     "website": "http://www.asphaltzipper.com",
     'description': """
 Manage transportation of product on internal transfers
@@ -39,7 +40,7 @@ Modifies Stock Picking to better manage transportation of product transfers betw
   * Show pickup/delivery addresses
   * Show notes
     """,
-    "depends": ['product', 'stock'],
+    "depends": ['stock'],
     'data': [
         'data/picking_data.xml',
         'views/stock_picking_views.xml',

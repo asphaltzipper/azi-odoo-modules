@@ -24,17 +24,3 @@ class StockPicking(models.Model):
     dest_contact_id = fields.Many2one(
         comodel_name='res.partner',
         string="Destination Address")
-
-    @api.onchange('location_id')
-    def onchange_location_id(self):
-        if not self.type_transport:
-            return
-        if self.location_id.partner_id:
-            self.srce_contact_id = self.location_id.partner_id
-
-    @api.onchange('location_dest_id')
-    def onchange_location_dest_id(self):
-        if not self.type_transport:
-            return
-        if self.location_dest_id.partner_id:
-            self.dest_contact_id = self.location_dest_id.partner_id
