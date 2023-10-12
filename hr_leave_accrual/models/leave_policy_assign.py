@@ -3,6 +3,7 @@ import calendar
 from dateutil.relativedelta import relativedelta
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
+from odoo.tools import float_compare
 
 
 class LeavePolicyAssign(models.Model):
@@ -92,6 +93,8 @@ class LeavePolicyAssign(models.Model):
         for record in self:
             if record.start_date > default_end_date or (record.end_date and record.end_date < default_start_date):
                 # skip assigned policies not applicable in this year
+                continue
+            if float_compare(record.policy_id.rate, 0.0, precision_digits=4) == 0:
                 continue
             start_date = default_start_date
             if record.start_date > default_start_date:
