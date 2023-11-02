@@ -24,9 +24,7 @@
 
         <record id="action_add_raw_move" model="ir.actions.act_window">
             <field name="name">Add Raw Material Product</field>
-            <field name="type">ir.actions.act_window</field>
             <field name="res_model">add.raw.move</field>
-            <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
         </record>

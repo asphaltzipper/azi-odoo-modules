@@ -1,12 +1,13 @@
-# Copyright 2017 Matt Taylor
+# Copyright 2023 Matt Taylor
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 {
     "name": "mrp_change_material",
-    "version": "12.0.1.0.0",
+    "version": "16.0.1.0.0",
     "summary": "MRP Change Material",
     "category": "Manufacturing",
     "author": "Matt Taylor",
+    "license": "AGPL-3",
     "website": "https://github.com/asphaltzipper",
     'description': """
 Change Manufacturing Order Consumed Material
@@ -20,6 +21,7 @@ Change Manufacturing Order Consumed Material
     """,
     "depends": ['mrp'],
     'data': [
+        'security/ir.model.access.csv',
         'wizards/add_raw_move.xml',
         'views/mrp_production_views.xml',
     ],

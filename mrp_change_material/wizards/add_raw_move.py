@@ -54,20 +54,13 @@ class AddRawMove(models.TransientModel):
             return self.env['stock.move']
         if bom_line.product_id.type not in ['product', 'consu']:
             return self.env['stock.move']
-        if self.production_id.routing_id:
-            routing = self.production_id.routing_id
-        else:
-            routing = self.production_id.bom_id.routing_id
-        if routing and routing.location_id:
-            source_location = routing.location_id
-        else:
-            source_location = self.production_id.location_src_id
+        source_location = self.production_id.location_src_id
         original_quantity = self.production_id.product_qty - self.production_id.qty_produced
         data = {
             'added_rm': True,
             'name': self.production_id.name,
             'date': self.production_id.date_planned_start,
-            'date_expected': self.production_id.date_planned_start,
+            'date_deadline': self.production_id.date_planned_start,
             'bom_line_id': bom_line.id,
             'product_id': bom_line.product_id.id,
             'product_uom_qty': quantity,
@@ -80,62 +73,47 @@ class AddRawMove(models.TransientModel):
             'price_unit': bom_line.product_id.standard_price,
             'procure_method': 'make_to_stock',
             'origin': self.production_id.name,
-            'warehouse_id': source_location.get_warehouse().id,
+            'warehouse_id': source_location.warehouse_id.id,
             'group_id': self.production_id.procurement_group_id.id,
-            'propagate': self.production_id.propagate,
+            'propagate_cancel': self.production_id.propagate_cancel,
             'unit_factor': quantity / original_quantity,
         }
         return self.env['stock.move'].create(data)
 
     def _generate_raw_move(self):
-        if self.production_id.routing_id:
-            routing = self.production_id.routing_id
-        else:
-            routing = self.production_id.bom_id.routing_id
-        if routing and routing.location_id:
-            source_location = routing.location_id
-        else:
-            source_location = self.production_id.location_src_id
+        source_location = self.production_id.location_src_id
         data = {
             'added_rm': True,
             'name': self.production_id.name,
             'date': self.production_id.date_planned_start,
-            'date_expected': self.production_id.date_planned_start,
+            'date_deadline': self.production_id.date_planned_start,
             'product_id': self.product_id.id,
             'product_uom_qty': self.product_qty,
             'product_uom': self.product_id.uom_id.id,
             'location_id': source_location.id,
-            'location_dest_id': self.production_id.product_id.property_stock_production.id,
+            'location_dest_id': self.production_id.product_id.with_company(self.production_id.company_id).property_stock_production.id,
             'raw_material_production_id': self.production_id.id,
             'company_id': self.production_id.company_id.id,
             'price_unit': self.product_id.standard_price,
             'procure_method': 'make_to_stock',
             'origin': self.production_id.name,
-            'warehouse_id': source_location.get_warehouse().id,
+            'warehouse_id': source_location.warehouse_id.id,
             'group_id': self.production_id.procurement_group_id.id,
-            'propagate': self.production_id.propagate,
+            'propagate_cancel': self.production_id.propagate_cancel,
             'unit_factor': self.product_qty / self.production_id.product_qty,
         }
-
-        # if self.production_id.routing_id:
-        #     operation = self.production_id.routing_id.operation_ids.search(
-        #         [],
-        #         order="sequence desc, id desc",
-        #         limit=1)
-        #     data['operation_id'] = operation.id
-
         return self.env['stock.move'].create(data)
 
-    @api.multi
     def button_add_raw_move(self):
         self.ensure_one()
         if self.production_id.state in ['done', 'cancel']:
             raise UserError(_("Production is complete for %s") % self.production_id.name)
 
         bom = self.env['mrp.bom']._bom_find(
-            product=self.product_id,
+            products=self.product_id,
             picking_type=self.production_id.picking_type_id,
             company_id=self.production_id.company_id.id)
+        bom = bom.get(self.product_id, False)
 
         if bom and bom.type == 'phantom':
             boms, lines = bom.explode(
@@ -147,7 +125,7 @@ class AddRawMove(models.TransientModel):
             moves = self._generate_raw_move()
 
         # Check for all draft moves whether they are mto or not
-        self.production_id._adjust_procure_method()
+        moves._adjust_procure_method()
         moves._action_confirm()
         moves._action_assign()
         return {}
