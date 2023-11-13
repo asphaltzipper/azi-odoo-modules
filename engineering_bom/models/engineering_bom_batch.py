@@ -156,7 +156,11 @@ class EngBomBatch(models.Model):
                 duplicate_parents.append(parent.id)
                 continue
             bom = bom_obj._bom_find(product=parent.product_id)
-            route_template = routing_obj.search([('name', '=', parent.route_template_name)])
+            route_template = routing_obj.search(
+                [('name', '=', parent.route_template_name)],
+                order="id ASC",
+                limit=1,
+            )
             bom_values = {
                 'batch_id': self.id,
                 'name': parent.product_id.id,
