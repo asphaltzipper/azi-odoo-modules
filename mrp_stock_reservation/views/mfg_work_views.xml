@@ -10,7 +10,7 @@
                 <button
                     type="object"
                     name="action_mrp_reservation_form"
-                    string="Mfg Reservations"
+                    help="Mfg Reservations"
                     icon="fa-shopping-cart"
                     attrs="{'invisible':[('product_id', '=', False)]}"/>
             </xpath>

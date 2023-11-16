@@ -14,38 +14,41 @@
                             <h3><span class="fa fa-barcode"/> Scan a manufacturing order to reserve material</h3>
                             <h3><span class="fa fa-barcode"/> Scan a part number to switch products</h3>
                         </div>
+                        <field name="_barcode_scanned" widget="barcode_handler" nolabel="1"/>
                     </div>
                     <group>
-                        <field name="_barcode_scanned" widget="barcode_handler" invisible="1"/>
                         <field name="qty_available"/>
                         <field name="qty_reserved"/>
                     </group>
-                    <group>
-                        <field name="mfg_demand_ids" nolabel="1">
-                            <tree>
-                                <field name="raw_material_production_id" string="MO"/>
-                                <field name="state"/>
-                                <field name="product_uom_qty" string="To Consume"/>
-                                <field name="reserved_availability" string="Reserved"/>
-                                <button type="object" name="do_unreserve" string="UnReserve" icon="fa-undo" attrs="{'invisible':[('reserved_availability', '=', 0.0)]}"/>
-                                <button type="object" name="action_assign" string="Reserve" icon="fa-check" attrs="{'invisible':[('state', '=', 'assigned')]}"/>
-                            </tree>
-                            <form>
-                                <sheet>
-                                    <group>
+                    <notebook>
+                        <page string="MFG">
+                            <field name="mfg_demand_ids" nolabel="1">
+                                <tree>
+                                    <field name="raw_material_production_id" string="MO"/>
+                                    <field name="state"/>
+                                    <field name="product_uom_qty" string="To Consume"/>
+                                    <field name="reserved_availability" string="Reserved"/>
+                                    <button type="object" name="do_unreserve" string="UnReserve" icon="fa-undo" attrs="{'invisible':[('reserved_availability', '=', 0.0)]}"/>
+                                    <button type="object" name="action_assign" string="Reserve" icon="fa-check" attrs="{'invisible':[('state', '=', 'assigned')]}"/>
+                                </tree>
+                                <form>
+                                    <sheet>
                                         <group>
-                                            <field name="raw_material_production_id" string="MO"/>
-                                            <field name="state"/>
+                                            <group>
+                                                <field name="raw_material_production_id" string="MO"/>
+                                                <field name="state"/>
+                                            </group>
+                                            <group>
+                                                <field name="product_uom_qty" string="To Consume"/>
+                                                <field name="reserved_availability" string="Reserved"/>
+                                            </group>
                                         </group>
-                                        <group>
-                                            <field name="product_uom_qty" string="To Consume"/>
-                                            <field name="reserved_availability" string="Reserved"/>
-                                        </group>
-                                    </group>
-                                </sheet>
-                            </form>
-                        </field>
-                    </group>
+                                    </sheet>
+                                </form>
+                            </field>
+                        </page>
+                    </notebook>
+
                 </sheet>
             </form>
         </field>
@@ -85,9 +88,7 @@
 
     <record id="action_mrp_stock_reservation" model="ir.actions.act_window">
         <field name="name">Mfg Reservation</field>
-        <field name="type">ir.actions.act_window</field>
         <field name="res_model">product.product</field>
-        <field name="view_type">form</field>
         <field name="view_mode">form</field>
         <field name="view_id" ref="mrp_stock_reservation.mrp_stock_reservation_form_view"/>
     </record>

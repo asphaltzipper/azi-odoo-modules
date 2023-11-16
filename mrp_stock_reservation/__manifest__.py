@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 Matt taylor
+# Copyright 2023 Matt taylor
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 {
     "name": "MRP Stock Reservation",
     "summary": "Reserve individual stock moves for specified manufacturing orders.",
-    "version": "12.0.1.0.0",
+    "version": "16.0.1.0.0",
     "category": "Manufacturing",
     "website": "http://www.github.com/asphaltzipper/azi-odoo-modules",
     'description': """

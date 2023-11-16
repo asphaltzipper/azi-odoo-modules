@@ -6,7 +6,7 @@ class StockMove(models.Model):
 
     def action_assign(self):
         for move in self:
-            move._action_assign()
+            move._action_assign(force_qty=False)
 
     def do_unreserve(self):
         for move in self:

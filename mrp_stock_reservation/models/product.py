@@ -42,7 +42,6 @@ class ProductProduct(models.Model):
                 product.stock_quant_ids.mapped('reserved_quantity')
             )
 
-    @api.multi
     def action_mrp_reservation_form(self):
         self.ensure_one()
         action = self.env.ref('mrp_stock_reservation.action_mrp_stock_reservation').read()[0]
@@ -58,7 +57,7 @@ class ProductProduct(models.Model):
             raise UserError("Unknown Barcode: %s" % (barcode,))
         product_id = self.id or self._origin.id
         domain = [
-            ('product_id', '=',product_id),
+            ('product_id', '=', product_id),
             ('raw_material_production_id', '=', mo.id)
         ]
         moves = self.env['stock.move'].search(domain)

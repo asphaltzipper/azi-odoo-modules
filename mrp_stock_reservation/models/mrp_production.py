@@ -18,7 +18,6 @@ class MrpProduction(models.Model):
         help="Value of the last barcode scanned.",
         store=False)
 
-    @api.multi
     @api.depends('move_raw_ids', 'move_raw_ids.state')
     def _compute_percent_available(self):
         for order in self:
@@ -45,7 +44,6 @@ class MrpProduction(models.Model):
                 order.percent_available = required_qty and \
                                           avail_qty/required_qty or 0.0
 
-    @api.multi
     def action_production_from_barcode(self):
         self.ensure_one()
         action = self.env.ref('mrp_stock_reservation.action_production_from_barcode').read()[0]
