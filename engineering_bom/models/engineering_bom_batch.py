@@ -175,15 +175,20 @@ class EngBomBatch(models.Model):
         # get configurator options
         # TODO: check against all product versions
         # TODO: automatically get configurator templates based on imported products
-        # TODO: use the BOM to get option components, not attr value products
-        domain = [('product_tmpl_id', 'in', self.configurator_ids.ids)]
-        option_values = attr_line_obj.search(domain).mapped('value_ids')
-        option_parents = option_values.mapped('product_id')
-        option_components = option_parents.mapped('bom_ids.bom_line_ids.product_id')
-        option_component_ids = option_components.ids
-        batch_comp_product_ids = self.comp_ids.mapped('product_id').ids
-        batch_option_ids = set(batch_comp_product_ids).intersection(set(option_component_ids))
-        self.option_component_ids = [(6, 0, batch_option_ids)]
+        option_products = self.env['product.product']
+        for tmpl in self.configurator_ids:
+            top_bom = bom_obj.search(
+                [('product_tmpl_id', '=', tmpl.id)],
+                order='version desc, sequence asc',
+                limit=1,
+            )
+            attr_val_prods = top_bom.bom_line_ids.mapped('product_id')
+            for prod in attr_val_prods:
+                if not prod.bom_ids:
+                    continue
+                opt_bom = prod.bom_ids[0]
+                option_products |= opt_bom.bom_line_ids.mapped('product_id')
+        self.option_component_ids = [(6, 0, option_products.ids)]
 
         # create bom lines
         product_bom_lines = {}
@@ -193,7 +198,7 @@ class EngBomBatch(models.Model):
         for adjacency in adjacencies:
             if not adjacency.parent_comp_id.product_id or not adjacency.child_comp_id.product_id:
                 continue
-            if adjacency.child_comp_id.product_id.id in option_component_ids:
+            if adjacency.child_comp_id.product_id.id in self.option_component_ids.ids:
                 # don't add option components as a child of any real BOM
                 continue
             parent = adjacency.parent_comp_id.product_id
