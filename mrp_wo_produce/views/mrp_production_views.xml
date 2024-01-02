@@ -7,10 +7,10 @@
         <field name="model">mrp.production</field>
         <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
         <field name="arch" type="xml">
-            <button name="open_produce_product" position="before">
+            <button name="button_plan" position="before">
                 <button
                         name="open_wo_produce"
-                        attrs="{'invisible': ['|', ('state', '!=', 'planned'), '|', ('routing_id', '=', False), ('check_to_done', '=', True)]}"
+                        attrs="{'invisible': ['|', ('workorder_ids', '=', []),'|',  ('state', '!=', 'confirmed'),('qty_producing', '!=', 0)]}"
                         type="object"
                         string="Produce Workorders"
                         class="oe_highlight"/>

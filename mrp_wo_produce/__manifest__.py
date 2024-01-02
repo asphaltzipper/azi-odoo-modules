@@ -3,7 +3,7 @@
 
 {
     "name": "Work Order Produce Wizard",
-    "version": "12.0.1.0.0",
+    "version": "16.0.1.0.0",
     "license": "AGPL-3",
     "summary": "Wizard for producing/completing Manufacturing Orders with Work Orders",
     "category": "Manufacturing",
@@ -31,6 +31,7 @@ Steps for processing manufacturing order:
         "mrp",
     ],
     "data": [
+        'security/ir.model.access.csv',
         'wizard/mrp_wo_produce_views.xml',
         'views/mrp_production_views.xml',
     ],

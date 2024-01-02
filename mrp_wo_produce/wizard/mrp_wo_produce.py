@@ -46,7 +46,7 @@ class MrpWoProduce(models.TransientModel):
         related='production_id.product_id.uom_id',
     )
     lot_id = fields.Many2one(
-        comodel_name='stock.production.lot',
+        comodel_name='stock.lot',
         string='Lot/Serial Number',
     )
     consume_line_ids = fields.One2many(
@@ -116,7 +116,6 @@ class MrpWoProduce(models.TransientModel):
             'product_qty': todo_quantity,
         })
 
-    @api.multi
     def load_lines(self):
         """
         We only display and process moves for tracked products.
@@ -216,15 +215,24 @@ class MrpWoProduce(models.TransientModel):
         work_lines = [{'workorder_id': wo.id} for wo in mo.workorder_ids]
         self.work_line_ids = [(5,)] + [(0, 0, x) for x in work_lines]
 
-    @api.multi
     def do_produce(self):
         self.update_work_time()
+        self.production_quantity()
         self.complete_workorders()
         self.prepare_finished_moves()
         self.production_id.button_mark_done()
         return {'type': 'ir.actions.act_window_close'}
 
-    @api.multi
+    def production_quantity(self):
+        if self.production_id.product_tracking in ('lot', 'serial') and not self.production_id.lot_producing_id:
+            self.production_id.action_generate_serial()
+        if self.production_id.product_tracking == 'serial' and float_compare(self.production_id.qty_producing, 1,
+                                                                     precision_rounding=self.production_id.product_uom_id.rounding) == 1:
+            self.production_id.qty_producing = 1
+        else:
+            self.production_id.qty_producing = self.production_id.product_qty - self.production_id.qty_produced
+        self.production_id._set_qty_producing()
+
     def update_work_time(self):
         """this method has been adapted from mrp.workorder methods button_start() and end_previous()"""
 
@@ -306,9 +314,8 @@ class MrpWoProduce(models.TransientModel):
                 tmp['date_end'] = performance_date_end
                 timeline.create(tmp)
 
-    @api.multi
     def complete_workorders(self):
-        last_workorder = self.production_id.workorder_ids.filtered(lambda x: not x.next_work_order_id)[0]
+        last_workorder = self.production_id.workorder_ids and self.production_id.workorder_ids[-1]
         move_line_ids = self.consume_line_ids.mapped("move_id.move_line_ids")
         move_line_ids.unlink()
         for line in self.consume_line_ids:
@@ -322,30 +329,28 @@ class MrpWoProduce(models.TransientModel):
             line.move_id.move_line_ids.create({
                 'move_id': line.move_id.id,
                 'lot_id': line.lot_id.id,
-                'lot_produced_id': self.lot_id.id or False,
-                'product_uom_qty': 0,
+                'reserved_uom_qty': 0,
                 'product_uom_id': line.move_id.product_uom.id,
                 'qty_done': line.qty_done,
                 'production_id': self.production_id.id,
                 'workorder_id': line.move_id.workorder_id.id or last_workorder.id,
                 'product_id': line.product_id.id,
-                'done_wo': False,
                 'location_id': line.move_id.location_id.id,
                 'location_dest_id': line.move_id.location_dest_id.id,
             })
             # line.move_id._action_assign()
 
+        self.production_id.lot_producing_id = self.lot_id
+        self.production_id.qty_producing = self.product_qty
         for wo in self.production_id.workorder_ids:
-            if self.product_id.tracking != 'none':
-                wo.final_lot_id = self.lot_id
             # pass all quality checks
+            # wo._update_finished_move()
             for check in wo.check_ids:
                 check.do_pass()
             wo.record_production()
 
         return True
 
-    @api.multi
     def prepare_finished_moves(self):
         # main finished move
         produce_move = self.production_id.move_finished_ids.filtered(
@@ -360,15 +365,13 @@ class MrpWoProduce(models.TransientModel):
             # We checked producing quantity at the beginning
             finished_line = produce_move.move_line_ids.filtered(
                 lambda x: x.lot_id == self.lot_id)
-            if not finished_line:
-                raise UserError(_("Something went wrong with processing the"
-                                  " finished product move. This may result from"
-                                  " failing to complete the workorders."))
+
             if len(finished_line) > 1:
                 raise UserError(_('You cannot produce multiple lots with this wizard.'))
+
             finished_line.update({
+                'reserved_uom_qty': finished_line.product_uom_qty,
                 'qty_done': finished_line.product_uom_qty,
-                'lot_id': self.lot_id.id,
             })
         else:
             produce_move._set_quantity_done(self.product_qty)
@@ -391,7 +394,7 @@ class MrpWoProduce(models.TransientModel):
             line.move_id.move_line_ids.create({
                 'move_id': line.move_id.id,
                 'lot_id': line.lot_id.id,
-                'product_uom_qty': line.qty_done,
+                'reserved_uom_qty': line.qty_done,
                 'product_uom_id': line.move_id.product_uom.id,
                 'qty_done': line.qty_done,
                 'production_id': self.production_id.id,
@@ -454,7 +457,7 @@ class MrpProductProduceCompLine(models.TransientModel):
         required=True,
     )
     lot_id = fields.Many2one(
-        comodel_name='stock.production.lot',
+        comodel_name='stock.lot',
         string='Lot/Serial Number',
     )
 
@@ -523,7 +526,7 @@ class MrpProductProduceByLine(models.TransientModel):
         required=True,
     )
     lot_id = fields.Many2one(
-        comodel_name='stock.production.lot',
+        comodel_name='stock.lot',
         string='Lot/Serial Number',
     )
 
@@ -594,13 +597,11 @@ class MrpWoProduceWorkLine(models.TransientModel):
         compute='_compute_hours_expected',
     )
 
-    @api.multi
     @api.depends('workorder_id')
     def _compute_hours_expected(self):
         for rec in self:
             rec.hours_expected = rec.workorder_id.duration_expected / 60
 
-    @api.multi
     @api.depends('workorder_id')
     def _compute_user_ids(self):
         for record in self:

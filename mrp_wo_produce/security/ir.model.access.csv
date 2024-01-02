@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_mrp_wo_produce_user,access.mrp.wo.produce.user,model_mrp_wo_produce,mrp.group_mrp_user,1,1,1,1
+access_mrp_wo_produce_comp_line_user,access.mrp.wo.produce.comp.line.user,model_mrp_wo_produce_comp_line,mrp.group_mrp_user,1,1,1,1
+access_mrp_wo_produce_by_line_user,access.mrp.wo.produce.by.line.user,mrp_wo_produce.model_mrp_wo_produce_by_line,mrp.group_mrp_user,1,1,1,1
+access_mrp_wo_produce_work_line_user,access.mrp.wo.produce.work.line.user,mrp_wo_produce.model_mrp_wo_produce_work_line,mrp.group_mrp_user,1,1,1,1
+access_mrp_wo_produce_work_line_user,access.mrp.wo.produce.work.line.user,mrp_wo_produce.model_mrp_wo_produce_work_line,mrp.group_mrp_user,1,1,1,1
