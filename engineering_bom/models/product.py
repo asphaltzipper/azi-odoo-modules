@@ -12,7 +12,7 @@ class ProductTemplate(models.Model):
 class ProductProduct(models.Model):
     _inherit = "product.product"
 
-    preserve_bom_on_import=fields.Boolean(
+    preserve_bom_on_import = fields.Boolean(
         string='Preserve BOM',
         default=False,
         required=True,

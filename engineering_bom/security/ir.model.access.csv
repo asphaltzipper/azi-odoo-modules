@@ -15,3 +15,5 @@ access_engineering_bom_diff_user,access.engineering.bom.diff.user,model_engineer
 access_engineering_bom_line_diff_user,access.engineering.bom.line.diff.user,model_engineering_bom_line_diff,ecm.group_engineering_user,1,0,0,0
 access_engineering_bom_component_user,access.engineering.bom.component.user,model_engineering_bom_component,ecm.group_engineering_user,1,0,0,0
 access_engineering_bom_adjacency_user,access.engineering.bom.adjacency.user,model_engineering_bom_adjacency,ecm.group_engineering_user,1,0,0,0
+access_engineering_bom_import_user,access.engineering.bom.import.user,model_engineering_bom_import,ecm.group_engineering_user,1,1,1,0
+access_engineering_bom_import_manager,access.engineering.bom.import.manager,model_engineering_bom_import,ecm.group_engineering_manager,1,1,1,1

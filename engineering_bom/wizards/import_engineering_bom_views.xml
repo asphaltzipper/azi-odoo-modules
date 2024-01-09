@@ -24,7 +24,6 @@
     <record id="action_engineering_bom_import" model="ir.actions.act_window">
         <field name="name">Import BOM</field>
         <field name="res_model">engineering.bom.import</field>
-        <field name="view_type">form</field>
         <field name="view_mode">form</field>
         <field name="view_id" ref="engineering_bom_import_form"/>
         <field name="target">new</field>

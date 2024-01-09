@@ -1,13 +1,14 @@
-# Copyright (C) 2019 Asphalt Zipper, Inc.
+# Copyright (C) 2023 Asphalt Zipper, Inc.
 # Author Matt Taylor
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
 {
     "name": "engineering_bom",
-    "version": "12.0.1.0.0",
+    "version": "16.0.1.0.0",
     "summary": "Engineering Bills of Materials Management",
     "category": "Engineering",
     "author": "Matt Taylor",
+    "license": "AGPL-3",
     "website": "http://www.asphaltzipper.com",
     'description': """
 Engineering Bills of Materials Management

@@ -29,7 +29,7 @@ class EngBomBatch(models.Model):
         string='State',
         default='draft',
         required=True,
-        track_visibility='onchange')
+        tracking=True)
     owner_id = fields.Many2one(
         comodel_name='res.users',
         string="Owner",
@@ -119,7 +119,6 @@ class EngBomBatch(models.Model):
         for batch in self:
             batch.bom_line_diff_count = len(self.bom_line_diff_ids.ids)
 
-    @api.multi
     def write(self, vals):
         # don't allow state to change if it's 'done'
         # if self.state == 'done' and vals.get('state', 'done') != 'done':
@@ -138,9 +137,9 @@ class EngBomBatch(models.Model):
 
         eng_bom_obj = self.env['engineering.bom']
         eng_bom_line_obj = self.env['engineering.bom.line']
-        product_obj = self.env['product.product']
         bom_obj = self.env['mrp.bom']
-        routing_obj = self.env['mrp.routing']
+        # TODO Routing
+        # routing_obj = self.env['mrp.routing']
         attr_line_obj = self.env['product.template.attribute.line']
 
         # get unique parent products and create boms
@@ -155,18 +154,22 @@ class EngBomBatch(models.Model):
             if parent.product_id in product_boms.keys():
                 duplicate_parents.append(parent.id)
                 continue
-            bom = bom_obj._bom_find(product=parent.product_id)
-            route_template = routing_obj.search([('name', '=', parent.route_template_name)])
-            bom_values = {
-                'batch_id': self.id,
-                'name': parent.product_id.id,
-                'bom_id': bom.id,
-                'quantity': 1.0,
-                'route_template_id': route_template.id,
-                'type': bom and bom.type or 'normal',
-            }
-            eng_bom = eng_bom_obj.create(bom_values)
-            product_boms[parent.product_id] = eng_bom
+            bom = bom_obj._bom_find(products=parent.product_id)
+            bom = bom.get(parent.product_id, False)
+            if bom:
+                # TODO Routing
+                # route_template = routing_obj.search([('name', '=', parent.route_template_name)])
+                bom_values = {
+                    'batch_id': self.id,
+                    'name': parent.product_id.id,
+                    'bom_id': bom.id,
+                    'quantity': 1.0,
+                    # TODO Routing
+                    # 'route_template_id': route_template.id,
+                    'type': bom and bom.type or 'normal',
+                }
+                eng_bom = eng_bom_obj.create(bom_values)
+                product_boms[parent.product_id] = eng_bom
 
         # get configurator options
         # TODO: check against all product versions
@@ -212,34 +215,40 @@ class EngBomBatch(models.Model):
         # create raw material boms and lines
         raw_parents = self.comp_ids.filtered(lambda x: not len(x.adjacency_parent_ids) and x.rm_qty > 0.0)
         for parent in raw_parents:
+            # TODO Routing
+            # REM from if or not parent.route_template_id
             if (
                     not parent.product_id
-                    or not parent.route_template_id
                     or not parent.rm_product_id
                     or parent.product_id in product_boms.keys()):
                 continue
             rm_product = parent.rm_product_id
-            route_template = parent.route_template_id
-            if not rm_product or not route_template:
+            # TODO Routing
+            #route_template = parent.route_template_id
+            #REM from if or not route_template
+            if not rm_product:
                 continue
-            bom = bom_obj._bom_find(product=parent.product_id)
-            bom_values = {
-                'batch_id': self.id,
-                'name': parent.product_id.id,
-                'bom_id': bom.id,
-                'quantity': 1.0,
-                'route_template_id': route_template.id,
-                'type': bom and bom.type or 'normal',
-                'rm_part': True,
-            }
-            eng_bom = eng_bom_obj.create(bom_values)
-            product_boms[parent.product_id] = eng_bom
-            line_values = {
-                'eng_bom_id': eng_bom.id,
-                'name': rm_product.id,
-                'quantity': parent.rm_qty,
-            }
-            eng_bom_line_obj.create(line_values)
+            bom = bom_obj._bom_find(products=parent.product_id)
+            bom = bom.get(parent.product_id, False)
+            if bom:
+                bom_values = {
+                    'batch_id': self.id,
+                    'name': parent.product_id.id,
+                    'bom_id': bom.id,
+                    'quantity': 1.0,
+                    # TODO Routing
+                    # 'route_template_id': route_template.id,
+                    'type': bom and bom.type or 'normal',
+                    'rm_part': True,
+                }
+                eng_bom = eng_bom_obj.create(bom_values)
+                product_boms[parent.product_id] = eng_bom
+                line_values = {
+                    'eng_bom_id': eng_bom.id,
+                    'name': rm_product.id,
+                    'quantity': parent.rm_qty,
+                }
+                eng_bom_line_obj.create(line_values)
 
         self.state = 'converted'
 
@@ -366,11 +375,12 @@ class EngBomBatch(models.Model):
                 has_change = True
                 diff.qty = eng_bom.bom_id.product_qty
                 diff.qty_new = eng_bom.quantity
-            if eng_bom.route_template_id.operation_ids.mapped('workcenter_id') != \
-                    eng_bom.bom_id.routing_id.operation_ids.mapped('workcenter_id'):
-                has_change = True
-                diff.route_template_id = eng_bom.bom_id.routing_id
-                diff.route_template_new_id = eng_bom.route_template_id
+            # TODO Routing
+            # if eng_bom.route_template_id.operation_ids.mapped('workcenter_id') != \
+            #         eng_bom.bom_id.routing_id.operation_ids.mapped('workcenter_id'):
+            #     has_change = True
+                # diff.route_template_id = eng_bom.bom_id.routing_id
+                # diff.route_template_new_id = eng_bom.route_template_id
             if eng_bom.type != eng_bom.bom_id.type:
                 has_change = True
                 diff.type = eng_bom.bom_id.type
@@ -595,19 +605,20 @@ class EngBomBatch(models.Model):
             if eng_bom.quantity != eng_bom.bom_id.product_qty:
                 eng_bom.bom_id.product_qty = eng_bom.quantity
 
+            # FIXME Routing
             # change routing
-            route_changed = eng_bom.route_template_id and eng_bom.bom_id.routing_id and \
-                            eng_bom.route_template_id.operation_ids.mapped('workcenter_id') != \
-                            eng_bom.bom_id.routing_id.operation_ids.mapped('workcenter_id') or \
-                            False
+            # route_changed = eng_bom.route_template_id and eng_bom.bom_id.routing_id and \
+            #                 eng_bom.route_template_id.operation_ids.mapped('workcenter_id') != \
+            #                 eng_bom.bom_id.routing_id.operation_ids.mapped('workcenter_id') or \
+            #                 False
             # remove routing
-            if route_changed or (eng_bom.bom_id.routing_id and not eng_bom.route_template_id):
-                eng_bom.bom_id.routing_id.unlink()
+            # if route_changed or (eng_bom.bom_id.routing_id and not eng_bom.route_template_id):
+            #     eng_bom.bom_id.routing_id.unlink()
             # add new routing
-            if route_changed or (eng_bom.route_template_id and not eng_bom.bom_id.routing_id):
-                route = eng_bom.route_template_id.copy()
-                route.name = eng_bom.name.default_code
-                eng_bom.bom_id.routing_id = route
+            # if route_changed or (eng_bom.route_template_id and not eng_bom.bom_id.routing_id):
+            #     route = eng_bom.route_template_id.copy()
+            #     route.name = eng_bom.name.default_code
+            #     eng_bom.bom_id.routing_id = route
 
             # change bom type
             if eng_bom.type != eng_bom.bom_id.type:
@@ -670,11 +681,12 @@ class EngBomBatch(models.Model):
             new_bom = bom_obj.create(bom_vals)
             eng_bom.bom_id = new_bom
 
+            # TODO Routing
             # add routing
-            if eng_bom.route_template_id:
-                route = eng_bom.route_template_id.copy()
-                route.name = eng_bom.name.default_code
-                new_bom.routing_id = route
+            # if eng_bom.route_template_id:
+            #     route = eng_bom.route_template_id.copy()
+            #     route.name = eng_bom.name.default_code
+            #     new_bom.routing_id = route
 
             # add bom lines
             for eng_line in eng_bom.bom_line_ids:

@@ -15,7 +15,8 @@
                             <field name="rm_part"/>
                         </group>
                         <group>
-                            <field name="route_template_id"/>
+                            <!-- TODO Routing-->
+                            <!--<field name="route_template_id"/>-->
                             <field name="type"/>
                             <field name="quantity"/>
                         </group>
@@ -39,7 +40,8 @@
             <tree>
                 <field name="batch_id"/>
                 <field name="name"/>
-                <field name="route_template_id"/>
+                <!-- TODO Routing -->
+                <!-- <field name="route_template_id"/> -->
                 <field name="rm_part"/>
                 <field name="type"/>
             </tree>
@@ -55,7 +57,8 @@
                 <field name="name" string="Product"/>
                 <filter string="Raw Material Parts" name="is_rm_part" domain="[('rm_part', '=', True)]"/>
                 <filter string="Not Raw Material Parts" name="is_rm_part" domain="[('rm_part', '=', False)]"/>
-                <filter string="Missing Routing" name="is_rm_part" domain="[('route_template_id', '=', False), ('type', '=', 'normal')]"/>
+                <!-- TODO Routing -->
+                <!-- <filter string="Missing Routing" name="is_rm_part" domain="[('route_template_id', '=', False), ('type', '=', 'normal')]"/>-->
             </search>
         </field>
     </record>
@@ -64,7 +67,6 @@
         <field name="name">BOMs</field>
         <field name="res_model">engineering.bom</field>
         <field name="view_id" ref="engineering_bom_tree_view"/>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="context">{'search_default_batch_id': active_id}</field>
     </record>

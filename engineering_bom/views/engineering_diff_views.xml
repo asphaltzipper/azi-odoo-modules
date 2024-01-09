@@ -78,7 +78,6 @@
         <field name="name">Part Diffs</field>
         <field name="res_model">engineering.part.diff</field>
         <field name="view_id" ref="engineering_part_diff_tree_view"/>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="context">{'search_default_batch_id': active_id}</field>
     </record>
@@ -103,15 +102,17 @@
                         <group>
                             <h2 colspan="2">Old</h2>
                             <field name="qty" string="Batch Qty"/>
-                            <field name="route_template_id" string="Route Name"/>
-                            <field name="route_detail" string="Route"/>
+                            <!-- TODO Routing-->
+                            <!--<field name="route_template_id" string="Route Name"/>
+                            <field name="route_detail" string="Route"/>-->
                             <field name="type" string="Type"/>
                         </group>
                         <group>
                             <h2 colspan="2">New</h2>
                             <field name="qty_new" string="Batch Qty"/>
-                            <field name="route_template_new_id" string="Route Name"/>
-                            <field name="route_detail_new" string="Route"/>
+                            <!-- TODO Routing -->
+                            <!--<field name="route_template_new_id" string="Route Name"/>
+                            <field name="route_detail_new" string="Route"/>-->
                             <field name="type_new" string="Type"/>
                         </group>
                     </group>
@@ -128,8 +129,9 @@
                 <field name="batch_id" invisible="1"/>
                 <field name="product_id"/>
                 <field name="action_type"/>
-                <field name="route_detail"/>
-                <field name="route_detail_new"/>
+                <!-- TODO Routing -->
+                <!-- <field name="route_detail"/>
+                <field name="route_detail_new"/>-->
                 <field name="rm_part"/>
                 <field name="type"/>
                 <field name="type_new"/>
@@ -155,7 +157,6 @@
         <field name="name">BOM Diffs</field>
         <field name="res_model">engineering.bom.diff</field>
         <field name="view_id" ref="engineering_bom_diff_tree_view"/>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="context">{'search_default_batch_id': active_id}</field>
     </record>
@@ -226,7 +227,6 @@
         <field name="name">BOM Line Diffs</field>
         <field name="res_model">engineering.bom.line.diff</field>
         <field name="view_id" ref="engineering_bom_line_diff_tree_view"/>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="context">{'search_default_batch_id': active_id}</field>
     </record>

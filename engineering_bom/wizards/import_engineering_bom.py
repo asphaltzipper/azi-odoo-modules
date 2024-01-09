@@ -44,11 +44,9 @@ class EngBomImport(models.TransientModel):
         res['batch_id'] = self._context.get('active_id')
         return res
 
-    @api.multi
     def action_import(self):
         """Load, extract and write BOM data to batch"""
 
-        product_obj = self.env['product.product']
         comp_obj = self.env['engineering.bom.component']
         adjacency_obj = self.env['engineering.bom.adjacency']
 

@@ -47,15 +47,16 @@ class EngBomDiff(models.Model):
         required=True,
         readonly=True,
         default=1.0)
-    route_template_id = fields.Many2one(
-        comodel_name='mrp.routing',
-        ondelete='set null',
-        readonly=True,
-        string='Old Route Name')
-    route_detail = fields.Char(
-        related='route_template_id.operations_detail',
-        string='Old Route',
-        store=True)
+    # TODO Routing and Operations Detail
+    # route_template_id = fields.Many2one(
+    #     comodel_name='mrp.routing',
+    #     ondelete='set null',
+    #     readonly=True,
+    #     string='Old Route Name')
+    # route_detail = fields.Char(
+    #     related='route_template_id.operations_detail',
+    #     string='Old Route',
+    #     store=True)
     type = fields.Selection(
         selection=[
             ('normal', 'Normal'),
@@ -69,14 +70,15 @@ class EngBomDiff(models.Model):
         required=True,
         default=1.0,
         help="Production batch quantity in new BOM")
-    route_template_new_id = fields.Many2one(
-        comodel_name='mrp.routing',
-        ondelete='set null',
-        string='New Route Name')
-    route_detail_new = fields.Char(
-        related='route_template_new_id.operations_detail',
-        string='New Route',
-        store=True)
+    # TODO Routing and Operations Detail
+    # route_template_new_id = fields.Many2one(
+    #     comodel_name='mrp.routing',
+    #     ondelete='set null',
+    #     string='New Route Name')
+    # route_detail_new = fields.Char(
+    #     related='route_template_new_id.operations_detail',
+    #     string='New Route',
+    #     store=True)
     type_new = fields.Selection(
         selection=[
             ('normal', 'Normal'),
@@ -139,7 +141,7 @@ class EngBomLineDiff(models.Model):
     name = fields.Many2one(
         comodel_name='product.product',
         string='Component',
-        ondelete='set null',
+        ondelete='cascade',
         readonly=True,
         required=True)
     qty = fields.Float(

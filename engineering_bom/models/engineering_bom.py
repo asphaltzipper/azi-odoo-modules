@@ -28,9 +28,10 @@ class EngBom(models.Model):
     quantity = fields.Float(
         string='Batch Qty',
         default=1.0)
-    route_template_id = fields.Many2one(
-        comodel_name='mrp.routing',
-        string='Route Template')
+    # TODO Routing
+    # route_template_id = fields.Many2one(
+    #     comodel_name='mrp.routing',
+    #     string='Route Template')
     type = fields.Selection(
         selection=[
             ('normal', 'Normal'),
@@ -47,7 +48,6 @@ class EngBom(models.Model):
         required=True,
         default=False)
 
-    @api.multi
     def set_bom(self):
         for eng_bom in self:
             eng_bom.bom_id = self.env['mrp.bom']._bom_find(
