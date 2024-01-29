@@ -409,6 +409,7 @@ class EcmEco(models.Model):
             obsolete.product_id.deprecated = True
             obsolete.product_id.warning = True
             obsolete.product_id.warning_message = obsolete.reason
+            obsolete.product_id.eng_hold_flag = True
 
     # TODO: automatically set Hold Production flag on parts added to ECO
 

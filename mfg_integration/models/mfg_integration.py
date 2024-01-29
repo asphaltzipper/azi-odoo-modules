@@ -267,6 +267,7 @@ class MfgWorkHeader(models.Model):
                 })
             produce_wiz.do_produce()
 
+        self.work_date = fields.Date.today()
         self.state = 'closed'
 
     @api.model
