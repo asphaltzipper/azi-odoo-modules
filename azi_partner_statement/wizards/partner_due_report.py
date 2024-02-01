@@ -6,7 +6,7 @@ class PartnerDueReport(models.TransientModel):
     _description = 'Partner Due Amount Report'
 
     def generate_partners(self):
-        partners = self.env['res.partner'].search([('customer', '=', True), ('parent_id', '=', False)]).filtered(
+        partners = self.env['res.partner'].search([('customer_rank', '>', 0), ('parent_id', '=', False)]).filtered(
             lambda p: p.total_due)
         return{
             'type': 'ir.actions.act_window',

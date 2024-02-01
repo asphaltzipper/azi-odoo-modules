@@ -5,22 +5,19 @@
         <field name="model">partner.due.report</field>
         <field name="arch" type="xml">
             <form>
-                <group>
-                    <div class="text-left" style="background-color: #CCECDB;color:#005326;">
-                        <b>"Generate" button will get all customers with outstanding balances</b>
-                    </div>
+                <div class="alert alert-success">
+                    <b>"Generate" button will get all customers with outstanding balances</b>
+                </div>
                 <footer>
                     <button name="generate_partners" string="Generate" type="object" class="btn-primary"/>
                     <button string="Cancel" special="cancel"/>
                 </footer>
-                </group>
             </form>
         </field>
     </record>
     <record id="partner_due_report_action" model="ir.actions.act_window">
         <field name="name">AZ Outstanding Balance Report</field>
         <field name="res_model">partner.due.report</field>
-        <field name="view_type">form</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
     </record>
