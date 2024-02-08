@@ -69,7 +69,7 @@ class ProductProduct(models.Model):
 
         # Prefetch the fields used by the `name_get`, so `browse` doesn't fetch other fields
         # Use `load=False` to not call `name_get` for the `product_tmpl_id`
-        self.sudo().read(['name', 'default_code', 'product_tmpl_id'], load=False)
+        self._origin.sudo().read(['name', 'default_code', 'product_tmpl_id'], load=False)
 
         product_template_ids = self.sudo().mapped('product_tmpl_id').ids
 
