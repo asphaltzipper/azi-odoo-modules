@@ -3,7 +3,7 @@
 {
     'license': 'LGPL-3',
     "name": "AZI Stock Request Kanban",
-    "version": "12.0.1.1.0",
+    "version": "16.0.1.1.0",
     "author": "Asphalt Zipper",
     "category": "Extra Tools",
     "summary": "Modify Kanban Report",

@@ -4,7 +4,7 @@
     <!-- label formatted for the brother p-touch printer -->
     <template id="report_kanban_label_24x70_body">
         <div class="row no-gutters">
-            <div class="col-9" style="text-align:left; vertical-align:top; margin:-7px -18px -12px -12px;">
+            <div class="col-9" style="text-align:left; vertical-align:top; margin:7px -18px 2px -12px;">
                 <div style="text-align:left; font-size:40px; font-family:'Code 128';" t-field="o.code128"/>
             </div>
             <div class="col-3" style="text-align:right; vertical-align:top; font-size:12px; margin-top:6px;">
@@ -44,23 +44,24 @@
             </t>
         </t>
     </template>
-    <report
-        id="action_report_kanban_label_24x70"
-        string="AZI Label 24x70mm"
-        model="stock.request.kanban"
-        report_type="qweb-pdf"
-        name="azi_stock_request_kanban.report_kanban_label_24x70"
-        file="azi_stock_request_kanban.report.stock_request_kanban_template"
-        paperformat="azi_stock.paperformat_label_24x70mm"
-        menu="True"/>
+    <record id="action_report_kanban_label_24x70" model="ir.actions.report">
+        <field name="name">AZI Label 24x70mm</field>
+        <field name="model">stock.request.kanban</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">azi_stock_request_kanban.report_kanban_label_24x70</field>
+        <field name="report_file">azi_stock_request_kanban.report.stock_request_kanban_template</field>
+        <field name="paperformat_id" ref="azi_stock.paperformat_label_24x70mm"/>
+        <field name="binding_model_id" ref="model_stock_request_kanban"/>
+        <field name="binding_type">report</field>
+    </record>
 
     <!-- 2x1 label -->
     <template id="report_kanban_label_2x1_body">
         <div class="row no-gutters">
-            <div class="col-9" style="text-align:left; vertical-align:top; margin:-7px -18px -12px -12px;">
+            <div class="col-9" style="text-align:left; vertical-align:top; margin:10px -18px 18px -12px;">
                 <div style="text-align:left; font-size:46px; font-family:'Code 128';" t-field="o.code128"/>
             </div>
-            <div class="col-3" style="text-align:right; vertical-align:top; font-size:10px; margin-top:6px;">
+            <div class="col-3" style="text-align:right; vertical-align:top; font-size:10px; margin-top:10px;">
                 <span style="text-align:right;" t-field="o.name"/><br/>
                 <span style="white-space:nowrap;" t-esc="'%s %s' % (float(o.product_uom_qty), o.product_uom_id.name)"/><br/>
                 <span style="text-align:right;" t-if="o.product_id.type == 'consu'">DNI</span>
@@ -80,8 +81,7 @@
             </div>
         </div>
         <t t-if="o.product_id.type == 'consu'">
-            <div
-                    style="position: absolute; top: 3px; left: -10px; bottom: 2px; right: -12px; border: 3px solid black;"/>
+            <div style="position: absolute; top: 3px; left: -10px; bottom: 2px; right: -12px; border: 3px solid black;"/>
         </t>
     </template>
     <template id="report_kanban_label_2x1">
@@ -96,14 +96,16 @@
             </t>
         </t>
     </template>
-    <report
-        id="action_report_kanban_label_2x1"
-        string="AZI Label 2x1"
-        model="stock.request.kanban"
-        paperformat="azi_stock.paperformat_label_2x1"
-        report_type="qweb-pdf"
-        name="azi_stock_request_kanban.report_kanban_label_2x1"
-        file="azi_stock_request_kanban.report.stock_request_kanban_template"
-        menu="True"/>
+
+    <record id="action_report_kanban_label_2x1" model="ir.actions.report">
+        <field name="name">AZI Label 2x1</field>
+        <field name="model">stock.request.kanban</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">azi_stock_request_kanban.report_kanban_label_2x1</field>
+        <field name="report_file">azi_stock_request_kanban.report.stock_request_kanban_template</field>
+        <field name="paperformat_id" ref="azi_stock.paperformat_label_2x1"/>
+        <field name="binding_model_id" ref="model_stock_request_kanban"/>
+        <field name="binding_type">report</field>
+    </record>
 
 </data></odoo>
