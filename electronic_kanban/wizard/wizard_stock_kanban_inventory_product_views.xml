@@ -20,7 +20,7 @@
                 <field name="product_id" invisible="1"/>
                 <field name="kanban_inventory_id" invisible="1"/>
                 <field name="_barcode_scanned" widget="barcode_handler"
-                       invisible="1"/>
+                       nolabel="1"/>
                 <footer>
                     <button
                             name="action_cancel"
@@ -33,12 +33,11 @@
         </field>
     </record>
 
-    <act_window id="wizard_stock_kanban_inventory_product_action"
-                name="Add Kanban"
-                res_model="wizard.stock.kanban.inventory.product"
-                view_mode="form"
-                view_type="form"
-                context="{'default_kanban_inventory_id': active_id}"
-                target="new"/>
-
+    <record id="wizard_stock_kanban_inventory_product_action" model="ir.actions.act_window">
+        <field name="name">Add Kanban</field>
+        <field name="res_model">wizard.stock.kanban.inventory.product</field>
+        <field name="view_mode">form</field>
+        <field name="context">{'default_kanban_inventory_id': active_id}</field>
+        <field name="target">new</field>
+    </record>
 </odoo>

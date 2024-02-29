@@ -18,7 +18,7 @@
         <field name="model">stock.request</field>
         <field name="inherit_id" ref="stock_request.stock_request_search"/>
         <field name="arch" type="xml">
-            <filter name="inactive" position="after">
+            <filter name="current_requests" position="after">
                 <filter string="Obsolete" name="deprecated" domain="[('product_deprecated','=',True)]"/>
                 <filter string="Current" name="non_deprecated" domain="[('product_deprecated','=',False)]"/>
             </filter>

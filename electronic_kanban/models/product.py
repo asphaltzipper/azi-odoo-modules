@@ -35,7 +35,7 @@ class ProductTemplate(models.Model):
         action = self.env.ref('stock_request_kanban.stock_request_kanban_action').read()[0]
         action['domain'] = [('product_id', 'in', self.product_variant_ids.ids)]
         if len(self) == 1:
-            action['context'] = {'default_product_id':self.product_variant_ids[0].id}
+            action['context'] = {'default_product_id': self.product_variant_ids[0].id}
         return action
 
 
@@ -58,6 +58,7 @@ class ProductProduct(models.Model):
         string='Kanban Qty',
         compute='_compute_e_kanban_qty',
         readonly=True,
+        compute_sudo=True,
         help="Default procurement quantity for electronic kanban ordering",
     )
 
@@ -71,6 +72,7 @@ class ProductProduct(models.Model):
         compute='_compute_e_kanban_qty',
         readonly=True,
         store=True,
+        compute_sudo=True,
         help="Number of bins/kanbans maintained for this product",
     )
 
@@ -99,7 +101,6 @@ class ProductProduct(models.Model):
                         all(product.e_kanban_ids.mapped('verify_date')):
                     product.e_kanban_verified = True
 
-    @api.multi
     def _search_e_kanban_verified(self, operator, value):
         # enable search by computed field
         if operator == '!=':

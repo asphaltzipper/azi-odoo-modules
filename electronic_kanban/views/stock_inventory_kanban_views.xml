@@ -25,7 +25,6 @@
                         icon="fa-barcode"
                         string="Scan Products"
                         states="draft"
-                        class="oe_read_only"
                 />
             </div>
             <notebook position="inside">

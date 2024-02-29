@@ -29,7 +29,6 @@ class StockInventoryKanban(models.Model):
             )
             rec.count_unconfigured_products = len(rec.unconfigured_product_ids)
 
-    @api.multi
     def print_missing_kanbans_2x1(self):
         """ Print the missing kanban cards in order to restore them
         """
@@ -39,7 +38,6 @@ class StockInventoryKanban(models.Model):
             self.missing_kanban_ids
         )
 
-    @api.multi
     def print_missing_kanbans_24x70(self):
         """ Print the missing kanban cards in order to restore them
         """
@@ -48,3 +46,5 @@ class StockInventoryKanban(models.Model):
             'azi_stock_request_kanban.action_report_kanban_label_24x70').report_action(
             self.missing_kanban_ids
         )
+
+

@@ -12,13 +12,19 @@ class WizardStockRequestOrderKanban(models.TransientModel):
             for request in stock_request:
                 request.order_id.write({'request_ids':  [(4, request.id)]})
         else:
-            self.stock_request_id = self.env['stock.request'].create(
+            stock_request_id = self.env["stock.request"].create(
                 self.stock_request_kanban_values()
             )
-            self.status_state = 0
-            self.status = _('Added kanban %s for product %s' % (
-                self.stock_request_id.kanban_id.name,
-                self.stock_request_id.product_id.display_name
-            ))
+            self.stock_request_id = stock_request_id
             self.stock_request_ending()
-        self.order_id = self.stock_request_id.order_id
+            self.update(
+                {
+                    "status_state": 0,
+                    "status": _(
+                        "Added kanban %(kanban)s for product %(product)s",
+                        kanban=stock_request_id.kanban_id.name,
+                        product=stock_request_id.product_id.display_name,
+                    ),
+                }
+            )
+

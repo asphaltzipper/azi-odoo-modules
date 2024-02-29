@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_wizard_stock_kanban_inventory_product_user,access.wizard.stock.kanban.inventory.product.user,model_wizard_stock_kanban_inventory_product,stock.group_stock_user,1,1,1,1

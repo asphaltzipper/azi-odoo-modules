@@ -33,10 +33,12 @@ Shelf Location
         'stock',
         'shelf_location',
         'stock_request',
-        'stock_request_kanban',
+        'azi_stock_request_kanban',
         'engineering_product',
+        'stock_inventory',
     ],
     'data': [
+        'security/ir.model.access.csv',
         'views/product_views.xml',
         'views/stock_request_views.xml',
         'views/stock_request_order_views.xml',
