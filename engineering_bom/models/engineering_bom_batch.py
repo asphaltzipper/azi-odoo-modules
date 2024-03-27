@@ -615,7 +615,7 @@ class EngBomBatch(models.Model):
             # add new routing
             if route_changed or (eng_bom.route_template_id and not eng_bom.bom_id.routing_id):
                 route = eng_bom.route_template_id.copy()
-                route.name = eng_bom.name.default_code
+                route.name = eng_bom.name.eng_code
                 eng_bom.bom_id.routing_id = route
 
             # change bom type

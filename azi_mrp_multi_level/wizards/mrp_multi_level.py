@@ -136,6 +136,14 @@ class MultiLevelMrp(models.TransientModel):
                 self.env['material.plan.log'].create({'type': 'warning', 'message': message})
             self.env.cr.commit()
 
+        # report product templates with qty on hand and a phantom BOM
+        tmpl_kits_on_hand = self._get_kits_on_hand()
+        if tmpl_kits_on_hand:
+            for tmpl in tmpl_kits_on_hand:
+                message = "Phantom BOM with qty on hand for product %s" % tmpl.display_name
+                self.env['material.plan.log'].create({'type': 'error', 'message': message})
+            self.env.cr.commit()
+
         # report unscheduled sale order lines without reserved serial numbers
         sol_not_reserved = self._get_sol_not_reserved()
         if sol_not_reserved:
@@ -225,6 +233,51 @@ class MultiLevelMrp(models.TransientModel):
             ('eng_management', '=', True),
         ]
         return self.env['product.product'].search(domain)
+
+    @api.model
+    def _get_kits_on_hand(self):
+        sql = """
+            with dmb as (
+                select distinct on (product_tmpl_id) *
+                from mrp_bom
+                where active=true
+                order by product_tmpl_id, version desc, sequence
+            )
+            select dmb.product_tmpl_id
+            from dmb
+            left join product_product pp on pp.id=dmb.product_id
+            left join product_template pt on pt.id=dmb.product_tmpl_id
+            left join product_mrp_area pma on pma.product_id=dmb.product_id
+            left join (
+                select
+                    sm.product_id,
+                    sum(
+                        case when (ls.usage<>'internal' and ld.usage='internal') then sm.product_qty
+                        else -sm.product_qty end
+                    ) as avail_qty
+                from stock_move as sm
+                left join stock_location as ls on ls.id=sm.location_id
+                left join stock_location as ld on ld.id=sm.location_dest_id
+                where sm.state='done'
+                and (
+                    (ls.usage<>'internal' and ld.usage='internal')
+                    or
+                    (ld.usage<>'internal' and ls.usage='internal')
+                )
+                group by sm.product_id
+            ) as mv on mv.product_id=dmb.product_id
+            where pp.active=true
+            and pt.type='product'
+            and pma.id is not null
+            and pma.mrp_exclude=false
+            and pma.mrp_verified=true
+            and dmb.type='phantom'
+            and mv.avail_qty<>0
+            order by product_tmpl_id
+        """
+        self.env.cr.execute(sql)
+        tmpl_ids = [x[0] for x in self.env.cr.fetchall()]
+        return self.env['product.template'].browse(tmpl_ids)
 
     @api.model
     def _get_tmpl_bom_ambiguity(self):
