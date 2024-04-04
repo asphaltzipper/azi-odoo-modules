@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 from odoo import api, fields, models, tools
 
 
@@ -27,7 +26,7 @@ class AccountLocationSalesTax(models.Model):
         self._cr.execute("""
             CREATE OR REPLACE VIEW account_location_sales_tax AS (
             select
-                i.id,
+                l.id as id,
                 i.id as invoice_id,
                 i.date_invoice as invoice_date,
                 l.account_id,
@@ -40,12 +39,13 @@ class AccountLocationSalesTax(models.Model):
                 round(i.amount_total::numeric, 4) as amount_total
             from (
                 select
+                    id,
                     account_id,
                     invoice_id,
                     sum(-1*balance) as inv_tax_amt
                 from account_move_line
                 where tax_line_id is not null
-                group by account_id, invoice_id
+                group by account_id, invoice_id, id
             ) as l
             left join account_invoice as i on i.id=l.invoice_id
             left join res_partner as sp on sp.id=i.partner_shipping_id
