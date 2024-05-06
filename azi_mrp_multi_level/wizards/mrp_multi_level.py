@@ -144,6 +144,14 @@ class MultiLevelMrp(models.TransientModel):
                 self.env['material.plan.log'].create({'type': 'error', 'message': message})
             self.env.cr.commit()
 
+        # report BOM loops
+        bom_loops = self._get_bom_loops()
+        if bom_loops:
+            for loop in bom_loops:
+                message = "BOM Loop: %s" % loop
+                self.env['material.plan.log'].create({'type': 'error', 'message': message})
+            self.env.cr.commit()
+
         # report unscheduled sale order lines without reserved serial numbers
         sol_not_reserved = self._get_sol_not_reserved()
         if sol_not_reserved:
@@ -292,6 +300,73 @@ class MultiLevelMrp(models.TransientModel):
         self.env.cr.execute(sql)
         tmpl_ids = [x[0] for x in self.env.cr.fetchall()]
         return self.env['product.template'].browse(tmpl_ids)
+
+    @api.model
+    def _get_bom_loops(self):
+        sql = """
+            with recursive default_bom as (
+                -- This auxiliary statement is not recursive, but the recursive
+                -- keyword must be placed on the first auxiliary statement.
+                -- Here, we get the default BOM for each product template
+                --   - active
+                --   - highest version
+                --   - lowest sequence
+                select distinct on (product_tmpl_id) *
+                from mrp_bom
+                where active=true
+                order by product_tmpl_id, version desc, sequence
+            ),
+            adjacency as (
+                -- Here, we get a parent-child adjacency list using product id.
+                -- If only template is specified on mrp.bom, the list is
+                -- expanded with all variant BOMs.
+                SELECT DISTINCT
+                    COALESCE(b.product_id,p.id) AS parent_id,
+                    l.product_id AS comp_id
+                FROM mrp_bom_line AS l, default_bom AS b, product_product AS p
+                WHERE b.product_tmpl_id=p.product_tmpl_id
+                AND l.bom_id=b.id
+            ),
+            stack (parent_id, comp_id, path, looped) as (
+                -- This auxiliary statement is recursive, as indicated by
+                -- the UNION keyword.
+                SELECT
+                    a.parent_id,
+                    a.comp_id,
+                    ARRAY[a.comp_id] as path,
+                    false as looped
+                FROM adjacency as a
+                UNION ALL
+                SELECT
+                    a.parent_id,
+                    a.comp_id,
+                    path || a.comp_id as path,
+                    a.comp_id = ANY(path) as looped
+                FROM stack AS s, adjacency as a
+                WHERE a.parent_id=s.comp_id
+                AND NOT s.looped
+            )
+            select
+                s.parent_id,
+                s.comp_id,
+                s.path
+            from stack as s
+            where s.looped
+        """
+
+        self.env.cr.execute(sql)
+        prod_obj = self.env['product.product']
+        loop_sets = []
+        loop_names = []
+        for data in self.env.cr.fetchall():
+            if set(data[2]) in loop_sets:
+                # keep loops unique, regardless of order
+                continue
+            loop_sets.append(set(data[2]))
+            prod_names = [prod_obj.browse(pid).display_name for pid in data[2]]
+            name = " ==>> ".join(prod_names)
+            loop_names.append(name)
+        return loop_names
 
     def _get_sol_not_reserved(self):
         sql = """
