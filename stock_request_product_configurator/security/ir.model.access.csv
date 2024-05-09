@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_product_configurator_stock_request_user,access.product.configurator.stock.request.user,model_product_configurator_stock_request,stock_request.group_stock_request_user,1,1,1,1

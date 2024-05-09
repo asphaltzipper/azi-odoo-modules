@@ -7,7 +7,6 @@ class ProductConfiguratorStockRequest(models.TransientModel):
 
     stock_request_id = fields.Many2one('stock.request')
 
-    @api.multi
     def action_config_done(self):
         """Parse values and execute final code before closing the wizard"""
         res = super(ProductConfiguratorStockRequest, self).action_config_done()

@@ -16,7 +16,7 @@ class StockRequest(models.Model):
     def _check_qty(self):
         for rec in self:
             if rec.product_id and rec.product_qty <= 0:
-                raise ValueError(_('Stock Request product quantity has to be strictly positive.'))
+                raise ValidationError(_('Stock Request product quantity has to be strictly positive.'))
 
     @api.onchange('product_id')
     def onchange_product_id(self):
@@ -31,7 +31,6 @@ class StockRequest(models.Model):
         res['domain']['product_uom_id'] = []
         return res
 
-    @api.multi
     def action_config_start(self):
         return {
             'type': 'ir.actions.act_window',
@@ -46,7 +45,6 @@ class StockRequest(models.Model):
             ),
         }
 
-    @api.multi
     def action_submit(self):
         if not self.product_id:
             raise ValidationError(_('Please set product before submitting request'))
