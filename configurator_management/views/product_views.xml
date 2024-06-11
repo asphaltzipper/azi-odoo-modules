@@ -1,60 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record id="attribute_value_products_tree_view" model="ir.ui.view">
-        <field name="name">attribute.value.products.tree.view</field>
-        <field name="model">attribute.value.products.report</field>
-        <field name="arch" type="xml">
-            <tree create="false" edit="false"
-                  default_order="product_attribute_value_id, product_id">
-                <field name="product_tmpl_id" invisible="1"/>
-                <field name="product_attribute_id"/>
-                <field name="product_attribute_value_id"/>
-                <field name="product_id"/>
-                <field name="product_qty"/>
-            </tree>
-        </field>
-    </record>
-
-    <record id="action_attribute_value_products" model="ir.actions.act_window">
-        <field name="name">Config BOM</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="res_model">attribute.value.products.report</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
-        <field name="domain">[('product_tmpl_id', '=', active_id)]</field>
-    </record>
-
-    <!-- add attribute value products (bom) page to product template form view -->
-    <record id="product_template_config_bom_form_view" model="ir.ui.view">
-        <field name="name">product.template.config_bom.form.view</field>
-        <field name="model">product.template</field>
-        <field name="inherit_id" ref="product.product_template_form_view"/>
-        <field name="arch" type="xml">
-            <notebook position="inside">
-                <page string="Config BOM" name="config_bom" attrs="{'invisible': [('config_ok', '=', False)]}">
-                    <group colspan="4" name="config_bom">
-                        <div>
-                            <button name="%(action_attribute_value_products)d" type="action" string="Show All"
-                                    class="oe_stat_button" icon="fa-arrows-v"/>
-                            <br />
-                            <field name="attribute_value_product_ids" nolabel="1"/>
-                        </div>
-                    </group>
-                </page>
-            </notebook>
-        </field>
-    </record>
-
     <!-- make attribute_value_ids field writeable for the administrator only -->
     <record id="view_product_variant_configurator_form" model="ir.ui.view">
         <field name="name">product.variant.configurator.inherit</field>
         <field name="model">product.product</field>
         <field name="inherit_id" ref="product.product_normal_form_view"/>
-        <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
         <field name="arch" type="xml">
-            <field name="attribute_value_ids" position="attributes">
-                <attribute name="readonly">0</attribute>
+            <field name="product_template_variant_value_ids" position="attributes">
+                <t groups="base.group_no_one">
+                    <attribute name="readonly">0</attribute>
+                </t>
             </field>
         </field>
     </record>

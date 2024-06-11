@@ -4,11 +4,6 @@ from odoo import models, fields, api
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
-    attribute_value_product_ids = fields.One2many(
-        comodel_name='attribute.value.products.report',
-        inverse_name='product_tmpl_id')
-
-    @api.multi
     def copy(self, default=None):
         if not default:
             default = {}
@@ -50,9 +45,7 @@ class ProductProduct(models.Model):
                 code = prod.name
             prod.config_code = code
 
-    @api.multi
     def name_get(self):
-
         def _name_get(d):
             myname = d.get('name', '')
             code = self._context.get('display_default_code', True) and d.get('default_code', False) or False
@@ -68,7 +61,7 @@ class ProductProduct(models.Model):
                     prod = self.browse(result[i][0])
                     independent_attrs = prod.config_step_line_ids.filtered(lambda x: x.name != 'Depends').mapped(
                         'attribute_line_ids.attribute_id').sorted(key=lambda x: x.name)
-                    variant = prod.attribute_value_ids._variant_name(independent_attrs)
+                    variant = prod.product_template_attribute_value_ids._variant_name(independent_attrs)
                     name = "%s (%s)" % (prod.name, variant)
                     mydict = {
                         'id': prod.id,

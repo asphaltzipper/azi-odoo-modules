@@ -1,8 +1,8 @@
 from odoo import models, fields, api
 
 
-class ProductAttributeValue(models.Model):
-    _inherit = 'product.attribute.value'
+class ProductTemplateAttributeValue(models.Model):
+    _inherit = 'product.template.attribute.value'
 
     code = fields.Char(
         string='Code',
