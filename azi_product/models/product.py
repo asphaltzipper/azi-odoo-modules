@@ -122,3 +122,14 @@ class ProductProduct(models.Model):
                           }
                 result.append(_name_get(mydict))
         return result
+
+
+class ProductTemplateAttributevalue(models.Model):
+    _inherit = "product.template.attribute.value"
+
+    def _variant_name(self, variable_attributes):
+        return ", ".join([
+            "%s: %s" % (v.attribute_id.name, v.name)
+            for v in self.sorted(key=lambda r: r.attribute_id.name)
+            if v.attribute_id in variable_attributes
+        ])
