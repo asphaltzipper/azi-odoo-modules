@@ -21,7 +21,6 @@
     <record id="change_stock_request_action" model="ir.actions.act_window">
         <field name="name">Change Date of Stock Request</field>
         <field name="res_model">change.stock.request</field>
-        <field name="view_type">form</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
         <field name="binding_model_id" ref="stock_request.model_stock_request"/>

@@ -17,11 +17,8 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//tree/field[@name='analytic_tag_ids']" position="before">
+            <xpath expr="//tree/field[@name='customer_lead']" position="before">
                 <field name="scheduled_date" string="Sched Date" widget="date"/>
-            </xpath>
-            <xpath expr="//tree/field[@name='analytic_tag_ids']" position="attributes">
-                <attribute name="invisible">1</attribute>
             </xpath>
         </field>
     </record>

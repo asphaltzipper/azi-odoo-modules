@@ -45,7 +45,6 @@
     <record id="managing_independent_demand_action" model="ir.actions.act_window">
         <field name="name">Managing Independent Demand</field>
         <field name="res_model">managing.independent.demand</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,kanban,form</field>
     </record>
 

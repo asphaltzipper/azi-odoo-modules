@@ -8,7 +8,15 @@ class ChangeStockRequest(models.TransientModel):
 
     expected_date = fields.Datetime('Expected Date')
 
-    @api.multi
+    @api.model
+    def default_get(self, fields):
+        res = super(ChangeStockRequest, self).default_get(fields)
+        requests = self.env['stock.request'].search([('id', 'in', self._context['active_ids']),
+                                                     ('state', 'not in', ('done', 'cancel')), ('scheduled', '=', True)])
+        if requests:
+            res['expected_date'] = max(requests.mapped('expected_date'))
+        return res
+
     def change_date_of_request(self):
         requests = self.env['stock.request'].search([('id', 'in', self._context['active_ids']),
                                                      ('state', 'not in', ('done', 'cancel')), ('scheduled', '=', True)])

@@ -3,7 +3,8 @@
     <record id="action_report_schedule_so" model="ir.actions.client">
         <field name="name">Scheduling Report</field>
         <field name="tag">schedule_so_report</field>
-        <field name="context" eval="{'model': 'report.stock_request_schedule.report_schedule_so'}" />
+        <field name="res_model">report.stock_request_schedule.report_schedule_so</field>
     </record>
+
     <menuitem id="schedule_sale_order_menu" action="action_report_schedule_so" parent="sale.menu_sale_report"/>
 </odoo>

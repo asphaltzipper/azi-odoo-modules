@@ -15,11 +15,13 @@ class SaleOrderLine(models.Model):
         string='Scheduled',
         compute='_compute_scheduled',
         store=True,
+        compute_sudo=True
     )
 
     scheduled_date = fields.Datetime(
         string='Scheduled Date',
         compute='_compute_scheduled',
+        compute_sudo=True
     )
 
     @api.depends('stock_request_ids')

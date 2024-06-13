@@ -55,8 +55,6 @@ class StockRequest(models.Model):
         store=True,
         copy=False)
 
-    production_ids = fields.Many2many(copy=False)
-
     serial = fields.Char(
         string="Serial",
         copy=False,

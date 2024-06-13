@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_managing_independent_demand_user,access.managing.independent.demand.user,model_managing_independent_demand,stock_request.group_stock_request_user,1,0,0,0
+access_change_stock_request_user,access.change.stock.request.user,model_change_stock_request,stock_request.group_stock_request_user,1,1,1,0

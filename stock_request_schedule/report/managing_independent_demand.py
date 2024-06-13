@@ -5,6 +5,7 @@ from odoo import api, fields, models, tools
 
 class ManagingIndependentDemand(models.Model):
     _name = 'managing.independent.demand'
+    _description = "Managing Independent Demand"
     _auto = False
 
     stock_request_id = fields.Many2one('stock.request', 'Stock Request', required=1)
@@ -20,7 +21,6 @@ class ManagingIndependentDemand(models.Model):
             if record.sale_order_line_id:
                 record.move_ids = record.sale_order_line_id.move_ids
 
-    @api.model_cr
     def init(self):
         tools.drop_view_if_exists(self._cr, 'managing_independent_demand')
         self._cr.execute("""

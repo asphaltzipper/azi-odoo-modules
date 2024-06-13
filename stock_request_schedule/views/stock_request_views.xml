@@ -29,7 +29,7 @@
         <field name="model">stock.request</field>
         <field name="inherit_id" ref="stock_request.stock_request_search"/>
         <field name="arch" type="xml">
-            <filter name="inactive" position="before">
+            <filter name="current_requests" position="before">
                 <filter string="Finished Goods" name="finished_goods" domain="[('finished_goods','=',True)]"/>
             </filter>
         </field>
@@ -37,7 +37,6 @@
     <record id="stock_request_finished_goods_action" model="ir.actions.act_window">
         <field name="name">Stock Requests for Finished Goods</field>
         <field name="res_model">stock.request</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="view_id" ref="stock_request.view_stock_request_tree"/>
         <field name="search_view_id" ref="stock_request.stock_request_search" />
@@ -82,7 +81,6 @@
                 <separator/>
                 <filter string="Active" name="active_requests" domain="[('state', 'not in', ['done', 'cancel'])]"/>
                 <filter name="recent_requests" string="Recent Requests" domain="['|', ('expected_date', '>', (datetime.date.today() - relativedelta(months=1)).strftime('%Y-%m-01')), ('state', '!=', 'done')]"/>
-                <filter string="Archived" name="inactive" domain="[('active','=',False)]"/>
                 <separator/>
                 <filter string="Sold" name="sold" domain="[('sold','=',True)]"/>
                 <filter string="Draft" name="draft" domain="[('state','=','draft')]"/>
@@ -159,7 +157,6 @@
         <field name="name">Scheduled Stock Requests</field>
         <field name="res_model">stock.request</field>
         <field name="type">ir.actions.act_window</field>
-        <field name="view_type">form</field>
         <field name="view_mode">kanban,tree,form</field>
         <field name="domain">[('scheduled', '=', True)]</field>
         <field name="context">{
