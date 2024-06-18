@@ -55,7 +55,6 @@
     <record id="material_plan_log_action" model="ir.actions.act_window">
         <field name="name">Material Plan Log</field>
         <field name="res_model">material.plan.log</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
     </record>
 

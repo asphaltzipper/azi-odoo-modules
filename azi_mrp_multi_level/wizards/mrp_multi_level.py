@@ -113,7 +113,6 @@ class MultiLevelMrp(models.TransientModel):
         self.env['material.plan.log'].create({'type': 'info', 'message': message})
         self.env.cr.commit()
 
-    @api.multi
     def run_mrp_multi_level(self):
         exec_start = time.time()
         message = "MRP run started by user %s" % self.env.user.display_name
@@ -203,9 +202,7 @@ class MultiLevelMrp(models.TransientModel):
         return result
 
     @api.model
-    def explode_action(
-            self, product_mrp_area_id, mrp_action_date, name, qty, action
-    ):
+    def explode_action(self, product_mrp_area_id, mrp_action_date, name, qty, action, values=None):
         if not product_mrp_area_id.product_id.bom_ids:
             log_msg = 'bom not found for product %s' % \
                       product_mrp_area_id.product_id.display_name
@@ -213,7 +210,7 @@ class MultiLevelMrp(models.TransientModel):
             self.env['material.plan.log'].create({'type': 'error', 'message': log_msg})
             self.env.cr.commit()
         return super(MultiLevelMrp, self).explode_action(
-            product_mrp_area_id, mrp_action_date, name, qty, action)
+            product_mrp_area_id, mrp_action_date, name, qty, action, values)
 
     @api.model
     def _get_products_missing_pma(self):
@@ -296,7 +293,7 @@ class MultiLevelMrp(models.TransientModel):
                 where state not in ('cancel')
             ) sm on sm.sale_line_id=sol.id
             left join stock_move_line sml on sml.move_id=sm.id
-            left join stock_production_lot spl on spl.id=sml.lot_id
+            left join stock_lot spl on spl.id=sml.lot_id
             where sol.delivery_remaining_qty>0
             and so.state='sale'
             and pc.name ilike 'FG - %'
@@ -316,9 +313,9 @@ class MultiLevelMrp(models.TransientModel):
                 sr.name as sr_name,
                 pp.default_code,
                 pt.name as prod_name,
-                sm.date_expected::date as so_date,
+                sm.date_deadline::date as so_date,
                 sr.expected_date::date as sr_date,
-                abs(round((extract(epoch from sm.date_expected::date) / 86400 - extract(epoch from sr.expected_date::date) / 86400)::decimal, 0)) as day_diff
+                abs(round((extract(epoch from sm.date_deadline::date) / 86400 - extract(epoch from sr.expected_date::date) / 86400)::decimal, 0)) as day_diff
             from sale_order_line sol
             left join sale_order so on so.id=sol.order_id
             left join product_product pp on pp.id=sol.product_id
@@ -335,12 +332,12 @@ class MultiLevelMrp(models.TransientModel):
                 where state not in ('cancel')
             ) sm on sm.sale_line_id=sol.id
             left join stock_move_line sml on sml.move_id=sm.id
-            left join stock_production_lot spl on spl.id=sml.lot_id
+            left join stock_lot spl on spl.id=sml.lot_id
             where sol.delivery_remaining_qty>0
             and so.state='sale'
             and pc.name ilike 'FG - %'
             and sr.id is not null
-            and round((extract(epoch from sm.date_expected::date) / 86400 - extract(epoch from sr.expected_date::date) / 86400)::decimal, 0)<0
+            and round((extract(epoch from sm.date_deadline::date) / 86400 - extract(epoch from sr.expected_date::date) / 86400)::decimal, 0)<0
         """
         self.env.cr.execute(sql)
         sol_sched_diff = [{
@@ -361,9 +358,9 @@ class MultiLevelMrp(models.TransientModel):
                 sr.name as sr_name,
                 pp.default_code,
                 pt.name as prod_name,
-                sm.date_expected::date as so_date,
+                sm.date_deadline::date as so_date,
                 sr.expected_date::date as sr_date,
-                abs(round((extract(epoch from sm.date_expected::date) / 86400 - extract(epoch from sr.expected_date::date) / 86400)::decimal, 0)) as day_diff
+                abs(round((extract(epoch from sm.date_deadline::date) / 86400 - extract(epoch from sr.expected_date::date) / 86400)::decimal, 0)) as day_diff
             from sale_order_line sol
             left join sale_order so on so.id=sol.order_id
             left join product_product pp on pp.id=sol.product_id
@@ -380,12 +377,12 @@ class MultiLevelMrp(models.TransientModel):
                 where state not in ('cancel')
             ) sm on sm.sale_line_id=sol.id
             left join stock_move_line sml on sml.move_id=sm.id
-            left join stock_production_lot spl on spl.id=sml.lot_id
+            left join stock_lot spl on spl.id=sml.lot_id
             where sol.delivery_remaining_qty>0
             and so.state='sale'
             and pc.name ilike 'FG - %'
             and sr.id is not null
-            and round((extract(epoch from sm.date_expected::date) / 86400 - extract(epoch from sr.expected_date::date) / 86400)::decimal, 0)>0
+            and round((extract(epoch from sm.date_deadline::date) / 86400 - extract(epoch from sr.expected_date::date) / 86400)::decimal, 0)>0
         """
         self.env.cr.execute(sql)
         sol_sched_diff = [{

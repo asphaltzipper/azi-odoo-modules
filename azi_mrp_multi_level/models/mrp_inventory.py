@@ -40,10 +40,12 @@ class MrpInventory(models.Model):
         for record in self:
             if record.product_id:
                 operations = self.env['mrp.bom'].search([('product_id', '=', record.product_id.id)]).\
-                    mapped('routing_id.operation_ids')
+                    mapped('operation_ids')
                 if operations:
                     work_center_codes = [code for code in operations.mapped('workcenter_id.code') if code]
                     record.routing_detail = ", ".join(work_center_codes)
+                else:
+                    record.routing_detail = None
 
     @api.depends('product_id')
     def _compute_on_blanket(self):

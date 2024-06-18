@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 {
     "name": "AZI MRP Multi level",
-    "version": "12.0.1.0.0",
+    "version": "16.0.1.0.0",
     "summary": "MRP Inventory",
     "category": "Manufacturing",
     "author": "John Welch",
+    "license": "AGPL-3",
     "website": "http://www.github.com/asphaltzipper",
-    'description': """
+    "description": """
 AZI MRP Multi Level
 ===================
 * Modified mrp.inventory to have routing details of the product
     """,
-    'depends': [
+    "depends": [
         'mrp_multi_level',
         'web_notify',
         'stock_request_schedule',

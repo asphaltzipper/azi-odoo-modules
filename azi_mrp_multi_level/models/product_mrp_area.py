@@ -6,17 +6,17 @@ class ProductMrpArea(models.Model):
     _inherit = ['product.mrp.area', 'mail.thread']
 
     mrp_nbr_days = fields.Integer(
-        track_visibility='onchange',
+        tracking=True,
     )
     mrp_minimum_stock = fields.Integer(
-        track_visibility='onchange',
+        tracking=True,
     )
     mrp_minimum_order_qty = fields.Integer(
-        track_visibility='onchange',
+        tracking=True,
     )
     mrp_maximum_order_qty = fields.Integer(
-        track_visibility='onchange',
+        tracking=True,
     )
     mrp_qty_multiple = fields.Integer(
-        track_visibility='onchange',
+        tracking=True,
     )
