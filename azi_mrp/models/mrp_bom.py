@@ -13,11 +13,7 @@ class MrpBom(models.Model):
     # I thought integer fields could not be null?
     # okay, make the default one
     sequence = fields.Integer(default=1)
-
-    type = fields.Selection(
-        track_visibility='onchange',
-    )
-
+    type = fields.Selection(tracking=True,)
 
     def ext_explode(self, product_id, quantity, deep=False):
         """
@@ -87,18 +83,7 @@ class MrpBomLine(models.Model):
     _inherit = 'mrp.bom.line'
 
     deprecated = fields.Boolean('Deprecated', related='parent_product_tmpl_id.deprecated', store=True)
-    product_tmpl_id = fields.Many2one('product.template', 'Product Template', related='product_id.product_tmpl_id', store=True)
 
-    @api.one
-    @api.depends('product_id')
-    def _compute_has_attachments(self):
-        nbr_attach = self.env['ir.attachment'].search_count([
-            '|',
-            '&', ('res_model', '=', 'product.product'), ('res_id', '=', self.product_id.id),
-            '&', ('res_model', '=', 'product.template'), ('res_id', '=', self.product_id.product_tmpl_id.id)])
-        self.has_attachments = bool(nbr_attach)
-
-    @api.multi
     def action_see_attachments(self):
         domain = [
             '|',
@@ -120,5 +105,6 @@ class MrpBomLine(models.Model):
                             Use this feature to store any files, like drawings or specifications.
                         </p>'''),
             'limit': 80,
-            'context': "{'default_res_model': '%s','default_res_id': %d}" % ('product.product', self.product_id.id)
+            'context': "{'default_res_model': '%s','default_res_id': %d, 'default_company_id': %s}" %
+                       ('product.product', self.product_id.id, self.company_id.id)
         }

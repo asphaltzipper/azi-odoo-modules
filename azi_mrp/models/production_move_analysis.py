@@ -102,17 +102,16 @@ class ProductionMoveAnalysis(models.Model):
         self.ensure_one()
         return self.product_id.action_material_analysis()
 
-    @api.model_cr
     def init(self):
-        tools.drop_view_if_exists(self._cr, 'production_move_analysis')
-        self._cr.execute("""
+        tools.drop_view_if_exists(self.env.cr, 'production_move_analysis')
+        self.env.cr.execute("""
             CREATE VIEW production_move_analysis AS (
                 select
                 m.id,
                 m.raw_material_production_id,
                 m.production_id,
                 m.date,
-                m.date_expected,
+                m.date_deadline as date_expected,
                 m.picking_id,
                 m.sequence,
                 m.origin,
@@ -150,9 +149,9 @@ class ProductionMoveAnalysis(models.Model):
                     -- Ppocurement methods
                     select
                         product_id,
-                        string_agg(name, ', ') as route_names
+                        string_agg(name->> %s, ', ') as route_names
                     from stock_route_product as sr
-                    left join stock_location_route as r on r.id=sr.route_id
+                    left join stock_route as r on r.id=sr.route_id
                     group by product_id
                 ) as r on r.product_id=p.product_tmpl_id
                 left join (
@@ -179,7 +178,7 @@ class ProductionMoveAnalysis(models.Model):
                     -- total quantity reserved to all moves
                     select
                         l.product_id,
-                        sum(l.product_uom_qty) as res_qty,
+                        sum(l.reserved_uom_qty) as res_qty,
                         string_agg(m.origin, ', ') as res_names    
                     from stock_move_line as l
                     left join stock_move as m on m.id=l.move_id
@@ -191,7 +190,7 @@ class ProductionMoveAnalysis(models.Model):
                     -- quantity reserved to this move
                     select
                         move_id,
-                        sum(product_uom_qty) as res_qty
+                        sum(reserved_uom_qty) as res_qty
                     from stock_move_line
                     group by move_id
                 ) as a on a.move_id=m.id
@@ -216,4 +215,4 @@ class ProductionMoveAnalysis(models.Model):
                 ) as kb on kb.product_id=m.product_id
                 order by m.sequence
             )
-        """)
+        """, (self.env.lang,))

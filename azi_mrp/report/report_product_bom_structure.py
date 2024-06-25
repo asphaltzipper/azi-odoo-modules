@@ -13,7 +13,7 @@ class ReportProductBom(models.AbstractModel):
     @api.model
     def get_html(self, product_id=False):
         res = self._get_report_data(product_id)
-        res['lines'] = self.env.ref('azi_mrp.report_product_bom').render({'data': res['lines']})
+        res['lines'] = self.env['ir.ui.view']._render_template('azi_mrp.report_product_bom', {'data': res['lines']})
         return res
 
     def _get_bom_reference(self, bom):

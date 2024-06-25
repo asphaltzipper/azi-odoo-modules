@@ -1,32 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <report
-        string="AZI Production Order"
-        id="action_report_production_order_azi"
-        model="mrp.production"
-        name="azi_mrp.report_mrporder_azi"
-        file="azi_mrp.report.mrp_production_templates"
-        paperformat="shelf_location.paperformat_landscape_us"
-        report_type="qweb-pdf"
-    />
+    <record id="action_report_production_order_azi" model="ir.actions.report">
+        <field name="name">AZI Production Order</field>
+        <field name="model">mrp.production</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">azi_mrp.report_mrporder_azi</field>
+        <field name="report_file">azi_mrp.report.mrp_production_templates</field>
+        <field name="paperformat_id" ref="shelf_location.paperformat_landscape_us"/>
+        <field name="binding_model_id" ref="model_mrp_production"/>
+        <field name="binding_type">report</field>
+    </record>
 
-    <report
-        string="Picking Images"
-        id="action_report_production_order_pick"
-        model="mrp.production"
-        name="azi_mrp.report_mrporder_pick"
-        file="azi_mrp.report.mrp_production_templates"
-        paperformat="base.paperformat_us"
-        report_type="qweb-pdf"
-    />
-    <report
-        string="BOM History"
-        id="action_mrp_bom_history_report"
-        model="mrp.bom.history"
-        name="azi_mrp.report_bom_history"
-        file="azi_mrp.mrp_bom_history_report"
-        report_type="qweb-html"
-    />
+    <record id="action_report_production_order_pick" model="ir.actions.report">
+        <field name="name">Picking Images</field>
+        <field name="model">mrp.production</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">azi_mrp.report_mrporder_pick</field>
+        <field name="report_file">azi_mrp.report.mrp_production_templates</field>
+        <field name="paperformat_id" ref="base.paperformat_us"/>
+        <field name="binding_model_id" ref="model_mrp_production"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="action_mrp_bom_history_report" model="ir.actions.report">
+        <field name="name">BOM History</field>
+        <field name="model">mrp.bom.history</field>
+        <field name="report_type">qweb-html</field>
+        <field name="report_name">azi_mrp.report_bom_history</field>
+        <field name="report_file">azi_mrp.mrp_bom_history_report</field>
+        <field name="paperformat_id" ref="base.paperformat_us"/>
+        <field name="binding_model_id" ref="model_mrp_bom_history"/>
+        <field name="binding_type">report</field>
+    </record>
 
 </odoo>

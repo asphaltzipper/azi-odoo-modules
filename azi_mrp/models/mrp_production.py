@@ -11,13 +11,19 @@ from odoo import fields, models, api
 class MrpProduction(models.Model):
     _inherit = "mrp.production"
 
+    @api.model
+    def _get_default_date_planned_start(self):
+        if self.env.context.get('default_date_deadline'):
+            return fields.Datetime.to_datetime(self.env.context.get('default_date_deadline'))
+        return datetime.datetime.now()
+
     date_planned_start = fields.Datetime(
-        string='Deadline Start',
+        string='Scheduled Date',
         copy=False,
-        default=fields.Datetime.now,
+        default=_get_default_date_planned_start,
         index=True,
         required=True,
-        oldname="date_planned",
+        help="Date at which you plan to start the production.",
         compute='_compute_date_planned_start',
         store=True)
 
@@ -35,9 +41,8 @@ class MrpProduction(models.Model):
             production.date_planned_start = production.date_planned_finished - datetime.timedelta(
                 days=int(production.product_id.produce_delay))
 
-    @api.multi
     def write(self, vals):
-        """Override wirte method to update stock move expected date that is related to mrp production"""
+        """Override write method to update stock move expected date that is related to mrp production"""
         res = super(MrpProduction, self).write(vals)
         if 'date_planned_finished' in vals or 'date_planned_start' in vals:
             for record in self:
@@ -46,13 +51,12 @@ class MrpProduction(models.Model):
                 moves = self.env['stock.move'].search(['|', ('raw_material_production_id', '=', record.id),
                                                        ('production_id', '=', record.id),
                                                        ('state', 'not in', ('cancel', 'done'))])
-                moves.sudo().write({'date_expected': date_planned_start,
+                moves.sudo().write({'date_deadline': date_planned_start,
                                     'date': date_planned_start})
                 move_lines = moves.mapped('move_line_ids')
                 move_lines and move_lines.sudo().write({'date': date_planned_start})
         return res
 
-    @api.multi
     def get_production_and_attachment(self):
         self.ensure_one()
         report = self.env['ir.actions.report']._get_report_from_name('azi_mrp.report_mrporder_azi')
@@ -67,7 +71,7 @@ class MrpProduction(models.Model):
                  ('res_model', '=', 'product.template'),
                  ('res_id', '=', self.product_id.product_tmpl_id.id)],
                 order='priority desc, name', limit=1)
-        report_bytes, _ = report.render_qweb_pdf(res_ids=self.id)
+        report_bytes, _ = report._render_qweb_pdf('azi_mrp.action_report_production_order_azi', res_ids=self.id)
         buffer = BytesIO(report_bytes)
         production_pdf = PdfFileReader(buffer)
         output = PdfFileWriter()
@@ -82,7 +86,6 @@ class MrpProduction(models.Model):
             self.report_attach = base64.b64encode(output_stream.getvalue())
             self.report_name = "Azi Production Order with Attachment.pdf"
 
-    @api.multi
     def print_production_and_attachment(self):
         self.get_production_and_attachment()
         printer_obj = self.env['printing.printer']
@@ -111,7 +114,6 @@ class MrpProduction(models.Model):
         self.env.user.notify_success(message=message, title="Print MO", sticky=False)
         return {}
 
-    @api.multi
     def direct_print_azi_report(self):
         self.ensure_one()
         report = self.env['ir.actions.report']._get_report_from_name('azi_mrp.report_mrporder_azi')
@@ -135,7 +137,6 @@ class MrpProduction(models.Model):
         self.env.user.notify_success(message=message, title="Print MO", sticky=False)
         return True
 
-    @api.multi
     def direct_print_product_attachment(self):
         self.ensure_one()
         printer_obj = self.env['printing.printer']
@@ -178,9 +179,8 @@ class MrpProduction(models.Model):
         user.notify_success(message=message, title="Print Attachment", sticky=False)
         return {}
 
-    @api.multi
-    def _generate_moves(self):
-        res = super(MrpProduction, self)._generate_moves()
+    def action_confirm(self):
+        res = super(MrpProduction, self).action_confirm()
         for production in self:
             bom_lines = self.get_bom_lines(production.product_qty, production.bom_id.id)
             bom_history_lines = []
@@ -191,13 +191,14 @@ class MrpProduction(models.Model):
         return res
 
     def get_bom_lines(self, quantity, bom_id):
+        lang = self.env.lang
         self._cr.execute("""
             with recursive bom_tree (parent_prod_id, comp_prod_id, level, name_path, bom_id, bom_line_id, bom_type, qty) as (
             select
                 b.product_id as parent_id,
                 l.product_id as comp_id,
                 0 as level,
-                coalesce(pp.default_code, t.name, '') as name_path,
+                coalesce(pp.default_code, t.name->> %s, '') as name_path,
                 b.id as bom_id,
                 l.id as line_id,
                 b.type as bom_type,
@@ -211,7 +212,7 @@ class MrpProduction(models.Model):
                 b.product_id as parent_id,
                 l.product_id as comp_id,
                 p.level + 1 as level,
-                p.name_path || ' | ' || coalesce(pp.default_code, t.name, '') as name_path,
+                p.name_path || ' | ' || coalesce(pp.default_code, t.name ->> %s, '') as name_path,
                 b.id as bom_id,
                 l.id as line_id,
                 b.type as bom_type,
@@ -243,6 +244,6 @@ class MrpProduction(models.Model):
             from bom_tree as t
             left join mrp_bom as b on b.id = t.bom_id
             order by name_path
-        """, (quantity, bom_id)
+        """, (lang, quantity, bom_id, lang)
         )
         return self._cr.fetchall()

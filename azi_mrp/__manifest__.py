@@ -1,8 +1,8 @@
-# Copyright 2017 Matt Taylor
+# Copyright 2024 Matt Taylor
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 {
     "name": "azi_mrp",
-    "version": "12.0.1.0.0",
+    "version": "16.0.1.0.0",
     "summary": "AZI MRP Customizations",
     "category": "Manufacturing",
     "author": "Matt Taylor",
@@ -28,7 +28,6 @@ AZI Specialized Customizations to MRP
         'engineering_product',
     ],
     'data': [
-        'views/report_bom_template.xml',
         'views/mrp_view_changes.xml',
         'views/mrp_bom_views.xml',
         'views/mrp_bom_history_views.xml',
@@ -36,12 +35,16 @@ AZI Specialized Customizations to MRP
         'report/mrp_report.xml',
         'report/mrp_production_templates.xml',
         'report/product_report_bom_structure.xml',
-        'report/mrp_report_bom_structure.xml',
         'views/production_move_analysis.xml',
         'views/product_views.xml',
         'wizards/compile_product_file_views.xml',
         'security/ir.model.access.csv',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'azi_mrp/static/src/js/product_bom_report.js',
+        ],
+    },
     "installable": True,
     "auto_install": False,
 }

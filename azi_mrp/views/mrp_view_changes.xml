@@ -4,7 +4,6 @@
         <field name="name">Moves Analysis</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">production.move.analysis</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">['|', ('raw_material_production_id', '=', active_id), ('production_id', '=', active_id)]</field>
     </record>
@@ -27,10 +26,10 @@
             <button name="%(mrp.action_mrp_production_moves)d" position="attributes">
                 <attribute name="attrs"/>
             </button>
-            <field name="routing_id" position="after">
+            <label for="lot_producing_id" position="before">
                 <field name="report_name" invisible="1"/>
                 <field name="report_attach" filename="report_name" widget="binary" invisible="1"/>
-            </field>
+            </label>
             <xpath expr="//page/field[@name='move_raw_ids']/tree" position="attributes">
                 <attribute name="default_order">has_tracking desc, product_id</attribute>
                 <attribute name="limit">1000</attribute>
@@ -45,15 +44,13 @@
             <xpath expr="//sheet/div[@name='button_box']/button[2]" position="before">
                 <button name="%(action_production_move_analysis)d" type="action" string="Moves Analysis" class="oe_stat_button" icon="fa-arrows-v"/>
             </xpath>
-            <xpath expr="//sheet/group/group/field[@name='date_planned_finished']" position="attributes">
-                <attribute name="invisible">0</attribute>
-                <attribute name="string">Finish Date</attribute>
-                <attribute name="widget">date</attribute>
+            <xpath expr="//field[@name='components_availability_state']" position="before">
+                <field name="date_planned_finished" widget="date" string="Finish Date"/>
             </xpath>
-            <xpath expr="//sheet/group/group/field[@name='date_planned_start']" position="attributes">
+            <field name="date_planned_start" position="attributes">
                 <attribute name="string">Start Date</attribute>
                 <attribute name="widget">date</attribute>
-            </xpath>
+            </field>
         </field>
     </record>
 

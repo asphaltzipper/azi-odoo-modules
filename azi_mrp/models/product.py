@@ -10,13 +10,12 @@ class ProductTemplate(models.Model):
         compute='_compute_mrp_product_open_qty',
     )
 
-    @api.one
     def _compute_mrp_product_open_qty(self):
+        self.ensure_one()
         self.mrp_product_open_qty = float_round(
             sum(self.mapped('product_variant_ids').mapped('mrp_product_open_qty')),
             precision_rounding=self.uom_id.rounding)
 
-    @api.multi
     def action_view_actual_mos(self):
         action = self.env.ref('mrp.mrp_production_action').read()[0]
         action['domain'] = [('product_id', 'in', self.product_variant_ids.ids)]
@@ -46,7 +45,6 @@ class ProductProduct(models.Model):
                 mapped_data.get(product.id, 0),
                 precision_rounding=product.uom_id.rounding)
 
-    @api.multi
     def action_view_actual_mos(self):
         action = self.env.ref('mrp.mrp_production_action').read()[0]
         action['domain'] = [('product_id', 'in', self.ids)]
