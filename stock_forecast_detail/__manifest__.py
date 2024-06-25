@@ -1,11 +1,12 @@
-# Copyright 2020 Matt taylor
+# Copyright 2024 Matt taylor
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 {
     "name": "Stock Forecast Detail",
-    "version": "12.0.1.0.0",
+    "version": "16.0.1.0.0",
     "summary": "Schedule of Future Product Stock Moves with Running Balance",
     "category": "Stock",
     "author": "Matt Taylor",
+    "license": "AGPL-3",
     "website": "http://www.github.com/asphaltzipper",
     "description": """
 Stock Forecast Detail
@@ -26,6 +27,7 @@ Unless Real-Only is specified, we also include the following:
         "azi_mrp_multi_level",
     ],
     "data": [
+        "security/ir.model.access.csv",
         "views/stock_forecast_detail_line_views.xml",
         "views/product_views.xml",
         "views/mrp_inventory_views.xml",

@@ -60,10 +60,10 @@ class StockForecastDetailWizard(models.TransientModel):
             lines.append({
                 'product_id': self.product_id.id,
                 'tx_type': tx_type,
-                'tx_date': move.date_expected,
+                'tx_date': move.date,
                 'product_qty': qty_sign * move.product_qty,
                 'after_qty': 0,
-                'late': move.date_expected < fields.datetime.now(),
+                'late': move.date < fields.datetime.now(),
                 'status': 'actual',
                 'origin': move.origin,
             })
@@ -177,7 +177,6 @@ class StockForecastDetailWizard(models.TransientModel):
 
         return lines
 
-    @api.multi
     def action_compute(self):
 
         # clear old analysis lines

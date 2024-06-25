@@ -4,9 +4,9 @@
     <record id="product_template_form_view_material_analysis_button" model="ir.ui.view">
         <field name="name">product.template.forecast.detail.button</field>
         <field name="model">product.template</field>
-        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="inherit_id" ref="stock.product_template_form_view_procurement_button"/>
         <field name="arch" type="xml">
-            <button name="%(stock.action_stock_level_forecast_report_template)d"
+            <button name="action_product_tmpl_forecast_report"
                     position="before">
                 <button type="object"
                         name="action_planned_forecast_detail"
@@ -24,7 +24,7 @@
                     </div>
                 </button>
             </button>
-            <button name="%(stock.action_stock_level_forecast_report_template)d"
+            <button name="action_product_tmpl_forecast_report"
                 position="attributes">
                 <attribute name="invisible">1</attribute>
             </button>
@@ -34,9 +34,9 @@
     <record id="product_variant_form_view_material_analysis_button" model="ir.ui.view">
         <field name="name">product.variant.forecast.detail.button</field>
         <field name="model">product.product</field>
-        <field name="inherit_id" ref="product.product_normal_form_view"/>
+        <field name="inherit_id" ref="stock.product_form_view_procurement_button"/>
         <field name="arch" type="xml">
-            <button name="%(stock.action_stock_level_forecast_report_product)d"
+            <button name="action_product_forecast_report"
                     position="before">
                 <button type="object"
                         name="action_planned_forecast_detail"
@@ -54,8 +54,7 @@
                     </div>
                 </button>
             </button>
-            <button name="%(stock.action_stock_level_forecast_report_product)d"
-                position="attributes">
+            <button name="action_product_forecast_report" position="attributes">
                 <attribute name="invisible">1</attribute>
             </button>
         </field>
