@@ -37,7 +37,6 @@ class MrpProduction(models.Model):
                                   "product %s on order %s" %
                                   (rec.product_id.display_name, rec.name)))
 
-    @api.multi
     def write(self, vals):
         if 'kit_assigned_qty' in vals:
             kit_change_qty = vals['kit_assigned_qty'] - self.kit_assigned_qty
@@ -71,13 +70,14 @@ class MrpProduction(models.Model):
         for rec in self:
             rec.kit_done = rec.kit_assigned_qty >= rec.product_qty
 
-    @api.model
-    def create(self, values):
-        if values.get('product_id') and values.get('product_qty'):
-            product = self.env['product.product'].search([('id', '=', values['product_id'])])
-            if product.mfg_kit_qty:
-                to_assign = min(product.mfg_kit_qty, values['product_qty'])
-                to_assign = int(float_round(to_assign, precision_digits=0))
-                values['kit_assigned_qty'] = to_assign
-                product.mfg_kit_qty = max(0, product.mfg_kit_qty - to_assign)
-        return super(MrpProduction, self).create(values)
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('product_id') and vals.get('product_qty'):
+                product = self.env['product.product'].search([('id', '=', vals['product_id'])])
+                if product.mfg_kit_qty:
+                    to_assign = min(product.mfg_kit_qty, vals['product_qty'])
+                    to_assign = int(float_round(to_assign, precision_digits=0))
+                    vals['kit_assigned_qty'] = to_assign
+                    product.mfg_kit_qty = max(0, product.mfg_kit_qty - to_assign)
+        return super(MrpProduction, self).create(vals_list)

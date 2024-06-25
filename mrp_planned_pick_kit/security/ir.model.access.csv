@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_mrp_planned_pick_kit_user,access.mrp.planned.pick.kit.user,model_mrp_planned_pick_kit,mrp.group_mrp_user,1,1,1,1
+access_mrp_planned_pick_kit_line_user,access.mrp.planned.pick.kit.line.user,model_mrp_planned_pick_kit_line,mrp.group_mrp_user,1,1,1,1

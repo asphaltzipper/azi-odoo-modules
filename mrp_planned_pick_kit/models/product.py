@@ -12,7 +12,7 @@ class ProductTemplate(models.Model):
         compute='_compute_mfg_kit_qty',
         inverse='_inverse_mfg_kit_qty',
         store=True,
-        track_visibility='onchange',
+        tracking=True,
     )
 
     @api.depends('product_variant_ids', 'product_variant_ids.mfg_kit_qty')
@@ -23,7 +23,6 @@ class ProductTemplate(models.Model):
         for tmpl in (self - unique_variants):
             tmpl.mfg_kit_qty = 0
 
-    @api.multi
     def action_create_mfg_kit(self):
         self.ensure_one()
         if len(self.product_variant_ids) > 1:
@@ -32,7 +31,6 @@ class ProductTemplate(models.Model):
                               % self.display_name))
         return self.product_variant_ids.action_create_mfg_kit()
 
-    @api.multi
     def _inverse_mfg_kit_qty(self):
         for rec in self:
             if len(rec.product_variant_ids) > 1:
@@ -50,15 +48,13 @@ class ProductProduct(models.Model):
         string="Kits",
         required=True,
         default=0,
-        track_visibility='onchange',
+        tracking=True,
     )
 
-    @api.multi
     def action_create_mfg_kit(self):
         self.ensure_one()
         return self.create_mfg_kit(1.0)
 
-    @api.multi
     def create_mfg_kit(self, quantity=1.0):
         self.ensure_one()
         if not self.bom_ids:

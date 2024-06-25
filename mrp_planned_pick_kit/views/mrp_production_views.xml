@@ -7,10 +7,10 @@
         <field name="model">mrp.production</field>
         <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
         <field name="arch" type="xml">
-            <field name="routing_id" position="after">
+            <label for="lot_producing_id" position="before">
                 <field name="kit_assigned_qty" attrs="{'readonly': [('state', 'in', ['done', 'cancel'])]}"/>
                 <field name="kit_done"/>
-            </field>
+            </label>
         </field>
     </record>
 
@@ -20,7 +20,7 @@
         <field name="model">mrp.production</field>
         <field name="inherit_id" ref="mrp.mrp_production_tree_view"/>
         <field name="arch" type="xml">
-            <field name="availability" position="after">
+            <field name="state" position="before">
                 <field name="kit_done" groups="mrp.group_mrp_routings"/>
             </field>
         </field>
@@ -30,7 +30,7 @@
         <field name="model">mrp.production</field>
         <field name="inherit_id" ref="mrp.view_mrp_production_filter"/>
         <field name="arch" type="xml">
-            <xpath expr="//filter[@name='done']" position="after">
+            <xpath expr="//filter[@name='filter_cancel']" position="after">
                     <filter string="Kit Done" domain="[('kit_done','=', True)]" name="kit_done" groups="mrp.group_mrp_routings"/>
                     <filter string="Kit Not Done" domain="[('kit_done','=', False)]" name="kit_not_done" groups="mrp.group_mrp_routings"/>
             </xpath>

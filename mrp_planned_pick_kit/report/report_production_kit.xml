@@ -17,24 +17,24 @@
         <field name="dpi">110</field>
     </record>
 
-    <report
-        string="Production Kit"
-        id="action_report_production_kit"
-        model="mrp.planned.pick.kit"
-        name="mrp_planned_pick_kit.report_production_kit"
-        file="mrp_planned_pick_kit.report.report_production_kit_templates"
-        paperformat="mrp_planned_pick_kit.paperformat_portrait_ledger"
-        report_type="qweb-pdf"
-    />
+    <record id="action_report_production_kit" model="ir.actions.report">
+        <field name="name">Production Kit</field>
+        <field name="model">mrp.planned.pick.kit</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">mrp_planned_pick_kit.report_production_kit</field>
+        <field name="report_file">mrp_planned_pick_kit.report.report_production_kit_templates</field>
+        <field name="binding_model_id" ref="model_mrp_planned_pick_kit"/>
+        <field name="paperformat_id" ref="mrp_planned_pick_kit.paperformat_portrait_ledger"/>
+    </record>
 
-    <report
-        string="Production Kit Images"
-        id="action_report_production_kit_images"
-        model="mrp.planned.pick.kit"
-        name="mrp_planned_pick_kit.report_production_kit_images"
-        file="mrp_planned_pick_kit.report.report_production_kit_templates"
-        paperformat="mrp_planned_pick_kit.paperformat_portrait_ledger"
-        report_type="qweb-pdf"
-    />
+    <record id="action_report_production_kit_images" model="ir.actions.report">
+        <field name="name">Production Kit Images</field>
+        <field name="model">mrp.planned.pick.kit</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">mrp_planned_pick_kit.report_production_kit_images</field>
+        <field name="report_file">mrp_planned_pick_kit.report.report_production_kit_templates</field>
+        <field name="binding_model_id" ref="model_mrp_planned_pick_kit"/>
+        <field name="paperformat_id" ref="mrp_planned_pick_kit.paperformat_portrait_ledger"/>
+    </record>
 
 </odoo>

@@ -1,9 +1,9 @@
-# Copyright 2020 Matt taylor
+# Copyright 2024 Matt taylor
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 {
     "name": "MRP Planned Pick Kit",
     "summary": "Support kitting for planned manufacturing orders",
-    "version": "12.0.1.0.0",
+    "version": "16.0.1.0.0",
     "category": "Manufacturing",
     "website": "http://www.github.com/asphaltzipper/azi-odoo-modules",
     'description': """
@@ -30,6 +30,7 @@ We add the following:
         'azi_mrp_multi_level',
     ],
     "data": [
+        'security/ir.model.access.csv',
         'views/mrp_planned_pick_kit_views.xml',
         'views/product_views.xml',
         'views/mrp_production_views.xml',

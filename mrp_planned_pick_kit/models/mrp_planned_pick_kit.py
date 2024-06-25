@@ -72,7 +72,7 @@ class MrpPlannedPickKit(models.TransientModel):
             bom = rec.product_id.bom_ids and rec.product_id.bom_ids[0]
             if bom:
                 rec.routing_detail = ", ".join(
-                    [x for x in bom.routing_id.operation_ids.mapped('workcenter_id.code') if x])
+                    [x for x in bom.operation_ids.mapped('workcenter_id.code') if x])
 
     @api.model
     @api.depends('product_id')
@@ -92,7 +92,6 @@ class MrpPlannedPickKit(models.TransientModel):
                                     "or change MRP Area demand grouping (Nbr. Days)." % self.product_qty))
         return True
 
-    @api.multi
     def action_toggle_images(self):
         self.ensure_one()
         if self.show_images:
@@ -100,7 +99,6 @@ class MrpPlannedPickKit(models.TransientModel):
         else:
             self.show_images = True
 
-    @api.multi
     def action_done(self):
         self.ensure_one()
         if self.state == 'done':
@@ -108,7 +106,6 @@ class MrpPlannedPickKit(models.TransientModel):
         self.product_id.mfg_kit_qty += self.product_qty
         self.write({'state': 'done'})
 
-    @api.multi
     def write(self, vals):
         if vals.get('product_qty'):
             for line in self.line_ids:
@@ -137,8 +134,8 @@ class MrpPlannedPickKitLine(models.TransientModel):
         compute="_compute_routing_detail",
         store=True,
     )
-    image_small = fields.Binary(
-        related='product_id.image_small',
+    image_small = fields.Image(
+        related='product_id.image_128',
         string='Image',
     )
     type = fields.Selection(
@@ -202,14 +199,13 @@ class MrpPlannedPickKitLine(models.TransientModel):
         related='product_id.e_kanban_verified',
     )
 
-    @api.multi
     @api.depends('product_id', 'location_id', 'warehouse_id')
     def _compute_supply_method(self):
         group_obj = self.env['procurement.group']
         for rec in self:
             values = {
                 'warehouse_id': rec.warehouse_id,
-                'company_id': self.env.user.company_id.id,
+                'company_id': self.env.user.company_id,
                 # TODO: better way to get company
             }
             rule = group_obj._get_rule(rec.product_id, rec.location_id, values)
@@ -238,13 +234,12 @@ class MrpPlannedPickKitLine(models.TransientModel):
                 rec.onhand_qty = rec.product_qty + 1
                 rec.reserved_qty = 0.0
                 rec.available_qty = rec.product_qty + 1
-                rec.short_qty = False
 
     @api.model
     @api.depends('product_id')
     def _compute_routing_detail(self):
         for rec in self:
             bom = rec.product_id.bom_ids and rec.product_id.bom_ids[0]
-            if bom and bom.routing_id:
+            if bom and bom.operation_ids:
                 rec.routing_detail = ", ".join(
-                    [x for x in bom.routing_id.operation_ids.mapped('workcenter_id.code') if x])
+                    [x for x in bom.operation_ids.mapped('workcenter_id.code') if x])

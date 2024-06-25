@@ -20,7 +20,7 @@
                         <field name="show_images" invisible="1"/>
                     </group>
                     <group>
-                        <field name="line_ids" nolabel="1" readonly="1">
+                        <field name="line_ids" nolabel="1" readonly="1" colspan="2">
                             <tree decoration-danger="short" decoration-success="not short">
                                 <field name="kit_id" invisible="1"/>
                                 <field name="show_images" invisible="1"/>
@@ -34,7 +34,8 @@
                                 <field name="available_qty"/>
                                 <field name="product_qty"/>
                                 <field name="short"/>
-                                <field name="image_small" string="Image" widget="image" height="64" attrs="{'invisible': [('show_images', '=', False)]}"/>
+                                <field name="image_small" string="Image" widget="image"
+                                       attrs="{'invisible': [('show_images', '=', False)]}"/>
                             </tree>
                         </field>
                     </group>
@@ -45,9 +46,7 @@
 
     <record id="action_mrp_planned_pick_kit" model="ir.actions.act_window">
         <field name="name">Planned Pick Kit</field>
-        <field name="type">ir.actions.act_window</field>
         <field name="res_model">mrp.planned.pick.kit</field>
-        <field name="view_type">form</field>
         <field name="view_mode">form</field>
         <field name="view_id" ref="mrp_planned_pick_kit.mrp_planned_pick_kit_form"/>
     </record>
