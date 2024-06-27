@@ -370,8 +370,8 @@ class MrpWoProduce(models.TransientModel):
                 raise UserError(_('You cannot produce multiple lots with this wizard.'))
 
             finished_line.update({
-                'reserved_uom_qty': finished_line.product_uom_qty,
-                'qty_done': finished_line.product_uom_qty,
+                'reserved_uom_qty': finished_line.reserved_uom_qty,
+                'qty_done': finished_line.reserved_uom_qty,
             })
         else:
             produce_move._set_quantity_done(self.product_qty)
