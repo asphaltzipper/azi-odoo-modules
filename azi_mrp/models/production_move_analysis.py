@@ -3,6 +3,8 @@
 
 from odoo import api, fields, models, tools
 from odoo.addons import decimal_precision as dp
+import logging
+logger = logging.getLogger(__name__)
 
 
 class ProductionMoveAnalysis(models.Model):

@@ -117,7 +117,7 @@ class MrpProduction(models.Model):
     def direct_print_azi_report(self):
         self.ensure_one()
         report = self.env['ir.actions.report']._get_report_from_name('azi_mrp.report_mrporder_azi')
-        report_bytes, _ = report.render_qweb_pdf(res_ids=self.id)
+        report_bytes, _ = report._render_qweb_pdf('azi_mrp.action_report_production_order_azi', res_ids=self.id)
         printer_obj = self.env['printing.printer']
         user = self.env.user
         printer = user.printing_printer_id or printer_obj.get_default()
