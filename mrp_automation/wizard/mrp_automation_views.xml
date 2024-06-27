@@ -6,7 +6,7 @@
         <field name="arch" type="xml">
             <form>
                 <field name="scan_error" invisible="1"/>
-                <field name="_barcode_scanned" widget="mo_barcode_handler" invisible="1"/>
+                <field name="_barcode_scanned" widget="mo_barcode_handler"/>
                 <div style="color: #dc3545" attrs="{'invisible': [('scan_error', '=', False)]}">
                     <b>You scanned an unrecognized barcode: <i><field name="scan_name" nolabel="1" readonly="1"/></i></b>
                     <ul name="possible_errors">
@@ -31,7 +31,6 @@
     <record id="mrp_automation_action" model="ir.actions.act_window">
         <field name="name">MO Automation</field>
         <field name="res_model">mrp.automation</field>
-        <field name="view_type">form</field>
         <field name="view_mode">form</field>
         <field name="target">current</field>
     </record>

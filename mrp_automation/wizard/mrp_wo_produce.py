@@ -9,7 +9,6 @@ class MrpWoProduce(models.TransientModel):
     update_quantity = fields.Boolean('Update Quantity')
     new_quantity = fields.Float('New Quantity to Produce')
 
-    @api.multi
     def do_produce(self):
         if self.update_quantity:
             change_mo_qty = self.env['change.production.qty'].create({'mo_id': self.production_id.id,

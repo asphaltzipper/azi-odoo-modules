@@ -71,9 +71,10 @@ class MrpAutomation(models.TransientModel):
         production.direct_print_azi_report()
         return production
 
+    def on_barcode_scanned(self, barcode):
+        pass
 
     def barcode_scanned_action(self, barcode):
-
         # try recognizing the scanned barcode
         scan_mo = self.env['mrp.production'].search([('name', '=', barcode)])
         product = self.env['product.product']
@@ -94,7 +95,7 @@ class MrpAutomation(models.TransientModel):
                 'type': 'ir.actions.act_window',
                 'name': _('Wo Produce'),
                 'res_model': 'mrp.wo.produce',
-                'target': 'current',
+                'target': 'new',
                 'view_mode': 'form',
                 'view_type': 'form',
                 'res_id': produce_wiz.id,

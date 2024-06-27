@@ -28,7 +28,6 @@
     <record id="mrp_wo_hour_action" model="ir.actions.act_window">
         <field name="name">MRP Wo Hour</field>
         <field name="res_model">mrp.wo.hour</field>
-        <field name="view_type">form</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
     </record>

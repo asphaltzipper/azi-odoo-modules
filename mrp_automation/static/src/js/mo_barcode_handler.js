@@ -1,43 +1,43 @@
-odoo.define('mrp_automation.MOBarcodeHandler', function (require) {
-    "use strict";
+/** @odoo-module **/
 
-    var AbstractField = require('web.AbstractField');
-    var field_registry = require('web.field_registry');
-    var FormController = require('web.FormController');
+import { registry } from "@web/core/registry";
+import { standardFieldProps } from "@web/views/fields/standard_field_props";
+import { useBus, useService } from "@web/core/utils/hooks";
+import rpc from "web.rpc";
 
-    FormController.include({
-        _barcodeHandleMoAction: function (barcode, activeBarcode) {
-            console.log("Barcode handling")
-            var record = this.model.get(this.handle);
-            var self = this;
-            var record = this.model.get(activeBarcode.handle);
-            return self._rpc({
-                    model: record.model,
-                    method: 'barcode_scanned_action',
-                    args: [[record.data.id], barcode],
-                }).done(function (action) {
-                    console.log("action", action)
-                    if (action) {
-                        self._barcodeStopListening();
-                        self.do_action(action);
-                    }
-                });
-        },
-    });
+const { Component, xml, useState } = owl;
 
-    var MOBarcodeHandler = AbstractField.extend({
-        init: function () {
-            this._super.apply(this, arguments);
-            this.trigger_up('activeBarcode', {
-                name: this.name,
-                commands: {
-                    barcode: '_barcodeHandleMoAction',
-                },
+export class MOBarcodeHandler extends Component {
+    setup() {
+        const barcode = useService("barcode");
+        this.actionService = useService("action");
+        useBus(barcode.bus, "barcode_scanned", (event) => this._onBarcodeScanned(event.detail.barcode));
+    }
+    _onBarcodeScanned(barcode) {
+        this.props.update(barcode);
+        this._barcodeHandleMoAction(barcode);
+
+    }
+
+    async _barcodeHandleMoAction(barcode) {
+        const activeRecord = this.props.record;
+
+        try {
+            const action = await rpc.query({
+                model: activeRecord.resModel,
+                method: 'barcode_scanned_action',
+                args: [[activeRecord.id], barcode],
             });
-        },
-    });
-    field_registry.add('mo_barcode_handler', MOBarcodeHandler);
+            if (action) {
+                this.actionService.doAction(action)
+            }
+        } catch (error) {
+            console.error('Error handling barcode action:', error);
+        }
+    }
+}
 
-    return MOBarcodeHandler;
+MOBarcodeHandler.template = xml``;
+MOBarcodeHandler.props = { ...standardFieldProps };
 
-});
+registry.category("fields").add("mo_barcode_handler", MOBarcodeHandler);
