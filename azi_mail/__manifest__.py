@@ -3,8 +3,9 @@
 {
     'license': 'LGPL-3',
     "name": "AZI Mail",
-    "version": "12.0.1.1.0",
+    "version": "16.0.1.1.0",
     "author": "Asphalt Zipper",
+    "license": "AGPL-3",
     "category": "Discuss",
     "summary": "Followers",
     'description': """
