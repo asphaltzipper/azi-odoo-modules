@@ -507,8 +507,8 @@ class EngBomBatch(models.Model):
                         'name': eng_line.name.id,
                         'qty': qty_change and mrp_qty or False,
                         'qty_new': qty_change and eng_qty or False,
-                        'uom_id': uom_change and mrp_line.product_uom_id or False,
-                        'uom_new_id': uom_change and eng_line.uom_id or False,
+                        'uom_id': uom_change and mrp_line.product_uom_id.id or False,
+                        'uom_new_id': uom_change and eng_line.uom_id.id or False,
                         'rm_part': is_rm_part,
                         'action_type': 'change',
                     })
