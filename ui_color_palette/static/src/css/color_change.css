@@ -1,4 +1,8 @@
 .o_home_menu
 {
+    /* production, staging
+    background-color: unset;
+    */
+    /* development (default) */
     background-color: #4d8496 !important;
 }

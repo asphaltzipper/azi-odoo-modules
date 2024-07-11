@@ -1,7 +1,16 @@
 .o_home_menu_background {
     &:not(.o_home_menu_background_custom) .o_main_navbar {
         background: url(/web_enterprise/static/img/home-menu-bg-overlay.svg),
+
+        /* production
+        linear-gradient(to right bottom, #690202, #964d4d, #c9a8a9) !important;
+        */
+        /* staging
+        linear-gradient(to right bottom, #505002, #84844d, #c9a8a9) !important;
+        */
+        /* development (default) */
         linear-gradient(to right bottom, #4d8496, #31758b) !important;
+
         border-bottom-color: transparent;
         background-size: cover;
     }

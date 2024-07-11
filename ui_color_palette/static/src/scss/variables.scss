@@ -21,8 +21,18 @@ $o-enterprise-color: #025069 !default;
 $o-enterprise-primary-color: #025069 !default;
 $o-enterprise-primary-color-light: scale-color($o-enterprise-primary-color, $lightness: 6%) !default;
 
+/* production
+$o-brand-odoo: #690202;
+$o-brand-primary: #964d4d;
+*/
+/* staging
+$o-brand-odoo: #505002;
+$o-brand-primary: #84844d;
+*/
+/* development (default) */
 $o-brand-odoo: $o-enterprise-color !default;
 $o-brand-primary: $o-enterprise-primary-color !default;
+
 $o-brand-secondary: #8f8f8f !default;
 $o-brand-lightsecondary: $o-gray-100 !default;
 
