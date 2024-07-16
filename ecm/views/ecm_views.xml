@@ -9,7 +9,6 @@
                 <sheet>
                     <group>
                         <group>
-                            <field name="eco_id"/>
                             <field name="product_id"/>
                             <field name="new_rev"/>
                             <field name="compatibility"/>
@@ -25,14 +24,14 @@
                     <notebook>
                         <page name="docs" string="Documents">
                             <button name="%(ecm.action_upload_rev_line_doc)d" string="Upload Doc" type="action" class="oe_highlight"/>
-                            <field name="doc_ids" mode="kanban" context="{'default_res_model': 'ecm.eco.rev.line', 'default_res_id': active_id}">
+                            <field name="doc_ids" mode="kanban" context="{'default_res_model': 'ecm.eco.rev.line', 'default_line_id': active_id}">
                                 <kanban limit="10" default_order="priority desc, name" quick_create="false" delete="true">
                                     <field name="id"/>
                                     <field name="res_model" invisible="1"/>
                                     <field name="res_id" invisible="1"/>
                                     <field name="mimetype"/>
                                     <field name="type"/>
-                                    <field name="datas_fname"/>
+                                    <field name="store_fname"/>
                                     <field name="name"/>
                                     <field name="priority"/>
                                     <templates>
@@ -46,14 +45,14 @@
                                                                     <t t-set="webimage" t-value="new RegExp('image.*(gif|jpeg|jpg|png)').test(record.mimetype.value)"/>
                                                                     <div t-if="!webimage" class="o_image" t-att-data-mimetype="record.mimetype.value"/>
                                                                     <div t-if="webimage" class="o_kanban_attachment_image">
-                                                                        <img t-attf-src="/web/image/#{record.id.raw_value}/64x64?download=1"/>
+                                                                        <img t-attf-src="/web/image/#{record.id.raw_value}/64x64?download=1" alt="attachment"/>
                                                                     </div>
                                                                 </a>
                                                             </div>
                                                             <div class="col-xs-8">
-                                                                <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right"/>
+                                                                <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right" title="delete"/>
                                                                 <strong><field name="name"/></strong><br/>
-                                                                <field name="datas_fname"/><br/>
+                                                                <field name="store_fname"/><br/>
                                                                 <div class="mt8">
                                                                     <field name="priority" widget="priority"/>
                                                                 </div>
@@ -91,7 +90,6 @@
             <form string="ECO">
                 <header>
                     <button string="Create Revs" name="action_create_revisions" type="object" attrs="{'invisible':[('final', '=', True)]}"/>
-                    <!-- <button name="button_reassign_orders" string="Reassign Orders" type="object" class="oe_highlight" attrs="{'invisible': ['|', ('state', '!=', 'imported')]}"/> -->
                     <field name="stage_id" widget="statusbar" options="{'clickable': '1'}" confirm="TODO: Make this work: Are you sure you want to change the stage?"/>
                 </header>
                 <sheet string="ECO">
@@ -111,16 +109,15 @@
                     </group>
                     <notebook>
                         <page name="revisions" string="Revised">
-                            <field name="rev_line_ids" context="{'default_eco_id': active_id}">
+                            <field name="rev_line_ids">
                                 <tree>
-                                    <field name="eco_id" invisible="1"/>
                                     <field name="product_id"/>
                                     <field name="new_rev"/>
                                     <field name="new_exists"/>
                                     <field name="description"/>
                                     <field name="reason"/>
                                     <field name="compatibility"/>
-                                    <field name="image_small" string="Image" widget="image" height="32"/>
+                                    <field name="image_small" string="Image" widget="image"/>
                                     <field name="eco_docs"/>
                                     <field name="final_docs"/>
                                     <field name="old_onhand"/>
@@ -134,7 +131,7 @@
                                 <tree>
                                     <field name="eco_id" invisible="1"/>
                                     <field name="product_id"/>
-                                    <field name="image_small" string="Image" widget="image" height="32"/>
+                                    <field name="image_small" string="Image" widget="image"/>
                                     <field name="final_docs"/>
                                     <field name="product_onhand"/>
                                 </tree>
@@ -142,7 +139,7 @@
                                     <sheet>
                                         <group>
                                             <group>
-                                                <field name="eco_id"/>
+<!--                                                <field name="eco_id"/>-->
                                                 <field name="product_id"/>
                                                 <field name="product_onhand"/>
                                             </group>
@@ -226,9 +223,7 @@
 
     <record id="action_ecm_eco_tree" model="ir.actions.act_window">
         <field name="name">Engineering Change Orders</field>
-        <field name="type">ir.actions.act_window</field>
         <field name="res_model">ecm.eco</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="search_view_id" ref="ecm_eco_search_view"/>
         <field name="context">{'search_default_open_filter':1}</field>
@@ -279,7 +274,6 @@
         <field name="name">ECO Types</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">ecm.eco.type</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
     </record>
 
@@ -330,9 +324,7 @@
 
     <record id="action_ecm_eco_stage" model="ir.actions.act_window">
         <field name="name">ECO Stages</field>
-        <field name="type">ir.actions.act_window</field>
         <field name="res_model">ecm.eco.stage</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
     </record>
 

@@ -43,7 +43,6 @@ class EcmApprovalSign(models.TransientModel):
         default=fields.Date.today(),
         required=True)
 
-    @api.multi
     def button_execute(self):
         self.ensure_one()
         self.approval_id.state = self.state

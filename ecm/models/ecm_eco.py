@@ -93,7 +93,6 @@ class EcmEcoApproval(models.Model):
     signed_date = fields.Date(
         string='Date')
 
-    @api.multi
     def button_approval_sign(self):
         self.ensure_one()
         values = {
@@ -216,7 +215,7 @@ class EcmEco(models.Model):
         comodel_name='ecm.eco.type',
         string='Type',
         required=True,
-        track_visibility='onchange')
+        tracking=True)
 
     stage_id = fields.Many2one(
         comodel_name='ecm.eco.stage',
@@ -225,7 +224,9 @@ class EcmEco(models.Model):
         required=True,
         default=_get_default_stage_id,
         domain="[('type_ids', '=', type_id)]",
-        track_visibility='onchange')
+        tracking=True,
+        copy=False,
+    )
 
     final = fields.Boolean(
         related='stage_id.final',
@@ -244,7 +245,7 @@ class EcmEco(models.Model):
         string="Status",
         default='draft',
         required=True,
-        track_visibility='onchange')
+        tracking=True)
 
     target_date = fields.Date(
         string='Target',
@@ -291,7 +292,6 @@ class EcmEco(models.Model):
                 new_revs_done = all(eco.rev_line_ids.mapped('new_product_id'))
                 eco.can_advance = approved and new_revs_done
 
-    @api.multi
     def unlink(self):
         for rec in self:
             if rec.rev_line_ids.filtered(lambda x: x.new_product_id and x.new_product_id != x.product_id):
@@ -371,9 +371,8 @@ class EcmEco(models.Model):
         ).unlink()
 
         # create new approvals
-        self._create_pending_approvals(self, type_id)
+        self._create_pending_approvals(type_id)
 
-    @api.multi
     def write(self, vals):
         # if eco type is changing, update approvals list
         if self.type_id and vals.get('type_id') and vals['type_id'] != self.type_id.id:
@@ -383,12 +382,13 @@ class EcmEco(models.Model):
             self.validate_stage_advance(vals['stage_id'])
         return super(EcmEco, self).write(vals)
 
-    @api.model
-    def create(self, vals):
-        new_eco = super(EcmEco, self).create(vals)
+    @api.model_create_multi
+    def create(self, vals_list):
+        new_ecos = super(EcmEco, self).create(vals_list)
         # create approvals from type-stage-approval-templates
-        new_eco._create_pending_approvals()
-        return new_eco
+        for new_eco in new_ecos:
+            new_eco._create_pending_approvals()
+        return new_ecos
 
     def action_create_revisions(self):
         self.ensure_one()
@@ -405,8 +405,9 @@ class EcmEco(models.Model):
                 line.new_product_id = new_prod
         for obsolete in self.obsolete_line_ids:
             obsolete.product_id.deprecated = True
-            obsolete.product_id.warning = True
-            obsolete.product_id.warning_message = obsolete.reason
+            # TODO check these fields
+            # obsolete.product_id.warning = True
+            # obsolete.product_id.warning_message = obsolete.reason
 
     # TODO: automatically set Hold Production flag on parts added to ECO
 
@@ -419,7 +420,7 @@ class EcmEcoRevLine(models.Model):
     eco_id = fields.Many2one(
         comodel_name='ecm.eco',
         string="ECO",
-        required=True,
+        # required=True,
         ondelete='cascade',
         readonly=True)
 
@@ -443,7 +444,7 @@ class EcmEcoRevLine(models.Model):
         comodel_name='product.product',
         string='Product',
         required=True,
-        ondelete='set null',
+        ondelete='cascade',
         domain=[('deprecated', '=', False)])
 
     new_rev = fields.Char(
@@ -486,8 +487,8 @@ class EcmEcoRevLine(models.Model):
         string='Orders',
         compute='_compute_obsolete_move_ids')
 
-    image_small = fields.Binary(
-        related='new_product_id.image_small',
+    image_small = fields.Image(
+        related='new_product_id.image_variant_128',
         string='Image',
         readonly=True)
 
@@ -548,10 +549,10 @@ class EcmEcoRevLine(models.Model):
         for rec in self:
             category = rec.product_id.categ_id
             new_code = "{}{}{}".format(rec.product_id.eng_code, category.rev_delimiter, rec.new_rev)
-            if not re.match(category.def_code_regex, rec.new_code):
+            if category.def_code_regex and not re.match(category.def_code_regex, rec.new_code):
                 raise ValidationError("The new revision code {} is not valid for "
                                       "this product's Engineering Category".format(new_code))
-            if rec.new_rev != category.default_rev and rec.new_rev <= rec.product_id.eng_rev:
+            if category.default_rev and rec.new_rev != category.default_rev and rec.product_id.eng_rev and rec.new_rev <= rec.product_id.eng_rev:
                 raise ValidationError("The new revision code must be greater than the old one: {}".format(new_code))
         return True
 
@@ -613,12 +614,11 @@ class EcmEcoRevLine(models.Model):
             line.obsolete_move_ids = line.product_id.stock_move_ids.filtered(lambda x: x.state not in ('done', 'cancel'))
             line.has_obsolete_moves = bool(len(line.obsolete_move_ids))
 
-    @api.multi
     def attach_document(self, file_name, file_data):
         self.env['ir.attachment'].create({
             'name': file_name,
-            'datas': file_data,
-            'datas_fname': file_name,
+            'raw': file_data,
+            'store_fname': file_name,
             'res_model': 'ecm.eco.rev.line',
             'res_id': self.id,
         })
@@ -656,14 +656,14 @@ class EcmEcoIntroLine(models.Model):
         comodel_name='product.product',
         string='Product',
         required=True,
-        ondelete='set null')
+        ondelete='cascade')
 
     product_onhand = fields.Float(
         related='product_id.qty_available',
         readonly=True)
 
-    image_small = fields.Binary(
-        related='product_id.image_small',
+    image_small = fields.Image(
+        related='product_id.image_variant_128',
         string='Image',
         readonly=True)
 
@@ -739,7 +739,7 @@ class EcmEcoObsoleteLine(models.Model):
         comodel_name='product.product',
         string='Product',
         required=True,
-        ondelete='set null')
+        ondelete='cascade')
 
     product_onhand = fields.Float(
         related='product_id.qty_available',

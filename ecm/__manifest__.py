@@ -23,10 +23,11 @@
 
 {
     "name": "ecm",
-    "version": "12.0.1.0.0",
+    "version": "16.0.1.0.0",
     "summary": "Engineering Change Management",
     "category": "Engineering",
     "author": "Matt Taylor",
+    "license": "AGPL-3",
     "website": "http://www.asphaltzipper.com",
     'description': """
 Manage Engineering Changes to Products

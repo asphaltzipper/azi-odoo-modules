@@ -30,9 +30,7 @@
 
         <record id="action_ecm_approval_sign" model="ir.actions.act_window">
             <field name="name">Approve/Reject ECO</field>
-            <field name="type">ir.actions.act_window</field>
             <field name="res_model">ecm.eco.approval.sign</field>
-            <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
         </record>
