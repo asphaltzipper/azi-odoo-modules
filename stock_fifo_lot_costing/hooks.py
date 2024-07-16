@@ -58,16 +58,17 @@ def pre_init_hook(cr):
             select
                 sm.id as sm_id,
                 sm.date,
-                sm.remaining_qty,
+                svl.remaining_qty,
                 sm.product_qty,
                 pp.default_code,
                 pt.name
             from stock_move as sm
+            left join stock_valuation_layer as svl on svl.stock_move_id = sm.id
             left join product_product as pp on pp.id=sm.product_id
             left join product_template as pt on pt.id=pp.product_tmpl_id
             left join stock_location as ls on ls.id=sm.location_id
             left join stock_location as ld on ld.id=sm.location_dest_id
-            where sm.remaining_qty>0.0
+            where svl.remaining_qty>0.0
             and sm.id in (select move_id from stock_move_line where lot_id is not null)
             and ls.usage<>'internal'
             and ld.usage='internal'
@@ -95,10 +96,11 @@ def pre_init_hook(cr):
     cr.execute("""
         select
             sm.id,
-            sm.remaining_qty,
+            svl.remaining_qty,
             sum(sml.remaining_qty) as line_qty
         from stock_move_line as sml
         left join stock_move as sm on sm.id=sml.move_id
+        left join stock_valuation_layer as svl on svl.stock_move_id = sm.id
         left join product_product as pp on pp.id=sm.product_id
         left join product_template as pt on pt.id=pp.product_tmpl_id
         left join stock_location as ls on ls.id=sm.location_id
@@ -107,8 +109,8 @@ def pre_init_hook(cr):
         and sm.state='done'
         and ls.usage<>'internal'
         and ld.usage='internal'
-        group by sm.id, sm.remaining_qty
-        having round(abs(sum(sml.remaining_qty)-sm.remaining_qty)::decimal, 4)>0.0001
+        group by sm.id, svl.remaining_qty
+        having round(abs(sum(sml.remaining_qty)-svl.remaining_qty)::decimal, 4)>0.0001
     """)
     for move in cr.fetchall():
         _logger.info('Move %s remaining_qty does not match line remaining_qty' % move[0])

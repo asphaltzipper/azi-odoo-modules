@@ -12,8 +12,9 @@ class StockMoveLine(models.Model):
                 values['remaining_qty'] = values.get('qty_done')
         return super(StockMoveLine, self).write(values)
 
-    @api.model
-    def create(self, values):
-        if 'remaining_qty' not in values:
-            values['remaining_qty'] = values.get('qty_done', 0.0)
-        return super(StockMoveLine, self).create(values)
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if 'remaining_qty' not in vals:
+                vals['remaining_qty'] = vals.get('qty_done', 0.0)
+        return super(StockMoveLine, self).create(vals_list)

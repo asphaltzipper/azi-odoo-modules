@@ -1,10 +1,10 @@
 # Copyright 2020 Matt Taylor
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo.tests.common import SavepointCase
+from odoo.tests.common import TransactionCase
 
 
-class TestStockFifoLotCostingCase(SavepointCase):
+class TestStockFifoLotCostingCase(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -13,7 +13,7 @@ class TestStockFifoLotCostingCase(SavepointCase):
         cls.product_obj = cls.env['product.product']
         cls.template_obj = cls.env['product.template']
         cls.inventory_obj = cls.env['stock.inventory']
-        cls.lot_obj = cls.env['stock.production.lot']
+        cls.lot_obj = cls.env['stock.lot']
         cls.location_obj = cls.env['stock.location']
         cls.account_obj = cls.env['account.account']
         cls.entry_obj = cls.env['account.move']
@@ -25,29 +25,29 @@ class TestStockFifoLotCostingCase(SavepointCase):
         cls.company = cls.env.ref('base.main_company')
 
         # Account types
-        expense_type = cls.env.ref('account.data_account_type_expenses')
-        liability_type = cls.env.ref('account.data_account_type_current_liabilities')
-        asset_type = cls.env.ref('account.data_account_type_current_assets')
+        expense_type = 'other_account_type_expenses'
+        liability_type = 'other_account_type_current_liabilities'
+        asset_type = 'other_account_type_current_assets'
 
         # Create account for Goods Received Not Invoiced
         cls.account_grni = cls.account_obj.create({
             'name': 'Goods Received Not Invoiced',
             'code': 'grni',
-            'user_type_id': liability_type.id,
+            'account_type': liability_type,
             'company_id': cls.company.id,
         })
         # Create account for Cost of Goods Sold
         cls.account_cogs = cls.account_obj.create({
             'name': 'Cost of Goods Sold',
             'code': 'cogs',
-            'user_type_id': expense_type.id,
+            'account_type': expense_type,
             'company_id': cls.company.id,
         })
         # Create account for Inventory
         cls.account_inv = cls.account_obj.create({
             'name': 'Inventory',
             'code': 'inv',
-            'user_type_id': asset_type.id,
+            'account_type': asset_type,
             'company_id': cls.company.id,
         })
         # get stock journal
