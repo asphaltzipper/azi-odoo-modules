@@ -1,4 +1,8 @@
-def pre_init_hook(cr, registry):
+def pre_init_hook(cr):
+    cr.execute("""DELETE FROM public.ir_asset 
+                    WHERE path in ('/web_responsive/static/src/js/web_responsive.js','/web_responsive/static/src/css/web_responsive.scss')
+
+    """)
     cr.execute("""
         UPDATE ir_module_module 
         SET state = 'to remove' 
