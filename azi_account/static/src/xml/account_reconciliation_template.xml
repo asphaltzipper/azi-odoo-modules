@@ -3,9 +3,9 @@
 <templates xml:space="preserve">
 
 <t t-extend="reconciliation.line.create">
-    <t t-jquery=".float-right tbody" t-operation="append">
+    <t t-jquery=".create_to_check" t-operation="after">
         <tr class="create_product_id" >
-            <td class="o_td_label">Products</td>
+            <td class="o_td_label"><label class="o_form_label">Products</label></td>
             <td class="o_td_field"></td>
         </tr>
     </t>

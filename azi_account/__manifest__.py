@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Matt Taylor
+# Copyright 2024 Matt Taylor
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 {
     "name": "azi_account",
-    "version": "12.0.1.0.0",
+    "version": "16.0.1.1.0",
     "summary": "AZI account Customizations",
     "category": "Accounting",
-    "author": "Matt Taylor",
+    "author": "Matt Taylor!",
     "license": "AGPL-3",
     "website": "http://www.asphaltzipper.com",
     'description': """
@@ -24,15 +24,18 @@ AZI Specialized Customizations to account
     """,
     "depends": ['account_check_printing', 'account_move_line_product'],
     'data': [
-        'views/account.xml',
+        'views/account_config_settings_views.xml',
         'views/account_view_changes.xml',
         'views/account_move_line_views.xml',
         'views/account_invoice_views.xml',
         'report/report_invoice.xml',
     ],
-    'qweb': [
-        'views/account_reconciliation_template.xml',
-    ],
+    'assets': {
+        'web.assets_backend': [
+            'azi_account/static/src/js/azi_account_assets.js',
+            'azi_account/static/src/xml/account_reconciliation_template.xml',
+        ],
+    },
     "installable": True,
     "auto_install": False,
 }

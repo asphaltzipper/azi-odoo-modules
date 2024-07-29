@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- add menu item for account types -->
-    <menuitem action="account.action_account_type_form" sequence="45" id="menu_action_account_type_form" parent="account.account_account_menu" groups="base.group_no_one"/>
-
     <!-- add bank statement info to journal item tree view -->
     <record id="account_move_line_withproduct" model="ir.ui.view">
         <field name="name">account.move.line</field>
@@ -29,68 +26,63 @@
         </field>
     </record>
 
-    <!--Already displayed-->
-    <!-- add analytic tags to account reconcile model form view -->
-    <!--<record id="view_account_reconcile_model_tags_form" model="ir.ui.view">-->
-        <!--<field name="name">account.reconcile.model.tags.form</field>-->
-        <!--<field name="model">account.reconcile.model</field>-->
-        <!--<field name="inherit_id" ref="account.view_account_reconcile_model_form"/>-->
-        <!--<field name="arch" type="xml">-->
-            <!--<xpath expr="//field[@name='journal_id']" position="after">-->
-                <!--<field name="analytic_tag_ids"  widget="many2many_tags"/>-->
-            <!--</xpath>-->
-        <!--</field>-->
-    <!--</record>-->
-
     <!-- add aging filters to invoice search view -->
     <record id="view_account_invoice_filter_aged" model="ir.ui.view">
         <field name="name">account.invoice.select</field>
-        <field name="model">account.invoice</field>
+        <field name="model">account.move</field>
         <field name="inherit_id" ref="account.view_account_invoice_filter"/>
         <field name="arch" type="xml">
             <xpath expr="//filter[@name='late']" position="after">
-                <filter name="late30" string="30+ days" domain="['&amp;', ('date_due', '&lt;', (context_today() - relativedelta(days=30)).strftime('%Y-%m-%d')), ('state', '=', 'open')]" help="Overdue invoices, maturity date passed"/>
-                <filter name="late60" string="60+ days" domain="['&amp;', ('date_due', '&lt;', (context_today() - relativedelta(days=60)).strftime('%Y-%m-%d')), ('state', '=', 'open')]" help="Overdue invoices, maturity date passed"/>
-                <filter name="late90" string="90+ days" domain="['&amp;', ('date_due', '&lt;', (context_today() - relativedelta(days=90)).strftime('%Y-%m-%d')), ('state', '=', 'open')]" help="Overdue invoices, maturity date passed"/>
+                <filter name="late30" string="30+ days" domain="['&amp;', ('invoice_date_due', '&lt;', (context_today() - relativedelta(days=30)).strftime('%Y-%m-%d')), ('state', '=', 'open')]" help="Overdue invoices, maturity date passed"/>
+                <filter name="late60" string="60+ days" domain="['&amp;', ('invoice_date_due', '&lt;', (context_today() - relativedelta(days=60)).strftime('%Y-%m-%d')), ('state', '=', 'open')]" help="Overdue invoices, maturity date passed"/>
+                <filter name="late90" string="90+ days" domain="['&amp;', ('invoice_date_due', '&lt;', (context_today() - relativedelta(days=90)).strftime('%Y-%m-%d')), ('state', '=', 'open')]" help="Overdue invoices, maturity date passed"/>
             </xpath>
         </field>
     </record>
 
     <record id="invoice_so_reference" model="ir.ui.view">
         <field name="name">account.invoice.so.reference</field>
-        <field name="model">account.invoice</field>
-        <field name="inherit_id" ref="account.invoice_form"/>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//sheet/notebook/page/group/group/field[@name='name']" position="replace">
-            </xpath>
-            <xpath expr="//sheet/group/group/field[@name='user_id']" position="before">
+            <field name="payment_reference" position="before">
                 <field name="name"/>
-            </xpath>
+            </field>
         </field>
     </record>
-
-    <record id="view_bank_statement_line_form_glentry" model="ir.ui.view">
-        <field name="name">bank.statement.line.form.glentry</field>
-        <field name="model">account.bank.statement.line</field>
-        <field name="inherit_id" ref="account.view_bank_statement_line_form"/>
+    <record id="invoice_so_reference" model="ir.ui.view">
+        <field name="name">account.invoice.so.reference</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//group" position="after">
-                <group col="4">
-                    <field name="journal_entry_ids" nolabel="1">
-                        <tree>
-                            <field name="date"/>
-                            <field name="move_id"/>
-                            <field name="name"/>
-                            <field name="partner_id"/>
-                            <field name="account_id"/>
-                            <field name="debit"/>
-                            <field name="credit"/>
-                        </tree>
-                    </field>
-                </group>
-            </xpath>
+            <field name='user_id' position="before">
+                <field name="name"/>
+            </field>
         </field>
     </record>
+<!--TODO Statement-->
+<!--    <record id="view_bank_statement_line_form_glentry" model="ir.ui.view">-->
+<!--        <field name="name">bank.statement.line.form.glentry</field>-->
+<!--        <field name="model">account.bank.statement.line</field>-->
+<!--        <field name="inherit_id" ref="account.view_bank_statement_line_form"/>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <xpath expr="//group" position="after">-->
+<!--                <group col="4">-->
+<!--                    <field name="journal_entry_ids" nolabel="1">-->
+<!--                        <tree>-->
+<!--                            <field name="date"/>-->
+<!--                            <field name="move_id"/>-->
+<!--                            <field name="name"/>-->
+<!--                            <field name="partner_id"/>-->
+<!--                            <field name="account_id"/>-->
+<!--                            <field name="debit"/>-->
+<!--                            <field name="credit"/>-->
+<!--                        </tree>-->
+<!--                    </field>-->
+<!--                </group>-->
+<!--            </xpath>-->
+<!--        </field>-->
+<!--    </record>-->
     <record id="view_tax_form" model="ir.ui.view">
         <field name="name">account.tax.form</field>
         <field name="model">account.tax</field>
