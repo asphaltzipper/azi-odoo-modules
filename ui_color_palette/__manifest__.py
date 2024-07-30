@@ -3,7 +3,7 @@
 {
     'license': 'LGPL-3',
     "name": "Custom Color Palette",
-    "version": "16.0.1.0.0",
+    "version": "16.0.1.1.0",
     "author": "Asphalt Zipper",
     "category": "Extra Tools",
     "summary": "Change Odoo color palette",
