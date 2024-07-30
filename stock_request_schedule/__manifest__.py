@@ -1,6 +1,6 @@
 {
     "name": "Stock Request Schedule",
-    "version": "16.0.1.0.0",
+    "version": "16.0.1.1.0",
     "summary": "Stock Request Schedule",
     "category": "Stock",
     "author": "Matt Taylor",
