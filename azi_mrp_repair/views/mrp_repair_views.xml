@@ -24,8 +24,9 @@
         <field name="model">repair.order</field>
         <field name="inherit_id" ref="repair.view_repair_order_form"/>
         <field name="arch" type="xml">
-            <field name="lot_id" position="after">
-                <field name="inventory_revaluation_id" readonly="1"/>
+            <field name="invoice_method" position="after">
+                <field name="do_revaluation"/>
+<!--                <field name="inventory_revaluation_id" readonly="1"/>-->
             </field>
         </field>
     </record>
