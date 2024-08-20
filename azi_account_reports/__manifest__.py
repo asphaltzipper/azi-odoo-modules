@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
-# (c) 2017 Matt Taylor
+# (c) 2024 Matt Taylor
 # see https://github.com/csnauwaert/
 
 
 {
     'name': 'AZI Enterprise Accounting Reports',
-    'version': '12.0.1.0.0',
+    'version': '16.0.1.0.0',
     'summary': 'AZI Enterprise Custom Accounting Reports',
     'category': 'Accounting',
     'author': 'matt454357',
+    "license": "AGPL-3",
     'website': 'http://www.github.com/asphaltzipper',
     'description': """
 AZI Enterprise Custom Accounting Reports
@@ -24,15 +25,16 @@ AZI Enterprise Custom Accounting Reports
         'account_reports',
     ],
     'data': [
-        'data/account.account.type.csv',
         'data/account_tags.xml',
         'data/azi_account_reports.xml',
         'views/account_views.xml',
         'views/report_views.xml',
-        # 'views/report_financial.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'azi_account_reports/static/src/js/account_selection.js',
+        ],
+    },
     'installable': True,
     'auto_install': False,
-    # 'pre_init_hook': '_set_update', #already commented
-    'post_init_hook': '_set_noupdate',
 }

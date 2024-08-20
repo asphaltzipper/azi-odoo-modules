@@ -1,14 +1,184 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-<data>
+    <data>
 
-    <record id="action_account_report_bbc_ar" model="ir.actions.client">
-        <field name="name">BBC Aged Receivable</field>
-        <field name="tag">account_report</field>
-        <field name="context" eval="{'model': 'account.bbc.aged.receivable'}" />
-    </record>
+        <record id="bbc_aged_receivable_report" model="account.report">
+            <field name="name">BBC Aged Receivable</field>
+            <field name="filter_date_range" eval="True"/>
+            <field name="filter_unfold_all" eval="False"/>
+            <field name="filter_partner" eval="True"/>
+            <field name="default_opening_date_filter">today</field>
+            <field name="filter_period_comparison" eval="False"/>
+            <field name="filter_hierarchy">never</field>
+            <field name="filter_show_draft" eval="False"/>
+            <field name="custom_handler_model_id" ref="model_account_bbc_aged_partner"/>
+            <field name="line_template">account_reports.aged_report_line_template</field>
+            <field name="main_template">account_reports.aged_report_main_template</field>
+            <field name="column_ids">
+                <record id="bbc_receivable_report_invoice_date" model="account.report.column">
+                    <field name="name">Invoice Date</field>
+                    <field name="expression_label">invoice_date</field>
+                    <field name="figure_type">date</field>
+                    <field name="sortable" eval="True"/>
+                </record>
+                <record id="bbc_receivable_report_period0" model="account.report.column">
+                    <field name="name">0 - 30</field>
+                    <field name="expression_label">period0</field>
+                    <field name="sortable" eval="True"/>
+                </record>
+                <record id="bbc_receivable_report_period1" model="account.report.column">
+                    <field name="name">30 - 60</field>
+                    <field name="expression_label">period1</field>
+                    <field name="sortable" eval="True"/>
+                </record>
+                <record id="bbc_receivable_report_period2" model="account.report.column">
+                    <field name="name">60 - 90</field>
+                    <field name="expression_label">period2</field>
+                    <field name="sortable" eval="True"/>
+                </record>
+                <record id="bbc_receivable_report_period3" model="account.report.column">
+                    <field name="name">90 - 120</field>
+                    <field name="expression_label">period3</field>
+                    <field name="sortable" eval="True"/>
+                </record>
+                <record id="bbc_receivable_report_period4" model="account.report.column">
+                    <field name="name">Older</field>
+                    <field name="expression_label">period4</field>
+                    <field name="sortable" eval="True"/>
+                </record>
+                <record id="bbc_receivable_report_total" model="account.report.column">
+                    <field name="name">Total</field>
+                    <field name="expression_label">total</field>
+                    <field name="sortable" eval="True"/>
+                </record>
+                <record id="bbc_receivable_report_over60" model="account.report.column">
+                    <field name="name">Over 60</field>
+                    <field name="expression_label">over</field>
+                    <field name="figure_type">monetary</field>
+                </record>
+                <record id="bbc_receivable_report_cross_aged" model="account.report.column">
+                    <field name="name">Cross Aged 20%</field>
+                    <field name="expression_label">cross_aged</field>
+                    <field name="figure_type">monetary</field>
+                </record>
+                <record id="bbc_receivable_report_conc" model="account.report.column">
+                    <field name="name">20% Conc</field>
+                    <field name="expression_label">conc</field>
+                    <field name="figure_type">monetary</field>
+                </record>
+                <record id="bbc_receivable_report_delinquent" model="account.report.column">
+                    <field name="name">Delinquent Credit</field>
+                    <field name="expression_label">delinquent</field>
+                    <field name="figure_type">monetary</field>
+                </record>
+                <record id="bbc_receivable_report_foreign" model="account.report.column">
+                    <field name="name">Foreign</field>
+                    <field name="expression_label">foreign</field>
+                    <field name="figure_type">monetary</field>
+                </record>
+                <record id="bbc_receivable_report_eligible" model="account.report.column">
+                    <field name="name">BBC Eligible</field>
+                    <field name="expression_label">eligible</field>
+                    <field name="figure_type">monetary</field>
+                </record>
+            </field>
+            <field name="line_ids">
+                <record id="bbc_aged_receivable_line" model="account.report.line">
+                    <field name="name">Aged Receivable</field>
+                    <field name="groupby">partner_id, id</field>
+                    <field name="expression_ids">
+                        <record id="bbc_receivable_line_invoice_date" model="account.report.expression">
+                            <field name="label">invoice_date</field>
+                            <field name="engine">custom</field>
+                            <field name="formula">_report_custom_engine_bbc_aged_receivable</field>
+                            <field name="subformula">invoice_date</field>
+                            <field name="auditable" eval="False"/>
+                        </record>
+                        <record id="bbc_receivable_line_period0" model="account.report.expression">
+                            <field name="label">period0</field>
+                            <field name="engine">custom</field>
+                            <field name="formula">_report_custom_engine_bbc_aged_receivable</field>
+                            <field name="subformula">period0</field>
+                        </record>
+                        <record id="bbc_receivable_line_period1" model="account.report.expression">
+                            <field name="label">period1</field>
+                            <field name="engine">custom</field>
+                            <field name="formula">_report_custom_engine_bbc_aged_receivable</field>
+                            <field name="subformula">period1</field>
+                        </record>
+                        <record id="bbc_receivable_line_period2" model="account.report.expression">
+                            <field name="label">period2</field>
+                            <field name="engine">custom</field>
+                            <field name="formula">_report_custom_engine_bbc_aged_receivable</field>
+                            <field name="subformula">period2</field>
+                        </record>
+                        <record id="bbc_receivable_line_period3" model="account.report.expression">
+                            <field name="label">period3</field>
+                            <field name="engine">custom</field>
+                            <field name="formula">_report_custom_engine_bbc_aged_receivable</field>
+                            <field name="subformula">period3</field>
+                        </record>
+                        <record id="bbc_receivable_line_period4" model="account.report.expression">
+                            <field name="label">period4</field>
+                            <field name="engine">custom</field>
+                            <field name="formula">_report_custom_engine_bbc_aged_receivable</field>
+                            <field name="subformula">period4</field>
+                        </record>
+                        <record id="bbc_receivable_line_total" model="account.report.expression">
+                            <field name="label">total</field>
+                            <field name="engine">custom</field>
+                            <field name="formula">_report_custom_engine_bbc_aged_receivable</field>
+                            <field name="subformula">total</field>
+                        </record>
+                        <record id="bbc_receivable_line_over60" model="account.report.expression">
+                            <field name="label">over</field>
+                            <field name="engine">custom</field>
+                            <field name="formula">_report_custom_engine_bbc_aged_receivable</field>
+                            <field name="subformula">over</field>
+                        </record>
+                        <record id="bbc_receivable_line_cross_aged" model="account.report.expression">
+                            <field name="label">cross_aged</field>
+                            <field name="engine">custom</field>
+                            <field name="formula">_report_custom_engine_bbc_aged_receivable</field>
+                            <field name="subformula">cross_aged</field>
+                        </record>
+                        <record id="bbc_receivable_line_conc" model="account.report.expression">
+                            <field name="label">conc</field>
+                            <field name="engine">custom</field>
+                            <field name="formula">_report_custom_engine_bbc_aged_receivable</field>
+                            <field name="subformula">conc</field>
+                        </record>
+                        <record id="bbc_receivable_line_delinquent" model="account.report.expression">
+                            <field name="label">delinquent</field>
+                            <field name="engine">custom</field>
+                            <field name="formula">_report_custom_engine_bbc_aged_receivable</field>
+                            <field name="subformula">delinquent</field>
+                        </record>
+                        <record id="bbc_receivable_line_foreign" model="account.report.expression">
+                            <field name="label">foreign</field>
+                            <field name="engine">custom</field>
+                            <field name="formula">_report_custom_engine_bbc_aged_receivable</field>
+                            <field name="subformula">foreign</field>
+                        </record>
+                        <record id="bbc_receivable_line_eligible" model="account.report.expression">
+                            <field name="label">eligible</field>
+                            <field name="engine">custom</field>
+                            <field name="formula">_report_custom_engine_bbc_aged_receivable</field>
+                            <field name="subformula">eligible</field>
+                        </record>
+                    </field>
+                </record>
+            </field>
+        </record>
+        <record id="action_account_report_bbc_ar" model="ir.actions.client">
+            <field name="name">BBC Aged Receivable</field>
+            <field name="tag">account_report</field>
+            <field name="context"
+                   eval="{'model': 'account.report', 'report_id': ref('azi_account_reports.bbc_aged_receivable_report')}"/>
+        </record>
 
-    <menuitem id="menu_action_account_report_bbc_aged_receivable" name="BBC Aged Receivable" action="action_account_report_bbc_ar" parent="account_reports.account_reports_partners_reports_menu"/>
+        <menuitem id="menu_action_account_report_bbc_aged_receivable" name="BBC Aged Receivable"
+                  action="action_account_report_bbc_ar" parent="account_reports.account_reports_partners_reports_menu"/>
 
-</data>
+    </data>
 </odoo>

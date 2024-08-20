@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-
         <record id="azi_account_tag_fg_inventory" model="account.account.tag">
             <field name="name">FG Inventory</field>
         </record>

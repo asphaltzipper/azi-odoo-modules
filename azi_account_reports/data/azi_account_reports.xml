@@ -1,71 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-
-        <template id="azi_account_reports_backend" inherit_id="web.assets_backend" active="True">
-            <xpath expr="." position="inside">
-                <link rel="stylesheet" href="/azi_account_reports/static/src/less/azi_account_financial_report.less"/>
-            </xpath>
-        </template>
+<!--        <template id="azi_account_reports_backend" inherit_id="web.assets_backend" active="True">-->
+<!--            <xpath expr="." position="inside">-->
+<!--                <link rel="stylesheet" href="/azi_account_reports/static/src/less/azi_account_financial_report.less"/>-->
+<!--            </xpath>-->
+<!--        </template>-->
+        <record id="azi_account_reports.account_financial_report_less" model="ir.asset">
+            <field name="name">Account Financial Report</field>
+            <field name="bundle">web.assets_backend</field>
+            <field name="path">azi_account_reports/static/src/less/azi_account_financial_report.less</field>
+        </record>
 
         <!-- This template is only used when printing a financial report to a PDF output -->
-        <template id="azi_assets_financial_report" inherit_id="account_reports.assets_financial_report">
-            <xpath expr="." position="inside">
-                <link rel="stylesheet" href="/azi_account_reports/static/src/less/azi_account_financial_report.less"/>
-            </xpath>
-        </template>
+<!--        <template id="azi_assets_financial_report" inherit_id="account_reports.assets_financial_report">-->
+<!--            <xpath expr="." position="inside">-->
+<!--                <link rel="stylesheet" href="/azi_account_reports/static/src/less/azi_account_financial_report.less"/>-->
+<!--            </xpath>-->
+<!--        </template>-->
 
-        <!-- Inventory Balance -->
-        <record id="account_financial_report_invbalance" model="account.financial.html.report">
+        <!--Inventory Balance-->
+
+
+        <record id="account_financial_report_invbalance" model="account.report">
             <field name="name">Inventory Balance</field>
-            <field name="debit_credit" eval="False"/>
-            <field name="analytic" eval="True"/>
-            <field name="date_range" eval="False"/>
-            <field name="hierarchy_option" eval="False"/>
-            <field name='parent_id' ref='account_reports.account_reports_partners_reports_menu'/>
+            <field name="filter_growth_comparison" eval="True"/>
+            <field name="filter_period_comparison" eval="True"/>
+            <field name="filter_analytic" eval="True"/>
+            <field name="column_ids">
+                <record id="inventory_balance_column" model="account.report.column">
+                    <field name="name">Balance</field>
+                    <field name="expression_label">balance</field>
+                    <field name="blank_if_zero">False</field>
+                </record>
+            </field>
+            <field name="line_ids">
+                <record id="account_financial_report_total_inventory" model="account.report.line">
+                    <field name="name">INVENTORY</field>
+                    <field name="code">AZIB_INV</field>
+                    <field name="hierarchy_level" eval="0"/>
+                    <field name="sequence" eval="1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_total_inventory_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">aggregation</field>
+                            <field name="formula">AZIB_FG.balance + AZIB_RM.balance + AZIB_O.balance</field>
+                            <field name="date_scope">normal</field>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_fg_group" model="account.report.line">
+                    <field name="name">Finished Goods Inventory</field>
+                    <field name="code">AZIB_FG</field>
+                    <field name="sequence" eval="1"/>
+                    <field name="hierarchy_level" eval="2"/>
+                    <field name="parent_id" ref='account_financial_report_total_inventory'/>
+                    <field name="groupby">product_categ_id</field>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_fg_group_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.tag_ids', 'in', ref('azi_account_reports.azi_account_tag_fg_inventory'))]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                            <field name="date_scope">normal</field>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_rm_group" model="account.report.line">
+                    <field name="name">Raw Materials Inventory</field>
+                    <field name="code">AZIB_RM</field>
+                    <field name="sequence" eval="2"/>
+                    <field name="hierarchy_level" eval="2"/>
+                    <field name="parent_id" ref='account_financial_report_total_inventory'/>
+                    <field name="groupby">product_categ_id</field>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_rm_group_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula"  eval="[('account_id.tag_ids', 'in', ref('azi_account_reports.azi_account_tag_rm_inventory'))]"/>
+                            <field name="subformula">sum</field>
+                            <field name="date_scope">normal</field>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_other_group" model="account.report.line">
+                    <field name="name">Other Inventory</field>
+                    <field name="code">AZIB_O</field>
+                    <field name="sequence" eval="3"/>
+                    <field name="hierarchy_level" eval="2"/>
+                    <field name="parent_id" ref='account_financial_report_total_inventory'/>
+                    <field name="groupby">account_id</field>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_other_group_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.tag_ids', 'in', ref('azi_account_reports.azi_account_tag_other_inventory'))]"/>
+                            <field name="subformula">sum</field>
+                            <field name="date_scope">normal</field>
+                        </record>
+                    </field>
+                </record>
+            </field>
         </record>
-
-        <record id="account_financial_report_total_inventory" model="account.financial.html.report.line">
-            <field name="name">INVENTORY</field>
-            <field name="code">AZIB_INV</field>
-            <field name="financial_report_id" ref="account_financial_report_invbalance"/>
-            <field name="formulas">balance = AZIB_FG.balance + AZIB_RM.balance + AZIB_O.balance</field>
-            <field name="sequence" eval="1"/>
-            <field name="level" eval="0"/>
+        <record id="action_account_inventory_report" model="ir.actions.client">
+            <field name="name">Inventory Balance</field>
+            <field name="tag">account_report</field>
+            <field name="context" eval="{'model': 'account.report', 'report_id': ref('azi_account_reports.account_financial_report_invbalance')}" />
         </record>
-        <record id="account_financial_report_fg_group" model="account.financial.html.report.line">
-            <field name="name">Finished Goods Inventory</field>
-            <field name="code">AZIB_FG</field>
-            <field name="parent_id" ref='account_financial_report_total_inventory'/>
-            <field name="domain"
-                   eval="[('account_id.tag_ids', 'in', ref('azi_account_reports.azi_account_tag_fg_inventory'))]"/>
-            <field name="groupby">product_categ_id</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="sequence" eval="1"/>
-            <field name="level" eval="2"/>
-        </record>
-        <record id="account_financial_report_rm_group" model="account.financial.html.report.line">
-            <field name="name">Raw Materials Inventory</field>
-            <field name="code">AZIB_RM</field>
-            <field name="parent_id" ref='account_financial_report_total_inventory'/>
-            <field name="domain"
-                   eval="[('account_id.tag_ids', 'in', ref('azi_account_reports.azi_account_tag_rm_inventory'))]"/>
-            <field name="groupby">product_categ_id</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="sequence" eval="2"/>
-            <field name="level" eval="2"/>
-        </record>
-        <record id="account_financial_report_other_group" model="account.financial.html.report.line">
-            <field name="name">Other Inventory</field>
-            <field name="code">AZIB_O</field>
-            <field name="parent_id" ref='account_financial_report_total_inventory'/>
-            <field name="domain"
-                   eval="[('account_id.tag_ids', 'in', ref('azi_account_reports.azi_account_tag_other_inventory'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="sequence" eval="3"/>
-            <field name="level" eval="2"/>
-        </record>
+        <menuitem id="menu_action_account_inventory_report" name="Inventory Balance"
+                  action="action_account_inventory_report"
+                  parent="account_reports.account_reports_partners_reports_menu"/>
 
 
         <!-- PROFIT AND LOSS
@@ -104,388 +149,596 @@
                 - Income Taxes
         *************************************************-->
 
-        <record id="account_financial_report_azi_profitandloss1" model="account.financial.html.report">
+        <record id="account_financial_report_azi_profitandloss1" model="account.report">
             <field name="name">AZI Profit and Loss</field>
-            <field name="debit_credit" eval="False"/>
-            <field name="analytic" eval="True"/>
-            <field name="hierarchy_option" eval="False"/>
-            <field name='parent_id' ref='account.account_reports_legal_statements_menu'/>
+            <field name="filter_growth_comparison" eval="True"/>
+            <field name="filter_period_comparison" eval="True"/>
+            <field name="filter_analytic" eval="True"/>
+            <field name="column_ids">
+                <record id="azi_profit_loss_balance_column" model="account.report.column">
+                    <field name="name">Balance</field>
+                    <field name="expression_label">balance</field>
+                    <field name="blank_if_zero">False</field>
+                </record>
+            </field>
+            <field name="line_ids">
+                <record id="account_financial_report_net_profit1" model="account.report.line">
+                    <field name="name">NET PROFIT</field>
+                    <field name="code">AZPL_NEP</field>
+                    <field name="hierarchy_level" eval="0"/>
+                    <field name="sequence" eval="1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_net_profit1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">aggregation</field>
+                            <field name="formula">AZPL_EBT.balance - AZPL_TAX.balance</field>
+                            <field name="date_scope">normal</field>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_earnings_before_taxes1" model="account.report.line">
+                    <field name="name">Earnings Before Taxes</field>
+                    <field name="code">AZPL_EBT</field>
+                    <field name="hierarchy_level" eval="1"/>
+                    <field name="sequence" eval="1"/>
+                    <field name="parent_id" ref='account_financial_report_net_profit1'/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_earnings_before_taxes1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">aggregation</field>
+                            <field name="formula">AZPL_EBIT.balance + AZPL_INTI.balance - AZPL_INTE.balance + AZPL_GOA.balance + AZPL_OIE.balance</field>
+                            <field name="date_scope">normal</field>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_earnings_before_interest_taxes1" model="account.report.line">
+                    <field name="name">Earnings Before Interest and Taxes</field>
+                    <field name="code">AZPL_EBIT</field>
+                    <field name="hierarchy_level" eval="2"/>
+                    <field name="sequence" eval="1"/>
+                    <field name="parent_id" ref='account_financial_report_earnings_before_taxes1'/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_earnings_before_interest_taxes1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">aggregation</field>
+                            <field name="formula">AZPL_NOI.balance - AZPL_DEP.balance</field>
+                            <field name="date_scope">normal</field>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_net_operating_income1" model="account.report.line">
+                    <field name="name">Net Operating Income</field>
+                    <field name="code">AZPL_NOI</field>
+                    <field name="hierarchy_level" eval="3"/>
+                    <field name="sequence" eval="1"/>
+                    <field name="parent_id" ref='account_financial_report_earnings_before_interest_taxes1'/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_net_operating_income1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">aggregation</field>
+                            <field name="formula">AZPL_GRP.balance - AZPL_EXPSM.balance - AZPL_EXPGA.balance</field>
+                            <field name="date_scope">normal</field>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_gross_profit1" model="account.report.line">
+                    <field name="name">Gross Profit</field>
+                    <field name="code">AZPL_GRP</field>
+                    <field name="hierarchy_level" eval="4"/>
+                    <field name="sequence" eval="1"/>
+                    <field name="parent_id" ref='account_financial_report_net_operating_income1'/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_gross_profit1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">aggregation</field>
+                            <field name="formula">AZPL_OPINC.balance - AZPL_COS.balance</field>
+                            <field name="date_scope">normal</field>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_revenue1" model="account.report.line">
+                    <field name="name">Operating Income</field>
+                    <field name="code">AZPL_OPINC</field>
+                    <field name="hierarchy_level" eval="5"/>
+                    <field name="sequence" eval="1"/>
+                    <field name="parent_id" ref='account_financial_report_gross_profit1'/>
+                    <field name="groupby">account_id</field>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_revenue1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', 'in', ('income', 'income_other'))]"/>
+                            <field name="subformula">-sum</field>
+                            <field name="date_scope">normal</field>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_cost_sales1" model="account.report.line">
+                    <field name="name">Cost of Revenue</field>
+                    <field name="code">AZPL_COS</field>
+                    <field name="hierarchy_level" eval="5"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="parent_id" ref='account_financial_report_gross_profit1'/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_cost_sales1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">aggregation</field>
+                            <field name="formula">AZPL_COGM.balance + AZPL_COGO.balance + AZPL_COGW.balance + AZPL_COGF.balance + AZPL_COGS.balance</field>
+                            <field name="date_scope">normal</field>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_cost_sales_material1" model="account.report.line">
+                    <field name="name">COGS Material</field>
+                    <field name="code">AZPL_COGM</field>
+                    <field name="hierarchy_level" eval="6"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref='account_financial_report_cost_sales1'/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_cost_sales_material1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'other_cogs_material')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_cost_sales_overhead1" model="account.report.line">
+                    <field name="name">COGS Overhead</field>
+                    <field name="code">AZPL_COGO</field>
+                    <field name="hierarchy_level" eval="6"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref='account_financial_report_cost_sales1'/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_cost_sales_overhead1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'other_cogs_overhead')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_cost_sales_wages1" model="account.report.line">
+                    <field name="name">COGS Salary &amp; Wages</field>
+                    <field name="code">AZPL_COGW</field>
+                    <field name="hierarchy_level" eval="6"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref='account_financial_report_cost_sales1'/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_cost_sales_wages1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'other_cogs_salary_wages')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_cost_sales_freight1" model="account.report.line">
+                    <field name="name">COGS Freight</field>
+                    <field name="code">AZPL_COGF</field>
+                    <field name="hierarchy_level" eval="6"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref='account_financial_report_cost_sales1'/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_cost_sales_freight1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'other_cogs_freight')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_cost_sales_other1" model="account.report.line">
+                    <field name="name">COGS Other</field>
+                    <field name="code">AZPL_COGS</field>
+                    <field name="hierarchy_level" eval="6"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref='account_financial_report_cost_sales1'/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_cost_sales_other1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'expense_direct_cost')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_expenses_sm1" model="account.report.line">
+                    <field name="name">Sales and Marketing Expenses</field>
+                    <field name="code">AZPL_EXPSM</field>
+                    <field name="hierarchy_level" eval="4"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="parent_id" ref='account_financial_report_net_operating_income1'/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_expenses_sm1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">aggregation</field>
+                            <field name="formula">AZPL_SFEXP.balance + AZPL_SVEXP.balance + AZPL_SWEXP.balance + AZPL_SOEXP.balance + AZPL_STEXP.balance + AZPL_SMEXP.balance + AZPL_SMOTHER.balance</field>
+                            <field name="date_scope">normal</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_sm_fixed1" model="account.report.line">
+                    <field name="name">Fixed Expenses</field>
+                    <field name="code">AZPL_SFEXP</field>
+                    <field name="hierarchy_level" eval="5"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref='account_financial_report_expenses_sm1'/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_sm_fixed1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'other_expense_sales_fixed')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_sm_variable1" model="account.report.line">
+                    <field name="name">Variable Expenses</field>
+                    <field name="code">AZPL_SVEXP</field>
+                    <field name="hierarchy_level" eval="5"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref='account_financial_report_expenses_sm1'/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_sm_variable1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'other_expense_sales_variable')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_exp_sm_wages1" model="account.report.line">
+                    <field name="name">Salary &amp; Wages Expenses</field>
+                    <field name="code">AZPL_SWEXP</field>
+                    <field name="hierarchy_level" eval="5"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref='account_financial_report_expenses_sm1'/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_exp_sm_wages1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'other_expense_sales_salary_wages')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_exp_sm_occupancy1" model="account.report.line">
+                    <field name="name">Occupancy Expenses</field>
+                    <field name="code">AZPL_SOEXP</field>
+                    <field name="hierarchy_level" eval="5"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref='account_financial_report_expenses_sm1'/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_exp_sm_occupancy1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'other_expense_sales_occupancy')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_exp_sm_travel1" model="account.report.line">
+                    <field name="name">Travel Expenses</field>
+                    <field name="code">AZPL_STEXP</field>
+                    <field name="hierarchy_level" eval="5"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref='account_financial_report_expenses_sm1'/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_exp_sm_travel1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'other_expense_sales_travel')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_sm_marketing1" model="account.report.line">
+                    <field name="name">Marketing Expenses</field>
+                    <field name="code">AZPL_SMEXP</field>
+                    <field name="hierarchy_level" eval="5"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref='account_financial_report_expenses_sm1'/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_sm_marketing1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'other_expense_sales_marketing')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_sm_other1" model="account.report.line">
+                    <field name="name">Other Expenses</field>
+                    <field name="code">AZPL_SMOTHER</field>
+                    <field name="hierarchy_level" eval="5"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref='account_financial_report_expenses_sm1'/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_sm_other1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'other_expense_sales_other')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_expenses_ga1" model="account.report.line">
+                    <field name="name">General and Administrative Expenses</field>
+                    <field name="code">AZPL_EXPGA</field>
+                    <field name="hierarchy_level" eval="4"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="parent_id" ref='account_financial_report_net_operating_income1'/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_expenses_ga1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">aggregation</field>
+                            <field name="formula">AZPL_GFEXP.balance + AZPL_GVEXP.balance + AZPL_GWEXP.balance + AZPL_GOEXP.balance + AZPL_GTEXP.balance + AZPL_GEXP.balance</field>
+                            <field name="date_scope">normal</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_exp_ga_fixed1" model="account.report.line">
+                    <field name="name">Fixed Expenses</field>
+                    <field name="code">AZPL_GFEXP</field>
+                    <field name="hierarchy_level" eval="5"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref='account_financial_report_expenses_ga1'/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_exp_ga_fixed1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'other_expense_admin_fixed')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_exp_ga_variable1" model="account.report.line">
+                    <field name="name">Variable Expenses</field>
+                    <field name="code">AZPL_GVEXP</field>
+                    <field name="hierarchy_level" eval="5"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref='account_financial_report_expenses_ga1'/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_exp_ga_variable1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'other_expense_admin_variable')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_exp_ga_wages1" model="account.report.line">
+                    <field name="name">Salary &amp; Wages Expenses</field>
+                    <field name="code">AZPL_GWEXP</field>
+                    <field name="hierarchy_level" eval="5"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref="account_financial_report_expenses_ga1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_exp_ga_wages1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'other_expense_admin_salary_wages')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_exp_ga_occupancy1" model="account.report.line">
+                    <field name="name">Occupancy Expenses</field>
+                    <field name="code">AZPL_GOEXP</field>
+                    <field name="hierarchy_level" eval="5"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref="account_financial_report_expenses_ga1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_exp_ga_occupancy1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'other_expense_admin_occupancy')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_exp_ga_travel1" model="account.report.line">
+                    <field name="name">Travel Expenses</field>
+                    <field name="code">AZPL_GTEXP</field>
+                    <field name="hierarchy_level" eval="5"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref="account_financial_report_expenses_ga1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_exp_ga_travel1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'other_expense_admin_travel')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_exp_ga_other1" model="account.report.line">
+                    <field name="name">Other Expenses</field>
+                    <field name="code">AZPL_GEXP</field>
+                    <field name="hierarchy_level" eval="5"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref="account_financial_report_expenses_ga1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_exp_ga_other1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'expense')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_depreciation1" model="account.report.line">
+                    <field name="name">Depreciation and Amortization Expense</field>
+                    <field name="code">AZPL_DEP</field>
+                    <field name="hierarchy_level" eval="3"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref="account_financial_report_earnings_before_interest_taxes1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_depreciation1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'expense_depreciation')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_interest_income1" model="account.report.line">
+                    <field name="name">Interest Income</field>
+                    <field name="code">AZPL_INTI</field>
+                    <field name="hierarchy_level" eval="2"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref="account_financial_report_earnings_before_taxes1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_interest_income1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'other_income_interest')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_interest_expense1" model="account.report.line">
+                    <field name="name">Interest Expense</field>
+                    <field name="code">AZPL_INTE</field>
+                    <field name="hierarchy_level" eval="2"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref="account_financial_report_earnings_before_taxes1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_interest_expense1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'other_expense_interest')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_gain_loss_sale_assets1" model="account.report.line">
+                    <field name="name">Gain or Loss on Sale of Assets</field>
+                    <field name="code">AZPL_GOA</field>
+                    <field name="hierarchy_level" eval="2"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref="account_financial_report_earnings_before_taxes1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_gain_loss_sale_assets1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'other_gain_loss_sale_assets')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">-sum</field>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_other_income_expense1" model="account.report.line">
+                    <field name="name">Other Income or Expense</field>
+                    <field name="code">AZPL_OIE</field>
+                    <field name="hierarchy_level" eval="2"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref="account_financial_report_earnings_before_taxes1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_other_income_expense1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'other_other_income_expense')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">-sum</field>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_taxes1" model="account.report.line">
+                    <field name="name">Income Taxes</field>
+                    <field name="code">AZPL_TAX</field>
+                    <field name="hierarchy_level" eval="1"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref="account_financial_report_net_profit1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_taxes1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'other_type_taxes')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                        </record>
+                    </field>
+                </record>
+            </field>
         </record>
-
-        <record id="account_financial_report_net_profit1" model="account.financial.html.report.line">
-            <field name="name">NET PROFIT</field>
-            <field name="code">AZPL_NEP</field>
-            <field name="financial_report_id" ref="account_financial_report_azi_profitandloss1"/>
-            <field name="formulas">balance = AZPL_EBT.balance - AZPL_TAX.balance</field>
-            <field name="sequence" eval="1"/>
-            <field name="level" eval="0"/>
+        <record id="action_account_financial_report_azi_profitandloss1" model="ir.actions.client">
+            <field name="name">AZI Profit and Loss</field>
+            <field name="tag">account_report</field>
+            <field name="context" eval="{'model': 'account.report', 'report_id': ref('azi_account_reports.account_financial_report_azi_profitandloss1')}" />
         </record>
-
-        <record id="account_financial_report_earnings_before_taxes1" model="account.financial.html.report.line">
-            <field name="name">Earnings Before Taxes</field>
-            <field name="code">AZPL_EBT</field>
-            <field name="formulas">balance = AZPL_EBIT.balance + AZPL_INTI.balance - AZPL_INTE.balance + AZPL_GOA.balance + AZPL_OIE.balance</field>
-            <field name="parent_id" ref='account_financial_report_net_profit1'/>
-            <field name="sequence" eval="1"/>
-            <field name="level" eval="1"/>
-        </record>
-
-        <record id="account_financial_report_earnings_before_interest_taxes1"
-                model="account.financial.html.report.line">
-            <field name="name">Earnings Before Interest and Taxes</field>
-            <field name="code">AZPL_EBIT</field>
-            <field name="formulas">balance = AZPL_NOI.balance - AZPL_DEP.balance</field>
-            <field name="parent_id" ref='account_financial_report_earnings_before_taxes1'/>
-            <field name="sequence" eval="1"/>
-            <field name="level" eval="2"/>
-        </record>
-
-        <record id="account_financial_report_net_operating_income1" model="account.financial.html.report.line">
-            <field name="name">Net Operating Income</field>
-            <field name="code">AZPL_NOI</field>
-            <field name="parent_id" ref='account_financial_report_earnings_before_interest_taxes1'/>
-            <field name="formulas">balance = AZPL_GRP.balance - AZPL_EXPSM.balance - AZPL_EXPGA.balance</field>
-            <field name="sequence" eval="1"/>
-            <field name="level" eval="3"/>
-        </record>
-
-        <record id="account_financial_report_gross_profit1" model="account.financial.html.report.line">
-            <field name="name">Gross Profit</field>
-            <field name="code">AZPL_GRP</field>
-            <field name="formulas">balance = AZPL_OPINC.balance - AZPL_COS.balance</field>
-            <field name="parent_id" ref='account_financial_report_net_operating_income1'/>
-            <field name="sequence" eval="1"/>
-            <field name="level" eval="4"/>
-        </record>
-
-        <record id="account_financial_report_revenue1" model="account.financial.html.report.line">
-            <field name="name">Operating Income</field>
-            <field name="code">AZPL_OPINC</field>
-            <field name="formulas">balance = -sum.balance</field>
-            <field name="parent_id" ref='account_financial_report_gross_profit1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', 'in', [ref('account.data_account_type_revenue'), ref('account.data_account_type_other_income')])]"/>
-            <field name="groupby">account_id</field>
-            <field name="sequence" eval="1"/>
-            <field name="level" eval="5"/>
-        </record>
-
-        <record id="account_financial_report_cost_sales1" model="account.financial.html.report.line">
-            <field name="name">Cost of Revenue</field>
-            <field name="code">AZPL_COS</field>
-            <field name="formulas">balance = AZPL_COGM.balance + AZPL_COGO.balance + AZPL_COGW.balance + AZPL_COGF.balance + AZPL_COGS.balance</field>
-            <field name="parent_id" ref='account_financial_report_gross_profit1'/>
-            <field name="sequence" eval="2"/>
-            <field name="level" eval="5"/>
-        </record>
-        <record id="account_financial_report_cost_sales_material1" model="account.financial.html.report.line">
-            <field name="name">COGS Material</field>
-            <field name="code">AZPL_COGM</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="parent_id" ref='account_financial_report_cost_sales1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', '=', ref('azi_account_reports.account_type_cogs_material'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="sequence" eval="1"/>
-            <field name="green_on_positive" eval="False"/>
-            <field name="level" eval="6"/>
-        </record>
-        <record id="account_financial_report_cost_sales_overhead1" model="account.financial.html.report.line">
-            <field name="name">COGS Overhead</field>
-            <field name="code">AZPL_COGO</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="parent_id" ref='account_financial_report_cost_sales1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', '=', ref('azi_account_reports.account_type_cogs_overhead'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="sequence" eval="2"/>
-            <field name="green_on_positive" eval="False"/>
-            <field name="level" eval="6"/>
-        </record>
-        <record id="account_financial_report_cost_sales_wages1" model="account.financial.html.report.line">
-            <field name="name">COGS Salary &amp; Wages</field>
-            <field name="code">AZPL_COGW</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="parent_id" ref='account_financial_report_cost_sales1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', '=', ref('azi_account_reports.account_type_cogs_salary_wages'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="sequence" eval="3"/>
-            <field name="green_on_positive" eval="False"/>
-            <field name="level" eval="6"/>
-        </record>
-        <record id="account_financial_report_cost_sales_freight1" model="account.financial.html.report.line">
-            <field name="name">COGS Freight</field>
-            <field name="code">AZPL_COGF</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="parent_id" ref='account_financial_report_cost_sales1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', '=', ref('azi_account_reports.account_type_cogs_freight'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="sequence" eval="4"/>
-            <field name="green_on_positive" eval="False"/>
-            <field name="level" eval="6"/>
-        </record>
-        <record id="account_financial_report_cost_sales_other1" model="account.financial.html.report.line">
-            <field name="name">COGS Other</field>
-            <field name="code">AZPL_COGS</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="parent_id" ref='account_financial_report_cost_sales1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', '=', ref('account.data_account_type_direct_costs'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="sequence" eval="5"/>
-            <field name="green_on_positive" eval="False"/>
-            <field name="level" eval="6"/>
-        </record>
-
-        <record id="account_financial_report_expenses_sm1" model="account.financial.html.report.line">
-            <field name="name">Sales and Marketing Expenses</field>
-            <field name="code">AZPL_EXPSM</field>
-            <field name="formulas">balance = AZPL_SFEXP.balance + AZPL_SVEXP.balance + AZPL_SWEXP.balance + AZPL_SOEXP.balance + AZPL_STEXP.balance + AZPL_SMEXP.balance + AZPL_SMOTHER.balance</field>
-            <field name="parent_id" ref='account_financial_report_net_operating_income1'/>
-            <field name="sequence" eval="2"/>
-            <field name="green_on_positive" eval="False"/>
-            <field name="level" eval="4"/>
-        </record>
-        <record id="account_financial_report_sm_fixed1" model="account.financial.html.report.line">
-            <field name="name">Fixed Expenses</field>
-            <field name="code">AZPL_SFEXP</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="parent_id" ref='account_financial_report_expenses_sm1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', '=', ref('azi_account_reports.account_type_expense_sales_fixed'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="sequence" eval="1"/>
-            <field name="green_on_positive" eval="False"/>
-            <field name="level" eval="5"/>
-        </record>
-        <record id="account_financial_report_sm_variable1" model="account.financial.html.report.line">
-            <field name="name">Variable Expenses</field>
-            <field name="code">AZPL_SVEXP</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="parent_id" ref='account_financial_report_expenses_sm1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', '=', ref('azi_account_reports.account_type_expense_sales_variable'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="sequence" eval="2"/>
-            <field name="green_on_positive" eval="False"/>
-            <field name="level" eval="5"/>
-        </record>
-        <record id="account_financial_report_exp_sm_wages1" model="account.financial.html.report.line">
-            <field name="name">Salary &amp; Wages Expenses</field>
-            <field name="code">AZPL_SWEXP</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="parent_id" ref='account_financial_report_expenses_sm1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', '=', ref('azi_account_reports.account_type_expense_sales_salary_wages'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="sequence" eval="3"/>
-            <field name="green_on_positive" eval="False"/>
-            <field name="level" eval="5"/>
-        </record>
-        <record id="account_financial_report_exp_sm_occupancy1" model="account.financial.html.report.line">
-            <field name="name">Occupancy Expenses</field>
-            <field name="code">AZPL_SOEXP</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="parent_id" ref='account_financial_report_expenses_sm1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', '=', ref('azi_account_reports.account_type_expense_sales_occupancy'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="sequence" eval="4"/>
-            <field name="green_on_positive" eval="False"/>
-            <field name="level" eval="5"/>
-        </record>
-        <record id="account_financial_report_exp_sm_travel1" model="account.financial.html.report.line">
-            <field name="name">Travel Expenses</field>
-            <field name="code">AZPL_STEXP</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="parent_id" ref='account_financial_report_expenses_sm1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', '=', ref('azi_account_reports.account_type_expense_sales_travel'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="sequence" eval="5"/>
-            <field name="green_on_positive" eval="False"/>
-            <field name="level" eval="5"/>
-        </record>
-        <record id="account_financial_report_sm_marketing1" model="account.financial.html.report.line">
-            <field name="name">Marketing Expenses</field>
-            <field name="code">AZPL_SMEXP</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="parent_id" ref='account_financial_report_expenses_sm1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', '=', ref('azi_account_reports.account_type_expense_sales_marketing'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="sequence" eval="6"/>
-            <field name="green_on_positive" eval="False"/>
-            <field name="level" eval="5"/>
-        </record>
-
-        <record id="account_financial_report_sm_other1" model="account.financial.html.report.line">
-            <field name="name">Other Expenses</field>
-            <field name="code">AZPL_SMOTHER</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="parent_id" ref='account_financial_report_expenses_sm1'/>
-            <field name="domain" eval="[('account_id.user_type_id', '=', ref('azi_account_reports.account_type_expense_sales_other'))]" />
-            <field name="groupby">account_id</field>
-            <field name="sequence" eval="6"/>
-            <field name="green_on_positive" eval="False"/>
-            <field name="level" eval="5" />
-        </record>
-
-        <record id="account_financial_report_expenses_ga1" model="account.financial.html.report.line">
-            <field name="name">General and Administrative Expenses</field>
-            <field name="code">AZPL_EXPGA</field>
-            <field name="formulas">balance = AZPL_GFEXP.balance + AZPL_GVEXP.balance + AZPL_GWEXP.balance + AZPL_GOEXP.balance + AZPL_GTEXP.balance + AZPL_GEXP.balance</field>
-            <field name="parent_id" ref='account_financial_report_net_operating_income1'/>
-            <field name="sequence" eval="3"/>
-            <field name="green_on_positive" eval="False"/>
-            <field name="level" eval="4"/>
-        </record>
-        <record id="account_financial_report_exp_ga_fixed1" model="account.financial.html.report.line">
-            <field name="name">Fixed Expenses</field>
-            <field name="code">AZPL_GFEXP</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="parent_id" ref='account_financial_report_expenses_ga1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', '=', ref('azi_account_reports.account_type_expense_admin_fixed'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="sequence" eval="1"/>
-            <field name="green_on_positive" eval="False"/>
-            <field name="level" eval="5"/>
-        </record>
-        <record id="account_financial_report_exp_ga_variable1" model="account.financial.html.report.line">
-            <field name="name">Variable Expenses</field>
-            <field name="code">AZPL_GVEXP</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="parent_id" ref='account_financial_report_expenses_ga1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', '=', ref('azi_account_reports.account_type_expense_admin_variable'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="sequence" eval="2"/>
-            <field name="green_on_positive" eval="False"/>
-            <field name="level" eval="5"/>
-        </record>
-        <record id="account_financial_report_exp_ga_wages1" model="account.financial.html.report.line">
-            <field name="name">Salary &amp; Wages Expenses</field>
-            <field name="code">AZPL_GWEXP</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="parent_id" ref='account_financial_report_expenses_ga1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', '=', ref('azi_account_reports.account_type_expense_admin_salary_wages'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="sequence" eval="3"/>
-            <field name="green_on_positive" eval="False"/>
-            <field name="level" eval="5"/>
-        </record>
-        <record id="account_financial_report_exp_ga_occupancy1" model="account.financial.html.report.line">
-            <field name="name">Occupancy Expenses</field>
-            <field name="code">AZPL_GOEXP</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="parent_id" ref='account_financial_report_expenses_ga1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', '=', ref('azi_account_reports.account_type_expense_admin_occupancy'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="sequence" eval="4"/>
-            <field name="green_on_positive" eval="False"/>
-            <field name="level" eval="5"/>
-        </record>
-        <record id="account_financial_report_exp_ga_travel1" model="account.financial.html.report.line">
-            <field name="name">Travel Expenses</field>
-            <field name="code">AZPL_GTEXP</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="parent_id" ref='account_financial_report_expenses_ga1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', '=', ref('azi_account_reports.account_type_expense_admin_travel'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="sequence" eval="5"/>
-            <field name="green_on_positive" eval="False"/>
-            <field name="level" eval="5"/>
-        </record>
-        <record id="account_financial_report_exp_ga_other1" model="account.financial.html.report.line">
-            <field name="name">Other Expenses</field>
-            <field name="code">AZPL_GEXP</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="parent_id" ref='account_financial_report_expenses_ga1'/>
-            <field name="domain" eval="[('account_id.user_type_id', '=', ref('account.data_account_type_expenses'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="sequence" eval="6"/>
-            <field name="green_on_positive" eval="False"/>
-            <field name="level" eval="5"/>
-        </record>
-
-        <record id="account_financial_report_depreciation1" model="account.financial.html.report.line">
-            <field name="name">Depreciation and Amortization Expense</field>
-            <field name="code">AZPL_DEP</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="parent_id" ref='account_financial_report_earnings_before_interest_taxes1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', '=', ref('account.data_account_type_depreciation'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="sequence" eval="2"/>
-            <field name="green_on_positive" eval="False"/>
-            <field name="level" eval="3"/>
-        </record>
-
-        <record id="account_financial_report_interest_income1" model="account.financial.html.report.line">
-            <field name="name">Interest Income</field>
-            <field name="code">AZPL_INTI</field>
-            <field name="parent_id" ref='account_financial_report_earnings_before_taxes1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', '=', ref('azi_account_reports.account_type_income_interest'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="sequence" eval="2"/>
-            <field name="level" eval="2"/>
-        </record>
-
-        <record id="account_financial_report_interest_expense1" model="account.financial.html.report.line">
-            <field name="name">Interest Expense</field>
-            <field name="code">AZPL_INTE</field>
-            <field name="parent_id" ref='account_financial_report_earnings_before_taxes1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', '=', ref('azi_account_reports.account_type_expense_interest'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="sequence" eval="3"/>
-            <field name="level" eval="2"/>
-        </record>
-
-        <record id="account_financial_report_gain_loss_sale_assets1" model="account.financial.html.report.line">
-            <field name="name">Gain or Loss on Sale of Assets</field>
-            <field name="code">AZPL_GOA</field>
-            <field name="formulas">balance = -sum.balance</field>
-            <field name="parent_id" ref='account_financial_report_earnings_before_taxes1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', '=', ref('azi_account_reports.account_type_gain_loss_sale_assets'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="sequence" eval="4"/>
-            <field name="level" eval="2"/>
-        </record>
-
-        <record id="account_financial_report_other_income_expense1" model="account.financial.html.report.line">
-            <field name="name">Other Income or Expense</field>
-            <field name="code">AZPL_OIE</field>
-            <field name="formulas">balance = -sum.balance</field>
-            <field name="parent_id" ref='account_financial_report_earnings_before_taxes1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', '=', ref('azi_account_reports.account_type_other_income_expense'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="sequence" eval="5"/>
-            <field name="level" eval="2"/>
-        </record>
-
-        <record id="account_financial_report_taxes1" model="account.financial.html.report.line">
-            <field name="name">Income Taxes</field>
-            <field name="code">AZPL_TAX</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="parent_id" ref='account_financial_report_net_profit1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', '=', ref('azi_account_reports.account_type_taxes'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="sequence" eval="2"/>
-            <field name="level" eval="1"/>
-        </record>
+        <menuitem id="menu_action_account_financial_report_azi_profitandloss1" name="AZI Profit and Loss"
+                  action="action_account_financial_report_azi_profitandloss1"
+                  parent="account.account_reports_legal_statements_menu"/>
 
 
         <!-- BALANCE SHEET
@@ -516,282 +769,485 @@
             + Current Year Earnings
             + Retained Earnings
         *************************************************-->
-
-        <record id="account_financial_report_balancesheet1" model="account.financial.html.report">
+        <record id="account_financial_report_balancesheet1" model="account.report">
             <field name="name">AZI Balance Sheet</field>
-            <field name="debit_credit" eval="False"/>
-            <field name="date_range" eval="False"/>
-            <field name="analytic" eval="True"/>
-            <field name="hierarchy_option" eval="False"/>
-            <field name='parent_id' ref='account.account_reports_legal_statements_menu'/>
+            <field name="filter_growth_comparison" eval="True"/>
+            <field name="filter_period_comparison" eval="True"/>
+            <field name="filter_analytic" eval="True"/>
+            <field name="column_ids">
+                <record id="azi_balance_sheet_balance_column" model="account.report.column">
+                    <field name="name">Balance</field>
+                    <field name="expression_label">balance</field>
+                    <field name="blank_if_zero">False</field>
+                </record>
+            </field>
+            <field name="line_ids">
+                <record id="account_financial_report_net_assets1" model="account.report.line">
+                    <field name="name">NET ASSETS</field>
+                    <field name="code">AZBS_NA</field>
+                    <field name="hierarchy_level" eval="0"/>
+                    <field name="sequence" eval="1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_net_assets1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">aggregation</field>
+                            <field name="formula">AZBS_TA.balance - AZBS_L.balance</field>
+                            <field name="date_scope">normal</field>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_total_assets1" model="account.report.line">
+                    <field name="name">ASSETS</field>
+                    <field name="code">AZBS_TA</field>
+                    <field name="hierarchy_level" eval="1"/>
+                    <field name="sequence" eval="1"/>
+                    <field name="parent_id" ref="account_financial_report_net_assets1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_total_assets1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">aggregation</field>
+                            <field name="formula">AZBS_CA.balance + AZBS_FA.balance + AZBS_PNCA.balance</field>
+                            <field name="date_scope">normal</field>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_current_assets_view1" model="account.report.line">
+                    <field name="name">Current Assets</field>
+                    <field name="code">AZBS_CA</field>
+                    <field name="hierarchy_level" eval="2"/>
+                    <field name="sequence" eval="1"/>
+                    <field name="parent_id" ref="account_financial_report_total_assets1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_current_assets_view1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">aggregation</field>
+                            <field name="formula">AZBS_BA.balance + AZBS_REC.balance + AZBS_OREC.balance + AZBS_INV.balance + AZBS_IA.balance + AZBS_OA.balance + AZBS_OCA.balance + AZBS_PRE.balance</field>
+                            <field name="date_scope">normal</field>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_bank_view1" model="account.report.line">
+                    <field name="name">Bank and Cash Accounts</field>
+                    <field name="code">AZBS_BA</field>
+                    <field name="hierarchy_level" eval="3"/>
+                    <field name="sequence" eval="1"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref="account_financial_report_current_assets_view1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_bank_view1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'asset_cash')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_receivable1" model="account.report.line">
+                    <field name="name">Receivables</field>
+                    <field name="code">AZBS_REC</field>
+                    <field name="hierarchy_level" eval="3"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref="account_financial_report_current_assets_view1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_receivable1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'asset_receivable')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_other_receivable1" model="account.report.line">
+                    <field name="name">Other Receivables</field>
+                    <field name="code">AZBS_OREC</field>
+                    <field name="hierarchy_level" eval="3"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref="account_financial_report_current_assets_view1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_other_receivable1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'other_other_receivable')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_inventory1" model="account.report.line">
+                    <field name="name">Inventory</field>
+                    <field name="code">AZBS_INV</field>
+                    <field name="hierarchy_level" eval="3"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref="account_financial_report_current_assets_view1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_inventory1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'other_inventory')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_inside_advance1" model="account.report.line">
+                    <field name="name">Inside Advances</field>
+                    <field name="code">AZBS_IA</field>
+                    <field name="hierarchy_level" eval="3"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref="account_financial_report_current_assets_view1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_inside_advance1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'other_inside_advance')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_outside_advance1" model="account.report.line">
+                    <field name="name">Outside Advances</field>
+                    <field name="code">AZBS_OA</field>
+                    <field name="hierarchy_level" eval="3"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref="account_financial_report_current_assets_view1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_outside_advance1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'other_outside_advance')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_other_current_assets1" model="account.report.line">
+                    <field name="name">Other Current Assets</field>
+                    <field name="code">AZBS_OCA</field>
+                    <field name="hierarchy_level" eval="3"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref="account_financial_report_current_assets_view1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_other_current_assets1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'asset_current')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_prepayements1" model="account.report.line">
+                    <field name="name">Prepayments</field>
+                    <field name="code">AZBS_PRE</field>
+                    <field name="hierarchy_level" eval="3"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref="account_financial_report_current_assets_view1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_prepayements1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'asset_prepayments')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_fixed_assets_view1" model="account.report.line">
+                    <field name="name">Fixed Assets</field>
+                    <field name="code">AZBS_FA</field>
+                    <field name="hierarchy_level" eval="2"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref="account_financial_report_total_assets1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_fixed_assets_view1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'asset_fixed')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_non_current_assets_view1" model="account.report.line">
+                    <field name="name">Long Term and Goodwill</field>
+                    <field name="code">AZBS_PNCA</field>
+                    <field name="hierarchy_level" eval="2"/>
+                    <field name="sequence" eval="2"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref="account_financial_report_total_assets1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_non_current_assets_view1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'asset_non_current')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">sum</field>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_liabilities_view1" model="account.report.line">
+                    <field name="name">LIABILITIES</field>
+                    <field name="code">AZBS_L</field>
+                    <field name="hierarchy_level" eval="1"/>
+                    <field name="sequence" eval="3"/>
+                    <field name="parent_id" ref="account_financial_report_net_assets1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_liabilities_view1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">aggregation</field>
+                            <field name="formula">AZBS_CL.balance + AZBS_NCL.balance</field>
+                            <field name="date_scope">normal</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_total_current_liabilities1" model="account.report.line">
+                    <field name="name">Current Liabilities</field>
+                    <field name="code">AZBS_CL</field>
+                    <field name="hierarchy_level" eval="2"/>
+                    <field name="sequence" eval="3"/>
+                    <field name="parent_id" ref="account_financial_report_liabilities_view1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_total_current_liabilities1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">aggregation</field>
+                            <field name="formula">AZBS_ACL.balance + AZBS_ACP.balance + AZBS_STP.balance + AZBS_TP.balance + AZBS_OCL.balance + AZBS_PAY.balance</field>
+                            <field name="date_scope">normal</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_accrued_liabilities1" model="account.report.line">
+                    <field name="name">Accrued Liabilities</field>
+                    <field name="code">AZBS_ACL</field>
+                    <field name="hierarchy_level" eval="3"/>
+                    <field name="sequence" eval="3"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref="account_financial_report_total_current_liabilities1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_accrued_liabilities1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', 'in', ('other_accrued_liabilities', 'liability_credit_card'))]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">-sum</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_accrued_payroll1" model="account.report.line">
+                    <field name="name">Accrued Payroll</field>
+                    <field name="code">AZBS_ACP</field>
+                    <field name="hierarchy_level" eval="3"/>
+                    <field name="sequence" eval="3"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref="account_financial_report_total_current_liabilities1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_accrued_payroll1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'other_accrued_payroll')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">-sum</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_sales_tax_payable1" model="account.report.line">
+                    <field name="name">Sales Tax Payable</field>
+                    <field name="code">AZBS_STP</field>
+                    <field name="hierarchy_level" eval="3"/>
+                    <field name="sequence" eval="3"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref="account_financial_report_total_current_liabilities1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_sales_tax_payable1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'other_sales_tax_payable')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">-sum</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_taxes_payable1" model="account.report.line">
+                    <field name="name">Taxes Payable</field>
+                    <field name="code">AZBS_TP</field>
+                    <field name="hierarchy_level" eval="3"/>
+                    <field name="sequence" eval="3"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref="account_financial_report_total_current_liabilities1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_taxes_payable1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'other_taxes_payable')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">-sum</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_other_current_liabilities1" model="account.report.line">
+                    <field name="name">Other Current Liabilities</field>
+                    <field name="code">AZBS_OCL</field>
+                    <field name="hierarchy_level" eval="3"/>
+                    <field name="sequence" eval="3"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref="account_financial_report_total_current_liabilities1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_other_current_liabilities1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'liability_current')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">-sum</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_current_liabilities_payable" model="account.report.line">
+                    <field name="name">Payables</field>
+                    <field name="code">AZBS_PAY</field>
+                    <field name="hierarchy_level" eval="3"/>
+                    <field name="sequence" eval="3"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref="account_financial_report_total_current_liabilities1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_current_liabilities_payable_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'liability_payable')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">-sum</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_non_current_liabilities1" model="account.report.line">
+                    <field name="name">Non-current Liabilities</field>
+                    <field name="code">AZBS_NCL</field>
+                    <field name="hierarchy_level" eval="2"/>
+                    <field name="sequence" eval="3"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref="account_financial_report_liabilities_view1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_non_current_liabilities1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'liability_non_current')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">-sum</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_report_equity1" model="account.report.line">
+                    <field name="name">EQUITY</field>
+                    <field name="code">AZBS_EQ</field>
+                    <field name="hierarchy_level" eval="0"/>
+                    <field name="sequence" eval="4"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_report_equity1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">aggregation</field>
+                            <field name="formula">AZBS_UNAFFECTED_EARNINGS.balance + AZBS_RETAINED_EARNINGS.balance</field>
+                            <field name="date_scope">normal</field>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_current_year_earnings1" model="account.report.line">
+                    <field name="name">CURRENT YEAR EARNINGS</field>
+                    <field name="code">AZBS_UNAFFECTED_EARNINGS</field>
+                    <field name="hierarchy_level" eval="1"/>
+                    <field name="sequence" eval="4"/>
+                    <field name="parent_id" ref="account_financial_report_equity1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_current_year_earnings1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">aggregation</field>
+                            <field name="formula">AZBS_NEP.balance - AZBS_YEAR_EARNING.balance</field>
+                            <field name="date_scope">normal</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                    <field name="children_ids">
+                        <record id="account_financial_report_net_profit" model="account.report.line">
+                            <field name="name">Net Profit</field>
+                            <field name="code">AZBS_NEP</field>
+                            <field name="hierarchy_level" eval="3"/>
+                            <field name="sequence" eval="4"/>
+                            <field name="action_id" eval="account_financial_report_azi_profitandloss1"/>
+                            <field name="expression_ids">
+                                <record id="account_financial_report_net_profit_exp" model="account.report.expression">
+                                    <field name="label">balance</field>
+                                    <field name="engine">aggregation</field>
+                                    <field name="formula">AZPL_NEP.balance</field>
+                                    <field name="date_scope">from_beginning</field>
+                                    <field name="subformula">cross_report</field>
+                                    <field name="green_on_positive" eval="False"/>
+                                </record>
+                            </field>
+                        </record>
+                        <record id="account_financial_report_unaffected_earning" model="account.report.line">
+                            <field name="name">Unaffected Earning</field>
+                            <field name="code">AZBS_YEAR_EARNING</field>
+                            <field name="groupby">account_id</field>
+                            <field name="hierarchy_level" eval="3"/>
+                            <field name="sequence" eval="4"/>
+                            <field name="expression_ids">
+                                <record id="account_financial_report_unaffected_earning_exp" model="account.report.expression">
+                                    <field name="label">balance</field>
+                                    <field name="engine">domain</field>
+                                    <field name="formula" eval="[('account_id.account_type', '=', 'equity_unaffected')]"/>
+                                    <field name="date_scope">normal</field>
+                                    <field name="subformula">-sum</field>
+                                    <field name="green_on_positive" eval="False"/>
+                                </record>
+                            </field>
+                        </record>
+                    </field>
+                </record>
+                <record id="account_financial_retained_earnings1" model="account.report.line">
+                    <field name="name">RETAINED EARNINGS</field>
+                    <field name="code">AZBS_RETAINED_EARNINGS</field>
+                    <field name="hierarchy_level" eval="1"/>
+                    <field name="sequence" eval="4"/>
+                    <field name="groupby">account_id</field>
+                    <field name="parent_id" ref="account_financial_report_equity1"/>
+                    <field name="expression_ids">
+                        <record id="account_financial_retained_earnings1_exp" model="account.report.expression">
+                            <field name="label">balance</field>
+                            <field name="engine">domain</field>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'equity')]"/>
+                            <field name="date_scope">normal</field>
+                            <field name="subformula">-sum</field>
+                            <field name="green_on_positive" eval="False"/>
+                        </record>
+                    </field>
+                </record>
+            </field>
         </record>
-
-        <record id="account_financial_report_net_assets1" model="account.financial.html.report.line">
-            <field name="name">NET ASSETS</field>
-            <field name="code">AZBS_NA</field>
-            <field name="financial_report_id" ref="account_financial_report_balancesheet1"/>
-            <field name="formulas">balance = AZBS_TA.balance - AZBS_L.balance</field>
-            <field name="sequence" eval="1"/>
-            <field name="level" eval="0"/>
+        <record id="action_account_financial_report_balancesheet1" model="ir.actions.client">
+            <field name="name">AZI Balance Sheet</field>
+            <field name="tag">account_report</field>
+            <field name="context" eval="{'model': 'account.report', 'report_id': ref('azi_account_reports.account_financial_report_balancesheet1')}" />
         </record>
-        <record id="account_financial_report_total_assets1" model="account.financial.html.report.line">
-            <field name="name">ASSETS</field>
-            <field name="code">AZBS_TA</field>
-            <field name="parent_id" ref='account_financial_report_net_assets1'/>
-            <field name="formulas">balance = AZBS_CA.balance + AZBS_FA.balance + AZBS_PNCA.balance</field>
-            <field name="sequence" eval="1"/>
-            <field name="level" eval="1"/>
-        </record>
-        <record id="account_financial_report_current_assets_view1" model="account.financial.html.report.line">
-            <field name="name">Current Assets</field>
-            <field name="code">AZBS_CA</field>
-            <field name="parent_id" ref='account_financial_report_total_assets1'/>
-            <field name="formulas">balance = AZBS_BA.balance + AZBS_REC.balance + AZBS_OREC.balance + AZBS_INV.balance + AZBS_IA.balance + AZBS_OA.balance + AZBS_OCA.balance + AZBS_PRE.balance</field>
-            <field name="sequence" eval="1"/>
-            <field name="level" eval="2"/>
-        </record>
-        <record id="account_financial_report_bank_view1" model="account.financial.html.report.line">
-            <field name="name">Bank and Cash Accounts</field>
-            <field name="code">AZBS_BA</field>
-            <field name="parent_id" ref='account_financial_report_current_assets_view1'/>
-            <field name="domain" eval="[('account_id.user_type_id', '=', ref('account.data_account_type_liquidity'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="sequence" eval="1"/>
-            <field name="level" eval="3"/>
-        </record>
-        <record id="account_financial_report_receivable1" model="account.financial.html.report.line">
-            <field name="name">Receivables</field>
-            <field name="code">AZBS_REC</field>
-            <field name="parent_id" ref='account_financial_report_current_assets_view1'/>
-            <field name="domain" eval="[('account_id.user_type_id.type', '=', 'receivable')]"/>
-            <field name="groupby">account_id</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="sequence" eval="2"/>
-            <field name="level" eval="3"/>
-        </record>
-        <record id="account_financial_report_other_receivable1" model="account.financial.html.report.line">
-            <field name="name">Other Receivables</field>
-            <field name="code">AZBS_OREC</field>
-            <field name="parent_id" ref='account_financial_report_current_assets_view1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', '=', ref('azi_account_reports.account_type_other_receivable'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="sequence" eval="2"/>
-            <field name="level" eval="3"/>
-        </record>
-        <record id="account_financial_report_inventory1" model="account.financial.html.report.line">
-            <field name="name">Inventory</field>
-            <field name="code">AZBS_INV</field>
-            <field name="parent_id" ref='account_financial_report_current_assets_view1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', '=', ref('azi_account_reports.account_type_inventory'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="sequence" eval="3"/>
-            <field name="level" eval="3"/>
-        </record>
-        <record id="account_financial_report_inside_advance1" model="account.financial.html.report.line">
-            <field name="name">Inside Advances</field>
-            <field name="code">AZBS_IA</field>
-            <field name="parent_id" ref='account_financial_report_current_assets_view1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', '=', ref('azi_account_reports.account_type_inside_advance'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="sequence" eval="4"/>
-            <field name="level" eval="3"/>
-        </record>
-        <record id="account_financial_report_outside_advance1" model="account.financial.html.report.line">
-            <field name="name">Outside Advances</field>
-            <field name="code">AZBS_OA</field>
-            <field name="parent_id" ref='account_financial_report_current_assets_view1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', '=', ref('azi_account_reports.account_type_outside_advance'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="sequence" eval="4"/>
-            <field name="level" eval="3"/>
-        </record>
-        <record id="account_financial_report_other_current_assets1" model="account.financial.html.report.line">
-            <field name="name">Other Current Assets</field>
-            <field name="code">AZBS_OCA</field>
-            <field name="parent_id" ref='account_financial_report_current_assets_view1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', '=', ref('account.data_account_type_current_assets'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="sequence" eval="5"/>
-            <field name="level" eval="3"/>
-        </record>
-        <record id="account_financial_report_prepayements1" model="account.financial.html.report.line">
-            <field name="name">Prepayments</field>
-            <field name="code">AZBS_PRE</field>
-            <field name="parent_id" ref='account_financial_report_current_assets_view1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', '=', ref('account.data_account_type_prepayments'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="sequence" eval="6"/>
-            <field name="level" eval="3"/>
-        </record>
-        <record id="account_financial_report_fixed_assets_view1" model="account.financial.html.report.line">
-            <field name="name">Fixed Assets</field>
-            <field name="code">AZBS_FA</field>
-            <field name="parent_id" ref='account_financial_report_total_assets1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', '=', ref('account.data_account_type_fixed_assets'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="sequence" eval="3"/>
-            <field name="level" eval="2"/>
-        </record>
-        <record id="account_financial_report_non_current_assets_view1" model="account.financial.html.report.line">
-            <field name="name">Long Term and Goodwill</field>
-            <field name="code">AZBS_PNCA</field>
-            <field name="parent_id" ref='account_financial_report_total_assets1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', '=', ref('account.data_account_type_non_current_assets'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="formulas">balance = sum.balance</field>
-            <field name="sequence" eval="4"/>
-            <field name="level" eval="2"/>
-        </record>
-
-        <record id="account_financial_report_liabilities_view1" model="account.financial.html.report.line">
-            <field name="name">LIABILITIES</field>
-            <field name="code">AZBS_L</field>
-            <field name="parent_id" ref='account_financial_report_net_assets1'/>
-            <field name="groupby">account_id</field>
-            <field name="formulas">balance = AZBS_CL.balance + AZBS_NCL.balance</field>
-            <field name="sequence" eval="2"/>
-            <field name="green_on_positive" eval="False"/>
-            <field name="level" eval="1"/>
-        </record>
-        <record id="account_financial_report_total_current_liabilities1" model="account.financial.html.report.line">
-            <field name="name">Current Liabilities</field>
-            <field name="code">AZBS_CL</field>
-            <field name="parent_id" ref='account_financial_report_liabilities_view1'/>
-            <field name="formulas">balance = AZBS_ACL.balance + AZBS_ACP.balance + AZBS_STP.balance + AZBS_TP.balance + AZBS_OCL.balance + AZBS_PAY.balance</field>
-            <field name="sequence" eval="1"/>
-            <field name="green_on_positive" eval="False"/>
-            <field name="level" eval="2"/>
-        </record>
-
-        <record id="account_financial_report_accrued_liabilities1" model="account.financial.html.report.line">
-            <field name="name">Accrued Liabilities</field>
-            <field name="code">AZBS_ACL</field>
-            <field name="parent_id" ref='account_financial_report_total_current_liabilities1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', 'in', [ref('azi_account_reports.account_type_accrued_liabilities'), ref('account.data_account_type_credit_card')])]"/>
-            <field name="groupby">account_id</field>
-            <field name="formulas">balance = -sum.balance</field>
-            <field name="sequence" eval="1"/>
-            <field name="green_on_positive" eval="False"/>
-            <field name="level" eval="3"/>
-        </record>
-        <record id="account_financial_report_accrued_payroll1" model="account.financial.html.report.line">
-            <field name="name">Accrued Payroll</field>
-            <field name="code">AZBS_ACP</field>
-            <field name="parent_id" ref='account_financial_report_total_current_liabilities1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', 'in', [ref('azi_account_reports.account_type_accrued_payroll')])]"/>
-            <field name="groupby">account_id</field>
-            <field name="formulas">balance = -sum.balance</field>
-            <field name="sequence" eval="2"/>
-            <field name="green_on_positive" eval="False"/>
-            <field name="level" eval="3"/>
-        </record>
-        <record id="account_financial_report_sales_tax_payable1" model="account.financial.html.report.line">
-            <field name="name">Sales Tax Payable</field>
-            <field name="code">AZBS_STP</field>
-            <field name="parent_id" ref='account_financial_report_total_current_liabilities1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', 'in', [ref('azi_account_reports.account_type_sales_tax_payable')])]"/>
-            <field name="groupby">account_id</field>
-            <field name="formulas">balance = -sum.balance</field>
-            <field name="sequence" eval="3"/>
-            <field name="green_on_positive" eval="False"/>
-            <field name="level" eval="3"/>
-        </record>
-        <record id="account_financial_report_taxes_payable1" model="account.financial.html.report.line">
-            <field name="name">Taxes Payable</field>
-            <field name="code">AZBS_TP</field>
-            <field name="parent_id" ref='account_financial_report_total_current_liabilities1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', 'in', [ref('azi_account_reports.account_type_taxes_payable')])]"/>
-            <field name="groupby">account_id</field>
-            <field name="formulas">balance = -sum.balance</field>
-            <field name="sequence" eval="4"/>
-            <field name="green_on_positive" eval="False"/>
-            <field name="level" eval="3"/>
-        </record>
-        <record id="account_financial_report_other_current_liabilities1" model="account.financial.html.report.line">
-            <field name="name">Other Current Liabilities</field>
-            <field name="code">AZBS_OCL</field>
-            <field name="parent_id" ref='account_financial_report_total_current_liabilities1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', 'in', [ref('account.data_account_type_current_liabilities')])]"/>
-            <field name="groupby">account_id</field>
-            <field name="formulas">balance = -sum.balance</field>
-            <field name="sequence" eval="5"/>
-            <field name="green_on_positive" eval="False"/>
-            <field name="level" eval="3"/>
-        </record>
-
-        <record id="account_financial_report_current_liabilities_payable" model="account.financial.html.report.line">
-            <field name="name">Payables</field>
-            <field name="code">AZBS_PAY</field>
-            <field name="parent_id" ref='account_financial_report_total_current_liabilities1'/>
-            <field name="domain" eval="[('account_id.user_type_id.type', '=', 'payable')]"/>
-            <field name="groupby">account_id</field>
-            <field name="formulas">balance = -sum.balance</field>
-            <field name="sequence" eval="6"/>
-            <field name="green_on_positive" eval="False"/>
-            <field name="level" eval="3"/>
-        </record>
-        <record id="account_financial_report_non_current_liabilities1" model="account.financial.html.report.line">
-            <field name="name">Non-current Liabilities</field>
-            <field name="code">AZBS_NCL</field>
-            <field name="parent_id" ref='account_financial_report_liabilities_view1'/>
-            <field name="domain"
-                   eval="[('account_id.user_type_id', '=', ref('account.data_account_type_non_current_liabilities'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="formulas">balance = -sum.balance</field>
-            <field name="sequence" eval="2"/>
-            <field name="green_on_positive" eval="False"/>
-            <field name="level" eval="2"/>
-        </record>
-
-        <record id="account_financial_report_equity1" model="account.financial.html.report.line">
-            <field name="name">EQUITY</field>
-            <field name="code">AZBS_EQ</field>
-            <field name="formulas">balance = AZBS_UNAFFECTED_EARNINGS.balance + AZBS_RETAINED_EARNINGS.balance</field>
-            <field name="sequence" eval="2"/>
-            <field name="financial_report_id" ref="account_financial_report_balancesheet1"/>
-            <field name="level" eval="0"/>
-        </record>
-        <record id="account_financial_current_year_earnings1" model="account.financial.html.report.line">
-            <field name="name">CURRENT YEAR EARNINGS</field>
-            <field name="code">AZBS_UNAFFECTED_EARNINGS</field>
-            <field name="domain" eval="[('account_id.user_type_id', '=', ref('account.data_unaffected_earnings'))]"/>
-            <field name="formulas">balance = AZPL_NEP.balance - sum.balance</field>
-            <field name="sequence" eval="1"/>
-            <field name="special_date_changer">from_beginning</field>
-            <field name="parent_id" ref='account_financial_report_equity1'/>
-            <field name="level" eval="1"/>
-        </record>
-        <record id="account_financial_retained_earnings1" model="account.financial.html.report.line">
-            <field name="name">RETAINED EARNINGS</field>
-            <field name="code">AZBS_RETAINED_EARNINGS</field>
-            <field name="domain" eval="[('account_id.user_type_id', '=', ref('account.data_account_type_equity'))]"/>
-            <field name="groupby">account_id</field>
-            <field name="formulas">balance = -sum.balance</field>
-            <field name="sequence" eval="2"/>
-            <field name="parent_id" ref='account_financial_report_equity1'/>
-            <field name="level" eval="1"/>
-        </record>
+        <menuitem id="menu_action_account_financial_report_balancesheet1" name="AZI Balance Sheet"
+                  action="action_account_financial_report_balancesheet1"
+                  parent="account.account_reports_legal_statements_menu"/>
 
     </data>
 </odoo>
