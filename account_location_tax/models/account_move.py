@@ -8,5 +8,5 @@ class AccountMoveLine(models.Model):
     zip = fields.Char(related='partner_id.zip')
     city = fields.Char(related='partner_id.city')
     state = fields.Selection(related='move_id.state')
-    amount_untaxed = fields.Monetary('Untaxed Amount', related='move_id.amount_untaxed', store=True)
-    amount_total = fields.Monetary('Total Amount', related='move_id.amount_total', store=True)
+    amount_untaxed = fields.Monetary('Untaxed Amount', related='move_id.amount_untaxed')
+    amount_total = fields.Monetary('Total Amount', related='move_id.amount_total')

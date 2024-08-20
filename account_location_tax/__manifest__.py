@@ -16,6 +16,7 @@ Sales Tax By Location
     'depends': ['sale_management', 'account_reports'],
     "data": [
         'views/account_location_sales_tax_views.xml',
+        # 'security/ir.model.access.csv',
     ],
     "installable": True,
     "auto_install": False,
