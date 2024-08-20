@@ -39,7 +39,7 @@ class ProductProduct(models.Model):
                 # independent_attrs = prod.config_step_line_ids.filtered(lambda x: x.name != 'Depends').mapped(
                 #     'attribute_line_ids.attribute_id').sorted(key=lambda x: x.name)
                 # variant = prod.attribute_value_ids.get_variant_code(independent_attrs)
-                variant = prod.attribute_value_ids.get_variant_code()
+                variant = prod.product_template_attribute_value_ids.get_variant_code()
                 code = "%s (%s)" % (prod.name, variant)
             else:
                 code = prod.name
