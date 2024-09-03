@@ -19,11 +19,10 @@ class StockLotImages(models.Model):
         string="Documents")
 
     lot_ids = fields.Many2many(
-        comodel_name='stock.production.lot',
+        comodel_name='stock.lot',
         string='Serial',
         required=False)
 
-    @api.multi
     def action_open_line(self):
         self.ensure_one()
         action = self.env.ref('serial_images.action_form_stock_lot_images').read()[0]

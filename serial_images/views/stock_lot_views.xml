@@ -4,7 +4,7 @@
 
     <record id="production_lot_serial_images_form" model="ir.ui.view">
         <field name="name">production.lot.serial.images.form</field>
-        <field name="model">stock.production.lot</field>
+        <field name="model">stock.lot</field>
         <field name="inherit_id" ref="serial_crm.production_lot_crm_integration_form"/>
         <field name="arch" type="xml">
             <page name="documents" position="after">
