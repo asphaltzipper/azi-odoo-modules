@@ -3,13 +3,10 @@
     <record id="view_inventory_form" model="ir.ui.view">
         <field name="name">stock.inventory.form</field>
         <field name="model">stock.inventory</field>
-        <field name="inherit_id" ref="stock.view_inventory_form"/>
+        <field name="inherit_id" ref="stock_inventory.view_inventory_group_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='date']" position="after">
                 <field name="imported" readonly="1"/>
-            </xpath>
-            <xpath expr="//page[1]/field/tree/field[@name='theoretical_qty']" position="before">
-                <field name="product_cost"/>
             </xpath>
         </field>
     </record>

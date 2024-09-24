@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Chris Emigh
+# Copyright 2024 Chris Emigh
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 {
     "name": "azi_stock",
-    "version": "12.0.1.0.0",
+    "version": "16.0.1.0.0",
     "summary": "AZI Stock Customizations",
     "category": "Warehouse",
     "author": "Chris Emigh",
@@ -18,11 +18,11 @@ AZI Specialized Customizations to Stock
 * Prevent negative quants for serial tracked products
     """,
     "depends": [
-        'stock',
+        'stock_inventory',
         'purchase',
         'engineering_product',
         'shelf_location',
-        'stock_inventory_valuation_location',
+        # 'stock_inventory_valuation_location',
         'barcode_font',
         'serial_crm',
     ],
@@ -43,6 +43,7 @@ AZI Specialized Customizations to Stock
         'report/stock_report.xml',
         'report/monthly_inventory_views.xml',
         'report/report_serial_plc_label.xml',
+        'report/report_azi_lot_label.xml',
         'views/stock_quant_views.xml',
         'views/stock_inventory_views.xml',
         'wizards/inventory_import_views.xml',

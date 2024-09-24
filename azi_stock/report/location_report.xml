@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-
-        <report
-            id="action_report_azi_location_label"
-            string="Azi Location Labels"
-            model="stock.shelf"
-            paperformat="azi_stock.paperformat_barcode"
-            report_type="qweb-pdf"
-            name="azi_stock.azi_report_locationlabel"
-            file="azi_stock.report.azi_report_locationlabel"/>
-
+        <record id="action_report_azi_location_label" model="ir.actions.report">
+            <field name="name">Azi Location Labels</field>
+            <field name="model">stock.shelf</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">azi_stock.azi_report_locationlabel</field>
+            <field name="report_file">azi_stock.report.azi_report_locationlabel</field>
+            <field name="paperformat_id" ref="azi_stock.paperformat_barcode"/>
+            <field name="binding_model_id" ref="shelf_location.model_stock_shelf"/>
+            <field name="binding_type">report</field>
+        </record>
     </data>
 </odoo>

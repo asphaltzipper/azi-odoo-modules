@@ -1,5 +1,4 @@
 from odoo import api, fields, models, tools
-from odoo.addons import decimal_precision as dp
 
 
 class MonthlyInventoryReport(models.Model):
@@ -18,9 +17,9 @@ class MonthlyInventoryReport(models.Model):
     orig_build = fields.Boolean('Origin Build')
     wa_unit = fields.Integer('WA Unit')
 
-    @api.model_cr
     def init(self):
         tools.drop_view_if_exists(self._cr, 'monthly_inventory_report')
+        lang = self.env.lang or 'en_US'
         self._cr.execute("""
             CREATE VIEW monthly_inventory_report AS (
                 select
@@ -59,10 +58,10 @@ class MonthlyInventoryReport(models.Model):
                         'FG - CS Non Production'
                         ) 
                     )
-                    and sml.location_id=(select id from stock_location where name='Production') and 
-                    sml.location_dest_id=(select id from stock_location where name='Stock') and pt.name not ilike '%generic%'
+                    and sml.location_id=(select id from stock_location where name='Production' limit 1) and 
+                    sml.location_dest_id=(select id from stock_location where name='Stock' limit 1) and pt.name ->> '{lang}' not ilike '%generic%'
                 ) as im
-                left join stock_production_lot spl on spl.id=im.lot_id
+                left join stock_lot spl on spl.id=im.lot_id
                 left join product_product pp on pp.id=spl.product_id
                 left join product_template pt on pt.id=pp.product_tmpl_id left join product_category pc on pc.id=pt.categ_id
                 left join (
@@ -82,11 +81,11 @@ class MonthlyInventoryReport(models.Model):
                         sml.id as sml_id, sm.date as move_date, sml.location_id, sml.location_dest_id
                     from stock_move_line as sml
                     left join stock_move sm on sm.id=sml.move_id
-                    left join stock_production_lot spl on spl.id=sml.lot_id
+                    left join stock_lot spl on spl.id=sml.lot_id
                     left join product_product pp on pp.id=sml.product_id
                     left join product_template pt on pt.id=pp.product_tmpl_id where sml.lot_id is not null
                     and sml.state='done'
-                    and pt.name not ilike '%generic%'
+                    and pt.name ->> '{lang}' not ilike '%generic%'
                     order by spl.name, sm.date
                 ) as fsm on fsm.serial_name=spl.name
                 left join stock_location sl on sl.id=om.location_dest_id left join res_partner rp on rp.id=spl.partner_id
@@ -94,10 +93,10 @@ class MonthlyInventoryReport(models.Model):
                 left join (
                     -- identify wheel assist builds
                     select product_product_id
-                        from product_attribute_value_product_product_rel pavppr where product_attribute_value_id in (
+                        from product_variant_combination pavppr where product_template_attribute_value_id in (
                         select pav.id
-                        from product_attribute_value pav
-                        left join product_attribute pa on pa.id=pav.attribute_id where pa.name like '%wa%'
+                        from product_template_attribute_value pav
+                        left join product_attribute pa on pa.id=pav.attribute_id where pa.name ->> '{lang}' like '%wa%'
                         )
                     ) as wa on wa.product_product_id=pp.id --where sl.name<>'Production'
                 where im.build_date>='2022-01-01' order by spl.name, im.build_date

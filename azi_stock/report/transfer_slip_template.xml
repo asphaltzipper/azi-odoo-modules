@@ -8,7 +8,7 @@
                     <h2>Transfer Slip</h2>
                     <h3><span t-field="o.product_id"/></h3>
                     <div style="font-size:large; padding-top: .5in; padding-left: .5in">
-                        <div><img class="oe-left" t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('Code128', o.product_id.barcode, 600, 100)" style="width:350px;height:60px"/><span style="font-size:small" t-field="o.product_id.barcode"/></div>
+                        <div><img class="oe-left" t-att-src="'/report/barcode/?barcode_type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('Code128', o.product_id.barcode, 600, 100)" style="width:350px;height:60px"/><span style="font-size:small" t-field="o.product_id.barcode"/></div>
                         <div><strong>Quantity: </strong><span t-field="o.product_uom_qty"/></div>
                         <div><strong>UOM: </strong><span t-field="o.product_uom" options="{'no_open': True, 'no_create': True}" groups="product.group_uom"/></div>
                         <div><strong>Description: </strong><span t-field="o.name"/></div>
@@ -30,7 +30,7 @@
                                 <span t-field="loc.name"/>,
                             </span>
                         </div>
-                        <img t-if="o.product_id.image_medium"  style="border: 3px solid black;" t-att-src="'data:image/png;base64,%s' % o.product_id.image"/>
+                        <img t-if="o.product_id.image_128"  style="border: 3px solid black;" t-att-src="'data:image/png;base64,%s' % o.product_id.image_128"/>
                     </div>
                 </div>
             </t>

@@ -29,23 +29,27 @@ class InventoryImport(models.TransientModel):
             raise ValidationError('Sorry, make sure to have `product_id` and `counted_qty` in xlsx header')
         product_col = column_pos['product_id']
         qty_col = column_pos['counted_qty']
-        inventory_lines = []
+        product_adjustment = {}
         for row in range(1, sheet.nrows):
             prod_ref = sheet.cell(row, product_col).value
             qty = sheet.cell(row, qty_col).value
             product = self.env['product.product'].search([('default_code', '=', prod_ref)], limit=1)
             if product and qty is not None:
-                inventory_lines.append((0, _, {'product_id': product.id, 'location_id': self.location_id.id,
-                                               'product_qty': float(qty)}))
+                product_adjustment.update({product.id: qty})
             else:
                 raise ValidationError(f"Bad Part Number or Quantity: {prod_ref}, {qty}")
-        if inventory_lines:
-            inventory = self.env['stock.inventory'].create({'location_id': self.location_id.id, 'name': self.filename,
-                                                            'imported': True, 'filter': 'partial'})
-            inventory.action_start()
-            inventory.update({'line_ids': inventory_lines})
 
-        view_id = self.env.ref('stock.view_inventory_form').id
+        inventory_vals = {'location_ids': [[6, False, [self.location_id.id]]], 'name': self.filename,
+                          'imported': True, 'product_selection': 'manual'}
+        if product_adjustment:
+            inventory_vals['product_ids'] = [[6, False, list(product_adjustment.keys())]]
+        inventory = self.env['stock.inventory'].create(inventory_vals)
+        inventory.action_state_to_in_progress()
+        for quant in inventory.stock_quant_ids:
+            qty_to_adjust = product_adjustment.get(quant.product_id.id)
+            if qty_to_adjust:
+                quant.inventory_quantity = qty_to_adjust
+        view_id = self.env.ref('stock_inventory.view_inventory_group_form').id
         return {
             'type': 'ir.actions.act_window',
             'name': 'Inventory Adjustments',

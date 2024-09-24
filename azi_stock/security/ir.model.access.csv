@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_monthly_inventory_report_users,access.monthly.inventory.report.users,model_monthly_inventory_report,stock.group_stock_user,1,0,0,0
+access_inventory_import_users,access.inventory.import.users,model_inventory_import,stock.group_stock_user,1,1,1,0

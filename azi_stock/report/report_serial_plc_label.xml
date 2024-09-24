@@ -2,6 +2,7 @@
 <odoo>
     <!-- 2.25 x 0.75 PLC label -->
     <template id="serial_plc_label_body">
+        <t t-set="o" t-value="get_note_values(doc)"/>
         <div class="row no-gutters">
             <div class="col-12"
                  style="text-align:left; vertical-align:top; margin:-5px 0px 0px -10px; font-size:30px; font-family: sans-serif; white-space: nowrap;">
@@ -23,7 +24,7 @@
     </template>
     <template id="report_serial_plc_label">
         <t t-call="web.basic_layout">
-            <t t-foreach="docs" t-as="o">
+            <t t-foreach="docs" t-as="doc">
                 <!--<div class="page" style="position: relative;">-->
                 <div class="page">
                     <t t-call="azi_stock.serial_plc_label_body">
@@ -35,13 +36,15 @@
         </t>
     </template>
 
-    <report
-        id="action_serial_plc_label"
-        string="PLC Label"
-        model="stock.production.lot"
-        paperformat="azi_stock.paperformat_label_225x075"
-        report_type="qweb-pdf"
-        name="azi_stock.report_serial_plc_label"
-        file="azi_stock.report_serial_plc_label"/>
+    <record id="action_serial_plc_label" model="ir.actions.report">
+        <field name="name">PLC Label</field>
+        <field name="model">stock.lot</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">azi_stock.report_serial_plc_label</field>
+        <field name="report_file">azi_stock.report_serial_plc_label</field>
+        <field name="paperformat_id" ref="azi_stock.paperformat_label_225x075"/>
+        <field name="binding_model_id" ref="stock.model_stock_lot"/>
+        <field name="binding_type">report</field>
+    </record>
 
 </odoo>

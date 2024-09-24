@@ -114,90 +114,115 @@
             <field name="dpi">90</field>
         </record>
 
-        <report
-            id="action_report_azi_product_label"
-            string="Azi Products Labels"
-            model="product.template"
-            paperformat="azi_stock.paperformat_barcode"
-            report_type="qweb-pdf"
-            name="azi_stock.azi_report_product_template_label"
-            file="azi_stock.report.product_labels"/>
-        <report
-            id="action_report_azi_product_product_label"
-            string="Azi Products Labels"
-            model="product.product"
-            paperformat="azi_stock.paperformat_barcode"
-            report_type="qweb-pdf"
-            name="azi_stock.azi_report_product_product_label"
-            file="azi_stock.report.product_labels"/>
+        <record id="action_report_azi_product_label" model="ir.actions.report">
+            <field name="name">Azi Products Labels</field>
+            <field name="model">product.template</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">azi_stock.azi_report_product_template_label</field>
+            <field name="report_file">azi_stock.report.product_labels</field>
+            <field name="paperformat_id" ref="azi_stock.paperformat_barcode"/>
+            <field name="binding_model_id" ref="stock.model_product_template"/>
+            <field name="binding_type">report</field>
+        </record>
 
-        <report
-            id="action_report_prod_tmpl_azi_2x1_label"
-            string="AZI 2x1 Label"
-            model="product.template"
-            paperformat="azi_stock.paperformat_label_2x1"
-            report_type="qweb-pdf"
-            name="azi_stock.report_prod_tmpl_2x1_label"
-            file="azi_stock.report.product_labels"/>
-        <report
-            id="action_report_prod_prod_azi_2x1_label"
-            string="AZI 2x1 Label"
-            model="product.product"
-            paperformat="azi_stock.paperformat_label_2x1"
-            report_type="qweb-pdf"
-            name="azi_stock.report_prod_prod_2x1_label"
-            file="azi_stock.report.product_labels"/>
+        <record id="action_report_azi_product_product_label" model="ir.actions.report">
+            <field name="name">Azi Products Labels</field>
+            <field name="model">product.product</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">azi_stock.azi_report_product_product_label</field>
+            <field name="report_file">azi_stock.report.product_labels</field>
+            <field name="paperformat_id" ref="azi_stock.paperformat_barcode"/>
+            <field name="binding_model_id" ref="stock.model_product_product"/>
+            <field name="binding_type">report</field>
+        </record>
 
-        <report
-            id="action_report_prod_tmpl_azi_3x2_label"
-            string="AZI 3x2 Label"
-            model="product.template"
-            paperformat="azi_stock.paperformat_label_3x2"
-            report_type="qweb-pdf"
-            name="azi_stock.report_prod_tmpl_3x2_label"
-            file="azi_stock.report.product_labels"/>
-        <report
-            id="action_report_prod_prod_azi_3x2_label"
-            string="AZI 3x2 Label"
-            model="product.product"
-            paperformat="azi_stock.paperformat_label_3x2"
-            report_type="qweb-pdf"
-            name="azi_stock.report_prod_prod_3x2_label"
-            file="azi_stock.report.product_labels"/>
+        <record id="action_report_prod_tmpl_azi_2x1_label" model="ir.actions.report">
+            <field name="name">AZI 2x1 Label</field>
+            <field name="model">product.template</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">azi_stock.report_prod_tmpl_2x1_label</field>
+            <field name="report_file">azi_stock.report.product_labels</field>
+            <field name="paperformat_id" ref="azi_stock.paperformat_label_2x1"/>
+            <field name="binding_model_id" ref="stock.model_product_template"/>
+            <field name="binding_type">report</field>
+        </record>
 
-        <report
-            id="action_report_prod_tmpl_azi_4x2_label"
-            string="AZI 4x2 Label"
-            model="product.template"
-            paperformat="azi_stock.paperformat_label_4x2"
-            report_type="qweb-pdf"
-            name="azi_stock.report_prod_tmpl_4x2_label"
-            file="azi_stock.report.product_labels"/>
-        <report
-            id="action_report_prod_prod_azi_4x2_label"
-            string="AZI 4x2 Label"
-            model="product.product"
-            paperformat="azi_stock.paperformat_label_4x2"
-            report_type="qweb-pdf"
-            name="azi_stock.report_prod_prod_4x2_label"
-            file="azi_stock.report.product_labels"/>
+        <record id="action_report_prod_prod_azi_2x1_label" model="ir.actions.report">
+            <field name="name">AZI 2x1 Label</field>
+            <field name="model">product.product</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">azi_stock.report_prod_prod_2x1_label</field>
+            <field name="report_file">azi_stock.report.product_labels</field>
+            <field name="paperformat_id" ref="azi_stock.paperformat_label_2x1"/>
+            <field name="binding_model_id" ref="stock.model_product_product"/>
+            <field name="binding_type">report</field>
+        </record>
 
-        <report
-            id="action_report_prod_tmpl_azi_4x3_label"
-            string="AZI 4x3 Label"
-            model="product.template"
-            paperformat="azi_stock.paperformat_label_4x3"
-            report_type="qweb-pdf"
-            name="azi_stock.report_prod_tmpl_4x3_label"
-            file="azi_stock.report.product_labels"/>
-        <report
-            id="action_report_prod_prod_azi_4x3_label"
-            string="AZI 4x3 Label"
-            model="product.product"
-            paperformat="azi_stock.paperformat_label_4x3"
-            report_type="qweb-pdf"
-            name="azi_stock.report_prod_prod_4x3_label"
-            file="azi_stock.report.product_labels"/>
+        <record id="action_report_prod_tmpl_azi_3x2_label" model="ir.actions.report">
+            <field name="name">AZI 3x2 Label</field>
+            <field name="model">product.template</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">azi_stock.report_prod_tmpl_3x2_label</field>
+            <field name="report_file">azi_stock.report.product_labels</field>
+            <field name="paperformat_id" ref="azi_stock.paperformat_label_3x2"/>
+            <field name="binding_model_id" ref="stock.model_product_template"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <record id="action_report_prod_prod_azi_3x2_label" model="ir.actions.report">
+            <field name="name">AZI 3x2 Label</field>
+            <field name="model">product.product</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">azi_stock.report_prod_prod_3x2_label</field>
+            <field name="report_file">azi_stock.report.product_labels</field>
+            <field name="paperformat_id" ref="azi_stock.paperformat_label_3x2"/>
+            <field name="binding_model_id" ref="stock.model_product_product"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <record id="action_report_prod_tmpl_azi_4x2_label" model="ir.actions.report">
+            <field name="name">AZI 4x2 Label</field>
+            <field name="model">product.template</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">azi_stock.report_prod_tmpl_4x2_label</field>
+            <field name="report_file">azi_stock.report.product_labels</field>
+            <field name="paperformat_id" ref="azi_stock.paperformat_label_4x2"/>
+            <field name="binding_model_id" ref="stock.model_product_template"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <record id="action_report_prod_prod_azi_4x2_label" model="ir.actions.report">
+            <field name="name">AZI 4x2 Label</field>
+            <field name="model">product.product</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">azi_stock.report_prod_prod_4x2_label</field>
+            <field name="report_file">azi_stock.report.product_labels</field>
+            <field name="paperformat_id" ref="azi_stock.paperformat_label_4x2"/>
+            <field name="binding_model_id" ref="stock.model_product_product"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <record id="action_report_prod_tmpl_azi_4x3_label" model="ir.actions.report">
+            <field name="name">AZI 4x3 Label</field>
+            <field name="model">product.template</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">azi_stock.report_prod_tmpl_4x3_label</field>
+            <field name="report_file">azi_stock.report.product_labels</field>
+            <field name="paperformat_id" ref="azi_stock.paperformat_label_4x3"/>
+            <field name="binding_model_id" ref="stock.model_product_template"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <record id="action_report_prod_prod_azi_4x3_label" model="ir.actions.report">
+            <field name="name">AZI 4x3 Label</field>
+            <field name="model">product.product</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">azi_stock.report_prod_prod_4x3_label</field>
+            <field name="report_file">azi_stock.report.product_labels</field>
+            <field name="paperformat_id" ref="azi_stock.paperformat_label_4x3"/>
+            <field name="binding_model_id" ref="stock.model_product_product"/>
+            <field name="binding_type">report</field>
+        </record>
 
         <record id="shelf_location.action_report_shelf_label" model="ir.actions.report">
             <field name="paperformat_id" ref="azi_stock.paperformat_barcode" />

@@ -5,12 +5,10 @@
         <field name="model">inventory.import</field>
         <field name="arch" type="xml">
             <form>
-                <group col="2">
-                    <div>
-                        <h2>Excel file containing columns labeled "product_id" and "counted_qty"</h2>
-                        <h3>product_id = Internal Reference (X000000.-0)</h3>
-                    </div>
-                </group>
+                <div>
+                    <h2>Excel file containing columns labeled "product_id" and "counted_qty"</h2>
+                    <h3>product_id = Internal Reference (X000000.-0)</h3>
+                </div>
                 <group>
                     <group>
                         <field name="location_id" required="1"/>

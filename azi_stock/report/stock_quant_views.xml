@@ -37,7 +37,6 @@
     <record model="ir.actions.act_window" id="fg_quantsact"> <!-- Menu + python -->
         <field name="name">FG Stock Valuation</field>
         <field name="res_model">stock.quant</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form,pivot</field>
         <field name="context">
             {

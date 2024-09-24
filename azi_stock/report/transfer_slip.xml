@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-
-    <report
-        string="Transfer Slip"
-        id="action_report_transfer_slip"
-        model="stock.move"
-        name="azi_stock.transfer_slip"
-        file="azi_stock.report.transfer_slip_template"
-        report_type="qweb-pdf"
-    />
-
+    <record id="action_report_transfer_slip" model="ir.actions.report">
+        <field name="name">Transfer Slip</field>
+        <field name="model">stock.move</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">azi_stock.transfer_slip</field>
+        <field name="report_file">azi_stock.report.transfer_slip_template</field>
+        <field name="binding_model_id" ref="stock.model_stock_move"/>
+        <field name="binding_type">report</field>
+    </record>
 </odoo>
