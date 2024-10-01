@@ -13,7 +13,6 @@ class StockQuant(models.Model):
         related='product_id.categ_id',
         readonly=True,
         store=True)
-    value = fields.Monetary(compute='_compute_value', groups='stock.group_stock_manager')
 
     @api.onchange('inventory_quantity', 'quantity', 'inventory_value')
     def _onchange_quantity(self):
@@ -26,59 +25,6 @@ class StockQuant(models.Model):
         self = self.with_context(is_quant=is_quant, inventory_value=self.inventory_value)
         super(StockQuant, self)._apply_inventory()
         self.write({'inventory_value': 0})
-
-    @api.depends('company_id', 'location_id', 'owner_id', 'product_id', 'quantity')
-    def _compute_value(self):
-        """ For FIFO valuation, compute the current accounting valuation
-        using the stock moves of the product with remaining value filled,
-        the accounting valuation is computed to global level, and then will
-        be divided for the quantity on hand.
-
-        Then, the value obtained from the division is an average valuation
-        of the product.
-
-        That value will be multiplied by the quantity available in the quant.
-
-        For standard and avg method, the standard price will be multiplied
-        by the quantity available in the quant.
-        """
-        # Just take into account the quants with usage internal and
-        # that belong to the company
-        for quant in self:
-            quant.currency_id = quant.company_id.currency_id
-            if not (quant.owner_id and quant.owner_id != quant.company_id.partner_id):
-                product_valuation = {quant.product_id.id: 0.0}
-                product_quantity = {quant.product_id.id: 0.0}
-                move_lines = self.env['stock.move.line'].search([('product_id', '=', quant.product_id.id), '|',
-                                                                ('location_id', '=', quant.location_id.id),
-                                                                ('location_dest_id', '=', quant.location_id.id),
-                                                                ('lot_id', '=', quant.lot_id.id), '|',
-                                                                ('package_id', '=', quant.package_id.id),
-                                                                ('result_package_id', '=', quant.package_id.id)])
-                move_ids = self.env['stock.valuation.layer'].search([
-                    ('stock_move_id', 'in', move_lines.mapped('move_id').ids),
-                    ('remaining_value', '>', 0)
-                ], order='create_date desc', limit=1).stock_move_id
-                if quant.product_id.cost_method != 'fifo':
-                    product_valuation[quant.product_id.id] = quant.product_id.standard_price
-                else:
-                    product_valuation[quant.product_id.id] = sum(map(abs, move_ids.mapped('account_cost_unit')))
-                prod = quant.product_id
-                quant.value = 0.0
-                # There is no average value for the standard method. Then, the
-                # standard price is multiplied directly by the quantity in the
-                # quant
-                if prod.cost_method != 'fifo':
-                    quant.value = product_valuation[prod.id] * quant.quantity
-                    continue
-
-                # In case of FIFO, the average value of the product in the
-                # moves -> sum(total_valuation) / sum(qty_on_hand), will be
-                # multiplied by quantity in the quant.
-                if quant.quantity > 0:
-                    quant.value = (product_valuation[prod.id] * quant.quantity)
-            else:
-                quant.value = 0
 
     def action_print_report(self):
         records = self
