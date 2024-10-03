@@ -13,8 +13,7 @@
     "depends": [
         "mrp",
         "azi_product",
-        "product_configurator",
-        "product_configurator_mrp",
+        # "product_configurator_mrp",
     ],
     "data": [
         "views/product_views.xml",

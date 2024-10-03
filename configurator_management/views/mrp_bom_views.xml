@@ -4,20 +4,24 @@
     <record id="mrp_bom_form_view" model="ir.ui.view">
         <field name="name">azi.product.config.mrp.bom.form.view</field>
         <field name="model">mrp.bom</field>
-        <field name="inherit_id" ref="product_configurator_mrp.mrp_bom_form_view"/>
+        <field name="inherit_id" ref="mrp.mrp_bom_form_view"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='config_ok']" position="after">
-                <field name="re_config"/>
+            <xpath expr="//field[@name='product_tmpl_id']" position="after">
+                <field name="config_ok" readonly="True"/>
+                <field name="re_config" force_save="True"/>
             </xpath>
             <xpath expr="//field[@name='product_id']" position="attributes">
-                <attribute name="attrs">{'readonly': [('config_ok', '=', True), ('re_config', '!=', True)], 'required': [('config_ok', '!=', True)]}</attribute>
+                <attribute name="attrs">{
+                    'readonly': [('config_ok', '=', True), ('re_config', '!=', True)],
+                    'required': [('config_ok', '!=', True)]
+                }</attribute>
             </xpath>
             <xpath expr="//field[@name='bom_product_template_attribute_value_ids']" position="attributes">
-                <attribute name="attrs">{'column_invisible': [('parent.product_id', '!=', False)], 'readonly': ['|', ('parent.config_ok', '!=', True), ('parent.re_config', '=', True)]}</attribute>
+                <attribute name="attrs">{
+                    'column_invisible': [('parent.product_id', '!=', False)],
+                    'readonly': ['|', ('parent.config_ok', '!=', True), ('parent.re_config', '=', True)]
+                }</attribute>
             </xpath>
-             <xpath expr="//field[@name='config_set_id']" position="attributes">
-                <attribute name="invisible">1</attribute>
-             </xpath>
         </field>
     </record>
 
