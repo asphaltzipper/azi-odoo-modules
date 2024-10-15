@@ -28,7 +28,7 @@
                     <t t-name="kanban-box">
                         <t t-set="color" t-value="kanban_color(record.color.raw_value)"/>
                         <div t-att-class="color + (record.title.raw_value == 1 ? ' oe_kanban_color_alert' : '') + ' oe_kanban_global_click'">
-                            <a t-if="!read_only_mode" type="delete"><span class="fa fa-times fa-pull-right"/></a>
+                            <a t-if="!read_only_mode" type="delete"><span class="fa fa-times fa-pull-right" title="delete"/></a>
                             <div class="o_kanban_image">
                                 <img t-if="record.type.raw_value === 'delivery'" t-att-src='"/base/static/img/truck.png"' alt="delivery"/>
                                 <img t-if="record.type.raw_value === 'invoice'" t-att-src='"/base/static/img/money.png"' alt="invoice"/>
