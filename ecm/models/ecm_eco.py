@@ -405,6 +405,7 @@ class EcmEco(models.Model):
                 line.new_product_id = new_prod
         for obsolete in self.obsolete_line_ids:
             obsolete.product_id.deprecated = True
+            obsolete.product_id.eng_hold_flag = True
             # TODO check these fields
             # obsolete.product_id.warning = True
             # obsolete.product_id.warning_message = obsolete.reason
