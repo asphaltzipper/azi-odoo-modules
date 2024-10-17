@@ -17,6 +17,9 @@
             <field name="ordering_date" position="after">
                 <field name="projected_reorder_date"/>
             </field>
+            <field name="description" position="attributes">
+                <attribute name="attrs">{'readonly': [('state','in',('done', 'cancel'))]}</attribute>
+            </field>
             <xpath expr="//field[@name='line_ids']/tree/field[@name='schedule_date']" position="before">
                 <field name="estimated_take_down_rate"/>
                 <field name="actual_take_down_rate"/>
