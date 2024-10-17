@@ -266,7 +266,7 @@ class MfgWorkHeader(models.Model):
                     'labor_time': labor_time,
                 })
             produce_wiz.do_produce()
-
+        self.work_date = fields.Date.today()
         self.state = 'closed'
 
     @api.model
@@ -387,7 +387,7 @@ class MfgWorkDetail(models.Model):
         if error_products:
             message = "The following products are missing BOMs or Operations " \
                       "or MFG data:\n {}".format(",".join(error_products.mapped('default_code')))
-            self.env.user.notify_warning(message=message, title="MRP Complete", sticky=True)
+            self.env.user.notify_warning(message=message, title="Data Error", sticky=True)
 
         products = self.filtered(lambda x: not x.product_error).mapped('product_id')
         for product in products:
