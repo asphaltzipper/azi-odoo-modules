@@ -19,7 +19,12 @@ class AccountMove(models.Model):
 
     retail_account_tax_id = fields.Many2one('account.tax', string='Retail Taxes', ondelete='restrict',
                                             default=_default_retail_tax)
-    retail_delivery_fees = fields.Monetary('Retail Delivery Fees', compute='_compute_tax_totals', store=True)
+    retail_delivery_fees = fields.Monetary(
+        string="Retail Delivery Fees",
+        compute='_compute_tax_totals',
+        compute_sudo=False,
+        store=True,
+    )
     tax_totals_report = fields.Binary("Tax Total Report", compute='_compute_tax_totals_report')
 
     @api.depends('line_ids', 'retail_delivery_fees', 'retail_account_tax_id')
@@ -55,7 +60,7 @@ class AccountMove(models.Model):
         for move in self:
             if move.is_invoice(include_receipts=True):
                 # Create a line for retail tax
-                apply_taxes = self.env['ir.config_parameter'].sudo().get_param('azi_account.apply_retail_taxes')
+                apply_taxes = self.env['ir.config_parameter'].get_param('azi_account.apply_retail_taxes')
                 if apply_taxes and move.retail_account_tax_id and move.partner_id.state_id.code == 'CO' and move.move_type in (
                         'out_invoice', 'in_invoice'):
                     retail_taxes = self.env['account.tax'].search([('retail_tax', '=', True)]).mapped('id')
