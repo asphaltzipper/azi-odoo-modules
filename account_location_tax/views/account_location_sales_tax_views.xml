@@ -1,20 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record id="action_location_sales_tax_pivot" model="ir.actions.act_window">
-        <field name="name">Location Sales Tax</field>
-        <field name="res_model">account.move.line</field>
-        <field name="view_mode">tree,pivot,form</field>
-        <field name="domain">[('tax_line_id', '!=', False),
-            ('state', 'not in', ('draft','cancel')),
-            ('tax_line_id.type_tax_use', '=', 'sale')]
-        </field>
-        <field name="view_ids" eval="[(5, 0, 0),
-              (0, 0, {'view_mode': 'tree', 'view_id': ref('account_location_tax.location_sales_tax_tree_view')}),
-              (0, 0, {'view_mode': 'pivot', 'view_id': ref('account_location_tax.location_sales_tax_pivot_view')}),
-              ]"/>
-    </record>
-
     <record id="location_sales_tax_pivot_view" model="ir.ui.view">
         <field name="name">location.sales.tax.pivot</field>
         <field name="model">account.move.line</field>
@@ -49,6 +35,21 @@
             </tree>
         </field>
     </record>
+
+    <record id="action_location_sales_tax_pivot" model="ir.actions.act_window">
+        <field name="name">Location Sales Tax</field>
+        <field name="res_model">account.move.line</field>
+        <field name="view_mode">tree,pivot,form</field>
+        <field name="domain">[('tax_line_id', '!=', False),
+            ('state', 'not in', ('draft','cancel')),
+            ('tax_line_id.type_tax_use', '=', 'sale')]
+        </field>
+        <field name="view_ids" eval="[(5, 0, 0),
+              (0, 0, {'view_mode': 'tree', 'view_id': ref('account_location_tax.location_sales_tax_tree_view')}),
+              (0, 0, {'view_mode': 'pivot', 'view_id': ref('account_location_tax.location_sales_tax_pivot_view')}),
+              ]"/>
+    </record>
+
     <menuitem id="menu_account_location_sales_tax" name="Location Sales Tax" action="action_location_sales_tax_pivot"
               parent="account_reports.account_reports_audit_reports_menu"/>
 
