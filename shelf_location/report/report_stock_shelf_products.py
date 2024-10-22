@@ -60,7 +60,7 @@ class ReportStockShelfProducts(models.Model):
     # get quant data from the database view because we are gouping it
     location_qty = fields.Float(
         string='Quantity On Hand',
-        digits=dp.get_precision('Product Unit of Measure'),
+        digits='Product Unit of Measure',
         required=True)
 
     location_id = fields.Many2one(

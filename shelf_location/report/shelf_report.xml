@@ -17,34 +17,37 @@
         <field name="dpi">90</field>
     </record>
 
-    <report
-        string="Product Listing"
-        id="action_report_shelf_product_listing"
-        model="stock.shelf"
-        name="shelf_location.shelf_product_listing"
-        file="shelf_location.report.shelf_product_listing_templates"
-        report_type="qweb-pdf"
-        paperformat="paperformat_landscape_us"
-    />
+    <record id="action_report_shelf_product_listing" model="ir.actions.report">
+        <field name="name">Product Listing</field>
+        <field name="model">stock.shelf</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">shelf_location.shelf_product_listing</field>
+        <field name="report_file">shelf_location.shelf_product_listing</field>
+        <field name="paperformat_id" ref="paperformat_landscape_us"/>
+        <field name="binding_model_id" ref="shelf_location.model_stock_shelf"/>
+        <field name="binding_type">report</field>
+    </record>
 
-    <report
-        id="action_report_shelf_label"
-        string="Azi Location Labels"
-        model="stock.shelf"
-        paperformat="base.paperformat_us"
-        report_type="qweb-pdf"
-        name="shelf_location.azi_report_shelflabel"
-        file="shelf_location.shelf_label_templates"
-    />
+    <record id="action_report_shelf_label" model="ir.actions.report">
+        <field name="name">Azi Location Labels</field>
+        <field name="model">stock.shelf</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">shelf_location.azi_report_shelflabel</field>
+        <field name="report_file">shelf_location.shelf_label_templates</field>
+        <field name="paperformat_id" ref="base.paperformat_us"/>
+        <field name="binding_model_id" ref="shelf_location.model_stock_shelf"/>
+        <field name="binding_type">report</field>
+    </record>
 
-    <report
-        string="Shelf Count Sheets"
-        id="action_report_shelf_count_sheets"
-        model="report.stock.shelf.products"
-        name="shelf_location.shelf_count_sheets"
-        file="shelf_location.report.shelf_count_sheets_templates"
-        report_type="qweb-pdf"
-        paperformat="paperformat_landscape_us"
-    />
+    <record id="action_report_shelf_count_sheets" model="ir.actions.report">
+        <field name="name">Shelf Count Sheets</field>
+        <field name="model">report.stock.shelf.products</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">shelf_location.shelf_count_sheets</field>
+        <field name="report_file">shelf_location.report.shelf_count_sheets_templates</field>
+        <field name="paperformat_id" ref="paperformat_landscape_us"/>
+        <field name="binding_model_id" ref="shelf_location.model_report_stock_shelf_products"/>
+        <field name="binding_type">report</field>
+    </record>
 
 </odoo>
