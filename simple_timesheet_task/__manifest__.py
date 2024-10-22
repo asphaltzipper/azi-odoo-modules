@@ -27,6 +27,7 @@
     "summary": "Tasks on Timesheet",
     "category": "Project Management",
     "author": "Matt Taylor",
+    "license": "AGPL-3",
     "website": "http://www.asphaltzipper.com",
     'description': """
 Specify Tasks on Timesheet Details Tab

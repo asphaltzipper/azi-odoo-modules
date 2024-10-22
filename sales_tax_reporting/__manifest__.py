@@ -8,6 +8,7 @@
     "summary": "Sales tax Reports",
     "category": "Accounting",
     "author": "Chris Emigh",
+    "license": "AGPL-3",
     "website": "http://www.asphaltzipper.com",
     'description': """
 Sales Tax Reporting

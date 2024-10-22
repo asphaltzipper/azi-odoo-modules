@@ -7,6 +7,7 @@
     "summary": "Image Books for Serialized Product Builds",
     "category": "Inventory",
     "author": "Matt Taylor",
+    "license": "AGPL-3",
     "website": "http://www.github.com/asphaltzipper",
     'description': """
         Upload images and make notes on serial numbered builds

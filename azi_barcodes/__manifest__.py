@@ -5,6 +5,7 @@
     "summary": "Barcode",
     "category": "Extra Tools",
     "author": "John Welch",
+    "license": "AGPL-3",
     "website": "http://www.github.com/asphaltzipper",
     'description': """
 AZI Barcodes
