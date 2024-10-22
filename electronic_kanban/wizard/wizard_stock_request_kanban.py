@@ -27,4 +27,3 @@ class WizardStockRequestOrderKanban(models.TransientModel):
                     ),
                 }
             )
-

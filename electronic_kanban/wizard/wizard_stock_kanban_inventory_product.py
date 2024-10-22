@@ -3,6 +3,7 @@ from odoo import fields, models, _
 
 class WizardStockKanbanInventoryProduct(models.TransientModel):
     _name = "wizard.stock.kanban.inventory.product"
+    _description = "Kanban Inventory Wizard by Barcode"
     _inherit = ['barcodes.barcode_events_mixin']
 
     kanban_inventory_id = fields.Many2one(
@@ -39,8 +40,10 @@ class WizardStockKanbanInventoryProduct(models.TransientModel):
                 'product_ids': [(4, self.product_id.id)]
             })
         else:
-            self.status = _("Barcode %s does not correspond to any "
-                            "product. Try with another barcode or "
-                            "press Close to finish scanning.") % barcode
+            self.status = _(
+                "Barcode %s does not correspond to any product. Try with another "
+                "barcode or press Close to finish scanning.",
+                barcode,
+            )
             self.status_state = 1
             self.env.user.notify_warning(message=barcode, title="Unknown Barcode", sticky=True)
