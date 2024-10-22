@@ -279,7 +279,7 @@
                         <record id="account_financial_report_cost_sales_material1_exp" model="account.report.expression">
                             <field name="label">balance</field>
                             <field name="engine">domain</field>
-                            <field name="formula" eval="[('account_id.account_type', '=', 'other_cogs_material')]"/>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'expense_cogs_material')]"/>
                             <field name="date_scope">normal</field>
                             <field name="subformula">sum</field>
                             <field name="green_on_positive" eval="False"/>
@@ -297,7 +297,7 @@
                         <record id="account_financial_report_cost_sales_overhead1_exp" model="account.report.expression">
                             <field name="label">balance</field>
                             <field name="engine">domain</field>
-                            <field name="formula" eval="[('account_id.account_type', '=', 'other_cogs_overhead')]"/>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'expense_cogs_overhead')]"/>
                             <field name="date_scope">normal</field>
                             <field name="subformula">sum</field>
                             <field name="green_on_positive" eval="False"/>
@@ -315,7 +315,7 @@
                         <record id="account_financial_report_cost_sales_wages1_exp" model="account.report.expression">
                             <field name="label">balance</field>
                             <field name="engine">domain</field>
-                            <field name="formula" eval="[('account_id.account_type', '=', 'other_cogs_salary_wages')]"/>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'expense_cogs_salary_wages')]"/>
                             <field name="date_scope">normal</field>
                             <field name="subformula">sum</field>
                             <field name="green_on_positive" eval="False"/>
@@ -333,7 +333,7 @@
                         <record id="account_financial_report_cost_sales_freight1_exp" model="account.report.expression">
                             <field name="label">balance</field>
                             <field name="engine">domain</field>
-                            <field name="formula" eval="[('account_id.account_type', '=', 'other_cogs_freight')]"/>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'expense_cogs_freight')]"/>
                             <field name="date_scope">normal</field>
                             <field name="subformula">sum</field>
                             <field name="green_on_positive" eval="False"/>
@@ -385,7 +385,7 @@
                         <record id="account_financial_report_sm_fixed1_exp" model="account.report.expression">
                             <field name="label">balance</field>
                             <field name="engine">domain</field>
-                            <field name="formula" eval="[('account_id.account_type', '=', 'other_expense_sales_fixed')]"/>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'expense_sales_fixed')]"/>
                             <field name="date_scope">normal</field>
                             <field name="subformula">sum</field>
                             <field name="green_on_positive" eval="False"/>
@@ -403,7 +403,7 @@
                         <record id="account_financial_report_sm_variable1_exp" model="account.report.expression">
                             <field name="label">balance</field>
                             <field name="engine">domain</field>
-                            <field name="formula" eval="[('account_id.account_type', '=', 'other_expense_sales_variable')]"/>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'expense_sales_variable')]"/>
                             <field name="date_scope">normal</field>
                             <field name="subformula">sum</field>
                             <field name="green_on_positive" eval="False"/>
@@ -421,7 +421,7 @@
                         <record id="account_financial_report_exp_sm_wages1_exp" model="account.report.expression">
                             <field name="label">balance</field>
                             <field name="engine">domain</field>
-                            <field name="formula" eval="[('account_id.account_type', '=', 'other_expense_sales_salary_wages')]"/>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'expense_sales_salary_wages')]"/>
                             <field name="date_scope">normal</field>
                             <field name="subformula">sum</field>
                             <field name="green_on_positive" eval="False"/>
@@ -439,7 +439,7 @@
                         <record id="account_financial_report_exp_sm_occupancy1_exp" model="account.report.expression">
                             <field name="label">balance</field>
                             <field name="engine">domain</field>
-                            <field name="formula" eval="[('account_id.account_type', '=', 'other_expense_sales_occupancy')]"/>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'expense_sales_occupancy')]"/>
                             <field name="date_scope">normal</field>
                             <field name="subformula">sum</field>
                             <field name="green_on_positive" eval="False"/>
@@ -457,7 +457,7 @@
                         <record id="account_financial_report_exp_sm_travel1_exp" model="account.report.expression">
                             <field name="label">balance</field>
                             <field name="engine">domain</field>
-                            <field name="formula" eval="[('account_id.account_type', '=', 'other_expense_sales_travel')]"/>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'expense_sales_travel')]"/>
                             <field name="date_scope">normal</field>
                             <field name="subformula">sum</field>
                             <field name="green_on_positive" eval="False"/>
@@ -475,7 +475,7 @@
                         <record id="account_financial_report_sm_marketing1_exp" model="account.report.expression">
                             <field name="label">balance</field>
                             <field name="engine">domain</field>
-                            <field name="formula" eval="[('account_id.account_type', '=', 'other_expense_sales_marketing')]"/>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'expense_sales_marketing')]"/>
                             <field name="date_scope">normal</field>
                             <field name="subformula">sum</field>
                             <field name="green_on_positive" eval="False"/>
@@ -493,7 +493,7 @@
                         <record id="account_financial_report_sm_other1_exp" model="account.report.expression">
                             <field name="label">balance</field>
                             <field name="engine">domain</field>
-                            <field name="formula" eval="[('account_id.account_type', '=', 'other_expense_sales_other')]"/>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'expense_sales_other')]"/>
                             <field name="date_scope">normal</field>
                             <field name="subformula">sum</field>
                             <field name="green_on_positive" eval="False"/>
@@ -527,7 +527,7 @@
                         <record id="account_financial_report_exp_ga_fixed1_exp" model="account.report.expression">
                             <field name="label">balance</field>
                             <field name="engine">domain</field>
-                            <field name="formula" eval="[('account_id.account_type', '=', 'other_expense_admin_fixed')]"/>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'expense_admin_fixed')]"/>
                             <field name="date_scope">normal</field>
                             <field name="subformula">sum</field>
                             <field name="green_on_positive" eval="False"/>
@@ -545,7 +545,7 @@
                         <record id="account_financial_report_exp_ga_variable1_exp" model="account.report.expression">
                             <field name="label">balance</field>
                             <field name="engine">domain</field>
-                            <field name="formula" eval="[('account_id.account_type', '=', 'other_expense_admin_variable')]"/>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'expense_admin_variable')]"/>
                             <field name="date_scope">normal</field>
                             <field name="subformula">sum</field>
                             <field name="green_on_positive" eval="False"/>
@@ -563,7 +563,7 @@
                         <record id="account_financial_report_exp_ga_wages1_exp" model="account.report.expression">
                             <field name="label">balance</field>
                             <field name="engine">domain</field>
-                            <field name="formula" eval="[('account_id.account_type', '=', 'other_expense_admin_salary_wages')]"/>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'expense_admin_salary_wages')]"/>
                             <field name="date_scope">normal</field>
                             <field name="subformula">sum</field>
                             <field name="green_on_positive" eval="False"/>
@@ -581,7 +581,7 @@
                         <record id="account_financial_report_exp_ga_occupancy1_exp" model="account.report.expression">
                             <field name="label">balance</field>
                             <field name="engine">domain</field>
-                            <field name="formula" eval="[('account_id.account_type', '=', 'other_expense_admin_occupancy')]"/>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'expense_admin_occupancy')]"/>
                             <field name="date_scope">normal</field>
                             <field name="subformula">sum</field>
                             <field name="green_on_positive" eval="False"/>
@@ -599,7 +599,7 @@
                         <record id="account_financial_report_exp_ga_travel1_exp" model="account.report.expression">
                             <field name="label">balance</field>
                             <field name="engine">domain</field>
-                            <field name="formula" eval="[('account_id.account_type', '=', 'other_expense_admin_travel')]"/>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'expense_admin_travel')]"/>
                             <field name="date_scope">normal</field>
                             <field name="subformula">sum</field>
                             <field name="green_on_positive" eval="False"/>
@@ -653,7 +653,7 @@
                         <record id="account_financial_report_interest_income1_exp" model="account.report.expression">
                             <field name="label">balance</field>
                             <field name="engine">domain</field>
-                            <field name="formula" eval="[('account_id.account_type', '=', 'other_income_interest')]"/>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'income_income_interest')]"/>
                             <field name="date_scope">normal</field>
                             <field name="subformula">sum</field>
                             <field name="green_on_positive" eval="False"/>
@@ -671,7 +671,7 @@
                         <record id="account_financial_report_interest_expense1_exp" model="account.report.expression">
                             <field name="label">balance</field>
                             <field name="engine">domain</field>
-                            <field name="formula" eval="[('account_id.account_type', '=', 'other_expense_interest')]"/>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'expense_interest')]"/>
                             <field name="date_scope">normal</field>
                             <field name="subformula">sum</field>
                             <field name="green_on_positive" eval="False"/>
@@ -689,7 +689,7 @@
                         <record id="account_financial_report_gain_loss_sale_assets1_exp" model="account.report.expression">
                             <field name="label">balance</field>
                             <field name="engine">domain</field>
-                            <field name="formula" eval="[('account_id.account_type', '=', 'other_gain_loss_sale_assets')]"/>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'expense_gain_loss_sale_assets')]"/>
                             <field name="date_scope">normal</field>
                             <field name="subformula">-sum</field>
                         </record>
@@ -706,7 +706,7 @@
                         <record id="account_financial_report_other_income_expense1_exp" model="account.report.expression">
                             <field name="label">balance</field>
                             <field name="engine">domain</field>
-                            <field name="formula" eval="[('account_id.account_type', '=', 'other_other_income_expense')]"/>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'income_other_income_expense')]"/>
                             <field name="date_scope">normal</field>
                             <field name="subformula">-sum</field>
                         </record>
@@ -723,7 +723,7 @@
                         <record id="account_financial_report_taxes1_exp" model="account.report.expression">
                             <field name="label">balance</field>
                             <field name="engine">domain</field>
-                            <field name="formula" eval="[('account_id.account_type', '=', 'other_type_taxes')]"/>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'expense_type_taxes')]"/>
                             <field name="date_scope">normal</field>
                             <field name="subformula">sum</field>
                         </record>
@@ -871,7 +871,7 @@
                         <record id="account_financial_report_other_receivable1_exp" model="account.report.expression">
                             <field name="label">balance</field>
                             <field name="engine">domain</field>
-                            <field name="formula" eval="[('account_id.account_type', '=', 'other_other_receivable')]"/>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'asset_other_receivable')]"/>
                             <field name="date_scope">normal</field>
                             <field name="subformula">sum</field>
                         </record>
@@ -888,7 +888,7 @@
                         <record id="account_financial_report_inventory1_exp" model="account.report.expression">
                             <field name="label">balance</field>
                             <field name="engine">domain</field>
-                            <field name="formula" eval="[('account_id.account_type', '=', 'other_inventory')]"/>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'asset_inventory')]"/>
                             <field name="date_scope">normal</field>
                             <field name="subformula">sum</field>
                         </record>
@@ -905,7 +905,7 @@
                         <record id="account_financial_report_inside_advance1_exp" model="account.report.expression">
                             <field name="label">balance</field>
                             <field name="engine">domain</field>
-                            <field name="formula" eval="[('account_id.account_type', '=', 'other_inside_advance')]"/>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'asset_inside_advance')]"/>
                             <field name="date_scope">normal</field>
                             <field name="subformula">sum</field>
                         </record>
@@ -922,7 +922,7 @@
                         <record id="account_financial_report_outside_advance1_exp" model="account.report.expression">
                             <field name="label">balance</field>
                             <field name="engine">domain</field>
-                            <field name="formula" eval="[('account_id.account_type', '=', 'other_outside_advance')]"/>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'asset_outside_advance')]"/>
                             <field name="date_scope">normal</field>
                             <field name="subformula">sum</field>
                         </record>
@@ -1039,7 +1039,7 @@
                         <record id="account_financial_report_accrued_liabilities1_exp" model="account.report.expression">
                             <field name="label">balance</field>
                             <field name="engine">domain</field>
-                            <field name="formula" eval="[('account_id.account_type', 'in', ('other_accrued_liabilities', 'liability_credit_card'))]"/>
+                            <field name="formula" eval="[('account_id.account_type', 'in', ('liability_accrued_liabilities', 'liability_credit_card'))]"/>
                             <field name="date_scope">normal</field>
                             <field name="subformula">-sum</field>
                             <field name="green_on_positive" eval="False"/>
@@ -1057,7 +1057,7 @@
                         <record id="account_financial_report_accrued_payroll1_exp" model="account.report.expression">
                             <field name="label">balance</field>
                             <field name="engine">domain</field>
-                            <field name="formula" eval="[('account_id.account_type', '=', 'other_accrued_payroll')]"/>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'liability_accrued_payroll')]"/>
                             <field name="date_scope">normal</field>
                             <field name="subformula">-sum</field>
                             <field name="green_on_positive" eval="False"/>
@@ -1075,7 +1075,7 @@
                         <record id="account_financial_report_sales_tax_payable1_exp" model="account.report.expression">
                             <field name="label">balance</field>
                             <field name="engine">domain</field>
-                            <field name="formula" eval="[('account_id.account_type', '=', 'other_sales_tax_payable')]"/>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'liability_sales_tax_payable')]"/>
                             <field name="date_scope">normal</field>
                             <field name="subformula">-sum</field>
                             <field name="green_on_positive" eval="False"/>
@@ -1093,7 +1093,7 @@
                         <record id="account_financial_report_taxes_payable1_exp" model="account.report.expression">
                             <field name="label">balance</field>
                             <field name="engine">domain</field>
-                            <field name="formula" eval="[('account_id.account_type', '=', 'other_taxes_payable')]"/>
+                            <field name="formula" eval="[('account_id.account_type', '=', 'liability_taxes_payable')]"/>
                             <field name="date_scope">normal</field>
                             <field name="subformula">-sum</field>
                             <field name="green_on_positive" eval="False"/>
