@@ -2,13 +2,12 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import fields, models
-import odoo.addons.decimal_precision as dp
 
 
 class StockForecastDetailLine(models.TransientModel):
     _name = 'stock.forecast.detail.line'
     _description = 'Stock Detail Forecast Line'
-    _order = 'product_id, tx_date, tx_type, product_qty desc, id'
+    _order = 'product_id, tx_date, product_qty desc, tx_type, id'
 
     product_id = fields.Many2one(
         comodel_name='product.product',
@@ -56,14 +55,14 @@ class StockForecastDetailLine(models.TransientModel):
 
     product_qty = fields.Float(
         string="Tx Qty",
-        digits=dp.get_precision('Product Unit of Measure'),
+        digits='Product Unit of Measure',
         required=True,
         help="Qty=1 is implied for schedule lines, Qty<0 when qty out.",
     )
 
     before_qty = fields.Float(
         string="Before",
-        digits=dp.get_precision('Product Unit of Measure'),
+        digits='Product Unit of Measure',
         required=True,
         default=0.0,
         help="The cumulative quantity or running sum of transactions",
@@ -71,7 +70,7 @@ class StockForecastDetailLine(models.TransientModel):
 
     after_qty = fields.Float(
         string="After",
-        digits=dp.get_precision('Product Unit of Measure'),
+        digits='Product Unit of Measure',
         required=True,
         default=0.0,
         help="The cumulative quantity or running sum of transactions",
