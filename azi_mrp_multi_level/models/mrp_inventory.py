@@ -13,9 +13,8 @@ class MrpInventory(models.Model):
         string="Obsolete",
         store=True,
     )
-    routing_detail = fields.Char(
-        string='Routing Detail',
-        compute='_compute_routing_detail',
+    routing_name = fields.Char(
+        related='product_id.routing_name',
         store=True,
     )
     main_supplier_id = fields.Many2one(
@@ -34,18 +33,6 @@ class MrpInventory(models.Model):
         required=True,
         default=False,
     )
-
-    @api.depends('product_id')
-    def _compute_routing_detail(self):
-        for record in self:
-            if record.product_id:
-                operations = self.env['mrp.bom'].search([('product_id', '=', record.product_id.id)]).\
-                    mapped('operation_ids')
-                if operations:
-                    work_center_codes = [code for code in operations.mapped('workcenter_id.code') if code]
-                    record.routing_detail = ", ".join(work_center_codes)
-                else:
-                    record.routing_detail = None
 
     @api.depends('product_id')
     def _compute_on_blanket(self):

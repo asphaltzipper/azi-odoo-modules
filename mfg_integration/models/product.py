@@ -29,9 +29,10 @@ class ProductTemplate(models.Model):
         compute='_compute_mfg_code',
         store=True,
         readonly=True)
-    routing_detail = fields.Char(
-        string="Routing Detail",
-        compute='_compute_mfg_properties')
+    routing_name = fields.Char(
+        string="Work Routing",
+        compute="_compute_routing_name",
+    )
     # only here for backward compatibility
     # TODO: remove this field
     formed = fields.Boolean(
@@ -103,22 +104,29 @@ class ProductTemplate(models.Model):
 
     @api.depends('bom_ids')
     def _compute_mfg_properties(self):
-        for rec in self:
-            bom = rec.bom_ids and rec.bom_ids[0] or False
-            if rec.bom_ids and rec.bom_ids[0].one_comp_product_id:
-                rec.rm_product_id = bom.one_comp_product_id
-                rec.raw_material_qty = bom.one_comp_product_qty
-                # rec.raw_material_uom_id = bom.one_comp_product_uom_id
-                rec.rm_material_code = bom.one_comp_product_id.material_id.name
-                rec.rm_gauge_code = bom.one_comp_product_id.gauge_id.name
-                rec.laser_code = bom.one_comp_product_id.gauge_id.laser_code
-                rec.routing_detail = ", ".join([x for x in bom.operation_ids.mapped('workcenter_id.code') if x])
+        for tmpl in self:
+            bom = tmpl.bom_ids[:1]
+            if (
+                bom
+                and len(tmpl.product_variant_ids) == 1
+                and bom.one_comp_product_id
+            ):
+                tmpl.rm_product_id = bom.one_comp_product_id
+                tmpl.raw_material_qty = bom.one_comp_product_qty
+                tmpl.rm_material_code = bom.one_comp_product_id.material_id.name
+                tmpl.rm_gauge_code = bom.one_comp_product_id.gauge_id.name
+                tmpl.laser_code = bom.one_comp_product_id.gauge_id.laser_code
             else:
-                rec.rm_product_id = None
-                rec.raw_material_qty = 0
-                rec.rm_material_code = None
-                rec.rm_gauge_code = None
-                rec.laser_code = None
+                tmpl.rm_product_id = None
+                tmpl.raw_material_qty = 0
+                tmpl.rm_material_code = None
+                tmpl.rm_gauge_code = None
+                tmpl.laser_code = None
+
+    @api.depends('bom_ids')
+    def _compute_routing_name(self):
+        for tmpl in self:
+            tmpl.routing_name = tmpl.bom_ids[:1].routing_name
 
     @api.depends('bend_count')
     def _compute_formed(self):
@@ -142,3 +150,17 @@ class ProductTemplate(models.Model):
         if not self.material_id:
             return {'domain': {'gauge_id': [('id', 'in', [])]}}
         return {'domain': {'gauge_id': [('id', 'in', self.material_id.gauge_ids.ids)]}}
+
+
+class ProductProduct(models.Model):
+    _inherit = "product.product"
+
+    routing_name = fields.Char(
+        string="Work Routing",
+        compute='_compute_routing_name',
+    )
+
+    @api.depends('variant_bom_ids')
+    def _compute_routing_name(self):
+        for prod in self:
+            prod.routing_name = prod.variant_bom_ids[:1].routing_name

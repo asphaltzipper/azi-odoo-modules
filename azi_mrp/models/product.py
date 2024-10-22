@@ -10,11 +10,13 @@ class ProductTemplate(models.Model):
         compute='_compute_mrp_product_open_qty',
     )
 
+    @api.depends("product_variant_ids")
     def _compute_mrp_product_open_qty(self):
-        self.ensure_one()
-        self.mrp_product_open_qty = float_round(
-            sum(self.mapped('product_variant_ids').mapped('mrp_product_open_qty')),
-            precision_rounding=self.uom_id.rounding)
+        for tmpl in self:
+            tmpl.mrp_product_open_qty = float_round(
+                sum(tmpl.mapped('product_variant_ids').mapped('mrp_product_open_qty')),
+                precision_rounding=tmpl.uom_id.rounding
+            )
 
     def action_view_actual_mos(self):
         action = self.env.ref('mrp.mrp_production_action').read()[0]

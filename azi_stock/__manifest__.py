@@ -22,9 +22,14 @@ AZI Specialized Customizations to Stock
         'purchase',
         'engineering_product',
         'shelf_location',
-        # 'stock_inventory_valuation_location',
         'barcode_font',
+        'stock_valuation_fifo_lot',
+        'stock_valuation_specific_identification',
         'serial_crm',
+        # 'stock_picking_filter_lot',  # TODO: from https://github.com/OCA/stock-logistics-workflow
+        # 'stock_lot_production_date',  # TODO: from https://github.com/OCA/stock-logistics-workflow
+        # 'stock_production_lot_quantity_tree',  # TODO: from https://github.com/OCA/stock-logistics-warehouse
+        # 'product_lot_sequence',  # TODO: modify and use from https://github.com/OCA/product-attribute
     ],
     'data': [
         'security/ir.model.access.csv',

@@ -1,16 +1,9 @@
 <?xml version="1.0"?>
 
 <odoo>
-    <record id="action_report_bom_combined" model="ir.actions.client">
-        <field name="name">CS Combined BOM Report</field>
-        <field name="tag">combined_bom_report</field>
-        <field name="context" eval="{'model': 'report.serial_crm.report_combined_bom'}" />
-        <field name="binding_model_id" ref="stock.model_stock_production_lot"/>
-    </record>
-
     <record id="production_lot_crm_search_view" model="ir.ui.view">
         <field name="name">lot.production.search.view</field>
-        <field name="model">stock.production.lot</field>
+        <field name="model">stock.lot</field>
         <field name="inherit_id" ref="stock.search_product_lot_filter"/>
         <field name="arch" type="xml">
             <xpath expr="/search/field[@name='product_id']" position="after">
@@ -19,237 +12,235 @@
         </field>
     </record>
 
-    <record id="stock.view_production_lot_form" model="ir.ui.view">
-        <field name="priority" eval="1"/>
-    </record>
-    <record id="stock.view_production_lot_form_simple" model="ir.ui.view">
-        <field name="priority" eval="10"/>
-    </record>
+<!--    <record id="stock.view_production_lot_form" model="ir.ui.view">-->
+<!--        <field name="priority" eval="1"/>-->
+<!--    </record>-->
+<!--    <record id="stock.view_production_lot_form_simple" model="ir.ui.view">-->
+<!--        <field name="priority" eval="10"/>-->
+<!--    </record>-->
 
     <record id="production_lot_crm_integration_form" model="ir.ui.view">
         <field name="name">lot.production.sn_integrate</field>
-        <field name="model">stock.production.lot</field>
+        <field name="model">stock.lot</field>
         <field name="inherit_id" ref="stock.view_production_lot_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//div[@name='button_box']" position="inside">
-                <button name="%(action_report_bom_combined)d" icon="fa-arrow-down" class="oe_stat_button"
-                        string="CS Combined Report" type="action"/>
+            <xpath expr="//field[@name='name']" position="after">
+                <button string="Next Serial" class="btn btn-link pt-0" name="get_next_serial"
+                        help="Add Next Serial Number" type="object"
+                        confirm="Do you want to DELETE this serial and Create a new one?"/>
             </xpath>
-            <xpath expr="//group[@name='main_group']/group" position="inside">
+            <xpath expr="//group[@name='main_group']/group[2]" position="inside">
                 <field name="state"/>
                 <field name="partner_id" options="{'no_create': True, 'no_create_edit': True}"/>
                 <field name="mfg_date"/>
                 <field name="current_hours"/>
-                <button string="Next Serial" class="oe_edit_only oe_highlight" name="get_next_serial"
-                        help="Add Next Serial Number" type="object"
-                        confirm="Do you want to DELETE this serial and Create a new one?"/>
             </xpath>
-            <group name="main_group" position="after">
-                <notebook>
-                    <page name="move_lines" string="Moves">
-                        <field name="move_line_ids">
-                            <tree default_order="date">
-                                <field name="date"/>
-                                <field name="state"/>
-                                <field name="reference"/>
-                                <field name="location_id"/>
-                                <field name="location_dest_id"/>
-                                <field name="account_cost_unit"/>
-                            </tree>
-                        </field>
-                    </page>
-                    <page name="changes" string="BOM Changes">
-                        <field name="change_ids">
-                            <tree editable="bottom">
-                                <field name="change_type"/>
-                                <field name="change_date"/>
-                                <field name="product_id"/>
-                                <field name="bom_qty"/>
-                                <field name="component_lot_id" domain="[('product_id', '=', product_id)]"/>
-                            </tree>
-                        </field>
-                    </page>
-                    <page name="repairs" string="Repairs">
-                        <field name="repair_ids"
-                               context="{'default_product_id': product_id, 'default_lot_id': active_id, 'default_partner_id': partner_id}">
-                            <tree>
-                                <field name="name"/>
-                                <field name="state"/>
-                                <field name="move_date" widget="date"/>
-                                <field name="partner_id"/>
-                                <field name="guarantee_limit"/>
-                            </tree>
-                        </field>
-                    </page>
-                    <page name="revaluations" string="Revaluations">
-                        <field name="reval_ids">
-                            <tree create="0">
-                                <field name="revaluation_id"/>
-                                <field name="old_value"/>
-                                <field name="new_value"/>
-                                <field name="state"/>
-                                <field name="post_date" widget="date"/>
-                                <field name="remarks"/>
-                            </tree>
-                        </field>
-                    </page>
-                    <page name="sales" string="Sales">
-                        <field name="sale_order_ids" context="{'default_partner_id': partner_id}">
-                            <tree>
-                                <field name="name"/>
-                                <field name="confirmation_date"/>
-                                <field name="partner_id"/>
-                                <field name="partner_shipping_id"/>
-                                <field name="state"/>
-                                <field name="invoice_status"/>
-                            </tree>
-                        </field>
-                    </page>
-                    <page name="notes" string="Notes">
-                        <field name="description" placeholder="Description"/>
-                        <group col="1">
-                            <field name="note_ids" nolabel="1" context="{'default_lot_id': active_id}">
-                                <tree editable="top">
-                                    <field name="create_uid" readonly="1"/>
-                                    <field name="create_date" widget="date" readonly="1"/>
-                                    <field name="name"/>
-                                    <field name="lot_id" invisible="1"/>
-                                </tree>
-                            </field>
-                        </group>
-                    </page>
-                    <page name="Owner" string="Owner">
-                        <field name="owner_ids" context="{'default_lot_id': active_id}">
-                            <tree editable="bottom">
-                                <field name="partner_id"/>
-                                <field name="lot_id" invisible="1"/>
-                                <field name="owner_date"/>
-                            </tree>
-                        </field>
-                    </page>
-                    <page name="hours" string="Hours">
-                        <field name="hour_ids" context="{'default_lot_id': active_id}">
-                            <tree editable="bottom">
-                                <field name="date"/>
-                                <field name="hours"/>
-                            </tree>
-                        </field>
-                    </page>
-                    <page name="documents" string="Documents">
-                        <!--<button type="object" name="action_see_attachments" string="All Documents"/>-->
-                        <field name="document_ids" mode="kanban" options="{'no_create_edit': True}"
-                               context="{'default_res_model': 'stock.production.lot', 'default_res_id': active_id}">
-                            <kanban limit="10" default_order="priority desc, name" quick_create="false" create="true"
-                                    delete="true">
-                                <field name="id"/>
-                                <field name="res_model" invisible="1"/>
-                                <field name="res_id" invisible="1"/>
-                                <field name="mimetype"/>
-                                <field name="type"/>
-                                <field name="datas_fname"/>
-                                <field name="name"/>
-                                <field name="priority"/>
-                                <templates>
-                                    <t t-name="kanban-box">
-                                        <div class="oe_kanban_global_click">
-                                            <div class="oe_kanban_vignette">
-                                                <div class="oe_attachment">
-                                                    <div class="row">
-                                                        <div class="col-xs-4 o_kanban_primary_left"
-                                                             t-if="record.type.raw_value == 'binary'">
-                                                            <a t-attf-href="/web/content/#{record.id.raw_value}?download=1">
-                                                                <t t-set="webimage"
-                                                                   t-value="new RegExp('image.*(gif|jpeg|jpg|png)').test(record.mimetype.value)"/>
-                                                                <div t-if="!webimage" class="o_image"
-                                                                     t-att-data-mimetype="record.mimetype.value"/>
-                                                                <div t-if="webimage" class="o_kanban_attachment_image">
-                                                                    <img t-attf-src="/web/image/#{record.id.raw_value}/256x256?download=1"/>
-                                                                </div>
-                                                            </a>
-                                                        </div>
-                                                        <div class="col-xs-8">
-                                                            <a t-if="!read_only_mode" type="delete"
-                                                               class="fa fa-times pull-right"/>
-                                                            <strong>
-                                                                <field name="name"/>
-                                                            </strong>
-                                                            <br/>
-                                                            <field name="datas_fname"/>
-                                                            <br/>
-                                                            <div class="mt8">
-                                                                <field name="priority" widget="priority"/>
+            <page name="description" position="before">
+                <page name="move_lines" string="Moves">
+                    <field name="move_line_ids">
+                        <tree default_order="date">
+                            <field name="date"/>
+                            <field name="state"/>
+                            <field name="reference"/>
+                            <field name="location_id"/>
+                            <field name="location_dest_id"/>
+                        </tree>
+                    </field>
+                </page>
+                <page name="valuation" string="Valuation">
+                    <field name="valuation_ids">
+                        <tree default_order="post_date" create="0">
+                            <field name="post_date"/>
+                            <field name="reference"/>
+                            <field name="description"/>
+                            <field name="remaining_qty"/>
+                            <field name="remaining_value"/>
+                            <field name="quantity"/>
+                            <field name="unit_cost"/>
+                            <field name="value"/>
+                        </tree>
+                    </field>
+                </page>
+                <page name="bom_changes" string="BOM Changes">
+                    <field name="change_ids">
+                        <tree editable="bottom">
+                            <field name="change_type"/>
+                            <field name="change_date"/>
+                            <field name="product_id"/>
+                            <field name="bom_qty"/>
+                            <field name="component_lot_id" domain="[('product_id', '=', product_id)]"/>
+                        </tree>
+                    </field>
+                </page>
+                <page name="repairs" string="Repairs">
+                    <field name="repair_ids"
+                           context="{'default_product_id': product_id, 'default_lot_id': active_id, 'default_partner_id': partner_id}">
+                        <tree>
+                            <field name="name"/>
+                            <field name="state"/>
+                            <field name="move_date" widget="date"/>
+                            <field name="partner_id"/>
+                            <field name="guarantee_limit"/>
+                        </tree>
+                    </field>
+                </page>
+                <page name="sales" string="Sales">
+                    <field name="sale_order_ids" context="{'default_partner_id': partner_id}">
+                        <tree>
+                            <field name="name"/>
+                            <field name="date_order"/>
+                            <field name="partner_id"/>
+                            <field name="partner_shipping_id"/>
+                            <field name="state"/>
+                            <field name="invoice_status"/>
+                        </tree>
+                    </field>
+                </page>
+                <page name="notes" string="Notes">
+                    <field name="note_ids" nolabel="1" context="{'default_lot_id': active_id}">
+                        <tree editable="top">
+                            <field name="create_uid" readonly="1"/>
+                            <field name="create_date" widget="date" readonly="1"/>
+                            <field name="name"/>
+                            <field name="lot_id" invisible="1"/>
+                        </tree>
+                    </field>
+                </page>
+                <page name="Owner" string="Owner">
+                    <field name="owner_ids" context="{'default_lot_id': active_id}">
+                        <tree editable="bottom">
+                            <field name="partner_id" context="{'res_partner_search_mode': 'customer'}"/>
+                            <field name="lot_id" invisible="1"/>
+                            <field name="owner_date"/>
+                        </tree>
+                    </field>
+                </page>
+                <page name="hour_log" string="Hour Log">
+                    <field name="hour_ids" context="{'default_lot_id': active_id}">
+                        <tree editable="bottom">
+                            <field name="date"/>
+                            <field name="hours"/>
+                        </tree>
+                    </field>
+                </page>
+                <page name="documents" string="Documents">
+                    <!--<button type="object" name="action_see_attachments" string="All Documents"/>-->
+                    <field name="document_ids" mode="kanban" options="{'no_create_edit': True}"
+                           context="{'default_res_model': 'stock.lot', 'default_res_id': active_id}">
+                        <kanban limit="10" default_order="priority desc, name" quick_create="false" create="true"
+                                delete="true">
+                            <field name="id"/>
+                            <field name="res_model" invisible="1"/>
+                            <field name="res_id" invisible="1"/>
+                            <field name="mimetype"/>
+                            <field name="type"/>
+                            <field name="store_fname"/>
+                            <field name="name"/>
+                            <field name="priority"/>
+                            <templates>
+                                <t t-name="kanban-box">
+                                    <div class="oe_kanban_global_click">
+                                        <div class="oe_kanban_vignette">
+                                            <div class="oe_attachment">
+                                                <div class="row">
+                                                    <div class="col-xs-4 o_kanban_primary_left"
+                                                         t-if="record.type.raw_value == 'binary'">
+                                                        <a t-attf-href="/web/content/#{record.id.raw_value}?download=1">
+                                                            <t t-set="webimage"
+                                                               t-value="new RegExp('image.*(gif|jpeg|jpg|png)').test(record.mimetype.value)"/>
+                                                            <div t-if="!webimage" class="o_image"
+                                                                 t-att-data-mimetype="record.mimetype.value"/>
+                                                            <div t-if="webimage" class="o_kanban_attachment_image">
+                                                                <img t-attf-src="/web/image/#{record.id.raw_value}/256x256?download=1" alt="document"/>
                                                             </div>
+                                                        </a>
+                                                    </div>
+                                                    <div class="col-xs-8">
+                                                        <a
+                                                            t-if="!read_only_mode"
+                                                            type="delete"
+                                                            class="fa fa-times pull-right"
+                                                            title="Delete"
+                                                        />
+                                                        <strong>
+                                                            <field name="name"/>
+                                                        </strong>
+                                                        <br/>
+                                                        <field name="store_fname"/>
+                                                        <br/>
+                                                        <div class="mt8">
+                                                            <field name="priority" widget="priority"/>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </t>
-                                </templates>
-                            </kanban>
-                            <form string="Documents">
-                                <sheet>
-                                    <label for="name" class="oe_edit_only"/>
-                                    <h1>
-                                        <field name="name"/>
-                                    </h1>
+                                    </div>
+                                </t>
+                            </templates>
+                        </kanban>
+                        <form string="Documents">
+                            <sheet>
+                                <label for="name" class="oe_edit_only"/>
+                                <h1>
+                                    <field name="name"/>
+                                </h1>
+                                <group>
                                     <group>
-                                        <group>
-                                            <field name="type"/>
-                                            <field name="datas" filename="datas_fname"
-                                                   attrs="{'invisible':[('type','=','url')]}"/>
-                                            <field name="datas_fname" invisible="1"
-                                                   attrs="{'invisible':[('type','=','url')]}"
-                                                   class="oe_inline oe_right"/>
-                                            <field name="url" widget="url"
-                                                   attrs="{'invisible':[('type','=','binary')]}"/>
-                                            <field name="mimetype" groups="base.group_no_one"/>
-                                        </group>
-                                        <group string="Attached To" groups="base.group_no_one">
-                                            <field name="res_model"/>
-                                            <field name="res_field"/>
-                                            <field name="res_id"/>
-                                            <field name="res_name"/>
-                                            <field name="company_id" groups="base.group_multi_company"
-                                                   options="{'no_create': True}"/>
-                                            <field name="public"/>
-                                        </group>
-                                        <group string="History" groups="base.group_no_one">
-                                            <label for="create_uid" string="Creation"/>
-                                            <div name="creation_div">
-                                                <field name="create_uid" readonly="1" class="oe_inline"/>
-                                                on
-                                                <field name="create_date" readonly="1" class="oe_inline"/>
-                                            </div>
-                                        </group>
-                                        <group name="description_group" string="Description" groups="base.group_no_one"
-                                               colspan="4">
-                                            <field name="description" nolabel="1"/>
-                                        </group>
-                                        <group groups="base.group_no_one" string="Indexed Content" colspan="4">
-                                            <field name="index_content" nolabel="1"/>
-                                        </group>
+                                        <field name="type"/>
+                                        <field name="datas" filename="store_fname"
+                                               attrs="{'invisible':[('type','=','url')]}"/>
+                                        <field name="store_fname" invisible="1"
+                                               attrs="{'invisible':[('type','=','url')]}"
+                                               class="oe_inline oe_right"/>
+                                        <field name="url" widget="url"
+                                               attrs="{'invisible':[('type','=','binary')]}"/>
+                                        <field name="mimetype" groups="base.group_no_one"/>
                                     </group>
-                                </sheet>
-                            </form>
-                            <tree editable="bottom">
-                                <field name="name"/>
-                                <field name="res_model" invisible="1"/>
-                                <field name="res_id" invisible="1"/>
-                                <field name="mimetype"/>
-                                <field name="public"/>
-                                <field name="create_uid"/>
-                            </tree>
-                        </field>
-                    </page>
-                </notebook>
-            </group>
+                                    <group string="Attached To" groups="base.group_no_one">
+                                        <field name="res_model"/>
+                                        <field name="res_field"/>
+                                        <field name="res_id"/>
+                                        <field name="res_name"/>
+                                        <field name="company_id" groups="base.group_multi_company"
+                                               options="{'no_create': True}"/>
+                                        <field name="public"/>
+                                    </group>
+                                    <group string="History" groups="base.group_no_one">
+                                        <label for="create_uid" string="Creation"/>
+                                        <div name="creation_div">
+                                            <field name="create_uid" readonly="1" class="oe_inline"/>
+                                            on
+                                            <field name="create_date" readonly="1" class="oe_inline"/>
+                                        </div>
+                                    </group>
+                                    <group name="description_group" string="Description" groups="base.group_no_one"
+                                           colspan="4">
+                                        <field name="description" nolabel="1"/>
+                                    </group>
+                                    <group groups="base.group_no_one" string="Indexed Content" colspan="4">
+                                        <field name="index_content" nolabel="1"/>
+                                    </group>
+                                </group>
+                            </sheet>
+                        </form>
+                        <tree editable="bottom">
+                            <field name="name"/>
+                            <field name="res_model" invisible="1"/>
+                            <field name="res_id" invisible="1"/>
+                            <field name="mimetype"/>
+                            <field name="public"/>
+                            <field name="create_uid"/>
+                        </tree>
+                    </field>
+                </page>
+            </page>
         </field>
     </record>
 
     <record id="view_production_lot_serial_tree" model="ir.ui.view">
-        <field name="name">stock.production.lot.serial.tree</field>
-        <field name="model">stock.production.lot</field>
+        <field name="name">stock.lot.serial.tree</field>
+        <field name="model">stock.lot</field>
         <field name="inherit_id" ref="stock.view_production_lot_tree"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='product_id']" position="before">
@@ -259,8 +250,8 @@
     </record>
 
     <record id="view_production_lot_hour_tree" model="ir.ui.view">
-        <field name="name">stock.production.lot.hour.tree</field>
-        <field name="model">stock.production.lot</field>
+        <field name="name">stock.lot.hour.tree</field>
+        <field name="model">stock.lot</field>
         <field name="inherit_id" ref="stock.view_production_lot_tree"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='product_id']" position="before">
@@ -276,7 +267,5 @@
             </field>
         </field>
     </record>
-
-
 
 </odoo>

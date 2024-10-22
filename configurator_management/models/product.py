@@ -4,6 +4,13 @@ from odoo import models, fields, api
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
+    routing_tmpl_id = fields.Many2one(
+        comodel_name="mrp.routing",
+        string="Routing Template",
+        help="The routing template tells the configurator what operations to create on "
+             "the configured variant's BOM",
+    )
+
     def copy(self, default=None):
         if not default:
             default = {}
@@ -39,7 +46,8 @@ class ProductProduct(models.Model):
                 # independent_attrs = prod.config_step_line_ids.filtered(lambda x: x.name != 'Depends').mapped(
                 #     'attribute_line_ids.attribute_id').sorted(key=lambda x: x.name)
                 # variant = prod.attribute_value_ids.get_variant_code(independent_attrs)
-                variant = prod.product_template_attribute_value_ids.get_variant_code()
+                variant = prod.product_template_attribute_value_ids.mapped(
+                    "product_attribute_value_id").get_variant_code()
                 code = "%s (%s)" % (prod.name, variant)
             else:
                 code = prod.name

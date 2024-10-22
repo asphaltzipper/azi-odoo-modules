@@ -24,7 +24,7 @@ class MrpPlannedPickKit(models.TransientModel):
     product_qty = fields.Float(
         string="Produce Qty",
         required=True,
-        digits=dp.get_precision('Product Unit of Measure'),
+        digits='Product Unit of Measure',
     )
     state = fields.Selection(
         selection=[
@@ -34,9 +34,9 @@ class MrpPlannedPickKit(models.TransientModel):
         default='new',
         required=True,
     )
-    routing_detail = fields.Char(
+    routing_name = fields.Char(
+        related="product_id.routing_name",
         string="Route",
-        compute="_compute_routing_detail",
     )
     no_batch = fields.Boolean(
         string="No Batch",
@@ -64,15 +64,6 @@ class MrpPlannedPickKit(models.TransientModel):
     def _onchange_product_qty(self):
         for line in self.line_ids:
             line.product_qty = line.factor * self.product_qty
-
-    @api.model
-    @api.depends('product_id')
-    def _compute_routing_detail(self):
-        for rec in self:
-            bom = rec.product_id.bom_ids and rec.product_id.bom_ids[0]
-            if bom:
-                rec.routing_detail = ", ".join(
-                    [x for x in bom.operation_ids.mapped('workcenter_id.code') if x])
 
     @api.model
     @api.depends('product_id')
@@ -129,9 +120,9 @@ class MrpPlannedPickKitLine(models.TransientModel):
         readonly=True,
         ondelete='cascade',
     )
-    routing_detail = fields.Char(
+    routing_name = fields.Char(
         string="Route",
-        compute="_compute_routing_detail",
+        compute="_compute_routing_name",
         store=True,
     )
     image_small = fields.Image(
@@ -155,7 +146,7 @@ class MrpPlannedPickKitLine(models.TransientModel):
     )
     product_qty = fields.Float(
         string="Required",
-        digits=dp.get_precision('Product Unit of Measure'),
+        digits='Product Unit of Measure',
     )
     factor = fields.Float(
         string="Factor",
@@ -165,19 +156,19 @@ class MrpPlannedPickKitLine(models.TransientModel):
         string="On Hand",
         compute="_compute_available_qty",
         store=True,
-        digits=dp.get_precision('Product Unit of Measure'),
+        digits='Product Unit of Measure',
     )
     reserved_qty = fields.Float(
         string="Reserved",
         compute="_compute_available_qty",
         store=True,
-        digits=dp.get_precision('Product Unit of Measure'),
+        digits='Product Unit of Measure',
     )
     available_qty = fields.Float(
         string="Available",
         compute="_compute_available_qty",
         store=True,
-        digits=dp.get_precision('Product Unit of Measure'),
+        digits='Product Unit of Measure',
         help="On-Hand quantity less Reserved quantity",
     )
     short = fields.Boolean(
@@ -237,9 +228,9 @@ class MrpPlannedPickKitLine(models.TransientModel):
 
     @api.model
     @api.depends('product_id')
-    def _compute_routing_detail(self):
+    def _compute_routing_name(self):
         for rec in self:
-            bom = rec.product_id.bom_ids and rec.product_id.bom_ids[0]
+            bom = rec.product_id.variant_bom_ids and rec.product_id.variant_bom_ids[0]
             if bom and bom.operation_ids:
-                rec.routing_detail = ", ".join(
+                rec.routing_name = ", ".join(
                     [x for x in bom.operation_ids.mapped('workcenter_id.code') if x])

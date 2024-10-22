@@ -7,7 +7,7 @@ class ResPartner(models.Model):
     serial_count = fields.Integer(compute='_compute_serial_count', string='# of Serials')
 
     def _compute_serial_count(self):
-        serial_data = self.env['stock.production.lot'].read_group(
+        serial_data = self.env['stock.lot'].read_group(
             domain=[('partner_id', 'child_of', self.ids)],
             fields=['partner_id'],
             groupby=['partner_id'])
@@ -20,4 +20,3 @@ class ResPartner(models.Model):
             partner_ids = [partner_ids.get('id')] + partner_ids.get('child_ids')
             # then we can sum for all the partner's child
             partner.serial_count = sum(mapped_data.get(child, 0) for child in partner_ids)
-

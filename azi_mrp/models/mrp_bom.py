@@ -23,17 +23,12 @@ class MrpBom(models.Model):
             Deep explode stops descending into the BOM when purchased items are encountered
         """
         product = self.env['product.product'].browse(product_id)
-        # import pdb
-        # pdb.set_trace()
         boms, lines = self.explode(product, quantity)
 
         if deep:
             comp_boms = []
             for line in lines:
                 prod = line[0].product_id
-                # if prod.display_name == '[X015788.-0] Wing Nut Weldment, 3/8':
-                #     import pdb
-                #     pdb.set_trace()
                 if prod.mrp_area_ids and prod.mrp_area_ids[0].supply_method in ['manufacture', 'phantom']:
                     bom = self._bom_find(product=prod)
                     if bom:
@@ -42,17 +37,11 @@ class MrpBom(models.Model):
                 current_bom, current_prod, current_qty = comp_boms[0]
                 comp_boms = comp_boms[1:]
                 _logger.info("Exploding component BOM for %s" % current_prod.display_name)
-                # if current_prod.display_name == '[X015788.-0] Wing Nut Weldment, 3/8':
-                #     import pdb
-                #     pdb.set_trace()
                 new_boms, new_lines = current_bom.explode(current_prod, current_qty)
                 boms += new_boms
                 lines += new_lines
                 for line in new_lines:
                     prod = line[0].product_id
-                    # if prod.display_name == '[X015788.-0] Wing Nut Weldment, 3/8':
-                    #     import pdb
-                    #     pdb.set_trace()
                     if prod.mrp_area_ids and prod.mrp_area_ids[0].supply_method in ['manufacture', 'phantom']:
                         bom = self._bom_find(product=prod)
                         if bom:

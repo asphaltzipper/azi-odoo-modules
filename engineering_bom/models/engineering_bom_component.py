@@ -60,8 +60,8 @@ class EngBomComp(models.Model):
     alt_qty = fields.Float(
         string='Alt Qty',
         default=0.0)
-    route_template_name = fields.Char(
-        string='Route Name')
+    routing_tmpl_name = fields.Char(
+        string='Route Tmpl Name')
     cutting_length_outer = fields.Float(
         string='Outer Cut Length')
     cutting_length_inner = fields.Float(
@@ -99,11 +99,10 @@ class EngBomComp(models.Model):
         string='Raw Product',
         domain=['|', ('active', '=', True), ('active', '=', False)],
         ondelete='set null')
-    # TODO Routing
-    # route_template_id = fields.Many2one(
-    #     comodel_name='mrp.routing',
-    #     string='Route Id',
-    #     ondelete='set null')
+    routing_tmpl_id = fields.Many2one(
+        comodel_name='mrp.routing',
+        string='Route Tmpl',
+        ondelete='set null')
     suggested_product_id = fields.Many2one(
         comodel_name='product.product',
         string='Suggested',
@@ -132,6 +131,7 @@ class EngBomComp(models.Model):
         coat_obj = self.env['engineering.coating']
         prep_obj = self.env['engineering.preparation']
         uom_obj = self.env['uom.uom']
+        routing_obj = self.env['mrp.routing']
         uom_name_map = {
             '': 'unit',
             'unit': 'unit',
@@ -266,8 +266,7 @@ class EngBomComp(models.Model):
                 'product_id': False,
                 'suggested_product_id': False,
                 'rm_product_id': False,
-                # TODO Routing
-                # 'route_template_id': False,
+                'routing_tmpl_id': False,
                 'eng_type_id': False,
                 'preparation_id': False,
                 'coating_id': False,
@@ -285,10 +284,8 @@ class EngBomComp(models.Model):
             comp.rm_product_id = comp.material_pn and prod_obj.search(
                 [('default_code', '=', comp.material_pn)],
                 limit=1)
-            # TODO Routing
-            # comp.route_template_id = comp.route_template_name and routing_obj.search(
-            #     [('name', '=', comp.route_template_name)],
-            #     limit=1)
+            comp.routing_tmpl_id = comp.routing_tmpl_name and routing_obj.search(
+                [('name', '=', comp.routing_tmpl_name)], limit=1)
             comp.eng_type_id = comp.part_type and type_obj.search(
                 [('code', '=', comp.part_type)],
                 limit=1)

@@ -81,7 +81,7 @@
                                 <field name="one_comp_product_id"/>
                                 <field name="one_comp_product_qty"/>
                                 <field name="one_comp_product_uom_id"/>
-                                <field name="routing_detail"/>
+                                <field name="routing_name"/>
                                 <field name="type"/>
                             </tree>
                         </field>

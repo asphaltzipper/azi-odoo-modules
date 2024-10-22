@@ -40,7 +40,7 @@
                     <div class="row">
                         <div class="col-12">
                             <t t-set="traceability"
-                               t-value="env['stock.traceability.report'].with_context({'active_id': o.id, 'model': 'stock.production.lot'}).get_lines()"/>
+                               t-value="env['stock.traceability.report'].with_context({'active_id': o.id, 'model': 'stock.lot'}).get_lines()"/>
                             <h3 style="color:#007bff;">UpStream Traceability Items</h3>
                             <table class="table table-bordered">
                                 <tr>

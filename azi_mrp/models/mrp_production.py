@@ -179,9 +179,11 @@ class MrpProduction(models.Model):
         user.notify_success(message=message, title="Print Attachment", sticky=False)
         return {}
 
-    def action_confirm(self):
-        res = super(MrpProduction, self).action_confirm()
+    def button_mark_done(self):
+        res = super(MrpProduction, self).button_mark_done()
         for production in self:
+            if not production.bom_id:
+                continue
             bom_lines = self.get_bom_lines(production.product_qty, production.bom_id.id)
             bom_history_lines = []
             for line in bom_lines:
@@ -240,7 +242,6 @@ class MrpProduction(models.Model):
                 bom_line_id,
                 name_path,
                 qty
-    
             from bom_tree as t
             left join mrp_bom as b on b.id = t.bom_id
             order by name_path

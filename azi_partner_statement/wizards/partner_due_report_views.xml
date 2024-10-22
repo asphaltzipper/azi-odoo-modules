@@ -5,7 +5,7 @@
         <field name="model">partner.due.report</field>
         <field name="arch" type="xml">
             <form>
-                <div class="alert alert-success">
+                <div>
                     <b>"Generate" button will get all customers with outstanding balances</b>
                 </div>
                 <footer>

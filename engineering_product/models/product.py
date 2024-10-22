@@ -258,36 +258,44 @@ class ProductProduct(models.Model):
                 raise ValidationError("Internal Reference code is not valid for this Engineering Category")
         return True
 
-    @api.model
-    def create(self, vals):
-        if not (vals.get('eng_code') and vals.get('eng_rev')):
-            cat = vals.get('categ_id') and self.env['product.category'].browse(vals['categ_id'])
-            if not cat:
-                tmpl = self.env['product.template'].browse(vals.get('product_tmpl_id'))
-                cat = tmpl.categ_id
-            if cat and cat.eng_management:
-                if not vals.get('default_code'):
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if not (vals.get('eng_code') and vals.get('eng_rev')):
+                cat = self.env['product.category'].browse(vals.get('categ_id'))
+                if not cat:
+                    tmpl = self.env['product.template'].browse(vals.get('product_tmpl_id'))
+                    cat = tmpl.categ_id
+                if cat and cat.eng_management and not vals.get('default_code'):
                     vals['default_code'] = "%s%s%s" % (
                         cat.eng_code_sequence.next_by_id(),
                         cat.rev_delimiter,
                         cat.default_rev,
                     )
-        product = super(ProductProduct, self.with_context(create_product_product=True)).create(vals)
+        product = super(
+            ProductProduct,
+            self.with_context(create_product_product=True)
+        ).create(vals_list)
         return product
 
     def write(self, values):
-        if 'default_code' not in values.keys():
-            # the user is not changing the default code, so we assume it still passes requirements
-            pass
-        elif not values.get('default_code'):
-            # the user is deleting the default code, so get the next in sequence
-            cat = self.env['product.category'].browse(values.get('categ_id', self.categ_id.id))
-            if cat.eng_management:
-                values['default_code'] = "%s%s%s" % (
-                    cat.eng_code_sequence.next_by_id(),
-                    cat.rev_delimiter,
-                    cat.default_rev,
-                )
+        if 'default_code' not in values.keys() and 'categ_id' not in values.keys():
+            return super(ProductProduct, self).write(values)
+        cat = self.env['product.category'].browse(values.get('categ_id')) or self.categ_id
+        if (
+            cat.eng_management and (
+                # the record doesn't have a default_code
+                not self.default_code
+                # or the user deleted the default_code
+                or ('default_code' in values.keys() and not values.get('default_code'))
+            )
+        ):
+            # get the next default_code in sequence
+            values['default_code'] = "%s%s%s" % (
+                cat.eng_code_sequence.next_by_id(),
+                cat.rev_delimiter,
+                cat.default_rev,
+            )
         res = super(ProductProduct, self).write(values)
         return res
 

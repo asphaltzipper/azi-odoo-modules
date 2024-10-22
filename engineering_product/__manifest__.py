@@ -26,6 +26,7 @@ Engineering Features for Products
         'uom',
         'shelf_location',
         'attachment_priority',
+        # 'product_sequence',  # TODO: modify and use from https://github.com/OCA/product-attribute
     ],
     'data': [
         'data/product_data.xml',

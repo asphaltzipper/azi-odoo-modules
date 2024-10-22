@@ -2,7 +2,7 @@
 <odoo>
 
     <!-- show serial number -->
-    <!-- hide partner and address -->
+    <!-- hide partner address -->
     <record id="view_repair_order_tree_azi" model="ir.ui.view">
         <field name="name">mrp.repair.tree.azi</field>
         <field name="model">repair.order</field>
@@ -11,23 +11,21 @@
             <field name="partner_id" position="before">
                 <field name="lot_id" string="Serial"/>
             </field>
-            <field name="partner_id" position="attributes">
-                <attribute name="invisible">1</attribute>
-            </field>
             <field name="address_id" position="attributes">
                 <attribute name="invisible">1</attribute>
             </field>
         </field>
     </record>
+
     <record id="view_repair_order_form" model="ir.ui.view">
         <field name="name">repair.order.form</field>
         <field name="model">repair.order</field>
         <field name="inherit_id" ref="repair.view_repair_order_form"/>
         <field name="arch" type="xml">
             <field name="invoice_method" position="after">
-                <field name="do_revaluation"/>
-<!--                <field name="inventory_revaluation_id" readonly="1"/>-->
+                <field name="stock_valuation_layer_id" readonly="1"/>
             </field>
         </field>
     </record>
+
 </odoo>

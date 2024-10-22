@@ -28,7 +28,7 @@
             </button>
             <label for="lot_producing_id" position="before">
                 <field name="report_name" invisible="1"/>
-                <field name="report_attach" filename="report_name" widget="binary" invisible="1"/>
+                <field name="report_attach" filename="report_name" invisible="1"/>
             </label>
             <xpath expr="//page/field[@name='move_raw_ids']/tree" position="attributes">
                 <attribute name="default_order">has_tracking desc, product_id</attribute>

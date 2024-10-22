@@ -1,7 +1,7 @@
 AZI MRP Repair
-====================
-* Override `action_repair_done` in order to separate `stock.move` values in different methods
-* Modify tree view of `repair.order`
+==============
+* Automatically create a revaluation for the repaired product
+* Hide the partner address
 * For Remove lines, make the default destination "Stock"
 
 Installation
@@ -14,4 +14,4 @@ Configuration
 
 Usage
 =====
-* Tree View: Repairs > Repairs
+* A revaluation is only created if the repair location is internal (e.g. Stock)

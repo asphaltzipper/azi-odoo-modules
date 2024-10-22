@@ -14,7 +14,7 @@
             </field>
             <field name="product_id" position="after">
                 <field name="e_kanban"/>
-                <field name="routing_detail"/>
+                <field name="routing_name"/>
                 <field name="main_supplier_id"/>
             </field>
         </field>
@@ -30,7 +30,7 @@
             </field>
             <field name="fixed" position="after">
                 <field name="e_kanban"/>
-                <field name="routing_detail"/>
+                <field name="routing_name"/>
                 <field name="main_supplier_id"/>
             </field>
         </field>
@@ -42,7 +42,7 @@
         <field name="inherit_id" ref="mrp_multi_level.mrp_planned_order_view_search"/>
         <field name="arch" type="xml">
             <field name="mrp_area_id" position="after">
-                <field name="routing_detail"/>
+                <field name="routing_name"/>
                 <separator />
                 <filter string="Non-Kanban" name="filter_non_kanban" domain="[('e_kanban','=',False)]"/>
                 <filter string="Kanban" name="filter_kanban" domain="[('e_kanban','=',True)]"/>
@@ -51,9 +51,9 @@
                 <filter string="Make" name="filter_produce" domain="[('mrp_action','=','manufacture')]"/>
             </field>
             <filter name='due_date' position="after">
-                <filter name='group_routing_detail'
-                        string="Routing Detail"
-                        context="{'group_by':'routing_detail'}"/>
+                <filter name='group_routing_name'
+                        string="Routing Name"
+                        context="{'group_by':'routing_name'}"/>
                 <filter name='group_mrp_action'
                         string="Action"
                         context="{'group_by':'mrp_action'}"/>
@@ -76,7 +76,7 @@
     <record id="mrp_planned_order_report" model="ir.actions.act_window">
         <field name="name">Planned Orders</field>
         <field name="res_model">mrp.planned.order</field>
-        <field name="context">{'search_default_group_routing_detail': True}</field>
+        <field name="context">{'search_default_group_routing_name': True}</field>
         <field name="view_mode">graph,pivot,form</field>
     </record>
     <menuitem id="menu_mrp_planned_order_report" parent="mrp.menu_mrp_reporting"

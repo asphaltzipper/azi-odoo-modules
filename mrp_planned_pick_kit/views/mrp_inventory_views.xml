@@ -8,6 +8,7 @@
         <field name="arch" type="xml">
             <button name="%(mrp_multi_level.act_mrp_inventory_procure)d" position="after">
                 <button string="Create Kit"
+                        title="Create Kit"
                         name="action_create_mfg_kit"
                         type="object"
                         attrs="{'invisible':[('to_procure','&lt;=',0.0)]}"/>

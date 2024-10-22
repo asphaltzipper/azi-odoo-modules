@@ -4,6 +4,7 @@ from odoo import api, fields, models
 class ProductConfiguratorStockRequest(models.TransientModel):
     _name = 'product.configurator.stock.request'
     _inherit = 'product.configurator'
+    _description = 'Stock Request Product Configurator'
 
     stock_request_id = fields.Many2one('stock.request')
 

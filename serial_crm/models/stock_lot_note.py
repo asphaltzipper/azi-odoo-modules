@@ -6,9 +6,13 @@ class StockLotNote(models.Model):
     _description = 'Serialized Unit Notes'
     _order = 'create_date desc'
 
-    name = fields.Text(string='Note', required=True)
+    name = fields.Text(
+        string='Note',
+        required=True,
+    )
 
     lot_id = fields.Many2one(
-        comodel_name='stock.production.lot',
+        comodel_name='stock.lot',
         string='Serial',
-        required=True)
+        required=True,
+    )

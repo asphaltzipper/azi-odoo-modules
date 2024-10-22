@@ -17,7 +17,7 @@
                             <span style="font-size:30px">Qty : <span t-field="o.product_qty"/></span>
                         </div>
                         <div style="float:left; width:33%; text-align:center;">
-                            <span style="font-size:30px">Route : <span t-field="o.routing_detail"/></span>
+                            <span style="font-size:30px">Route : <span t-field="o.routing_name"/></span>
                         </div>
                         <div style="float:left; width:33%; text-align:right;">
                             <span class="text-right">
@@ -42,7 +42,7 @@
                         </thead>
                         <tbody>
                             <t t-if="o.line_ids">
-                                <tr t-foreach="o.line_ids.sorted(key=lambda x: (x.supply_method or '', x.routing_detail or '', x.product_id.default_code or ''), reverse=True)" t-as="line">
+                                <tr t-foreach="o.line_ids.sorted(key=lambda x: (x.supply_method or '', x.routing_name or '', x.product_id.default_code or ''), reverse=True)" t-as="line">
                                     <td>
                                         <div t-field="line.product_id"/>
                                         <br/>
@@ -53,8 +53,8 @@
                                     </td>
                                     <td>
                                         <span t-field="line.supply_method"/>
-                                        <span t-if="line.routing_detail">
-                                            : <span t-field="line.routing_detail"/>
+                                        <span t-if="line.routing_name">
+                                            : <span t-field="line.routing_name"/>
                                         </span>
                                     </td>
                                     <td class="text-center">
@@ -107,7 +107,7 @@
                             <span style="font-size:30px">Qty : <span t-field="o.product_qty"/></span>
                         </div>
                         <div style="float:left; width:33%; text-align:center;">
-                            <span style="font-size:30px">Route : <span t-field="o.routing_detail"/></span>
+                            <span style="font-size:30px">Route : <span t-field="o.routing_name"/></span>
                         </div>
                         <div style="float:left; width:33%; text-align:right;">
                             <span class="text-right">
@@ -132,7 +132,7 @@
                         </thead>
                         <tbody>
                             <t t-if="o.line_ids">
-                                <tr t-foreach="o.line_ids.sorted(key=lambda x: (x.supply_method or '', x.routing_detail or '', x.product_id.default_code or ''), reverse=True)" t-as="line">
+                                <tr t-foreach="o.line_ids.sorted(key=lambda x: (x.supply_method or '', x.routing_name or '', x.product_id.default_code or ''), reverse=True)" t-as="line">
                                     <td>
                                         <div t-field="line.product_id"/>
                                     </td>
@@ -144,8 +144,8 @@
                                     </td>
                                     <td>
                                         <span t-field="line.supply_method"/>
-                                        <span t-if="line.routing_detail">
-                                            : <span t-field="line.routing_detail"/>
+                                        <span t-if="line.routing_name">
+                                            : <span t-field="line.routing_name"/>
                                         </span>
                                     </td>
                                     <td class="text-center">

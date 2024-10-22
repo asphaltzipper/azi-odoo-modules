@@ -15,8 +15,7 @@
                             <field name="rm_part"/>
                         </group>
                         <group>
-                            <!-- TODO Routing-->
-                            <!--<field name="route_template_id"/>-->
+                            <field name="routing_tmpl_id"/>
                             <field name="type"/>
                             <field name="quantity"/>
                         </group>
@@ -40,8 +39,7 @@
             <tree>
                 <field name="batch_id"/>
                 <field name="name"/>
-                <!-- TODO Routing -->
-                <!-- <field name="route_template_id"/> -->
+                <field name="routing_tmpl_id"/>
                 <field name="rm_part"/>
                 <field name="type"/>
             </tree>
@@ -57,8 +55,7 @@
                 <field name="name" string="Product"/>
                 <filter string="Raw Material Parts" name="is_rm_part" domain="[('rm_part', '=', True)]"/>
                 <filter string="Not Raw Material Parts" name="is_rm_part" domain="[('rm_part', '=', False)]"/>
-                <!-- TODO Routing -->
-                <!-- <filter string="Missing Routing" name="is_rm_part" domain="[('route_template_id', '=', False), ('type', '=', 'normal')]"/>-->
+                <filter string="Missing Routing" name="is_rm_part" domain="[('routing_tmpl_id', '=', False), ('type', '=', 'normal')]"/>
             </search>
         </field>
     </record>

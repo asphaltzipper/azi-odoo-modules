@@ -23,9 +23,11 @@ class MrpBom(models.Model):
         string='Comp UOM',
         compute='_compute_one_component')
 
-    routing_detail = fields.Char(
-        compute='_compute_routing_detail',
-        string='Routing Detail')
+    routing_name = fields.Char(
+        compute='_compute_routing_name',
+        string='Routing Name',
+        store=True,
+    )
 
     deprecated = fields.Boolean(
         string="Obsolete",
@@ -43,10 +45,7 @@ class MrpBom(models.Model):
                 bom.one_comp_product_uom_id = None
 
     @api.depends('operation_ids')
-    def _compute_routing_detail(self):
+    def _compute_routing_name(self):
         for bom in self:
-            if bom.operation_ids:
-                work_center_codes = [code for code in bom.operation_ids.mapped('workcenter_id.code') if code]
-                bom.routing_detail = ", ".join(work_center_codes)
-            else:
-                bom.routing_detail = None
+            wc_codes = bom.operation_ids.mapped('workcenter_id.code')
+            bom.routing_name = any(wc_codes) and ", ".join(wc_codes)

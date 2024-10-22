@@ -17,3 +17,5 @@ access_engineering_bom_component_user,access.engineering.bom.component.user,mode
 access_engineering_bom_adjacency_user,access.engineering.bom.adjacency.user,model_engineering_bom_adjacency,ecm.group_engineering_user,1,0,0,0
 access_engineering_bom_import_user,access.engineering.bom.import.user,model_engineering_bom_import,ecm.group_engineering_user,1,1,1,0
 access_engineering_bom_import_manager,access.engineering.bom.import.manager,model_engineering_bom_import,ecm.group_engineering_manager,1,1,1,1
+access_mrp_routing_manager,access_mrp_routing_manager,model_mrp_routing,ecm.group_engineering_manager,1,1,1,1
+access_mrp_routing_line_manager,access_mrp_routing_line_manager,model_mrp_routing_line,ecm.group_engineering_manager,1,1,1,1

@@ -30,7 +30,7 @@ class ProductionMoveAnalysis(models.Model):
         states={'done': [('readonly', True)]})
     product_uom_qty = fields.Float(
         'Quantity',
-        digits=dp.get_precision('Product Unit of Measure'),
+        digits='Product Unit of Measure',
         default=1.0, required=True, states={'done': [('readonly', True)]},
         help="This is the quantity of products from an inventory "
              "point of view. For moves in the state 'done', this is the "

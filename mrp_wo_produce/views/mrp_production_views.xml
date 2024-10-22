@@ -10,7 +10,7 @@
             <button name="button_plan" position="before">
                 <button
                         name="open_wo_produce"
-                        attrs="{'invisible': ['|', ('workorder_ids', '=', []),'|',  ('state', '!=', 'confirmed'),('qty_producing', '!=', 0)]}"
+                        attrs="{'invisible': ['|', ('workorder_ids', '=', []),'|',  ('state', '!=', 'progress'),('qty_producing', '!=', 0)]}"
                         type="object"
                         string="Produce Workorders"
                         class="oe_highlight"/>

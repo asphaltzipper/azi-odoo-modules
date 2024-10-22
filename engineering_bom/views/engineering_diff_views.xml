@@ -102,17 +102,13 @@
                         <group>
                             <h2 colspan="2">Old</h2>
                             <field name="qty" string="Batch Qty"/>
-                            <!-- TODO Routing-->
-                            <!--<field name="route_template_id" string="Route Name"/>
-                            <field name="route_detail" string="Route"/>-->
+                            <field name="routing_name" string="Routing"/>
                             <field name="type" string="Type"/>
                         </group>
                         <group>
                             <h2 colspan="2">New</h2>
                             <field name="qty_new" string="Batch Qty"/>
-                            <!-- TODO Routing -->
-                            <!--<field name="route_template_new_id" string="Route Name"/>
-                            <field name="route_detail_new" string="Route"/>-->
+                            <field name="routing_name" string="Routing"/>
                             <field name="type_new" string="Type"/>
                         </group>
                     </group>
@@ -129,9 +125,8 @@
                 <field name="batch_id" invisible="1"/>
                 <field name="product_id"/>
                 <field name="action_type"/>
-                <!-- TODO Routing -->
-                <!-- <field name="route_detail"/>
-                <field name="route_detail_new"/>-->
+                <field name="routing_name"/>
+                <field name="routing_name_new"/>
                 <field name="rm_part"/>
                 <field name="type"/>
                 <field name="type_new"/>

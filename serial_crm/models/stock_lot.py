@@ -2,13 +2,13 @@ from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 
 
-class ProductionLot(models.Model):
-    _inherit = 'stock.production.lot'
+class StockLot(models.Model):
+    _inherit = 'stock.lot'
 
     document_ids = fields.One2many(
         comodel_name='ir.attachment',
         inverse_name='res_id',
-        domain=[('res_model', '=', 'stock.production.lot'), ('type', '=', 'binary')],
+        domain=[('res_model', '=', 'stock.lot'), ('type', '=', 'binary')],
         auto_join=True,
         string="Documents")
 
@@ -29,8 +29,6 @@ class ProductionLot(models.Model):
         inverse_name='lot_id',
         string='Notes')
 
-    description = fields.Text(string="Description")
-
     change_ids = fields.One2many(
         comodel_name='stock.lot.change',
         inverse_name='parent_lot_id',
@@ -41,10 +39,10 @@ class ProductionLot(models.Model):
         inverse_name='lot_id',
         string='Repairs')
 
-    reval_ids = fields.One2many(
-        comodel_name='stock.lot.revaluations',
-        inverse_name='lot_id',
-        string='Revaluation lines')
+    valuation_ids = fields.One2many(
+        comodel_name='stock.valuation.layer',
+        inverse_name='lot_ids',
+        string='Valuation lines')
 
     move_line_ids = fields.One2many(
         comodel_name='stock.move.line',
@@ -83,12 +81,12 @@ class ProductionLot(models.Model):
 
     current_hours = fields.Float(
         compute='_compute_current_hours',
-        string='Total Hours')
+        string='Hours')
 
     hour_ids = fields.One2many(
          comodel_name='stock.lot.hour.log',
          inverse_name='lot_id',
-         string='Hours')
+         string='Hour Log')
 
     mfg_date = fields.Date(
         string="Mfg Date",
@@ -106,26 +104,34 @@ class ProductionLot(models.Model):
     def _compute_current_hours(self):
         for lot in self:
             if len(lot.hour_ids):
-                lot.current_hours = lot.hour_ids.sorted(lambda x: x.date, reverse=True)[0].hours
+                lot.current_hours = lot.hour_ids.sorted(
+                    lambda x: x.date,
+                    reverse=True,
+                )[0].hours
+            else:
+                lot.current_hours = 0.0
 
     def get_next_serial(self):
         if not self.product_id:
             raise UserError(_("Product is required"))
         self.name = self.env['ir.sequence'].next_by_code('azi.fg.serial')
 
-    @api.multi
     @api.depends('move_line_ids')
     def _compute_state(self):
+        # The state field uses the same keys as the location usage field, but
+        # assigns new names.  We also add the assigned value, which is not a
+        # location usage.
         for serial in self:
             if serial.product_id.tracking == 'lot':
                 serial.state = 'lot'
                 continue
             moves_in_out = serial.move_line_ids.filtered(
-                lambda x: x.state == 'done' and
-                          (x.location_id.usage == 'internal' and
-                           x.location_dest_id.usage != 'internal') or
-                          (x.location_id.usage != 'internal' and
-                           x.location_dest_id.usage == 'internal')
+                lambda x: x.state == 'done' and (
+                              x.move_id._is_in()
+                              or x.move_id._is_out()
+                              or x.move_id._is_dropshipped()
+                              or x.move_id._is_dropshipped_returned()
+                          )
             )
             if not moves_in_out:
                 serial.state = 'assigned'
@@ -133,16 +139,19 @@ class ProductionLot(models.Model):
             last_move = moves_in_out.sorted(lambda x: x.date)[-1]
             serial.state = last_move.location_dest_id.usage
 
-    @api.model
-    def _search(self, args, offset=0, limit=None, order=None, count=False, access_rights_uid=None):
-        res = super(ProductionLot, self)._search(args, offset=offset, limit=limit, order=order,
-                                                 count=count, access_rights_uid=access_rights_uid)
-        search_by_name = list(filter(lambda a: a[0] == 'name', args))
-        if search_by_name and res:
-            move_lot_ids = self.env['stock.move.line'].search([('lot_id', 'in', res),
-                                                               ('lot_produced_id', '!=', False)]).mapped('lot_produced_id')
-            move_lot_ids and res.extend(move_lot_ids.ids)
-            args = [('id', 'in', res)]
-            res = super(ProductionLot, self)._search(args, offset=offset, limit=limit, order=order,
-                                                     count=count, access_rights_uid=access_rights_uid)
-        return res
+    # TODO: Modifying the _search method has far reaching side effects. Drop it and
+    #  instead provide a way for the user to search explicitly for lot_produced_id.
+
+    # @api.model
+    # def _search(self, args, offset=0, limit=None, order=None, count=False, access_rights_uid=None):
+    #     res = super(StockLot, self)._search(args, offset=offset, limit=limit, order=order,
+    #                                              count=count, access_rights_uid=access_rights_uid)
+    #     search_by_name = list(filter(lambda a: a[0] == 'name', args))
+    #     if search_by_name and res:
+    #         move_lot_ids = self.env['stock.move.line'].search([('lot_id', 'in', res),
+    #                                                            ('lot_produced_id', '!=', False)]).mapped('lot_produced_id')
+    #         move_lot_ids and res.extend(move_lot_ids.ids)
+    #         args = [('id', 'in', res)]
+    #         res = super(StockLot, self)._search(args, offset=offset, limit=limit, order=order,
+    #                                                  count=count, access_rights_uid=access_rights_uid)
+    #     return res

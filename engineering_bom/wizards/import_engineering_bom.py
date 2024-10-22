@@ -92,7 +92,7 @@ class EngBomImport(models.TransientModel):
                 'material_spec': find_text(part, "./Material", str),
                 'material_pn': find_text(part, "./MaterialPn", str),
                 'rm_qty': find_text(part, "./ChildQty", float),
-                'route_template_name': find_text(part, "./RouteTemplate", str),
+                'routing_tmpl_name': find_text(part, "./RouteTemplate", str),
                 'part_type': find_text(part, "./Type", str),
                 'make': find_text(part, "./Make", str),
                 'coating': find_text(part, "./Coating", str),

@@ -28,10 +28,9 @@ class EngBom(models.Model):
     quantity = fields.Float(
         string='Batch Qty',
         default=1.0)
-    # TODO Routing
-    # route_template_id = fields.Many2one(
-    #     comodel_name='mrp.routing',
-    #     string='Route Template')
+    routing_tmpl_id = fields.Many2one(
+        comodel_name='mrp.routing',
+        string='Routing Template')
     type = fields.Selection(
         selection=[
             ('normal', 'Normal'),

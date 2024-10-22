@@ -16,7 +16,7 @@ AZI Specialized Customizations to MRP Repair
 * Change repair order account move names to the name of the repair order
 * Show repaired serial number in list view
     """,
-    # TODO add 'stock_inventory_revaluation' in the dependency
+    # TODO add 'stock_account' in the dependency?
     "depends": ['repair'],
     'data': [
         'views/mrp_repair_views.xml',

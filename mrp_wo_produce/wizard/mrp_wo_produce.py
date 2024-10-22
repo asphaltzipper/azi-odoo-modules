@@ -38,7 +38,7 @@ class MrpWoProduce(models.TransientModel):
     )
     product_qty = fields.Float(
         string='Quantity',
-        digits=dp.get_precision('Product Unit of Measure'),
+        digits='Product Unit of Measure',
         readonly=True)
     product_uom_id = fields.Many2one(
         comodel_name='uom.uom',
@@ -445,7 +445,7 @@ class MrpProductProduceCompLine(models.TransientModel):
     )
     qty_to_consume = fields.Float(
         string='To Consume',
-        digits=dp.get_precision('Product Unit of Measure'),
+        digits='Product Unit of Measure',
         required=True,
     )
     qty_done = fields.Float(
@@ -514,7 +514,7 @@ class MrpProductProduceByLine(models.TransientModel):
     )
     qty_to_produce = fields.Float(
         string='To Produce',
-        digits=dp.get_precision('Product Unit of Measure'),
+        digits='Product Unit of Measure',
         required=True,
     )
     qty_done = fields.Float(

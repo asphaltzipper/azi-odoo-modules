@@ -26,10 +26,10 @@
                             <span t-field="o.product_qty"/>
                             <span t-field="o.product_uom_id.name" groups="product.group_uom"/>
                         </div>
-<!--                        <div class="col-3">-->
-<!--                            <strong>Routing:</strong><br/>-->
-<!--                            <span t-field="o.routing_detail"/>-->
-<!--                        </div>-->
+                        <div class="col-3">
+                            <strong>Routing:</strong><br/>
+                            <span t-field="o.routing_name"/>
+                        </div>
                     </div>
 
                     <div class="row mt32 mb32" style="font-size:16px;">

@@ -9,6 +9,7 @@
             <sheet position="before">
                 <header>
                     <button string="Create Procurement"
+                            title="Create Procurement"
                             name="%(mrp_multi_level.act_mrp_inventory_procure)d"
                             type="action"
                             attrs="{'invisible':[('to_procure','&lt;=',0.0)]}"/>
@@ -16,7 +17,7 @@
             </sheet>
             <field name="product_id" position="after">
                 <field name="e_kanban"/>
-                <field name="routing_detail"/>
+                <field name="routing_name"/>
                 <field name="main_supplier_id"/>
             </field>
             <field name="uom_id" position="after">
@@ -35,7 +36,7 @@
                 <field name="deprecated"/>
                 <field name="e_kanban"/>
                 <field name="on_blanket"/>
-                <field name="routing_detail"/>
+                <field name="routing_name"/>
                 <field name="main_supplier_id"/>
                 <field name="to_expedite"/>
             </field>
@@ -48,7 +49,7 @@
         <field name="inherit_id" ref="mrp_multi_level.mrp_inventory_search"/>
         <field name="arch" type="xml">
             <field name="mrp_area_id" position="after">
-                <field name="routing_detail"/>
+                <field name="routing_name"/>
                 <field name="main_supplier_id"/>
             </field>
             <filter name="filter_to_procure" position="after">
@@ -71,9 +72,9 @@
                 <filter string="2 Month" name="two_month" domain="[('order_release_date', '&lt;=', (context_today()-relativedelta(months=2)).strftime('%Y-%m-%d'))]"/>
             </filter>
             <filter name='group_release_date' position="after">
-                <filter name='group_routing_detail'
-                        string="Routing Detail"
-                        context="{'group_by':'routing_detail'}"/>
+                <filter name='group_routing_name'
+                        string="Routing Name"
+                        context="{'group_by':'routing_name'}"/>
                 <filter name='group_main_supplier'
                         string="Vendor"
                         context="{'group_by':'main_supplier_id'}"/>

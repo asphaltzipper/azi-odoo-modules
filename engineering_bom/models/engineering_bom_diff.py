@@ -47,16 +47,10 @@ class EngBomDiff(models.Model):
         required=True,
         readonly=True,
         default=1.0)
-    # TODO Routing and Operations Detail
-    # route_template_id = fields.Many2one(
-    #     comodel_name='mrp.routing',
-    #     ondelete='set null',
-    #     readonly=True,
-    #     string='Old Route Name')
-    # route_detail = fields.Char(
-    #     related='route_template_id.operations_detail',
-    #     string='Old Route',
-    #     store=True)
+    routing_name = fields.Char(
+        string='Old Route Name',
+        readonly=True,
+    )
     type = fields.Selection(
         selection=[
             ('normal', 'Normal'),
@@ -70,34 +64,15 @@ class EngBomDiff(models.Model):
         required=True,
         default=1.0,
         help="Production batch quantity in new BOM")
-    # TODO Routing and Operations Detail
-    # route_template_new_id = fields.Many2one(
-    #     comodel_name='mrp.routing',
-    #     ondelete='set null',
-    #     string='New Route Name')
-    # route_detail_new = fields.Char(
-    #     related='route_template_new_id.operations_detail',
-    #     string='New Route',
-    #     store=True)
+    routing_name_new = fields.Char(
+        string='New Route Name',
+        readonly=True,
+    )
     type_new = fields.Selection(
         selection=[
             ('normal', 'Normal'),
             ('phantom', 'Kit/Phantom')],
         string='New Type')
-
-    # this is not necessary because we will be accessing old and new values to
-    # check whether we even need to create a diff record
-    # def create(self, values):
-    #     if values.get('bom_id'):
-    #         bom_obj = self.env['mrp.bom']
-    #         bom = bom_obj.search([('id', '=', values['bom_id'])])
-    #         values['qty'] = bom.product_qty
-    #         values['route_template_id'] = bom.routing_id
-    #         values['type'] = bom.type
-    #         values['action_type'] = 'change'
-    #     else:
-    #         values['action_type'] = 'new'
-    #     super(EngBomDiff, self).create(values)
 
 
 class EngBomLineDiff(models.Model):

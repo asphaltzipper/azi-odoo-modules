@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-
-        <report id="action_serial_lot_report"  string="Lots/Serial (HTML)" model="stock.production.lot"
-                report_type="qweb-html" name="serial_crm.azi_lot_serial_report"
-                file="serial_crm.lot_serial_report"/>
-        <report id="action_combined_bom_report" string="Combined BOM" model="stock.production.lot"
-                report_type="qweb-html" name="serial_crm.combined_bom" file="serial_crm.combined_bom"/>
+        <record id="serial_lot_report" model="ir.actions.report">
+            <field name="name">AZI Lot/Serial</field>
+            <field name="model">stock.lot</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">serial_crm.azi_lot_serial_report</field>
+            <field name="report_file">serial_crm.azi_lot_serial_report</field>
+            <field name="print_report_name">'Lot-Serial %s' % object.name</field>
+            <field name="binding_model_id" ref="model_stock_lot"/>
+            <field name="binding_type">report</field>
+            <field name="binding_view_types">form</field>
+        </record>
     </data>
 </odoo>

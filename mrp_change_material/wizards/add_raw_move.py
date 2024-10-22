@@ -22,7 +22,7 @@ class AddRawMove(models.TransientModel):
         domain=[('type', 'in', ['product', 'consu'])])
     product_qty = fields.Float(
         string='Quantity To Consume',
-        digits=dp.get_precision('Product Unit of Measure'),
+        digits='Product Unit of Measure',
         required=True)
 
     @api.model

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="stock_valuation_layer_revaluation_form_view" model="ir.ui.view">
+        <field name="name">stock.valuation.layer.revaluation.form</field>
+        <field name="model">stock.valuation.layer.revaluation</field>
+        <field name="inherit_id" ref="stock_account.stock_valuation_layer_revaluation_form_view"/>
+        <field name="arch" type="xml">
+            <field name="product_id" position="after">
+                <field name="lot_id" domain="[('product_id', '=', product_id)]"/>
+            </field>
+
+            <field name="current_value_svl" position="attributes">
+                <attribute name="attrs">{'invisible':[('lot_id', '!=', False)]}</attribute>
+            </field>
+            <field name="current_value_svl" position="after">
+                <field name="current_lot_value_svl" class="oe_inline" widget="monetary" attrs="{'invisible':[('lot_id', '=', False)]}"/>
+            </field>
+
+            <field name="current_quantity_svl" position="attributes">
+                <attribute name="attrs">{'invisible':[('lot_id', '!=', False)]}</attribute>
+            </field>
+            <field name="current_quantity_svl" position="after">
+                <field name="current_lot_quantity_svl" class="oe_inline" attrs="{'invisible':[('lot_id', '=', False)]}"/>
+            </field>
+
+            <field name="new_value" position="attributes">
+                <attribute name="attrs">{'invisible':[('lot_id', '!=', False)]}</attribute>
+            </field>
+            <field name="new_value" position="after">
+                <field name="new_lot_value" class="oe_inline" attrs="{'invisible':[('lot_id', '=', False)]}"/>
+            </field>
+
+            <field name="new_value_by_qty" position="attributes">
+                <attribute name="attrs">{'invisible':[('lot_id', '!=', False)]}</attribute>
+            </field>
+            <field name="new_value_by_qty" position="after">
+                <field name="new_lot_value_by_qty" class="oe_inline ms-1" attrs="{'invisible':[('lot_id', '=', False)]}"/>
+            </field>
+        </field>
+    </record>
+</odoo>

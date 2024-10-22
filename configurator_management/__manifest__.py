@@ -13,11 +13,13 @@
     "depends": [
         "mrp",
         "azi_product",
-        # "product_configurator_mrp",
+        "product_configurator",
+        "product_configurator_mrp",
+        "engineering_bom",
     ],
     "data": [
-        "views/product_views.xml",
         "views/mrp_bom_views.xml",
+        "views/product_views.xml",
         "views/product_attribute_views.xml",
     ],
     "installable": True,

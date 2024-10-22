@@ -8,12 +8,14 @@ class StockLotHourLog(models.Model):
     date = fields.Date(
         string='Date',
         required=True,
-        default=fields.Date.today())
+        default=fields.Date.today(),
+    )
 
     lot_id = fields.Many2one(
-        comodel_name='stock.production.lot',
+        comodel_name='stock.lot',
         string='Serial',
-        required=True)
+        required=True,
+    )
 
     hours = fields.Float(string='Hours')
 

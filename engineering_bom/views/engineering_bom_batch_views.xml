@@ -52,9 +52,8 @@
                             <field name="material_pn"/>
                             <field name="rm_product_id"/>
                             <field name="rm_qty"/>
-                            <field name="route_template_name"/>
-                            <!-- TODO Routing -->
-                            <!-- <field name="route_template_id"/>-->
+                            <field name="routing_tmpl_name"/>
+                            <field name="routing_tmpl_id"/>
                             <field name="cutting_length_outer"/>
                             <field name="cutting_length_inner"/>
                             <field name="cut_out_count"/>
@@ -96,8 +95,7 @@
                 <filter string='Unknown Products' name="unknown_products" domain="[('product_id', '=', False), ('suggested_product_id', '=', False)]" />
                 <filter string='Unknown Revisions' name="unknown_revisions" domain="[('product_id', '=', False), ('suggested_product_id', '!=', False)]" />
                 <filter string='Bad Raw Material' name="bad_raw_material" domain="[('rm_qty', '>', 0.0), ('rm_product_id', '=', False)]" />
-                <!-- TODO Routing -->
-                <!-- <filter string='Bad Raw Routing' name="bad_routing" domain="[('route_template_id', '=', False), '|', ('rm_qty', '>', 0.0), ('route_template_name', '!=', False)]" />-->
+                <filter string='Bad Raw Routing' name="bad_routing" domain="[('routing_tmpl_id', '=', False), '|', ('rm_qty', '>', 0.0), ('routing_tmpl_name', '!=', False)]" />
                 <field name="batch_id" string="Batch"/>
                 <field name="product_id" string="Product"/>
             </search>

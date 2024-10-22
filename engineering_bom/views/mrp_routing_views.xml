@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="mrp_routing_tree_view" model="ir.ui.view">
+        <field name="name">mrp.routing.tree.view</field>
+        <field name="model">mrp.routing</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <tree string="MRP Routing Templates">
+                <field name="name"/>
+                <field name="routing_name"/>
+                <field name="line_ids" widget="many2many_tags"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="mrp_routing_form_view" model="ir.ui.view">
+        <field name="name">mrp.routing.form.view</field>
+        <field name="model">mrp.routing</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <form>
+                <group colspan="4">
+                    <field name="name"/>
+                    <field name="line_ids">
+                        <tree>
+                            <field name="sequence" widget="handle"/>
+                            <field name="workcenter_id"/>
+                        </tree>
+                    </field>
+                </group>
+           </form>
+        </field>
+    </record>
+
+    <record id="mrp_routing_view_action" model="ir.actions.act_window">
+        <field name="name">MRP Routing Templates</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">mrp.routing</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem
+        action="mrp_routing_view_action" id="menu_mrp_routing"
+        parent="mrp.menu_mrp_configuration" sequence="3"/>
+
+</odoo>
