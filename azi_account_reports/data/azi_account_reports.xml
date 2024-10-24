@@ -246,9 +246,9 @@
                     <field name="code">AZPL_OPINC</field>
                     <field name="hierarchy_level" eval="5"/>
                     <field name="sequence" eval="1"/>
-                    <field name="foldable" eval="True"/>
                     <field name="parent_id" ref='account_financial_report_gross_profit1'/>
                     <field name="groupby">account_id</field>
+                    <field name="foldable" eval="True"/>
                     <field name="expression_ids">
                         <record id="account_financial_report_revenue1_exp" model="account.report.expression">
                             <field name="label">balance</field>
@@ -673,6 +673,7 @@
                     <field name="hierarchy_level" eval="2"/>
                     <field name="sequence" eval="2"/>
                     <field name="groupby">account_id</field>
+                    <field name="foldable" eval="True"/>
                     <field name="parent_id" ref="account_financial_report_earnings_before_taxes1"/>
                     <field name="expression_ids">
                         <record id="account_financial_report_interest_income1_exp" model="account.report.expression">
@@ -691,6 +692,7 @@
                     <field name="hierarchy_level" eval="2"/>
                     <field name="sequence" eval="2"/>
                     <field name="groupby">account_id</field>
+                    <field name="foldable" eval="True"/>
                     <field name="parent_id" ref="account_financial_report_earnings_before_taxes1"/>
                     <field name="expression_ids">
                         <record id="account_financial_report_interest_expense1_exp" model="account.report.expression">
@@ -709,6 +711,7 @@
                     <field name="hierarchy_level" eval="2"/>
                     <field name="sequence" eval="2"/>
                     <field name="groupby">account_id</field>
+                    <field name="foldable" eval="True"/>
                     <field name="parent_id" ref="account_financial_report_earnings_before_taxes1"/>
                     <field name="expression_ids">
                         <record id="account_financial_report_gain_loss_sale_assets1_exp" model="account.report.expression">
@@ -726,6 +729,7 @@
                     <field name="hierarchy_level" eval="2"/>
                     <field name="sequence" eval="2"/>
                     <field name="groupby">account_id</field>
+                    <field name="foldable" eval="True"/>
                     <field name="parent_id" ref="account_financial_report_earnings_before_taxes1"/>
                     <field name="expression_ids">
                         <record id="account_financial_report_other_income_expense1_exp" model="account.report.expression">
@@ -743,6 +747,7 @@
                     <field name="hierarchy_level" eval="1"/>
                     <field name="sequence" eval="2"/>
                     <field name="groupby">account_id</field>
+                    <field name="foldable" eval="True"/>
                     <field name="parent_id" ref="account_financial_report_net_profit1"/>
                     <field name="expression_ids">
                         <record id="account_financial_report_taxes1_exp" model="account.report.expression">
@@ -1002,6 +1007,7 @@
                     <field name="hierarchy_level" eval="2"/>
                     <field name="sequence" eval="2"/>
                     <field name="groupby">account_id</field>
+                    <field name="foldable" eval="True"/>
                     <field name="parent_id" ref="account_financial_report_total_assets1"/>
                     <field name="expression_ids">
                         <record id="account_financial_report_fixed_assets_view1_exp" model="account.report.expression">
@@ -1019,6 +1025,7 @@
                     <field name="hierarchy_level" eval="2"/>
                     <field name="sequence" eval="2"/>
                     <field name="groupby">account_id</field>
+                    <field name="foldable" eval="True"/>
                     <field name="parent_id" ref="account_financial_report_total_assets1"/>
                     <field name="expression_ids">
                         <record id="account_financial_report_non_current_assets_view1_exp" model="account.report.expression">
@@ -1182,6 +1189,7 @@
                     <field name="hierarchy_level" eval="2"/>
                     <field name="sequence" eval="3"/>
                     <field name="groupby">account_id</field>
+                    <field name="foldable" eval="True"/>
                     <field name="parent_id" ref="account_financial_report_liabilities_view1"/>
                     <field name="expression_ids">
                         <record id="account_financial_report_non_current_liabilities1_exp" model="account.report.expression">
@@ -1246,6 +1254,7 @@
                             <field name="name">Unaffected Earning</field>
                             <field name="code">AZBS_YEAR_EARNING</field>
                             <field name="groupby">account_id</field>
+                            <field name="foldable" eval="True"/>
                             <field name="hierarchy_level" eval="3"/>
                             <field name="sequence" eval="4"/>
                             <field name="foldable" eval="True"/>
@@ -1268,6 +1277,7 @@
                     <field name="hierarchy_level" eval="1"/>
                     <field name="sequence" eval="4"/>
                     <field name="groupby">account_id</field>
+                    <field name="foldable" eval="True"/>
                     <field name="parent_id" ref="account_financial_report_equity1"/>
                     <field name="expression_ids">
                         <record id="account_financial_retained_earnings1_exp" model="account.report.expression">
