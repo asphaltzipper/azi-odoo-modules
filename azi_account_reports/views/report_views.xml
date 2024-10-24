@@ -4,7 +4,7 @@
 
         <record id="bbc_aged_receivable_report" model="account.report">
             <field name="name">BBC Aged Receivable</field>
-            <field name="filter_date_range" eval="True"/>
+            <field name="filter_date_range" eval="False"/>
             <field name="filter_unfold_all" eval="False"/>
             <field name="filter_partner" eval="True"/>
             <field name="default_opening_date_filter">today</field>
