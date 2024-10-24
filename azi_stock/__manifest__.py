@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright 2024 Chris Emigh
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 {
@@ -34,7 +33,6 @@ AZI Specialized Customizations to Stock
     'data': [
         'security/ir.model.access.csv',
         'views/stock_view_changes.xml',
-        'views/stock_move_line_views.xml',
         'report/transfer_slip_template.xml',
         'report/transfer_slip.xml',
         'report/product_labels.xml',

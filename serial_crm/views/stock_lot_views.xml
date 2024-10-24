@@ -49,7 +49,7 @@
                 </page>
                 <page name="valuation" string="Valuation">
                     <field name="valuation_ids">
-                        <tree default_order="post_date" create="0">
+                        <tree default_order="post_date,create_date" create="0">
                             <field name="post_date"/>
                             <field name="reference"/>
                             <field name="description"/>
