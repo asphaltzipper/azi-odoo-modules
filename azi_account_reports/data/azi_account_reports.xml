@@ -803,6 +803,7 @@
             <field name="name">AZI Balance Sheet</field>
             <field name="filter_growth_comparison" eval="True"/>
             <field name="filter_period_comparison" eval="True"/>
+            <field name="filter_date_range" eval="False"/>
             <field name="filter_analytic" eval="True"/>
             <field name="default_opening_date_filter">today</field>
             <field name="column_ids">
