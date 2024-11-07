@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="stock_request_order_form" model="ir.ui.view" >
+        <field name="name">stock.request.order.form</field>
+        <field name="model">stock.request.order</field>
+        <field name="inherit_id" ref="electronic_kanban.stock_request_order_e_kanban_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='stock_request_ids']/tree/field[@name='name']" position="before">
+                <field name="is_purchase" invisible="1"/>
+                <field name="can_edit_procure" invisible="1"/>
+                <field name="to_procure" attrs="{'readonly': [('can_edit_procure', '=', False)]}"/>
+            </xpath>
+            <xpath expr="//field[@name='stock_request_ids']/tree/field[@name='product_responsible_id']" position="replace">
+                <field name="vendor_id"/>
+            </xpath>
+            <xpath expr="//field[@name='stock_request_ids']/tree/field[@name='product_uom_id']" position="replace">
+                <field name="stock_type"/>
+            </xpath>
+            <xpath expr="//field[@name='stock_request_ids']/tree/field[@name='route_id']" position="replace"/>
+            <xpath expr="//field[@name='stock_request_ids']/tree/field[@name='qty_in_progress']" position="replace">
+                <field name="purchase_qty_in_progress"/>
+            </xpath>
+            <xpath expr="//field[@name='stock_request_ids']/tree/field[@name='qty_done']" position="replace"/>
+            <xpath expr="//field[@name='stock_request_ids']/tree/field[@name='state']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='stock_request_ids']/tree/field[@name='state']" position="after">
+                <field name="purchase_name"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="create_procure_request_action" model="ir.actions.server">
+        <field name="name">Procure</field>
+        <field name="model_id" ref="stock_request.model_stock_request_order"/>
+        <field name="binding_model_id" ref="stock_request.model_stock_request_order"/>
+        <field name="binding_view_types">form</field>
+        <field name="state">code</field>
+        <field name="code">
+            action = records.launch_procure_specific_requests()
+        </field>
+    </record>
+</odoo>
