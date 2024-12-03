@@ -28,7 +28,8 @@
     ],
     "assets": {
         'web.assets_backend': [
-            'serial_crm/static/src/js/combined_bom_report.js',
+            'serial_crm/static/src/components/combined_bom_report.xml',
+            'serial_crm/static/src/components/combined_bom_report.js',
         ],
     },
     "installable": True,
