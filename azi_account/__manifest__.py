@@ -24,6 +24,7 @@ AZI Specialized Customizations to account
     """,
     "depends": ['account_check_printing', 'account_move_line_product'],
     'data': [
+        'views/account_bank_statement_views.xml',
         'views/account_config_settings_views.xml',
         'views/account_view_changes.xml',
         'views/account_move_line_views.xml',

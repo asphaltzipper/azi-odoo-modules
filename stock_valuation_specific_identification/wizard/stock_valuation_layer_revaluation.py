@@ -33,7 +33,7 @@ class StockValuationLayerRevaluation(models.TransientModel):
         compute="_compute_lot_value",
     )
     new_lot_value = fields.Monetary(
-        string="New value",
+        string="New Lot Value",
         compute='_compute_lot_value',
     )
     new_lot_value_by_qty = fields.Monetary(

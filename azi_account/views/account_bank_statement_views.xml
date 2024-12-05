@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_bank_statement_azi_tree" model="ir.ui.view">
+        <field name="name">account.bank.statement.azi.tree</field>
+        <field name="model">account.bank.statement</field>
+        <field name="inherit_id" ref="account.view_bank_statement_tree"/>
+        <field name="arch" type="xml">
+            <field name="balance_end_real" position="after">
+                <field name="problem_description" optional="hide"/>
+            </field>
+            <field name="balance_end" position="attributes">
+                <attribute name="invisible">0</attribute>
+                <attribute name="optional">hide</attribute>
+            </field>
+        </field>
+    </record>
+
+</odoo>

@@ -28,7 +28,7 @@ class MrpWorkorder(models.Model):
         """
         d_now = fields.Datetime.now()
         d_max = max(self.mapped('production_date'))
-        span_days = (d_max - d_now).days
+        span_days = (d_max - d_now).days or 1
         factor = 8.0 / span_days
         for rec in self:
             day = (rec.production_date - d_now).days
