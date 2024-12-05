@@ -6,7 +6,7 @@
         <t t-call="web.basic_layout">
             <t t-foreach="docs" t-as="o">
                 <t t-set="pn_style" t-value="'font-weight: bold; margin-top:-2px; font-size: %.3fem' % (len(o.default_code)&lt;11 and 1.5 or 1.5*15/len(o.default_code),)" />
-                <div class="page text-center">
+                <div class="page text-center" style="border: 3px solid black; box-sizing: border-box; height: 26mm; width: 70mm;margin-left:-8px;">
                     <img class="barcode" t-att-src="'/report/barcode/?barcode_type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('Code128', quote_plus(o.default_code or ''), 2000, 30)" style="display: block; width: 100%; height: 16px;"/>
                     <div t-att-style="pn_style" t-field="o.default_code"/>
                     <div style="font-weight: bold;font-size: 0.93em" t-field="o.name"/>
@@ -18,7 +18,7 @@
         <t t-call="web.basic_layout">
             <t t-foreach="docs" t-as="o">
                 <t t-set="pn_style" t-value="'font-weight: bold; margin-top: -2px; font-size: %.3fem' % (len(o.default_code)&lt;11 and 1.5 or 1.5*15/len(o.default_code),)" />
-                <div class="page text-center">
+                <div class="page text-center" style="border: 3px solid black; box-sizing: border-box; height: 26mm; width: 70mm;margin-left:-8px;">
                     <img t-att-src="'/report/barcode/?barcode_type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('Code128', quote_plus(o.default_code or ''), 2000, 30)" style="display: block; width: 100%; height: 16px;"/>
                     <div t-att-style="pn_style" t-field="o.default_code"/>
                     <div style="font-weight:bold; font-size: 0.93em" t-field="o.name"/>
