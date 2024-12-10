@@ -24,6 +24,12 @@ class ProductTemplate(models.Model):
         action['context'] = {'search_default_todo': 1}
         return action
 
+    def action_view_used_quantity_bom(self):
+        action = self.env.ref('azi_mrp.mrp_bom_line_action').read()[0]
+        action['domain'] = [('bom_id.active', '=', True)]
+        action['context'] = {'search_default_product_tmpl_id': self.id, 'search_default_deprecated': 1}
+        return action
+
 
 class ProductProduct(models.Model):
     _inherit = "product.product"
@@ -51,4 +57,10 @@ class ProductProduct(models.Model):
         action = self.env.ref('mrp.mrp_production_action').read()[0]
         action['domain'] = [('product_id', 'in', self.ids)]
         action['context'] = {'search_default_todo': 1}
+        return action
+
+    def action_view_used_quantity_bom(self):
+        action = self.env.ref('azi_mrp.mrp_bom_line_action').read()[0]
+        action['domain'] = [('bom_id.active', '=', True)]
+        action['context'] = {'search_default_product_id': self.id, 'search_default_deprecated': 1}
         return action
