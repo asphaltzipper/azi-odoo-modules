@@ -34,17 +34,11 @@ AZI Specialized Customizations to MRP
         'report/mrp_bom_history_report.xml',
         'report/mrp_report.xml',
         'report/mrp_production_templates.xml',
-        'report/product_report_bom_structure.xml',
         'views/production_move_analysis.xml',
         'views/product_views.xml',
         'wizards/compile_product_file_views.xml',
         'security/ir.model.access.csv',
     ],
-    'assets': {
-        'web.assets_backend': [
-            'azi_mrp/static/src/js/product_bom_report.js',
-        ],
-    },
     "installable": True,
     "auto_install": False,
 }
