@@ -584,6 +584,7 @@ class MrpWoProduceWorkLine(models.TransientModel):
         comodel_name='res.users',
         string='Users',
         compute='_compute_user_ids',
+        context={'active_test': False},
         ondelete='cascade',
     )
     labor_date = fields.Datetime(
