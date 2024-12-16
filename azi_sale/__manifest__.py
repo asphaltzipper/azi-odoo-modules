@@ -27,11 +27,13 @@ AZI Specialized Customizations to Sales
         'stock_available_unreserved',
     ],
     'data': [
+        'security/ir.model.access.csv',
         'views/crm_team_view.xml',
         'views/res_partner_views.xml',
         'views/sale_order_view.xml',
         'views/product_views.xml',
         'report/azi_sales_order.xml',
+        'report/so_line_views.xml',
     ],
     "installable": True,
     "auto_install": False,
