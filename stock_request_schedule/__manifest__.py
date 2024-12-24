@@ -27,12 +27,12 @@ a master production schedule.
         'views/sale_order_views.xml',
         'wizard/change_stock_request_views.xml',
         'report/managing_independent_demand_views.xml',
-        'report/schedule_sale_order_report.xml',
         'report/schedule_sale_order_views.xml',
     ],
     "assets": {
         'web.assets_backend': [
-            'stock_request_schedule/static/src/js/schedule_sale_order.js',
+            'stock_request_schedule/static/src/components/schedule_sale_order.js',
+            'stock_request_schedule/static/src/components/schedule_sale_order.xml',
         ],
     },
     "installable": True,

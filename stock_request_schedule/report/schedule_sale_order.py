@@ -9,7 +9,6 @@ class ScheduleSaleOrder(models.AbstractModel):
     @api.model
     def get_html(self):
         res = self._get_report_data()
-        res['lines'] = self.env['ir.ui.view']._render_template("stock_request_schedule.report_schedule_so", {'data': res})
         return res
 
     @api.model
@@ -20,6 +19,7 @@ class ScheduleSaleOrder(models.AbstractModel):
         schedule_so_with_early_date = self.get_schedule_so_with_early_date()
         schedule_so_with_late_date = self.get_schedule_so_with_late_date()
         schedule_so_not_confirmed = self.get_schedule_so_not_confirmed()
+
         return {
             'unschedule_without_reserved': unschedule_so_without_reserved,
             'schedule_so_with_reserved': schedule_so_with_reserved,
@@ -34,7 +34,7 @@ class ScheduleSaleOrder(models.AbstractModel):
             select
                 so.name,
                 pp.default_code,
-                pt.name,
+                pt.name ->>'en_US' as prod_name,
                 spl.name,
                 so.id
             from sale_order_line sol
@@ -63,7 +63,7 @@ class ScheduleSaleOrder(models.AbstractModel):
         self._cr.execute("""
             select
                 so.name,
-                pp.default_code, pt.name,
+                pp.default_code, pt.name ->>'en_US' as prod_name,
                 spl.name,
                 so.id
             from sale_order_line sol
@@ -94,11 +94,11 @@ class ScheduleSaleOrder(models.AbstractModel):
                 so.id as so_id,
                 so.name as so_name,
                 ppo.default_code as so_prod_code,
-                pto.name as so_prod_name,
+                pto.name ->> 'en_US' as so_prod_name,
                 sr.id as sr_id,
                 sr.name as sr_name,
                 ppr.default_code as sr_prod_code,
-                ptr.name as sr_prod_name
+                ptr.name ->> 'en_US' as sr_prod_name
             from sale_order_line sol
             left join sale_order so on so.id=sol.order_id
             left join product_product ppo on ppo.id=sol.product_id
@@ -131,7 +131,7 @@ class ScheduleSaleOrder(models.AbstractModel):
                 so.id,
                 so.name,
                 pp.default_code,
-                pt.name,
+                pt.name ->> 'en_US' as prod_name,
                 sm.date_deadline::date as so_date,
                 sr.id,
                 sr.name,

@@ -1,12 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<odoo>
-    <template id="report_schedule_so">
-        <div style="margin-left:20px;">
+<templates xml:space="preserve">
+    <div class="o_action" t-name="stock_request_schedule.ScheduleSOReport" owl="1">
+        <ControlPanel display="controlPanelDisplay">
+            <t t-set-slot="control-panel-bottom-left-buttons">
+                <div class="o_cp_buttons">
+                    <div class="o_list_buttons"/>
+                </div>
+            </t>
+            <t t-set-slot="control-panel-top-right">
+                <form class="row gx-0">
+                    <div class="col-lg-8 row">
+                        <div class="col-lg-11 row gx-1 mb-2">
+
+
+                        </div>
+                    </div>
+                </form>
+            </t>
+
+            <t t-set-slot="control-panel-bottom-right">
+                <div class="o_search_options">
+
+                </div>
+            </t>
+        </ControlPanel>
+        <div class="o_content overflow-auto h-100">
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="mt16">
+                    <div class="mt16" style="margin-left:10px;">
                         <h4>UnScheduled SO without Reserved Serial</h4>
-                        <t t-if="data['unschedule_without_reserved']">
+                        <t t-if="state.unscheduleWithoutReserved[0]">
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
@@ -15,11 +38,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <t t-foreach="data['unschedule_without_reserved']" t-as="unschedule_without_reserved">
+                                    <t t-foreach="state.unscheduleWithoutReserved"
+                                       t-key="unschedule_without_reserved[4]" t-as="unschedule_without_reserved">
                                         <tr>
                                             <td>
                                                 <a href="#" t-att-data-res-id="unschedule_without_reserved[4]"
-                                                   t-att-data-model="'sale.order'" class="o_schedule_so_action">
+                                                   t-att-data-model="'sale.order'" t-on-click.prevent="goToAction">
                                                     <t t-esc="unschedule_without_reserved[0]"/>
                                                 </a>
                                             </td>
@@ -34,11 +58,13 @@
                                 </tbody>
                             </table>
                         </t>
-                        <t t-else="">None</t>
+                        <t t-else="">
+                            <h6>None</h6>
+                        </t>
                         <br/>
                         <br/>
                         <h4>Scheduled SO with Reserved Serial</h4>
-                        <t t-if="data['schedule_so_with_reserved']">
+                        <t t-if="state.scheduleSOWithReserved[0]">
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
@@ -47,11 +73,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <t t-foreach="data['schedule_so_with_reserved']" t-as="schedule_so_with_reserved">
+                                    <t t-foreach="state.scheduleSOWithReserved" t-key="schedule_so_with_reserved[4]"
+                                       t-as="schedule_so_with_reserved">
                                         <tr>
                                             <td>
-                                                <a href="#" t-att-data-res-id="schedule_so_with_reserved[3]" t-att-data-model="'sale.order'"
-                                                   class="o_schedule_so_action">
+                                                <a href="#" t-att-data-res-id="schedule_so_with_reserved[4]"
+                                                   t-att-data-model="'sale.order'" t-on-click.prevent="goToAction">
                                                     <t t-esc="schedule_so_with_reserved[0]"/>
                                                 </a>
                                             </td>
@@ -66,11 +93,13 @@
                                 </tbody>
                             </table>
                         </t>
-                        <t t-else="">None</t>
+                        <t t-else="">
+                            <h6>None</h6>
+                        </t>
                         <br/>
                         <br/>
                         <h4>Scheduled SO with Different Product</h4>
-                        <t t-if="data['schedule_so_with_diff_product']">
+                        <t t-if="state.scheduleSOWithDiff[0]">
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
@@ -81,12 +110,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <t t-foreach="data['schedule_so_with_diff_product']" t-as="schedule_so_with_diff_product">
+                                    <t t-foreach="state.scheduleSOWithDiff" t-key="schedule_so_with_diff_product[0]"
+                                       t-as="schedule_so_with_diff_product">
                                         <tr>
                                             <td>
                                                 <a href="#" t-att-data-res-id="schedule_so_with_diff_product[0]"
-                                                   t-att-data-model="'sale.order'"
-                                                   class="o_schedule_so_action">
+                                                   t-att-data-model="'sale.order'" t-on-click.prevent="goToAction">
                                                     <t t-esc="schedule_so_with_diff_product[1]"/>
                                                 </a>
                                             </td>
@@ -98,8 +127,7 @@
                                             </td>
                                             <td>
                                                 <a href="#" t-att-data-res-id="schedule_so_with_diff_product[4]"
-                                                   t-att-data-model="'stock.request'"
-                                                   class="o_schedule_so_action">
+                                                   t-att-data-model="'stock.request'" t-on-click.prevent="goToAction">
                                                     <t t-esc="schedule_so_with_diff_product[5]"/>
                                                 </a>
                                             </td>
@@ -114,11 +142,13 @@
                                 </tbody>
                             </table>
                         </t>
-                        <t t-else="">None</t>
+                        <t t-else="">
+                            <h6>None</h6>
+                        </t>
                         <br/>
                         <br/>
                         <h4>Scheduled SO with Earlier Date</h4>
-                        <t t-if="data['schedule_so_with_early_date']">
+                        <t t-if="state.scheduleSOWithEarlyDate[0]">
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
@@ -129,19 +159,18 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <t t-foreach="data['schedule_so_with_early_date']" t-as="schedule_so_with_early_date">
+                                    <t t-foreach="state.scheduleSOWithEarlyDate" t-key="schedule_so_with_early_date[0]"
+                                       t-as="schedule_so_with_early_date">
                                         <tr>
                                             <td>
                                                 <a href="#" t-att-data-res-id="schedule_so_with_early_date[0]"
-                                                   t-att-data-model="'sale.order'"
-                                                   class="o_schedule_so_action">
+                                                   t-att-data-model="'sale.order'" t-on-click.prevent="goToAction">
                                                     <t t-esc="schedule_so_with_early_date[1]"/>
                                                 </a>
                                             </td>
                                             <td>
                                                 <a href="#" t-att-data-res-id="schedule_so_with_early_date[5]"
-                                                   t-att-data-model="'stock.request'"
-                                                   class="o_schedule_so_action">
+                                                   t-att-data-model="'stock.request'" t-on-click.prevent="goToAction">
                                                     <t t-esc="schedule_so_with_early_date[6]"/>
                                                 </a>
                                             </td>
@@ -163,11 +192,13 @@
                                 </tbody>
                             </table>
                         </t>
-                        <t t-else="">None</t>
+                        <t t-else="">
+                            <h6>None</h6>
+                        </t>
                         <br/>
                         <br/>
                         <h4>Scheduled SO with Later Date</h4>
-                        <t t-if="data['schedule_so_with_late_date']">
+                        <t t-if="state.scheduleSOWithLateDate[0]">
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
@@ -178,19 +209,18 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <t t-foreach="data['schedule_so_with_late_date']" t-as="schedule_so_with_late_date">
+                                    <t t-foreach="state.scheduleSOWithLateDate" t-key="schedule_so_with_late_date[0]"
+                                       t-as="schedule_so_with_late_date">
                                         <tr>
                                             <td>
                                                 <a href="#" t-att-data-res-id="schedule_so_with_late_date[0]"
-                                                   t-att-data-model="'sale.order'"
-                                                   class="o_schedule_so_action">
+                                                   t-att-data-model="'sale.order'" t-on-click.prevent="goToAction">
                                                     <t t-esc="schedule_so_with_late_date[1]"/>
                                                 </a>
                                             </td>
                                             <td>
                                                 <a href="#" t-att-data-res-id="schedule_so_with_late_date[5]"
-                                                   t-att-data-model="'stock.request'"
-                                                   class="o_schedule_so_action">
+                                                   t-att-data-model="'stock.request'" t-on-click.prevent="goToAction">
                                                     <t t-esc="schedule_so_with_late_date[6]"/>
                                                 </a>
                                             </td>
@@ -212,11 +242,13 @@
                                 </tbody>
                             </table>
                         </t>
-                        <t t-else="">None</t>
+                        <t t-else="">
+                            <h6>None</h6>
+                        </t>
                         <br/>
                         <br/>
                         <h4>Scheduled SO Not Confirmed</h4>
-                        <t t-if="data['schedule_so_not_confirmed']">
+                        <t t-if="state.scheduleSONotConfirmed[0]">
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
@@ -226,12 +258,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <t t-foreach="data['schedule_so_not_confirmed']" t-as="schedule_so_not_confirmed">
+                                    <t t-foreach="state.scheduleSONotConfirmed" t-key="schedule_so_not_confirmed[0]"
+                                       t-as="schedule_so_not_confirmed">
                                         <tr>
                                             <td>
                                                 <a href="#" t-att-data-res-id="schedule_so_not_confirmed[0]"
-                                                   t-att-data-model="'sale.order'"
-                                                   class="o_schedule_so_action">
+                                                   t-att-data-model="'sale.order'" t-on-click.prevent="goToAction">
                                                     <t t-esc="schedule_so_not_confirmed[1]"/>
                                                 </a>
                                             </td>
@@ -242,8 +274,7 @@
                                             </td>
                                             <td>
                                                 <a href="#" t-att-data-res-id="schedule_so_not_confirmed[3]"
-                                                   t-att-data-model="'stock.request'"
-                                                   class="o_schedule_so_action">
+                                                   t-att-data-model="'stock.request'" t-on-click.prevent="goToAction">
                                                     <t t-esc="schedule_so_not_confirmed[4]"/>
                                                 </a>
                                             </td>
@@ -252,10 +283,12 @@
                                 </tbody>
                             </table>
                         </t>
-                        <t t-else="">None</t>
+                        <t t-else="">
+                            <h6>None</h6>
+                        </t>
                     </div>
                 </div>
             </div>
         </div>
-    </template>
-</odoo>
+    </div>
+</templates>
