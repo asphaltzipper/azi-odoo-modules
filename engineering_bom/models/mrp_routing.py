@@ -40,6 +40,7 @@ class MrpRoutingLine(models.Model):
     _name = "mrp.routing.line"
     _description = "Work Routing Template Operations"
     _rec_name = "workcenter_id"
+    _order = "sequence, workcenter_sequence"
 
     routing_id = fields.Many2one(
         comodel_name="mrp.routing",
@@ -48,5 +49,8 @@ class MrpRoutingLine(models.Model):
     workcenter_id = fields.Many2one(
         comodel_name="mrp.workcenter",
         string="Work Center",
+    )
+    workcenter_sequence = fields.Integer(
+        related="workcenter_id.sequence",
     )
     sequence = fields.Integer(default=1)
