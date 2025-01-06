@@ -86,7 +86,7 @@ class ProductProduct(models.Model):
                 'product_qty': line[1]['qty'] * quantity,
                 'factor': line[1]['qty'],
             })
-        action = self.env.ref(
-            'mrp_planned_pick_kit.action_mrp_planned_pick_kit').read()[0]
+        action = self.env["ir.actions.actions"]._for_xml_id(
+            'mrp_planned_pick_kit.action_mrp_planned_pick_kit')
         action['res_id'] = kit.id
         return action

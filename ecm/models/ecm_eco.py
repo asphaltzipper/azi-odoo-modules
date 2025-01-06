@@ -103,7 +103,8 @@ class EcmEcoApproval(models.Model):
         elif self._uid not in self.allowed_user_ids.ids:
             raise UserError("You are not in the list of allowed users for this approval")
         wizard = self.env['ecm.eco.approval.sign'].create(values)
-        action = self.env.ref('ecm.action_ecm_approval_sign').read()[0]
+        action = self.env["ir.actions.actions"]._for_xml_id(
+            "ecm.action_ecm_approval_sign")
         action['res_id'] = wizard.id
         return action
 

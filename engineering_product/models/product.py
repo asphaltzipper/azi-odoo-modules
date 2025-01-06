@@ -191,7 +191,8 @@ class ProductTemplate(models.Model):
 
     def action_open_product_version(self):
         self.ensure_one()
-        action = self.env.ref('engineering_product.product_template_action_one').read()[0]
+        action = self.env["ir.actions.actions"]._for_xml_id(
+            'engineering_product.product_template_action_one')
         action['res_id'] = self.id
         return action
 

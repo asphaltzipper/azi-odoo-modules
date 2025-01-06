@@ -8,5 +8,6 @@ class MrpProduction(models.Model):
 
     def open_wo_produce(self):
         self.ensure_one()
-        action = self.env.ref('mrp_wo_produce.act_mrp_wo_produce_wizard').read()[0]
+        action = self.env["ir.actions.actions"]._for_xml_id(
+            'mrp_wo_produce.act_mrp_wo_produce_wizard')
         return action

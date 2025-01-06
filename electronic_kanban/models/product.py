@@ -32,7 +32,8 @@ class ProductTemplate(models.Model):
     )
 
     def action_kanban_cards(self):
-        action = self.env.ref('stock_request_kanban.stock_request_kanban_action').read()[0]
+        action = self.env["ir.actions.actions"]._for_xml_id(
+            'stock_request_kanban.stock_request_kanban_action')
         action['domain'] = [('product_id', 'in', self.product_variant_ids.ids)]
         if len(self) == 1:
             action['context'] = {'default_product_id': self.product_variant_ids[0].id}
@@ -113,7 +114,8 @@ class ProductProduct(models.Model):
             return[('id', 'in', [x.id for x in recs])]
 
     def action_kanban_cards(self):
-        action = self.env.ref('stock_request_kanban.stock_request_kanban_action').read()[0]
+        action = self.env["ir.actions.actions"]._for_xml_id(
+            'stock_request_kanban.stock_request_kanban_action')
         action['domain'] = [('product_id', 'in', self.ids)]
         if len(self) == 1:
             action['context'] = {'default_product_id': self.id}

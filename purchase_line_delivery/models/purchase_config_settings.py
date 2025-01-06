@@ -23,4 +23,4 @@ class ResConfigSettings(models.TransientModel):
 
     def set_values(self):
         super(ResConfigSettings, self).set_values()
-        self.env['ir.config_parameter'].set_param('purchase_line_delivery.po_carrier_id', self.po_carrier_id.id)
+        self.env['ir.config_parameter'].sudo().set_param('purchase_line_delivery.po_carrier_id', self.po_carrier_id.id)

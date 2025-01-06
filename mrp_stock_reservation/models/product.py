@@ -44,7 +44,8 @@ class ProductProduct(models.Model):
 
     def action_mrp_reservation_form(self):
         self.ensure_one()
-        action = self.env.ref('mrp_stock_reservation.action_mrp_stock_reservation').read()[0]
+        action = self.env["ir.actions.actions"]._for_xml_id(
+            'mrp_stock_reservation.action_mrp_stock_reservation')
         action['res_id'] = self.id
         return action
 

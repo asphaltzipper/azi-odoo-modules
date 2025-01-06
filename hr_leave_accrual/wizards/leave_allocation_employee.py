@@ -21,6 +21,7 @@ class LeaveAllocationEmployee(models.TransientModel):
                                                               ('employee_id', '=', self.employee_id.id)])
         if not allocation_ids:
             raise ValidationError('No record found for this employee')
-        action = self.env.ref('hr_leave_accrual.action_leave_allocation_tree').read()[0]
+        action = self.env["ir.actions.actions"]._for_xml_id(
+            'hr_leave_accrual.action_leave_allocation_tree')
         action.update(domain=[('id', 'in', allocation_ids.ids)], context=dict(search_default_group_alloc_type=1))
         return action

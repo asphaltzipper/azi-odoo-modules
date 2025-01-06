@@ -164,6 +164,7 @@ class LeavePolicyAssign(models.Model):
             'employee_id': self.employee_id.id,
         }
         wizard = self.env['wizard.leave.generate.accruals'].create(values)
-        action = self.env.ref('hr_leave_accrual.wizard_leave_generate_accruals_action').read()[0]
+        action = self.env["ir.actions.actions"]._for_xml_id(
+            'hr_leave_accrual.wizard_leave_generate_accruals_action')
         action['res_id'] = wizard.id
         return action

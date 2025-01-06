@@ -19,15 +19,17 @@ class ProductTemplate(models.Model):
             )
 
     def action_view_actual_mos(self):
-        action = self.env.ref('mrp.mrp_production_action').read()[0]
+        action = self.env["ir.actions.actions"]._for_xml_id('mrp.mrp_production_action')
         action['domain'] = [('product_id', 'in', self.product_variant_ids.ids)]
         action['context'] = {'search_default_todo': 1}
         return action
 
     def action_view_used_quantity_bom(self):
-        action = self.env.ref('azi_mrp.mrp_bom_line_action').read()[0]
+        action = self.env["ir.actions.actions"]._for_xml_id(
+            "azi_mrp.mrp_bom_line_action")
         action['domain'] = [('bom_id.active', '=', True)]
-        action['context'] = {'search_default_product_tmpl_id': self.id, 'search_default_deprecated': 1}
+        action['context'] = {'search_default_product_tmpl_id': self.id,
+                             'search_default_deprecated': 1}
         return action
 
 
@@ -54,13 +56,14 @@ class ProductProduct(models.Model):
                 precision_rounding=product.uom_id.rounding)
 
     def action_view_actual_mos(self):
-        action = self.env.ref('mrp.mrp_production_action').read()[0]
+        action = self.env["ir.actions.actions"]._for_xml_id('mrp.mrp_production_action')
         action['domain'] = [('product_id', 'in', self.ids)]
         action['context'] = {'search_default_todo': 1}
         return action
 
     def action_view_used_quantity_bom(self):
-        action = self.env.ref('azi_mrp.mrp_bom_line_action').read()[0]
+        action = self.env["ir.actions.actions"]._for_xml_id(
+            'azi_mrp.mrp_bom_line_action')
         action['domain'] = [('bom_id.active', '=', True)]
         action['context'] = {'search_default_product_id': self.id, 'search_default_deprecated': 1}
         return action

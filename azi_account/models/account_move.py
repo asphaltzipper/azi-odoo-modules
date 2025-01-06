@@ -60,7 +60,7 @@ class AccountMove(models.Model):
         for move in self:
             if move.is_invoice(include_receipts=True):
                 # Create a line for retail tax
-                apply_taxes = self.env['ir.config_parameter'].get_param('azi_account.apply_retail_taxes')
+                apply_taxes = self.env['ir.config_parameter'].sudo().get_param('azi_account.apply_retail_taxes')
                 if apply_taxes and move.retail_account_tax_id and move.partner_id.state_id.code == 'CO' and move.move_type in (
                         'out_invoice', 'in_invoice'):
                     retail_taxes = self.env['account.tax'].search([('retail_tax', '=', True)]).mapped('id')

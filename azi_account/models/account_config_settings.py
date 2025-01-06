@@ -15,5 +15,5 @@ class ResConfigSettings(models.TransientModel):
 
     def set_values(self):
         super(ResConfigSettings, self).set_values()
-        self.env['ir.config_parameter'].set_param(
+        self.env['ir.config_parameter'].sudo().set_param(
             'azi_account.apply_retail_taxes', self.apply_retail_taxes)

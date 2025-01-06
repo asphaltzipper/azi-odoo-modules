@@ -25,6 +25,7 @@ class StockLotImages(models.Model):
 
     def action_open_line(self):
         self.ensure_one()
-        action = self.env.ref('serial_images.action_form_stock_lot_images').read()[0]
+        action = self.env["ir.actions.actions"]._for_xml_id(
+            'serial_images.action_form_stock_lot_images')
         action['res_id'] = self.id
         return action
