@@ -17,7 +17,7 @@
             </field>
             <xpath expr="//group[1]" position="before">
                 <b/>
-                <div>
+                <div style="width:750px">
                     <field name="note" placeholder="Write a Note Here" attrs="{'invisible':[('scheduled','=',False)]}"/>
                 </div>
             </xpath>

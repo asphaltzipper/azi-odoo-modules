@@ -78,7 +78,7 @@
                                         </t>
                                     </td>
                                     <td valign="middle" align="center">
-                                        <img style="max-width:75px; max-height:75px; width:auto; height:auto;" t-attf-src="/web/image/product.product/#{line.product_id.id}/image"/>
+                                        <img style="max-width:75px; max-height:75px; width:auto; height:auto;" t-attf-src="/web/image/product.product/#{line.product_id.id}/image_128"/>
                                     </td>
                                 </tr>
                             </t>

@@ -11,22 +11,30 @@ class MfgCreateBom(models.TransientModel):
     product_tmpl_id = fields.Many2one(
         comodel_name='product.template',
         string="Mfg Product",
-        readonly=True)
+        readonly=True,
+    )
     rm_product_id = fields.Many2one(
         comodel_name='product.product',
         string="Raw Material",
         required=True,
         domain=[('is_continuous', '=', True)],
-        help="Only products with continuous UOM will show here.")
+        help="Only products with continuous UOM will show here.",
+    )
     rm_uom_id = fields.Many2one(
         comodel_name='uom.uom',
         related='rm_product_id.uom_id',
         string="RM Units",
-        readonly=True)
+        readonly=True,
+    )
     rm_qty = fields.Float(
         string="RM Qty",
-        required=True)
-    workcenter_ids = fields.Many2many('mrp.workcenter', string='Work Center')
+        required=True,
+    )
+    routing_id = fields.Many2one(
+        comodel_name='mrp.routing',
+        string="Routing",
+        required=True,
+    )
 
     @api.model
     def default_get(self, fields):
@@ -61,7 +69,10 @@ class MfgCreateBom(models.TransientModel):
                     "create the new BOM manually.")
 
             if old_bom.one_comp_product_id.id == self.rm_product_id.id:
-                if old_bom.operation_ids and old_bom.operation_ids.mapped('workcenter_id') == self.workcenter_ids:
+                if (
+                    old_bom.operation_ids
+                    and old_bom.operation_ids.mapped('workcenter_id') == self.routing_id.mapped('line_ids.workcenter_id')
+                ):
                     # don't worry about uom because the old bom probably used the stocking uom
                     old_bom.bom_line_ids[0].product_qty = self.rm_qty
                     return {'type': 'ir.actions.act_window_close'}
@@ -75,8 +86,12 @@ class MfgCreateBom(models.TransientModel):
                 i += 1
                 # bom.active = False
         operation_ids = []
-        for workcenter in self.workcenter_ids:
-            operation_ids.append((0, 0, {'name': workcenter.name, 'workcenter_id': workcenter.id}))
+        for line in self.routing_id.line_ids:
+            operation_ids.append((0, 0, {
+                'name': line.workcenter_id.name,
+                'workcenter_id': line.workcenter.id,
+                'sequence': line.sequence,
+            }))
         # create bom and component line
         bom_vals = {
             'product_id': self.product_tmpl_id.product_variant_ids[0].id,

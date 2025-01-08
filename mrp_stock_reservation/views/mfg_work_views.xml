@@ -9,7 +9,7 @@
             <xpath expr="//tree/field[@name='minutes_assigned']" position="after">
                 <button
                     type="object"
-                    name="action_mrp_reservation_form"
+                    title="action_mrp_reservation_form"
                     help="Mfg Reservations"
                     icon="fa-shopping-cart"
                     attrs="{'invisible':[('product_id', '=', False)]}"/>

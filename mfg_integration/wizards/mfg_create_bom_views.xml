@@ -11,7 +11,7 @@
                         <field name="rm_product_id"/>
                         <field name="rm_qty"/>
                         <field name="rm_uom_id"/>
-                        <field name="workcenter_ids" widget="many2many_tags" required="true"/>
+                        <field name="routing_id"/>
                     </group>
                 </group>
                 <footer>

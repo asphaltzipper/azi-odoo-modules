@@ -5,19 +5,19 @@
         <t t-set="o" t-value="get_note_values(doc)"/>
         <div class="row no-gutters">
             <div class="col-12"
-                 style="text-align:left; vertical-align:top; margin:-5px 0px 0px -10px; font-size:30px; font-family: sans-serif; white-space: nowrap;">
+                 style="text-align:left; vertical-align:top; margin:7px 0px 0px -10px; font-size:30px; font-family: sans-serif; white-space: nowrap;">
                 <div t-esc="o['desc']"/>
             </div>
         </div>
         <div class="row no-gutters">
             <div class="col-12"
-                 style="text-align:left; vertical-align:top; margin:-10px 0px 0px -10px; font-size:20px; font-family: sans-serif;">
+                 style="text-align:left; vertical-align:top; margin:0px 0px 0px -10px; font-size:20px; font-family: sans-serif;">
                 <div t-esc="'CONFIG: ' + o['config']"/>
             </div>
         </div>
         <div class="row no-gutters">
             <div class="col-12"
-                 style="text-align:left; vertical-align:top; margin:-5px 0px 0px -10px; font-size:20px; font-family: sans-serif;">
+                 style="text-align:left; vertical-align:top; margin:5px 0px 0px -10px; font-size:20px; font-family: sans-serif;">
                 <t t-esc="'SERIAL: ' + o['lot'].name"/>
             </div>
         </div>
