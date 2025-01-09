@@ -17,7 +17,7 @@
     "depends": ["web_enterprise"],
     "assets": {
         'web._assets_primary_variables': [
-            ('replace', 'web_enterprise/static/src/scss/primary_variables.scss', 'ui_color_palette/static/src/scss/variables.scss'),
+            ('after', 'web_enterprise/static/src/scss/primary_variables.scss', 'ui_color_palette/static/src/scss/variables.scss'),
 
         ],
         'web.assets_backend': [
