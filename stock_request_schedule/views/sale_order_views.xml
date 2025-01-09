@@ -7,7 +7,7 @@
         <field name="inherit_id" ref="sale.view_order_line_tree"/>
         <field name="arch" type="xml">
             <field name="price_subtotal" position="before">
-                <field name="is_scheduled" invisible="1"/>
+                <field name="is_on_sr" invisible="1"/>
             </field>
         </field>
     </record>
@@ -17,8 +17,18 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//tree/field[@name='customer_lead']" position="before">
-                <field name="scheduled_date" string="Sched Date" widget="date"/>
+            <xpath expr="//field[@name='order_line']/tree//field[@name='customer_lead']" position="before">
+                <field
+                    name="sr_date"
+                    string="SR Date"
+                    optional="hide"
+                />
+                <field
+                    name="stock_request_ids"
+                    string="SRs"
+                    widget="many2many_tags"
+                    optional="hide"
+                />
             </xpath>
         </field>
     </record>
