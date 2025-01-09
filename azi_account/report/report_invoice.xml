@@ -7,36 +7,39 @@
             <xpath expr="//t[@t-set='address']" position="attributes">
                 <attribute name="groups">!sale.group_delivery_invoice_address</attribute>
             </xpath>
-            <xpath expr="//div[@class='page']/table/thead/tr/th[@name='th_taxes']" position="replace">
+            <xpath expr="//div[hasclass('page')]/table/thead/tr/th[@name='th_taxes']" position="replace">
                 <th class="text-right"></th>
             </xpath>
-            <xpath expr="//div[@class='page']/table/thead/tr/th[6]" position="replace">
+            <xpath expr="//div[hasclass('page')]/table/thead/tr/th[6]" position="replace">
                 <th class="text-right">Price</th>
             </xpath>
-            <xpath expr="//div[@class='page']/table/tbody/t/tr/t/td[5]" position="replace">
+            <xpath expr="//div[hasclass('page')]/table/tbody/t/tr/t/td[5]" position="replace">
                 <td class="text-right"></td>
             </xpath>
-            <xpath expr="//t[@t-set='address']" position="before">
-                <div style="position: relative; top: 60; padding-bottom: 1.875in;"
-                     groups="sale.group_delivery_invoice_address">
-                    <div class="mt8 col-xs-5" style="position: absolute; top: 0; left: .3125in">
-                        <strong>Invoicing address:</strong>
-                        <div t-field="o.partner_id"
-                             t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
-                        <span t-if="o.partner_id.vat">TIN:
-                            <span t-field="o.partner_id.vat"/>
-                        </span>
+            <t t-set="information_block" position="replace"/>
+            <xpath expr="//div[hasclass('page')]" position="before">
+                <t t-set="information_block">
+                    <div groups="account.group_delivery_invoice_address" name="shipping_address_block"  style="position: relative; top: 60; padding-bottom: 1.875in;">
+                        <div class="mt8 col-xs-5" style="position: absolute; top: 0; left: .3125in">
+                            <strong>Invoicing address:</strong>
+                            <div t-field="o.partner_id"
+                                 t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
+                            <span t-if="o.partner_id.vat">TIN:
+                                <span t-field="o.partner_id.vat"/>
+                            </span>
+                        </div>
+                        <div class="mt8 col-xs-5" style="position: absolute; top: 0;  left: 4.9375in">
+                            <strong>Shipping address:</strong>
+                            <div t-field="o.partner_shipping_id"
+                                 t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
+                            <span t-if="o.partner_shipping_id.vat">TIN:
+                                <span t-field="o.partner_shipping_id.vat"/>
+                            </span>
+                        </div>
                     </div>
-                    <div class="mt8 col-xs-5" style="position: absolute; top: 0;  left: 4.9375in">
-                        <strong>Shipping address:</strong>
-                        <div t-field="o.partner_shipping_id"
-                             t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
-                        <span t-if="o.partner_shipping_id.vat">TIN:
-                            <span t-field="o.partner_shipping_id.vat"/>
-                        </span>
-                    </div>
-                </div>
+                </t>
             </xpath>
+            <address t-field="o.partner_id" position="replace"/>
         </template>
 
         <record id="account_azi_invoice_no_header_footer" model="ir.actions.report">
