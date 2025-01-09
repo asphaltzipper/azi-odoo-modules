@@ -16,6 +16,7 @@ Integrate with Manufacturing Machine Software
 * Raw Material thickness/qty
     """,
     "depends": [
+        'mrp_routing_template',
         'engineering_product',
         'mrp_wo_produce',
     ],

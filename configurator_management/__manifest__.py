@@ -15,7 +15,7 @@
         "azi_product",
         "product_configurator",
         "product_configurator_mrp",
-        "engineering_bom",
+        "mrp_routing_template",
     ],
     "data": [
         "views/mrp_bom_views.xml",

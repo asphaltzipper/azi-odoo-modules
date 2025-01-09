@@ -52,5 +52,9 @@ class MrpRoutingLine(models.Model):
     )
     workcenter_sequence = fields.Integer(
         related="workcenter_id.sequence",
+        string="WC Sequence",
     )
-    sequence = fields.Integer(default=1)
+    sequence = fields.Integer(
+        string="Sequence",
+        default=1,
+    )

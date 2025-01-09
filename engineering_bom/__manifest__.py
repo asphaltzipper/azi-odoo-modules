@@ -19,6 +19,7 @@ Engineering Bills of Materials Management
     """,
     "depends": [
         'mrp',
+        'mrp_routing_template',
         'mfg_integration',
         'ecm',
         'product_configurator',
@@ -29,7 +30,6 @@ Engineering Bills of Materials Management
         'views/engineering_bom_views.xml',
         'views/engineering_diff_views.xml',
         'views/engineering_bom_batch_views.xml',
-        'views/mrp_routing_views.xml',
         'views/product_views.xml',
     ],
     "installable": True,
