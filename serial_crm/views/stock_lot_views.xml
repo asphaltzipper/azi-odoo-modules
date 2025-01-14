@@ -57,6 +57,7 @@
                     <field name="valuation_ids">
                         <tree default_order="post_date,create_date" create="0">
                             <field name="post_date"/>
+                            <field name="create_date" optional="hide"/>
                             <field name="reference"/>
                             <field name="description"/>
                             <field name="remaining_qty"/>
