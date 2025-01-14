@@ -38,10 +38,11 @@
                             <field name="product_id"/>
                         </tree>
                     </field>
-                    <group colspan="4">
+                    <notebook>
+                        <page string="Attachments">
                         <!-- <button name="" type="object" class="oe_edit_only"/> -->
                         <!-- <field name="attachment_ids" mode="kanban" nolabel="1" options="{'no_create_edit': True}" context="{'default_res_model': 'stock.lot.images', 'default_res_id': active_id}"> -->
-                        <field name="attachment_ids" mode="kanban" nolabel="1">
+                            <field name="attachment_ids" mode="kanban" nolabel="1">
                             <kanban limit="10" default_order="priority desc, name" quick_create="false" create="false" delete="true">
                                 <field name="id"/>
                                 <field name="res_model" invisible="1"/>
@@ -105,7 +106,8 @@
                               </sheet>
                             </form>
                         </field>
-                    </group>
+                        </page>
+                    </notebook>
                 </sheet>
                 <div class="oe_chatter">
                     <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
