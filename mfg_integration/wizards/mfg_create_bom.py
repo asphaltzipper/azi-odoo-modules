@@ -89,7 +89,7 @@ class MfgCreateBom(models.TransientModel):
         for line in self.routing_id.line_ids:
             operation_ids.append((0, 0, {
                 'name': line.workcenter_id.name,
-                'workcenter_id': line.workcenter.id,
+                'workcenter_id': line.workcenter_id.id,
                 'sequence': line.sequence,
             }))
         # create bom and component line

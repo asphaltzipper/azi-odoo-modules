@@ -6,7 +6,7 @@
         <!-- barcode size parameters -->
         <!--<t t-set="bc_size" t-value="int(-0.70*len(o.code128) + 40)"/>-->
         <t t-set="bc_size" t-value="int(44)"/>
-        <t t-set="bc_top" t-value="int(-15.0)"/>
+        <t t-set="bc_top" t-value="int(0)"/>
         <t t-set="bc_right" t-value="int(-15.0)"/>
         <t t-set="bc_bottom" t-value="int(-15.0)"/>
         <t t-set="bc_left" t-value="int(-10.0)"/>
@@ -15,13 +15,13 @@
 
         <div class="row no-gutters">
             <div class="col-12"
-                 style="text-align:left; vertical-align:top; margin:0px 0px 0px -10px; font-size:16px; font-family: Arial, sans-serif;">
+                 style="text-align:left; vertical-align:top; margin:5px 0px 0px -10px; font-size:16px; font-family: Arial, sans-serif;">
                 <t t-esc="'PN: ' + o.product_id.default_code"/>
             </div>
         </div>
         <div class="row no-gutters">
             <div class="col-12"
-                 style="text-align:left; vertical-align:top; margin:-10px 0px 0px -10px; font-size:16px; font-family: Arial, sans-serif;">
+                 style="text-align:left; vertical-align:top; margin:0px 0px 0px -10px; font-size:16px; font-family: Arial, sans-serif;">
                 <t t-esc="'SN: ' + o.name"/>
             </div>
         </div>
