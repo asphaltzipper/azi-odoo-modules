@@ -21,7 +21,7 @@
                         </div>
                         <div style="float:left; width:33%; text-align:right;">
                             <span class="text-right">
-                                <img t-att-src="'/report/barcode/?type=%s&amp;value=%s,%s&amp;width=%s&amp;height=%s' % ('Code128', o.product_id.id, o.product_qty, 600, 100)" style="width:100%;height:60px"/>
+                                <img t-att-src="'/report/barcode/?barcode_type=%s&amp;value=%s,%s&amp;width=%s&amp;height=%s' % ('Code128', o.product_id.id, o.product_qty, 600, 100)" style="width:100%;height:60px"/>
                             </span>
                         </div>
                     </div>
@@ -111,7 +111,7 @@
                         </div>
                         <div style="float:left; width:33%; text-align:right;">
                             <span class="text-right">
-                                <img t-att-src="'/report/barcode/?type=%s&amp;value=%s,%s&amp;width=%s&amp;height=%s' % ('Code128', o.product_id.id, o.product_qty, 600, 100)" style="width:100%;height:60px"/>
+                                <img t-att-src="'/report/barcode/?barcode_type=%s&amp;value=%s,%s&amp;width=%s&amp;height=%s' % ('Code128', o.product_id.id, o.product_qty, 600, 100)" style="width:100%;height:60px"/>
                             </span>
                         </div>
                     </div>
