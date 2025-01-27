@@ -215,6 +215,8 @@ class MrpWoProduce(models.TransientModel):
         work_lines = [{'workorder_id': wo.id} for wo in mo.workorder_ids]
         self.work_line_ids = [(5,)] + [(0, 0, x) for x in work_lines]
 
+        return True
+
     def do_produce(self):
         self.update_work_time()
         self.production_quantity()

@@ -1,5 +1,6 @@
 from odoo import fields, models, api, _
 import logging
+import collections
 
 
 _logger = logging.getLogger(__name__)
@@ -30,7 +31,7 @@ class MrpBom(models.Model):
             for line in lines:
                 prod = line[0].product_id
                 if prod.mrp_area_ids and prod.mrp_area_ids[0].supply_method in ['manufacture', 'phantom']:
-                    bom = self._bom_find(product=prod)
+                    bom = self._bom_find(products=prod).get(prod)
                     if bom:
                         comp_boms.append((bom, prod, line[1]['qty']))
             while comp_boms:
@@ -43,7 +44,7 @@ class MrpBom(models.Model):
                 for line in new_lines:
                     prod = line[0].product_id
                     if prod.mrp_area_ids and prod.mrp_area_ids[0].supply_method in ['manufacture', 'phantom']:
-                        bom = self._bom_find(product=prod)
+                        bom = self._bom_find(products=prod).get(prod)
                         if bom:
                             comp_boms.append((bom, prod, line[1]['qty']))
 
