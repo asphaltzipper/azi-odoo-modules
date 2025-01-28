@@ -32,6 +32,7 @@ AZI Specialized Customizations to Stock
     ],
     'data': [
         'security/ir.model.access.csv',
+        'data/ir_cron.xml',
         'views/stock_view_changes.xml',
         'report/transfer_slip_template.xml',
         'report/transfer_slip.xml',
