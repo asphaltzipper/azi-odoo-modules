@@ -577,18 +577,23 @@ class MrpWoProduceWorkLine(models.TransientModel):
         required=True,
         ondelete='cascade',
     )
+    employee_id = fields.Many2one(
+        comodel_name='hr.employee',
+        string="Employee",
+        ondelete="cascade",
+    )
     user_id = fields.Many2one(
         comodel_name='res.users',
         string="User",
-        ondelete='cascade',
+        compute="_compute_user",
     )
-    user_ids = fields.Many2many(
-        comodel_name='res.users',
-        string='Users',
-        compute='_compute_user_ids',
-        context={'active_test': False},
-        ondelete='cascade',
-    )
+    # user_ids = fields.Many2many(
+    #     comodel_name='res.users',
+    #     string='Users',
+    #     compute='_compute_user_ids',
+    #     context={'active_test': False},
+    #     ondelete='cascade',
+    # )
     labor_date = fields.Datetime(
         string="Date", default=fields.Datetime.now()
     )
@@ -604,6 +609,11 @@ class MrpWoProduceWorkLine(models.TransientModel):
     def _compute_hours_expected(self):
         for rec in self:
             rec.hours_expected = rec.workorder_id.duration_expected / 60
+
+    @api.depends('workorder_id', 'employee_id')
+    def _compute_user(self):
+        for record in self:
+            record.user_id = self.employee_id.sudo().user_id
 
     @api.depends('workorder_id')
     def _compute_user_ids(self):
