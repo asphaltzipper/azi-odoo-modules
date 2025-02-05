@@ -613,7 +613,7 @@ class MrpWoProduceWorkLine(models.TransientModel):
     @api.depends('workorder_id', 'employee_id')
     def _compute_user(self):
         for record in self:
-            record.user_id = self.employee_id.sudo().user_id
+            record.user_id = record.employee_id.sudo().user_id
 
     @api.depends('workorder_id')
     def _compute_user_ids(self):
