@@ -31,20 +31,58 @@
         </t>
     </template>
 
-    <template id="report_prod_2x1_label_body">
+    <!-- 2.25 x 0.75 barcoded label -->
+    <template id="report_prod_225x075_label_body">
         <!-- barcode size parameters -->
-        <t t-set="bc_size" t-value="int(719.0/len(o.code128))"/>
-        <t t-set="bc_top" t-value="int(1.05*len(o.code128)-25.5)"/>
-        <t t-set="bc_right" t-value="int(0.625*len(o.code128)-21.25)"/>
-        <t t-set="bc_bottom" t-value="int(3.125*len(o.code128)-76.25)"/>
-        <t t-set="bc_left" t-value="int(0.625*len(o.code128)-21.25)"/>
+        <!--<t t-set="bc_size" t-value="int(-0.70*len(o.code128) + 40)"/>-->
+        <t t-set="bc_size" t-value="int(800.0/len(o.code128))"/>
         <t t-set="bc_style"
-           t-value="'clear:both; float:left; margin:%spx %spx %spx %spx; white-space:nowrap; text-align:center; font-family:\'Code 128\'; font-size:%spx' % (bc_top,bc_right,bc_bottom,bc_left,bc_size)" />
+           t-value="'clear:both; float:left; margin:0px 0px 2px 0px; white-space:nowrap; overflow:hidden; height:42px; text-align:center; font-family:\'Code 128\'; font-size:%spx' % bc_size"/>
 
         <!-- part number size parameters -->
         <t t-set="pn_size" t-value="int(-0.5*len(o.code128)+27.0)"/>
         <t t-set="pn_style"
-           t-value="'display:block; margin:-2px -2px -2px -2px; white-space:nowrap; text-align:center; font-weight:bold; font-family:sans-serif; font-size:%spx;' % (pn_size,)" />
+           t-value="'display:block; margin:0px 0px 0px 0px; white-space:nowrap; text-align:center; font-weight:bold; font-family:sans-serif; font-size:%spx;' % (pn_size,)" />
+
+        <div style="display:block; height:84px; width:230px; overflow:hidden;">
+            <div
+                t-att-style="bc_style"
+                t-field="o.code128"/>
+            <div
+                style="display:block; clear:both; float:left; width:100%; background:white;">
+                <div
+                    t-att-style="pn_style"
+                    t-field="o.default_code"/>
+                <div
+                    style="display:block; width:100%; text-align:center; font-family:sans-serif; line-height:12px; font-size:10px;"
+                    t-field="o.name"/>
+            </div>
+        </div>
+    </template>
+    <template id="report_prod_225x075_label">
+        <t t-call="web.basic_layout">
+            <t t-foreach="docs" t-as="o">
+                <!--<div class="page" style="position: relative;">-->
+                <div class="page">
+                    <t t-call="azi_stock.report_prod_225x075_label_body">
+                        <!--<t t-set="o" t-value="o"/>-->
+                    </t>
+                    <p style="page-break-before: always"></p>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_prod_2x1_label_body">
+        <!-- barcode size parameters -->
+        <t t-set="bc_size" t-value="int(719.0/len(o.code128))"/>
+        <t t-set="bc_style"
+           t-value="'clear:both; float:left; margin:0px 0px 0px 0px; white-space:nowrap; text-align:center; font-family:\'Code 128\'; font-size:%spx' % bc_size" />
+
+        <!-- part number size parameters -->
+        <t t-set="pn_size" t-value="int(-0.5*len(o.code128)+27.0)"/>
+        <t t-set="pn_style"
+           t-value="'display:block; margin:0px 0px 0px 0px; white-space:nowrap; text-align:center; font-weight:bold; font-family:sans-serif; font-size:%spx;' % (pn_size,)" />
 
         <div style="display:block; height:96px; width:205px; overflow:hidden;">
             <div

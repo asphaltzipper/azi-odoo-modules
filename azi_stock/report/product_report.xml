@@ -136,6 +136,28 @@
             <field name="binding_type">report</field>
         </record>
 
+        <record id="action_report_prod_tmpl_azi_225x075_label" model="ir.actions.report">
+            <field name="name">AZI 2.25x0.75 Label</field>
+            <field name="model">product.template</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">azi_stock.report_prod_225x075_label</field>
+            <field name="report_file">azi_stock.report.product_labels</field>
+            <field name="paperformat_id" ref="azi_stock.paperformat_label_225x075"/>
+            <field name="binding_model_id" ref="stock.model_product_template"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <record id="action_report_prod_prod_azi_225x075_label" model="ir.actions.report">
+            <field name="name">AZI 2.25x0.75 Label</field>
+            <field name="model">product.product</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">azi_stock.report_prod_225x075_label</field>
+            <field name="report_file">azi_stock.report.product_labels</field>
+            <field name="paperformat_id" ref="azi_stock.paperformat_label_225x075"/>
+            <field name="binding_model_id" ref="stock.model_product_product"/>
+            <field name="binding_type">report</field>
+        </record>
+
         <record id="action_report_prod_tmpl_azi_2x1_label" model="ir.actions.report">
             <field name="name">AZI 2x1 Label</field>
             <field name="model">product.template</field>

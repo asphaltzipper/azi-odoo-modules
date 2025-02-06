@@ -1,6 +1,6 @@
-# -*- coding: utf-8 -*-
-
 from odoo import models, fields, api, _
+import base64
+from io import BytesIO
 
 
 class ProductTemplate(models.Model):
@@ -150,6 +150,14 @@ class ProductTemplate(models.Model):
         if not self.material_id:
             return {'domain': {'gauge_id': [('id', 'in', [])]}}
         return {'domain': {'gauge_id': [('id', 'in', self.material_id.gauge_ids.ids)]}}
+
+    def get_product_labels_pdf(self):
+        report_bytes, _ = self.env['ir.actions.report']._render_qweb_pdf(
+            'azi_stock.report_prod_225x075_label',
+            res_ids=self.ids,
+        )
+        b64 = base64.b64encode(report_bytes)
+        return b64
 
 
 class ProductProduct(models.Model):
