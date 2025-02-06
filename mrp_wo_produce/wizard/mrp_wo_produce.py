@@ -102,6 +102,7 @@ class MrpWoProduce(models.TransientModel):
             'product_id': production.product_id.id,
             'product_uom_id': todo_uom.id,
             'product_qty': todo_quantity,
+            'lot_id': production.lot_producing_id,
         })
         return res
 
@@ -226,10 +227,14 @@ class MrpWoProduce(models.TransientModel):
         return {'type': 'ir.actions.act_window_close'}
 
     def production_quantity(self):
-        if self.production_id.product_tracking in ('lot', 'serial') and not self.production_id.lot_producing_id:
-            self.production_id.action_generate_serial()
-        if self.production_id.product_tracking == 'serial' and float_compare(self.production_id.qty_producing, 1,
-                                                                     precision_rounding=self.production_id.product_uom_id.rounding) == 1:
+        if (
+            self.production_id.product_tracking == 'serial'
+            and float_compare(
+                self.production_id.qty_producing,
+                1,
+                 precision_rounding=self.production_id.product_uom_id.rounding
+            ) == 1
+        ):
             self.production_id.qty_producing = 1
         else:
             self.production_id.qty_producing = self.production_id.product_qty - self.production_id.qty_produced
