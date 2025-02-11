@@ -1,5 +1,6 @@
 AZI Sale
 ====================
+* Reset line prices/discounts when duplicating a sale order
 * Add new filters in `crm.team`
 * Add new fields in `res.partner`, override `name_get` and `_compute_display_name` to display name of partner in different way
 * Add new fields in `sale.order` and override `action_confirm` to do some validation first

@@ -61,8 +61,7 @@ class SaleOrder(models.Model):
     @api.returns('self', lambda value: value.id)
     def copy(self, default=None):
         res = super(SaleOrder, self).copy(default=default)
-        for line in res.order_line:
-            line.price_unit = 0
+        res._recompute_prices()
         return res
 
 
