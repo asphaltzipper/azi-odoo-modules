@@ -490,7 +490,7 @@ class EcmEcoRevLine(models.Model):
         compute='_compute_obsolete_move_ids')
 
     image_small = fields.Image(
-        related='new_product_id.image_variant_128',
+        related='new_product_id.image_128',
         string='Image',
         readonly=True)
 
@@ -665,7 +665,7 @@ class EcmEcoIntroLine(models.Model):
         readonly=True)
 
     image_small = fields.Image(
-        related='product_id.image_variant_128',
+        related='product_id.image_128',
         string='Image',
         readonly=True)
 

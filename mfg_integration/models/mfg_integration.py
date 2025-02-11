@@ -221,9 +221,13 @@ class MfgWorkHeader(models.Model):
         rounded_total_time = float_round(self.total_hours, precision_digits=2)
         if abs(detail_time - self.total_hours) > 0.1:
             raise UserError(
-                "Time assigned on detail lines ({} hours) doesn't sum to the "
-                "total time on the batch ({} hours)".format(
-                    rounded_detail_time, rounded_total_time))
+                "{}: Time assigned on detail lines ({:4.2f} hours) doesn't sum to the "
+                "total time on the batch ({:4.2f} hours)".format(
+                    self.name,
+                    rounded_detail_time,
+                    rounded_total_time,
+                )
+            )
 
         # check for canceled or completed orders
         comp_lines = self.detail_ids.filtered(
@@ -279,9 +283,11 @@ class MfgWorkHeader(models.Model):
         self.number_sheets = new_count
 
     def action_automate_batch(self):
-        mfg_to_automate = self.filtered(lambda m: not m.product_error and
-                                                  m.state not in ('draft', 'cancel') and m.time_match
-                                                  and m.total_hours > 0 and m.detail_time > 0)
+        mfg_to_automate = self.filtered(
+            lambda m: not m.product_error
+                      and m.state not in ('draft', 'cancel')
+                      and m.total_hours > 0
+        )
         for mfg in mfg_to_automate:
             mfg.button_reassign_orders()
             mfg.button_distribute_time()
@@ -390,12 +396,24 @@ class MfgWorkDetail(models.Model):
             self.env.user.notify_warning(message=message, title="Data Error", sticky=True)
 
         products = self.filtered(lambda x: not x.product_error).mapped('product_id')
+
+        assigned_lines = self.search([
+            ('header_id.state', 'not in', ['closed', 'cancel']),
+            ('production_state', 'not in', ['done', 'cancel']),
+        ])
+        assigned_mo_ids = assigned_lines.production_id.ids
         for product in products:
 
             # check for open MOs
+            # don't select MOs that are already assigned to another import line
             mos = self.env['mrp.production'].search(
-                [('product_id', '=', product.id), ('state', 'not in', ['done', 'cancel'])],
-                order='date_planned_start')
+                [
+                    ('product_id', '=', product.id),
+                    ('state', 'not in', ['done', 'cancel']),
+                    ('id', 'not in', assigned_mo_ids),
+                ],
+                order='date_planned_start'
+            )
             if not mos:
                 mos = self.env['mrp.production'].create({
                     'product_id': product.id,
