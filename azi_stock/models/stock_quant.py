@@ -28,10 +28,12 @@ class StockQuant(models.Model):
         return allowed_fields
 
     def _apply_inventory(self):
-        is_quant = self.inventory_quantity > self.quantity and True
-        self = self.with_context(is_quant=is_quant, inventory_value=self.inventory_value)
-        super(StockQuant, self)._apply_inventory()
-        self.write({'inventory_value': 0})
+        # TODO: make this more efficient by operating on all quants at once
+        for quant in self:
+            is_quant = quant.inventory_quantity > quant.quantity and True
+            quant = quant.with_context(is_quant=is_quant, inventory_value=quant.inventory_value)
+            super(StockQuant, quant)._apply_inventory()
+            quant.write({'inventory_value': 0})
 
     def action_print_report(self):
         records = self
