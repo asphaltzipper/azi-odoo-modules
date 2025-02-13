@@ -285,8 +285,7 @@ class EcmEco(models.Model):
             final_stages = eco.stage_id.search([('final', '=', True)])
             if eco.stage_id in final_stages:
                 eco.can_advance = False
-                return
-            if not required_approvals and not require_new_revs:
+            elif not required_approvals and not require_new_revs:
                 eco.can_advance = True
             else:
                 approved = all(x == 'approved' for x in required_approvals.mapped('state'))
