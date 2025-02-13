@@ -11,3 +11,8 @@ class StockRule(models.Model):
         if procure_wizard and user_id:
             res['user_id'] = user_id
         return res
+
+    def _make_po_get_domain(self, company_id, values, partner):
+        res = super(StockRule, self)._make_po_get_domain(company_id, values, partner)
+        domain = tuple([(field, operator, val) for field, operator, val in res if field != 'user_id'])
+        return domain
