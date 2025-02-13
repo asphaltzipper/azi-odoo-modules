@@ -55,16 +55,20 @@ class Partner(models.Model):
         return [(6, 0, [self.env['ir.model.data']._xmlid_to_res_id('sales_team.team_sales_department')])]
 
     @api.model
-    @api.constrains('team_ids', 'customer_rank')
+    @api.constrains('team_ids', 'customer_rank', 'auto_assign_team', 'parent_id')
     def _require_team(self):
         for record in self:
-            if (record.customer_rank > 0 and not record.team_ids and not
-                    record.parent_id):
-                raise ValidationError(_("Customers require a valid Sales Team."
-                                        " \n\nEnsure a Sales Region is"
-                                        " assigned to each team or disable"
-                                        " Auto Assign Team(s) to remember"
-                                        " manual assignment."))
+            if (
+                record.customer_rank > 0
+                and not record.team_ids
+                and not record.auto_assign_team
+                and not record.parent_id
+            ):
+                raise ValidationError(_(
+                    "Customers require a valid Sales Team. \n\nEnsure a Sales Region is"
+                    " assigned to each team or disable Auto Assign Team(s) to remember"
+                    " manual assignment."
+                ))
 
     @api.model
     def _st_search(self):
