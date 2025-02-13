@@ -45,7 +45,7 @@ class MrpRouting(models.Model):
         bom.operation_ids.action_archive()
         # add all operations
         vals_list = []
-        for line in self.lines:
+        for line in self.line_ids:
             vals_list.append({
                 "bom_id": bom.id,
                 "name": line.workcenter_id.code,
