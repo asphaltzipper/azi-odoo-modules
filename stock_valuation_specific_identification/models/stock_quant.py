@@ -26,7 +26,8 @@ class StockQuant(models.Model):
         super(StockQuant, untracked)._compute_value()
         tracked = self - untracked
         for quant in tracked:
-            quant.currency_id = quant.company_id.currency_id
+            company_id = quant.company_id or self.env.company
+            quant.currency_id = company_id.currency_id
             rounding = quant.product_id.uom_id.rounding
             if (
                 not quant.location_id
