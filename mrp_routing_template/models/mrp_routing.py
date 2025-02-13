@@ -32,8 +32,27 @@ class MrpRouting(models.Model):
     @api.depends("line_ids")
     def _compute_routing_name(self):
         for rt in self:
-            wc_codes = rt.line_ids.mapped("workcenter_id.code")
+            # don't use .mapped() because it returns unique codes only, and routings
+            # may pass through the same workcenter more than once
+            wc_codes = [x.workcenter_id.code for x in rt.line_ids]
             rt.routing_name = any(wc_codes) and ", ".join(wc_codes)
+
+    def apply_to_bom(self, bom):
+        # TODO: keep/modify existing operations
+        self.ensure_one()
+        bom.ensure_one()
+        # remove all operations
+        bom.operation_ids.action_archive()
+        # add all operations
+        vals_list = []
+        for line in self.lines:
+            vals_list.append({
+                "bom_id": bom.id,
+                "name": line.workcenter_id.code,
+                "workcenter_id": line.workcenter_id.id,
+                "time_mode": "auto",
+            })
+        self.env['mrp.routing.workcenter'].create(vals_list)
 
 
 class MrpRoutingLine(models.Model):

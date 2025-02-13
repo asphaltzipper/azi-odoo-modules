@@ -47,5 +47,7 @@ class MrpBom(models.Model):
     @api.depends('operation_ids')
     def _compute_routing_name(self):
         for bom in self:
-            wc_codes = bom.operation_ids.mapped('workcenter_id.code')
+            # don't use .mapped() because it returns unique codes only, and routings
+            # may pass through the same workcenter more than once
+            wc_codes = [x.workcenter_id.code for x in bom.operation_ids]
             bom.routing_name = any(wc_codes) and ", ".join(wc_codes)

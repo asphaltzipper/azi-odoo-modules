@@ -10,7 +10,7 @@
                     <button string="Finish" name="action_done" type="object" states="new" class="oe_highlight"/>
                     <button string="Hide Images" name="action_toggle_images" type="object" attrs="{'invisible': [('show_images', '=', False)]}"/>
                     <button string="Show Images" name="action_toggle_images" type="object" attrs="{'invisible': [('show_images', '=', True)]}"/>
-                    <field name="state" widget="statusbar" clickable="False"/>
+                    <field name="state" widget="statusbar" options="{'clickable':0}"/>
                 </header>
                 <sheet string="Pick Kit">
                     <group>

@@ -121,8 +121,8 @@ class MrpPlannedPickKitLine(models.TransientModel):
         ondelete='cascade',
     )
     routing_name = fields.Char(
+        related="product_id.routing_name",
         string="Route",
-        compute="_compute_routing_name",
         store=True,
     )
     image_small = fields.Image(
@@ -225,12 +225,3 @@ class MrpPlannedPickKitLine(models.TransientModel):
                 rec.onhand_qty = rec.product_qty + 1
                 rec.reserved_qty = 0.0
                 rec.available_qty = rec.product_qty + 1
-
-    @api.model
-    @api.depends('product_id')
-    def _compute_routing_name(self):
-        for rec in self:
-            bom = rec.product_id.variant_bom_ids and rec.product_id.variant_bom_ids[0]
-            if bom and bom.operation_ids:
-                rec.routing_name = ", ".join(
-                    [x for x in bom.operation_ids.mapped('workcenter_id.code') if x])

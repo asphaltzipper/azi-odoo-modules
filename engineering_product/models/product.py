@@ -85,7 +85,7 @@ class ProductTemplate(models.Model):
         ],
         string='Make',
         compute='_compute_make',
-        help="Selected production routes include manufacturing (M) or not (P)")
+        help="Selected procurement routes include manufacturing (M) or not (P)")
     doc_ids = fields.One2many(
         comodel_name='ir.attachment',
         inverse_name='res_id',

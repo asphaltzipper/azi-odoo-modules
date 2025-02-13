@@ -171,7 +171,7 @@
                     <button string="Get Diffs" name="action_get_diffs" type="object" states="converted"/>
                     <button string="Apply Important Part Diffs" name="action_apply_part_diffs" type="object" states="comparing"/>
                     <button string="Apply All BOM Diffs" name="action_apply_bom_diffs" type="object" states="comparing"/>
-                    <field name="state" widget="statusbar" clickable="True" confirm="Are you sure you want to change the state?"/>
+                    <field name="state" widget="statusbar" options="{'clickable':1}" confirm="Are you sure you want to change the state?"/>
                 </header>
                 <sheet string="Eng BOM">
                     <div class="oe_button_box" name="button_box">
@@ -228,9 +228,8 @@
                                     <field name="product_id"/>
                                     <field name="rm_part"/>
                                     <field name="action_type"/>
-                                    <!-- TODO Routing -->
-                                    <!--<field name="route_detail" string="Old Route"/>
-                                    <field name="route_detail_new" string="New Route"/>-->
+                                    <field name="routing_name" string="Old Route"/>
+                                    <field name="routing_name_new" string="New Route"/>
                                     <field name="type" string="Old Type"/>
                                     <field name="type_new" string="New Type"/>
                                 </tree>
