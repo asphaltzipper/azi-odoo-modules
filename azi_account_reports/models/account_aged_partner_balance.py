@@ -36,6 +36,7 @@ class AgedPartnerBalanceCustomHandler(models.AbstractModel):
                 currency = self.env['res.currency'].browse(query_res['currency_id'][0]) if len(query_res['currency_id']) == 1 else None
                 rslt.update({
                     'due_date': query_res['due_date'][0] if len(query_res['due_date']) == 1 else None,
+                    'invoice_date': query_res['invoice_date'][0] if len(query_res['invoice_date']) == 1 else None,
                     'amount_currency': query_res['amount_currency'],
                     'currency_id': query_res['currency_id'][0] if len(query_res['currency_id']) == 1 else None,
                     'currency': currency.display_name if currency else None,
@@ -50,6 +51,7 @@ class AgedPartnerBalanceCustomHandler(models.AbstractModel):
             else:
                 rslt.update({
                     'due_date': None,
+                    'invoice_date': None,
                     'amount_currency': None,
                     'currency_id': None,
                     'currency': None,
@@ -106,17 +108,19 @@ class AgedPartnerBalanceCustomHandler(models.AbstractModel):
                 ) AS amount_currency,
                 ARRAY_AGG(DISTINCT account_move_line.partner_id) AS partner_id,
                 ARRAY_AGG(account_move_line.payment_id) AS payment_id,
-                ARRAY_AGG(DISTINCT COALESCE(account_move_line.date, account_move_line.date_maturity)) AS report_date,
+                ARRAY_AGG(DISTINCT COALESCE(move.invoice_date, account_move_line.date, account_move_line.date_maturity)) AS report_date,
                 ARRAY_AGG(DISTINCT account_move_line.expected_pay_date) AS expected_date,
                 ARRAY_AGG(DISTINCT account.code) AS account_name,
                 ARRAY_AGG(DISTINCT COALESCE(account_move_line.date_maturity, account_move_line.date)) AS due_date,
+                ARRAY_AGG(DISTINCT COALESCE(move.invoice_date, account_move_line.date)) AS invoice_date,
                 ARRAY_AGG(DISTINCT account_move_line.currency_id) AS currency_id,
                 COUNT(account_move_line.id) AS aml_count,
                 ARRAY_AGG(account.code) AS account_code,
                 {select_period_query}
 
             FROM {tables}
-
+            
+            JOIN account_move move on move.id = account_move_line.move_id
             JOIN account_journal journal ON journal.id = account_move_line.journal_id
             JOIN account_account account ON account.id = account_move_line.account_id
             JOIN {currency_table} ON currency_table.company_id = account_move_line.company_id
@@ -144,12 +148,12 @@ class AgedPartnerBalanceCustomHandler(models.AbstractModel):
             JOIN period_table ON
                 (
                     period_table.date_start IS NULL
-                    OR COALESCE(account_move_line.date, account_move_line.date_maturity) <= DATE(period_table.date_start)
+                    OR COALESCE(move.invoice_date, account_move_line.date, account_move_line.date_maturity) <= DATE(period_table.date_start)
                 )
                 AND
                 (
                     period_table.date_stop IS NULL
-                    OR COALESCE(account_move_line.date, account_move_line.date_maturity) >= DATE(period_table.date_stop)
+                    OR COALESCE(move.invoice_date, account_move_line.date, account_move_line.date_maturity) >= DATE(period_table.date_stop)
                 )
 
             WHERE {where_clause}
