@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data noupdate="1">
-        <delete model="account.report.column" id="account_reports.aged_receivable_report_period0"/>
-        <delete model="account.report.column" id="account_reports.aged_payable_report_period0"/>
-        <delete model="account.report.column" id="account_reports.aged_payable_report_period5"/>
-        <delete model="account.report.column" id="account_reports.aged_receivable_report_period5"/>
-        <delete model="account.report.expression" id="account_reports.aged_receivable_line_period0"/>
-        <delete model="account.report.expression" id="account_reports.aged_payable_line_period0"/>
-        <delete model="account.report.expression" id="account_reports.aged_payable_line_period5"/>
-        <delete model="account.report.expression" id="account_reports.aged_receivable_line_period5"/>
-    </data>
     <data noupdate="0">
+        <record id="account_reports.aged_payable_report" model="account.report">
+            <field
+                eval="[Command.unlink(ref('account_reports.aged_payable_report_due_date'))]"
+                name="column_ids"
+            />
+        </record>
         <record id="account_reports.aged_receivable_line_period1" model="account.report.expression">
             <field name="label">period0</field>
             <field name="subformula">period0</field>
