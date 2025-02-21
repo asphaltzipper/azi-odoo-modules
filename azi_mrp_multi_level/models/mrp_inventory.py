@@ -33,6 +33,16 @@ class MrpInventory(models.Model):
         required=True,
         default=False,
     )
+    time_cycle = fields.Float(
+        string='Hours',
+        compute="_compute_workorder_time",
+        store=True,
+    )
+    workorder_count = fields.Integer(
+        string="# Work Orders",
+        compute="_compute_workorder_time",
+        store=True,
+    )
 
     @api.depends('product_id')
     def _compute_on_blanket(self):
@@ -49,3 +59,22 @@ class MrpInventory(models.Model):
                 record.on_blanket = True
             else:
                 record.on_blanket = False
+
+    @api.depends('product_id')
+    def _compute_workorder_time(self):
+        make_lines = self.filtered(lambda x: x.supply_method=="manufacture" and x.to_procure>0)
+        other_lines = self - make_lines
+        other_lines.update({"time_cycle": 0, "workorder_count": 0})
+        boms_by_product = self.env["mrp.bom"]._bom_find(make_lines.mapped("product_id"))
+        for rec in self:
+            bom = boms_by_product.get(rec.product_id, self.env["mrp.bom"])
+            if not bom:
+                rec.time_cycle = 0
+                rec.workorder_count = 0
+                continue
+            if not bom.operation_ids:
+                rec.time_cycle = 0
+                rec.workorder_count = 0
+                continue
+            rec.time_cycle = sum(bom.mapped("operation_ids.time_cycle"))/60
+            rec.workorder_count = sum(bom.mapped("operation_ids.workorder_count"))

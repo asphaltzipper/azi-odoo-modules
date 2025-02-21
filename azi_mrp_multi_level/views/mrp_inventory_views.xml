@@ -33,12 +33,27 @@
         <field name="inherit_id" ref="mrp_multi_level.mrp_inventory_tree"/>
         <field name="arch" type="xml">
             <field name="product_id" position="after">
-                <field name="deprecated"/>
-                <field name="e_kanban"/>
-                <field name="on_blanket"/>
-                <field name="routing_name"/>
-                <field name="main_supplier_id"/>
-                <field name="to_expedite"/>
+                <field name="deprecated" optional="hide"/>
+                <field name="e_kanban" optional="hide"/>
+                <field name="on_blanket" optional="hide"/>
+                <field name="routing_name" optional="hide"/>
+                <field name="main_supplier_id" optional="hide"/>
+                <field name="to_expedite" optional="hide"/>
+                <field name="time_cycle" optional="hide"/>
+                <field name="workorder_count" optional="hide"/>
+            </field>
+            <field name="uom_id" position="attributes">
+                <attribute name="string">UoM</attribute>
+            </field>
+            <field name="initial_on_hand_qty" position="attributes">
+                <attribute name="string">Starting</attribute>
+            </field>
+            <field name="final_on_hand_qty" position="attributes">
+                <attribute name="string">Final</attribute>
+            </field>
+            <field name="running_availability" position="attributes">
+                <attribute name="string">Plan Avail</attribute>
+                <attribute name="optional">hide</attribute>
             </field>
         </field>
     </record>

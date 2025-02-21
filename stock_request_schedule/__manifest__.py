@@ -25,6 +25,7 @@ a master production schedule.
         'views/product_views.xml',
         'views/stock_request_views.xml',
         'views/sale_order_views.xml',
+        'views/schedule_mfg_detail_views.xml',
         'wizard/change_stock_request_views.xml',
         'report/managing_independent_demand_views.xml',
         'report/schedule_sale_order_views.xml',

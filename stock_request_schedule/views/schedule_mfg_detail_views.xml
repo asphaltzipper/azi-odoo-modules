@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="schedule_mfg_detail_tree_view" model="ir.ui.view">
+        <field name="name">schedule.mfg.detail.tree.view</field>
+        <field name="model">schedule.mfg.detail</field>
+        <field name="priority" eval="6"/>
+        <field name="arch" type="xml">
+            <tree string="Schedule MFG Detail">
+                <field name="stock_request_id"/>
+                <field name="expected_date" widget="date"/>
+                <field name="top_prod_id" optional="hide"/>
+                <field name="top_tmpl_id"/>
+                <field name="config_code"/>
+                <field name="product_id" optional="hide"/>
+                <field name="product_tmpl_id" optional="hide"/>
+                <field name="bom_id" optional="hide"/>
+                <field name="workcenter_id"/>
+                <field name="status"/>
+                <field name="multiplied_qty"/>
+                <field name="time_cycle" string="Hours"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="schedule_mfg_detail_search_view">
+        <field name="name">schedule.mfg.detail.search.view</field>
+        <field name="model">schedule.mfg.detail</field>
+        <field name="arch" type="xml">
+            <search string="Schedule MFG Detail Filter">
+                <field name="stock_request_id" string="Stock Request Number"/>
+                <field name="top_prod_id" string="Scheduled Variant" filter_domain="['|',('top_prod_id.default_code','ilike',self),('top_prod_id.name','ilike',self)]"/>
+                <field name="product_id" string="Sub Product" filter_domain="['|',('product_id.default_code','ilike',self),('product_id.name','ilike',self)]"/>
+                <filter string="Draft" name="draft" domain="[('status','=','Draft')]"/>
+                <filter string="Submitted" name="submitted" domain="[('status','=','Submitted')]"/>
+                <filter string="In Progress" name="open" domain="[('status','=','Open')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="workcenter" string="Workcenter" domain="[]" context="{'group_by':'workcenter_id'}"/>
+                    <filter name="status" string="Status" domain="[]" context="{'group_by':'status'}"/>
+                    <filter name="product_variant" string="Variant" domain="[]" context="{'group_by':'top_prod_id'}"/>
+                    <filter name="product_family" string="Family" domain="[]" context="{'group_by':'top_tmpl_id'}"/>
+                    <filter name="planned_week" string="Planned Week" domain="[]" context="{'group_by':'expected_date:week'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_schedule_mfg_detail_tree" model="ir.actions.act_window">
+        <field name="name">Schedule MFG Detail</field>
+        <field name="res_model">schedule.mfg.detail</field>
+        <field name="view_mode">tree</field>
+        <field name="search_view_id" ref="schedule_mfg_detail_search_view"/>
+        <field name="context">{
+                'search_default_workcenter': 1,
+                'search_default_planned_week': 1,
+        }</field>
+        <field name="help" type="html">
+          <p>
+            Create some scheduled stock requests to see data here.
+          </p>
+        </field>
+    </record>
+
+    <menuitem
+        id="menu_stock_request_reporting"
+        parent="stock_request.menu_stock_request_root"
+        name="Reporting"
+        sequence="200"
+    />
+    <menuitem
+        id="menu_schedule_mfg_detail"
+        action="action_schedule_mfg_detail_tree"
+        name="Schedule MFG Detail"
+        parent="stock_request_schedule.menu_stock_request_reporting"
+        sequence="30"
+    />
+
+</odoo>

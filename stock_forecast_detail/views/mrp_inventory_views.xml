@@ -21,10 +21,12 @@
         <field name="inherit_id" ref="mrp_multi_level.mrp_inventory_tree"/>
         <field name="arch" type="xml">
             <field name="running_availability" position="after">
-                <button string="Forecast Detail"
-                        title="Forecast Detail"
-                        name="action_planned_forecast_detail"
-                        icon="fa-bars" type="object"/>
+                <button
+                    title="Forecast Detail"
+                    name="action_planned_forecast_detail"
+                    icon="fa-bars"
+                    type="object"
+                />
             </field>
         </field>
     </record>
