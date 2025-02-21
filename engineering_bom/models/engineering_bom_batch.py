@@ -657,7 +657,8 @@ class EngBomBatch(models.Model):
             eng_bom.bom_id = new_bom
 
             # add routing
-            eng_bom.routing_tmpl_id.apply_to_bom(eng_bom.bom_id)
+            if eng_bom.routing_tmpl_id:
+                eng_bom.routing_tmpl_id.apply_to_bom(eng_bom.bom_id)
 
             # add bom lines
             for eng_line in eng_bom.bom_line_ids:
