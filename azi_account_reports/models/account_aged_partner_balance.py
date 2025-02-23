@@ -35,13 +35,11 @@ class AgedPartnerBalanceCustomHandler(models.AbstractModel):
                 query_res = query_res_lines[0] # We're grouping by id, so there is only 1 element in query_res_lines anyway
                 currency = self.env['res.currency'].browse(query_res['currency_id'][0]) if len(query_res['currency_id']) == 1 else None
                 rslt.update({
-                    'due_date': query_res['due_date'][0] if len(query_res['due_date']) == 1 else None,
                     'invoice_date': query_res['invoice_date'][0] if len(query_res['invoice_date']) == 1 else None,
                     'amount_currency': query_res['amount_currency'],
                     'currency_id': query_res['currency_id'][0] if len(query_res['currency_id']) == 1 else None,
                     'currency': currency.display_name if currency else None,
                     'account_name': query_res['account_name'][0] if len(query_res['account_name']) == 1 else None,
-                    'expected_date': query_res['expected_date'][0] if len(query_res['expected_date']) == 1 else None,
                     'total': None,
                     'has_sublines': query_res['aml_count'] > 0,
 
@@ -50,13 +48,11 @@ class AgedPartnerBalanceCustomHandler(models.AbstractModel):
                 })
             else:
                 rslt.update({
-                    'due_date': None,
                     'invoice_date': None,
                     'amount_currency': None,
                     'currency_id': None,
                     'currency': None,
                     'account_name': None,
-                    'expected_date': None,
                     'total': sum(rslt[f'period{i}'] for i in range(len(periods))),
                     'has_sublines': False,
                 })
@@ -109,9 +105,7 @@ class AgedPartnerBalanceCustomHandler(models.AbstractModel):
                 ARRAY_AGG(DISTINCT account_move_line.partner_id) AS partner_id,
                 ARRAY_AGG(account_move_line.payment_id) AS payment_id,
                 ARRAY_AGG(DISTINCT COALESCE(move.invoice_date, account_move_line.date, account_move_line.date_maturity)) AS report_date,
-                ARRAY_AGG(DISTINCT account_move_line.expected_pay_date) AS expected_date,
                 ARRAY_AGG(DISTINCT account.code) AS account_name,
-                ARRAY_AGG(DISTINCT COALESCE(account_move_line.date_maturity, account_move_line.date)) AS due_date,
                 ARRAY_AGG(DISTINCT COALESCE(move.invoice_date, account_move_line.date)) AS invoice_date,
                 ARRAY_AGG(DISTINCT account_move_line.currency_id) AS currency_id,
                 COUNT(account_move_line.id) AS aml_count,

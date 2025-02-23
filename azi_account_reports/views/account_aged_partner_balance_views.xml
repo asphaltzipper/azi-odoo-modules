@@ -3,7 +3,13 @@
     <data noupdate="0">
         <record id="account_reports.aged_payable_report" model="account.report">
             <field
-                eval="[Command.unlink(ref('account_reports.aged_payable_report_due_date'))]"
+                eval="[Command.unlink(ref('account_reports.aged_payable_report_due_date')), Command.unlink(ref('account_reports.aged_payable_report_expected_date'))]"
+                name="column_ids"
+            />
+        </record>
+        <record id="account_reports.aged_receivable_report" model="account.report">
+            <field
+                eval="[Command.unlink(ref('account_reports.aged_receivable_report_due_date')), Command.unlink(ref('account_reports.aged_receivable_report_expected_date'))]"
                 name="column_ids"
             />
         </record>
@@ -84,6 +90,24 @@
         </record>
         <record id="account_reports.aged_receivable_report" model="account.report">
             <field name="column_ids" eval="[(4, ref('azi_account_reports.aged_receivable_report_invoice_date'))]" />
+        </record>
+        <record id="aged_payable_report_invoice_date" model="account.report.column">
+            <field name="name">Invoice Date</field>
+            <field name="sequence">-1</field>
+            <field name="expression_label">invoice_date</field>
+            <field name="figure_type">date</field>
+            <field name="sortable" eval="True"/>
+        </record>
+        <record id="aged_payable_line_invoice_date" model="account.report.expression">
+            <field name="label">invoice_date</field>
+            <field name="engine">custom</field>
+            <field name="report_line_id" ref="account_reports.aged_payable_line"/>
+            <field name="formula">_report_custom_engine_aged_payable</field>
+            <field name="subformula">invoice_date</field>
+            <field name="auditable" eval="False"/>
+        </record>
+        <record id="account_reports.aged_payable_report" model="account.report">
+            <field name="column_ids" eval="[(4, ref('azi_account_reports.aged_payable_report_invoice_date'))]" />
         </record>
     </data>
 </odoo>
