@@ -24,7 +24,7 @@
                     </div>
                 </button>
 			</div>
-            <field name="job_title" position="after">
+            <field name="department_id" position="before">
                 <field name="hire_date"/>
             </field>
             <page name="hr_settings" position="after">

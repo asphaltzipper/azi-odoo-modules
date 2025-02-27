@@ -207,7 +207,7 @@
                                         <span t-field="line.product_uom.name" groups="product.group_uom"/>
                                     </td>
                                     <td class="oe_avatar">
-                                        <img style="height:90px" t-attf-src="/web/image/product.product/#{line.product_id.id}/image"/>
+                                        <img style="max-width:75px; max-height:75px; width:auto; height:auto;" t-attf-src="/web/image/product.product/#{line.product_id.id}/image_128"/>
                                     </td>
                                     <td class="text-center">
                                         <span t-if="line.product_id.barcode">

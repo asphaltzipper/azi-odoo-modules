@@ -594,7 +594,10 @@ class EngBomBatch(models.Model):
 
             # change routing
             if eng_bom.routing_tmpl_id.routing_name != eng_bom.bom_id.routing_name:
-                eng_bom.routing_tmpl_id.apply_to_bom(eng_bom.bom_id)
+                if eng_bom.routing_tmpl_id:
+                    eng_bom.routing_tmpl_id.apply_to_bom(eng_bom.bom_id)
+                else:
+                    eng_bom.bom_id.operation_ids.archive()
 
             # change bom type
             if eng_bom.type != eng_bom.bom_id.type:
