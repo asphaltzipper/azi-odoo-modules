@@ -1245,7 +1245,7 @@
                                     <field name="label">balance</field>
                                     <field name="engine">aggregation</field>
                                     <field name="formula">AZPL_NEP.balance</field>
-                                    <field name="date_scope">from_beginning</field>
+                                    <field name="date_scope">from_fiscalyear</field>
                                     <field name="subformula">cross_report</field>
                                     <field name="green_on_positive" eval="False"/>
                                 </record>
@@ -1264,7 +1264,7 @@
                                     <field name="label">balance</field>
                                     <field name="engine">domain</field>
                                     <field name="formula" eval="[('account_id.account_type', '=', 'equity_unaffected')]"/>
-                                    <field name="date_scope">normal</field>
+                                    <field name="date_scope">from_fiscalyear</field>
                                     <field name="subformula">-sum</field>
                                     <field name="green_on_positive" eval="False"/>
                                 </record>
