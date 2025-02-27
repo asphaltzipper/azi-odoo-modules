@@ -23,15 +23,16 @@ class report_account_bbc_aged_partner(models.AbstractModel):
             LEFT JOIN "account_account" AS "account_move_line__account_id" 
             ON ("account_move_line"."account_id" = "account_move_line__account_id"."id")
             JOIN {currency_table} ON currency_table.company_id = account_move_line.company_id
+            JOIN account_move move on move.id = account_move_line.move_id
              JOIN period_table ON
                 (
                     period_table.date_start IS NULL
-                    OR COALESCE(account_move_line.date_maturity, account_move_line.date) <= DATE(period_table.date_start)
+                    OR COALESCE(move.invoice_date, account_move_line.date, account_move_line.date_maturity) <= DATE(period_table.date_start)
                 )
                 AND
                 (
                     period_table.date_stop IS NULL
-                    OR COALESCE(account_move_line.date_maturity, account_move_line.date) >= DATE(period_table.date_stop)
+                    OR COALESCE(move.invoice_date, account_move_line.date, account_move_line.date_maturity) >= DATE(period_table.date_stop)
                 )
 
             WHERE (((((((("account_move_line"."display_type" not in ('line_section', 'line_note')) 
@@ -192,10 +193,10 @@ class report_account_bbc_aged_partner(models.AbstractModel):
                 %s * SUM(account_move_line.amount_currency) AS amount_currency,
                 ARRAY_AGG(DISTINCT account_move_line.partner_id) AS partner_id,
                 ARRAY_AGG(account_move_line.payment_id) AS payment_id,
-                ARRAY_AGG(DISTINCT COALESCE(account_move_line.date_maturity, account_move_line.date)) AS report_date,
+                ARRAY_AGG(DISTINCT COALESCE(move.invoice_date, account_move_line.date, account_move_line.date_maturity)) AS report_date,
                 ARRAY_AGG(DISTINCT account_move_line.expected_pay_date) AS expected_date,
                 ARRAY_AGG(DISTINCT account.code) AS account_name,
-                ARRAY_AGG(DISTINCT COALESCE(account_move_line.date_maturity, account_move_line.date)) AS invoice_date,
+                ARRAY_AGG(DISTINCT COALESCE(move.invoice_date, account_move_line.date)) AS invoice_date,
                 ARRAY_AGG(DISTINCT account_move_line.currency_id) AS currency_id,
                 COUNT(account_move_line.id) AS aml_count,
                 ARRAY_AGG(account.code) AS account_code,
@@ -203,6 +204,7 @@ class report_account_bbc_aged_partner(models.AbstractModel):
 
             FROM {tables}
 
+            JOIN account_move move on move.id = account_move_line.move_id
             JOIN account_journal journal ON journal.id = account_move_line.journal_id
             JOIN account_account account ON account.id = account_move_line.account_id
             JOIN {currency_table} ON currency_table.company_id = account_move_line.company_id
@@ -224,12 +226,12 @@ class report_account_bbc_aged_partner(models.AbstractModel):
             JOIN period_table ON
                 (
                     period_table.date_start IS NULL
-                    OR COALESCE(account_move_line.date_maturity, account_move_line.date) <= DATE(period_table.date_start)
+                    OR COALESCE(move.invoice_date, account_move_line.date, account_move_line.date_maturity) <= DATE(period_table.date_start)
                 )
                 AND
                 (
                     period_table.date_stop IS NULL
-                    OR COALESCE(account_move_line.date_maturity, account_move_line.date) >= DATE(period_table.date_stop)
+                    OR COALESCE(move.invoice_date, account_move_line.date, account_move_line.date_maturity) >= DATE(period_table.date_stop)
                 )
 
             WHERE {where_clause}
