@@ -42,7 +42,7 @@
                         </thead>
                         <tbody>
                             <t t-if="o.line_ids">
-                                <tr t-foreach="o.line_ids.sorted(key=lambda x: (x.supply_method or '', x.product_id.default_code or ''))" t-as="line">
+                                <tr t-foreach="o.line_ids.sorted(key=lambda x: (x.supply_method or '', x.routing_name or '', x.product_id.default_code or ''))" t-as="line">
                                     <td>
                                         <div t-field="line.product_id"/>
                                         <br/>
@@ -132,7 +132,7 @@
                         </thead>
                         <tbody>
                             <t t-if="o.line_ids">
-                                <tr t-foreach="o.line_ids.sorted(key=lambda x: (x.supply_method or '', x.product_id.default_code or ''))" t-as="line">
+                                <tr t-foreach="o.line_ids.sorted(key=lambda x: (x.supply_method or '', x.routing_name or '', x.product_id.default_code or ''))" t-as="line">
                                     <td>
                                         <div t-field="line.product_id"/>
                                     </td>
