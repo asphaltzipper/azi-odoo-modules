@@ -30,7 +30,7 @@
                         <thead style="display:table-header-group;">
                             <tr>
                                 <th><strong>Product</strong></th>
-                                <th><strong>Type</strong></th>
+                                <th><strong>Material</strong></th>
                                 <th><strong>Method</strong></th>
                                 <th><strong class="text-center">Bin</strong></th>
                                 <th class="text-right"><strong>OnHand</strong></th>
@@ -49,7 +49,7 @@
                                         <div style="font-size:68%" t-esc="' | '.join(line.product_id.shelf_ids.sorted(key=name).mapped('name'))"/>
                                     </td>
                                     <td>
-                                        <span t-field="line.type"/>
+                                        <span t-field="line.material"/>
                                     </td>
                                     <td>
                                         <span t-field="line.supply_method"/>
@@ -121,7 +121,7 @@
                             <tr>
                                 <th><strong>Product</strong></th>
                                 <th><strong>Locations</strong></th>
-                                <th><strong>Type</strong></th>
+                                <th><strong>Material</strong></th>
                                 <th><strong>Method</strong></th>
                                 <th><strong class="text-center">Bin</strong></th>
                                 <th class="text-right"><strong>OnHand</strong></th>
@@ -140,7 +140,7 @@
                                         <div style="font-size:68%" t-esc="' | '.join(line.product_id.shelf_ids.sorted(key=name).mapped('name'))"/>
                                     </td>
                                     <td>
-                                        <span t-field="line.type"/>
+                                        <span t-field="line.material"/>
                                     </td>
                                     <td>
                                         <span t-field="line.supply_method"/>

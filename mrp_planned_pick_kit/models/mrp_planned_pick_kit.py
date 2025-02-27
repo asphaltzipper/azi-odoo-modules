@@ -132,6 +132,10 @@ class MrpPlannedPickKitLine(models.TransientModel):
     type = fields.Selection(
         related='product_id.type',
     )
+    material = fields.Char(
+        string='Material',
+        compute='_compute_material'
+    )
     supply_method = fields.Selection(
         selection=[('buy', 'Buy'),
                    ('none', 'Undefined'),
@@ -225,3 +229,9 @@ class MrpPlannedPickKitLine(models.TransientModel):
                 rec.onhand_qty = rec.product_qty + 1
                 rec.reserved_qty = 0.0
                 rec.available_qty = rec.product_qty + 1
+
+    @api.depends('product_id.rm_material_code', 'product_id.rm_gauge_code')
+    def _compute_material(self):
+        for rec in self:
+            material = [rec.product_id.rm_gauge_code or '', rec.product_id.rm_material_code or '']
+            rec.material = " ".join(material)
