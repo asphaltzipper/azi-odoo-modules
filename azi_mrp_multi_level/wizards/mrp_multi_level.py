@@ -417,6 +417,42 @@ class MultiLevelMrp(models.TransientModel):
                 })
             self.env.cr.commit()
 
+        # report manufacturing orders with earlier date
+        mo_sched_date_early = self._get_mo_sched_date_early()
+        if mo_sched_date_early:
+            for mo in mo_sched_date_early:
+                message = _(
+                    "MO date earlier than schedule date by %s days: %s / %s -- [%s] %s",
+                    mo['day_diff'],
+                    mo['mo_name'],
+                    mo['sr_name'],
+                    mo['default_code'],
+                    mo['prod_name'],
+                )
+                self.env['material.plan.log'].create({
+                    'type': 'error',
+                    'message': message,
+                })
+            self.env.cr.commit()
+
+        # report manufacturing orders with later date
+        mo_sched_date_late = self._get_mo_sched_date_late()
+        if mo_sched_date_late:
+            for mo in mo_sched_date_late:
+                message = _(
+                    "MO date later than schedule date by %s days: %s / %s -- [%s] %s",
+                    mo['day_diff'],
+                    mo['mo_name'],
+                    mo['sr_name'],
+                    mo['default_code'],
+                    mo['prod_name'],
+                )
+                self.env['material.plan.log'].create({
+                    'type': 'error',
+                    'message': message,
+                })
+            self.env.cr.commit()
+
         result = super(MultiLevelMrp, self).run_mrp_multi_level()
 
         exec_stop = time.time()
@@ -749,6 +785,68 @@ class MultiLevelMrp(models.TransientModel):
             for x in self.env.cr.fetchall()
         ]
         return sol_diff_prod
+
+    def _get_mo_sched_date_early(self):
+        sql = """
+            select
+                mp.name as mo_name,
+                sr.name as sr_name,
+                pp.default_code,
+                pt.name->>'en_US' as prod_name,
+                mp.date_planned_finished::date as mo_date,
+                sr.expected_date::date as sr_date,
+                abs(round((extract(epoch from mp.date_planned_finished::date) / 86400 - extract(epoch from sr.expected_date::date) / 86400)::decimal, 0)) as day_diff
+            from stock_request sr
+            left join mrp_production_stock_request_rel mpsrr on mpsrr.stock_request_id=sr.id
+            left join mrp_production mp on mp.id=mpsrr.mrp_production_id
+            left join product_product pp on pp.id=sr.product_id
+            left join product_template pt on pt.id=pp.product_tmpl_id
+            where sr.state in ('submitted', 'draft', 'open')
+            and mp.state in ('confirmed', 'progress')
+            and round((extract(epoch from mp.date_planned_finished::date) / 86400 - extract(epoch from sr.expected_date::date) / 86400)::decimal, 0)<0
+        """
+        self.env.cr.execute(sql)
+        mo_sched_diff = [{
+                'mo_name': x[0],
+                'sr_name': x[1],
+                'default_code': x[2],
+                'prod_name': x[3],
+                'so_date': x[4],
+                'sr_date': x[5],
+                'day_diff': x[6],
+            } for x in self.env.cr.fetchall()]
+        return mo_sched_diff
+
+    def _get_mo_sched_date_late(self):
+        sql = """
+            select
+                mp.name as mo_name,
+                sr.name as sr_name,
+                pp.default_code,
+                pt.name->>'en_US' as prod_name,
+                mp.date_planned_finished::date as mo_date,
+                sr.expected_date::date as sr_date,
+                abs(round((extract(epoch from mp.date_planned_finished::date) / 86400 - extract(epoch from sr.expected_date::date) / 86400)::decimal, 0)) as day_diff
+            from stock_request sr
+            left join mrp_production_stock_request_rel mpsrr on mpsrr.stock_request_id=sr.id
+            left join mrp_production mp on mp.id=mpsrr.mrp_production_id
+            left join product_product pp on pp.id=sr.product_id
+            left join product_template pt on pt.id=pp.product_tmpl_id
+            where sr.state in ('submitted', 'draft', 'open')
+            and mp.state in ('confirmed', 'progress')
+            and round((extract(epoch from mp.date_planned_finished::date) / 86400 - extract(epoch from sr.expected_date::date) / 86400)::decimal, 0)>0
+        """
+        self.env.cr.execute(sql)
+        mo_sched_diff = [{
+                'mo_name': x[0],
+                'sr_name': x[1],
+                'default_code': x[2],
+                'prod_name': x[3],
+                'so_date': x[4],
+                'sr_date': x[5],
+                'day_diff': x[6],
+            } for x in self.env.cr.fetchall()]
+        return mo_sched_diff
 
     def _get_expedite_mrp_inv(self):
         sql = """
