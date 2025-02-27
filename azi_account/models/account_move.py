@@ -88,3 +88,8 @@ class AccountMove(models.Model):
                 lambda line: set(line.tax_ids.mapped('id')) & retail_taxes)
             if len(retail_lines) > 1:
                 raise ValidationError(_('You should have only one retail tax applied per invoice'))
+
+    @api.onchange('invoice_date', 'move_type')
+    def _onchange_bill_date(self):
+        if self.move_type == 'in_invoice' and self.invoice_date:
+            self.date = self.invoice_date
