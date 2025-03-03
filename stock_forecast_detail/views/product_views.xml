@@ -20,14 +20,14 @@
                             </span>
                             <field name="uom_name" class="ml4"/>
                         </span>
-                        <span class="o_stat_text">Forecasted</span>
+                        <span class="o_stat_text">Planning</span>
                     </div>
                 </button>
             </button>
-            <button name="action_product_tmpl_forecast_report"
-                position="attributes">
-                <attribute name="invisible">1</attribute>
-            </button>
+<!--            <button name="action_product_tmpl_forecast_report"-->
+<!--                position="attributes">-->
+<!--                <attribute name="invisible">1</attribute>-->
+<!--            </button>-->
         </field>
     </record>
 
@@ -50,13 +50,13 @@
                             </span>
                             <field name="uom_name" class="ml4"/>
                         </span>
-                        <span class="o_stat_text">Forecasted</span>
+                        <span class="o_stat_text">Planning</span>
                     </div>
                 </button>
             </button>
-            <button name="action_product_forecast_report" position="attributes">
-                <attribute name="invisible">1</attribute>
-            </button>
+<!--            <button name="action_product_forecast_report" position="attributes">-->
+<!--                <attribute name="invisible">1</attribute>-->
+<!--            </button>-->
         </field>
     </record>
 

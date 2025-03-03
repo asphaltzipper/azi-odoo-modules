@@ -31,6 +31,8 @@ Unless Real-Only is specified, we also include the following:
         "views/stock_forecast_detail_line_views.xml",
         "views/product_views.xml",
         "views/mrp_inventory_views.xml",
+        "views/operations_forecast_detail_views.xml",
+        "views/mrp_bom_views.xml",
         "wizards/stock_forecast_detail_views.xml",
     ],
     "installable": True,

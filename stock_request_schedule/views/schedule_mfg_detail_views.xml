@@ -10,13 +10,14 @@
                 <field name="stock_request_id"/>
                 <field name="expected_date" widget="date"/>
                 <field name="top_prod_id" optional="hide"/>
-                <field name="top_tmpl_id"/>
+                <field name="top_tmpl_id" optional="hide"/>
                 <field name="config_code"/>
                 <field name="product_id" optional="hide"/>
                 <field name="product_tmpl_id" optional="hide"/>
                 <field name="bom_id" optional="hide"/>
+                <field name="code_path" optional="hide"/>
                 <field name="workcenter_id"/>
-                <field name="status"/>
+                <field name="status" optional="hide"/>
                 <field name="multiplied_qty"/>
                 <field name="time_cycle" string="Hours"/>
             </tree>
@@ -29,6 +30,7 @@
         <field name="arch" type="xml">
             <search string="Schedule MFG Detail Filter">
                 <field name="stock_request_id" string="Stock Request Number"/>
+                <field name="workcenter_id" string="Workcenter" filter_domain="[('workcenter_id.name','ilike',self)]"/>
                 <field name="top_prod_id" string="Scheduled Variant" filter_domain="['|',('top_prod_id.default_code','ilike',self),('top_prod_id.name','ilike',self)]"/>
                 <field name="product_id" string="Sub Product" filter_domain="['|',('product_id.default_code','ilike',self),('product_id.name','ilike',self)]"/>
                 <filter string="Draft" name="draft" domain="[('status','=','Draft')]"/>
@@ -52,7 +54,6 @@
         <field name="search_view_id" ref="schedule_mfg_detail_search_view"/>
         <field name="context">{
                 'search_default_workcenter': 1,
-                'search_default_planned_week': 1,
         }</field>
         <field name="help" type="html">
           <p>

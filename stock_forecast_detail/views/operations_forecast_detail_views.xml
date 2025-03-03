@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="operations_recursion_line_tree_view" model="ir.ui.view">
+        <field name="name">operations.recursion.line.tree.view</field>
+        <field name="model">operations.recursion.line</field>
+        <field name="priority" eval="6"/>
+        <field name="arch" type="xml">
+            <tree string="Operations Detail">
+                <field name="top_product_id" optional="hide"/>
+                <field name="product_id"/>
+                <field name="workcenter_id"/>
+                <field name="code_path" optional="hide"/>
+                <field name="bom_id" optional="hide"/>
+                <field name="multiplied_qty"/>
+                <field name="time_cycle" string="Hours"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="operations_recursion_line_search_view">
+        <field name="name">operations.recursion.line.search.view</field>
+        <field name="model">operations.recursion.line</field>
+        <field name="arch" type="xml">
+            <search string="Operations Detail Filter">
+                <field name="product_id" string="Sub Product" filter_domain="['|',('product_id.default_code','ilike',self),('product_id.name','ilike',self)]"/>
+                <field name="workcenter_id" string="Workcenter" filter_domain="[('workcenter_id.name','ilike',self)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_workcenter" string="Workcenter" domain="[]" context="{'group_by':'workcenter_id'}"/>
+                    <filter name="group_product_id" string="Product" domain="[]" context="{'group_by':'product_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_operations_recursion_line_tree" model="ir.actions.act_window">
+        <field name="name">Operations Detail</field>
+        <field name="res_model">operations.recursion.line</field>
+        <field name="view_mode">tree</field>
+        <field name="search_view_id" ref="operations_recursion_line_search_view"/>
+        <field name="context">{
+                'search_default_group_workcenter': 1,
+        }</field>
+        <field name="help" type="html">
+          <p>
+            Create some operations to see data here.
+          </p>
+        </field>
+    </record>
+
+</odoo>

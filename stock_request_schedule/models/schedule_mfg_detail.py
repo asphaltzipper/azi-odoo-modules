@@ -44,7 +44,7 @@ class ScheduleMfgDetail(models.Model):
     status = fields.Char(
         string="Status",
     )
-    path_code = fields.Char(
+    code_path = fields.Char(
         string="BOM Path",
     )
     time_cycle = fields.Float(
@@ -63,7 +63,7 @@ class ScheduleMfgDetail(models.Model):
 
     def init(self):
         tools.drop_view_if_exists(self.env.cr, 'schedule_mfg_detail')
-        self.env.cr.execute("""
+        sql = """
 CREATE VIEW schedule_mfg_detail AS (
     with recursive default_bom as (
         select distinct on (product_id) *
@@ -164,7 +164,7 @@ CREATE VIEW schedule_mfg_detail AS (
         mrw.workcenter_id,
         b.mult_qty as multiplied_qty,
         sn.sel_name as status,
-        b.code_path as path_code,
+        b.code_path,
         coalesce(wd.avg_duration_unit, 0) * b.mult_qty / 60 as time_cycle
     from bom_path as b
     left join clean_bom as cb on cb.parent_prod_id=b.parent_id and cb.comp_prod_id=b.comp_id
@@ -179,4 +179,5 @@ CREATE VIEW schedule_mfg_detail AS (
     and coalesce(db."type", '')<>'phantom'
     order by b.code_path, mrw.sequence
 )
-        """, {'avg_len': 10})
+        """
+        self.env.cr.execute(sql, {'avg_len': 10})
