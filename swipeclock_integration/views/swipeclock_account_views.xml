@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="view_swipeclock_account_form" model="ir.ui.view">
+        <field name="name">swipeclock.account.form</field>
+        <field name="model">swipeclock.account</field>
+        <field name="arch" type="xml">
+            <form string="SwipeClock Account">
+                <header>
+                    <button name="action_import" string="Import Timecards" class="oe_highlight"
+                            type="object" groups="hr_attendance.group_hr_attendance_manager"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="site_id"/>
+                            <field name="user_secret"/>
+                            <field name="auth_url"/>
+                            <field name="api_url"/>
+                            <field name="audit_buffer_days"/>
+                        </group>
+                        <group>
+                            <field name="employee_group"/>
+                            <field name="minimum_begin_date"/>
+                            <field name="last_begin_date"/>
+                            <field name="last_import_date"/>
+                            <field name="last_success"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_swipeclock_account_tree" model="ir.ui.view">
+        <field name="name">swipeclock.account.tree</field>
+        <field name="model">swipeclock.account</field>
+        <field name="arch" type="xml">
+            <tree string="Swipeclock Accounts">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_swipeclock_log_tree" model="ir.ui.view">
+        <field name="name">swipeclock.log.tree</field>
+        <field name="model">swipeclock.log</field>
+        <field name="arch" type="xml">
+            <tree string="Swipeclock Import Log">
+                <field name="account_id" optional="hide"/>
+                <field name="create_date"/>
+                <field name="create_uid"/>
+                <field name="success"/>
+                <field name="begin_date" widget="date"/>
+                <field name="employee_count"/>
+                <field name="punch_count"/>
+                <field name="message"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_swipeclock_log_form" model="ir.ui.view">
+        <field name="name">swipeclock.log.form</field>
+        <field name="model">swipeclock.log</field>
+        <field name="arch" type="xml">
+            <form string="Swipeclock Import Log">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="account_id"/>
+                            <field name="create_date"/>
+                            <field name="success"/>
+                            <field name="message"/>
+                        </group>
+                        <group>
+                            <field name="create_uid"/>
+                            <field name="begin_date"/>
+                            <field name="employee_count"/>
+                            <field name="punch_count"/>
+                        </group>
+                    </group>
+                    <field name="details"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_swipeclock_account_form" model="ir.actions.act_window">
+        <field name="name">Swipeclock Accounts</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">swipeclock.account</field>
+        <field name="view_id" ref="view_swipeclock_account_tree"/>
+    </record>
+
+    <record id="action_swipeclock_log_tree" model="ir.actions.act_window">
+        <field name="name">Swipeclock Log</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">swipeclock.log</field>
+        <field name="view_id" ref="view_swipeclock_log_tree"/>
+    </record>
+
+
+    <menuitem
+        id="menu_hr_attendance_configuration"
+        name="Configuration"
+        parent="hr_attendance.menu_hr_attendance_root"
+        groups="hr_attendance.group_hr_attendance_manager"
+        sequence="99"/>
+
+    <record model="ir.ui.menu" id="hr_attendance.menu_hr_attendance_settings">
+        <field name="name">Settings</field>
+        <field name="sequence">2</field>
+        <field name="parent_id" ref="swipeclock_integration.menu_hr_attendance_configuration"/>
+    </record>
+
+    <menuitem
+        id="menu_swipeclock_account"
+        name="Swipeclock Accounts"
+        parent="swipeclock_integration.menu_hr_attendance_configuration"
+        action="action_swipeclock_account_form"
+        groups="hr_attendance.group_hr_attendance_manager"
+        sequence="3"/>
+
+    <menuitem
+        id="menu_swipeclock_log"
+        name="Swipeclock Import Log"
+        parent="swipeclock_integration.menu_hr_attendance_configuration"
+        action="action_swipeclock_log_tree"
+        groups="hr_attendance.group_hr_attendance_manager"
+        sequence="4"/>
+
+</odoo>

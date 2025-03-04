@@ -1,0 +1,3 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_swipeclock_account,access.swipeclock.account,model_swipeclock_account,hr_attendance.group_hr_attendance_manager,1,1,1,1
+access_swipeclock_log,access.swipeclock.log,model_swipeclock_log,hr_attendance.group_hr_attendance_manager,1,1,1,1
