@@ -47,7 +47,7 @@ class InventoryImport(models.TransientModel):
         inventory.action_state_to_in_progress()
         for quant in inventory.stock_quant_ids:
             qty_to_adjust = product_adjustment.get(quant.product_id.id)
-            if qty_to_adjust:
+            if qty_to_adjust or qty_to_adjust == 0:
                 quant.inventory_quantity = qty_to_adjust
         view_id = self.env.ref('stock_inventory.view_inventory_group_form').id
         return {
