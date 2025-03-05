@@ -60,11 +60,13 @@ class SwipeclockAccount(models.Model):
     )
     last_import_date = fields.Datetime(
         string="Last Import Date",
+        readonly=True,
     )
     last_success = fields.Boolean(
         string="Success",
         required=True,
         default=False,
+        readonly=True,
         help="Latest import attempt was successful",
     )
     log_ids = fields.One2many(
@@ -133,8 +135,8 @@ class SwipeclockAccount(models.Model):
         domain = [('swipeclock_ref', '!=', False)]
         if employee_codes:
             domain.append(('swipeclock_ref', 'in', employee_codes))
-        odoo_employees = self.env['hr.employee'].search(domain)
-        employees_by_ref = {x.swipeclock_ref: x for x in odoo_employees}
+        employees = self.env['hr.employee'].with_context(active_test=False).search(domain)
+        employees_by_ref = {x.swipeclock_ref: x for x in employees}
 
         # get SwipeClock employees
         headers = {
