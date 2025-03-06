@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="report_saleorder_document_azi" inherit_id="sale.report_saleorder_document">
+    <xpath expr="//div[hasclass('page')]/div[last()]" position="after">
+        <div t-if="doc.lot_ids">
+            <br/>
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Related Serials</th>
+                        <th>Product</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="doc.lot_ids" t-as="lot">
+                        <tr>
+                            <td>
+                                <t t-esc="lot.name"/>
+                            </td>
+                            <td>
+                                <t t-esc="lot.product_id.display_name"/>
+                            </td>
+                        </tr>
+                    </t>
+                </tbody>
+            </table>
+        </div>
+    </xpath>
+</template>
+</odoo>

@@ -6,7 +6,7 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-            <field name="partner_shipping_id" position="after">
+            <group name="partner_comment" position="before">
                 <div colspan="2">
                     <field name="lot_ids" context="{'search_default_partner_id': partner_id}" nolabel="1">
                         <tree>
@@ -15,7 +15,7 @@
                         </tree>
                     </field>
                 </div>
-            </field>
+            </group>
             <field name="partner_id" position="attributes">
                 <attribute name="domain">[('parent_id', '=', False)]</attribute>
             </field>
