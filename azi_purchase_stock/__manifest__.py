@@ -13,7 +13,7 @@
     "website": "http://www.github.com/asphaltzipper",
     "depends": [
         "purchase_stock",
-        "mrp_multi_level",
+        "azi_mrp_multi_level",
     ],
     "data": [
     ],
