@@ -32,11 +32,11 @@ class MonthlyInventoryReport(models.Model):
                 im.reference,
                 sl.name as curr_loc,
                 coalesce(prp.name, rp.name) as customer,
-                case 
-                    when fsm.sml_id=im.sml_id then true else false 
-                end as orig_build, 
-                case 
-                    when wa.product_product_id is not null then 1 else 0 
+                case
+                    when fsm.sml_id=im.sml_id then true else false
+                end as orig_build,
+                case
+                    when wa.product_product_id is not null then 1 else 0
                 end as wa_unit
             from (
                 -- inbound move 
@@ -55,17 +55,17 @@ class MonthlyInventoryReport(models.Model):
                     'FG - Water System',
                     'FG - Shift Tilt',
                     'FG - CS Non Production'
-                    ) 
+                    )
                 )
-                and sml.location_id=(select id from stock_location where name='Production')
-                and sml.location_dest_id=(select id from stock_location where name='Stock')
+                and sml.location_id in (select id from stock_location where usage='production')
+                and sml.location_dest_id in (select id from stock_location where usage='internal')
                 and (pt.name ->> 'en_US') not ilike '%generic%'
             ) as im
             left join stock_lot spl on spl.id=im.lot_id
             left join product_product pp on pp.id=spl.product_id
             left join product_template pt on pt.id=pp.product_tmpl_id left join product_category pc on pc.id=pt.categ_id
             left join (
-                -- last move (probably outbound, but not necessarily) 
+                -- last move (probably outbound, but not necessarily)
                 select distinct on (lot_id)
                     sml.lot_id,
                     sm.date, sm.location_dest_id
@@ -73,9 +73,9 @@ class MonthlyInventoryReport(models.Model):
                 left join stock_move sm on sm.id=sml.move_id where sml.lot_id is not null
                 and sm.state='done'
                 order by sml.lot_id, sm.date desc
-            ) as om on om.lot_id=im.lot_id 
+            ) as om on om.lot_id=im.lot_id
             left join (
-                -- first move (should always be inbound) 
+                -- first move (should always be inbound)
                 select distinct on (spl.name)
                     spl.name as serial_name, sml.lot_id,
                     sml.id as sml_id, sm.date as move_date, sml.location_id, sml.location_dest_id
