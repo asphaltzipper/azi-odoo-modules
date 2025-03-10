@@ -2,7 +2,7 @@
 <odoo>
 <template id="report_saleorder_document_azi" inherit_id="sale.report_saleorder_document">
     <xpath expr="//div[hasclass('page')]/div[last()]" position="after">
-        <div t-if="doc.lot_ids">
+        <div t-if="doc.related_lot_ids">
             <br/>
             <table class="table table-sm">
                 <thead>
@@ -12,7 +12,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <t t-foreach="doc.lot_ids" t-as="lot">
+                    <t t-foreach="doc.related_lot_ids" t-as="lot">
                         <tr>
                             <td>
                                 <t t-esc="lot.name"/>
