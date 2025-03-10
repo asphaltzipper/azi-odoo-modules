@@ -92,11 +92,12 @@
                     </field>
                 </page>
                 <page name="sales" string="Sales">
-                    <field name="sale_order_ids" context="{'default_partner_id': partner_id}">
-                        <tree>
+                    <field name="related_sale_ids" readonly="0">
+                        <tree editable="bottom">
                             <field name="name"/>
                             <field name="date_order"/>
                             <field name="partner_id"/>
+                            <field name="company_id" invisible="1"/>
                             <field name="partner_shipping_id"/>
                             <field name="state"/>
                             <field name="invoice_status"/>

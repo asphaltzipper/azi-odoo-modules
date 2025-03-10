@@ -8,7 +8,7 @@
         <field name="arch" type="xml">
             <group name="partner_comment" position="before">
                 <div colspan="2">
-                    <field name="lot_ids" context="{'search_default_partner_id': partner_id}" nolabel="1">
+                    <field name="related_lot_ids" context="{'search_default_partner_id': partner_id}" nolabel="1">
                         <tree>
                             <field name="name" string="Related Serials"/>
                             <field name="product_id"/>

@@ -2,7 +2,7 @@
 
 {
     "name": "Serial CRM",
-    "version": "16.0.1.0.0",
+    "version": "16.0.2.0.0",
     "summary": "Extra Info for Serialized Products",
     "category": "Inventory",
     "author": "Chris Emigh",

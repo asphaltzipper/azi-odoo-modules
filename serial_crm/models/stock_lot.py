@@ -75,9 +75,14 @@ class StockLot(models.Model):
              "Lost/Scrapped: SERIAL moved to inventory loss or scrap location\n"
              "Lot: multi-unit lot")
 
-    sale_order_ids = fields.Many2many(
+    related_sale_ids = fields.Many2many(
         comodel_name='sale.order',
-        string="Sale Orders")
+        relation='related_sale_order_stock_lot_rel',
+        column1='stock_lot_id',
+        column2='sale_order_id',
+        string="Sale Orders",
+        readonly=False,
+    )
 
     current_hours = fields.Float(
         compute='_compute_current_hours',
