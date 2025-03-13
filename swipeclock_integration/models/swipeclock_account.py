@@ -8,6 +8,9 @@ from odoo.exceptions import UserError, ValidationError
 from datetime import date, datetime, UTC, timedelta
 from dateutil.relativedelta import relativedelta
 import jwt
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 # assume 2 pay periods per month, spanning from the 1st to the 15th and from the
@@ -183,7 +186,7 @@ class SwipeclockAccount(models.Model):
         # check for unknown swipeclock employees
         sw_employee_codes = [x['EmployeeCode'] for x in swipeclock_employees]
         new_employee_codes = set(sw_employee_codes) - set(employees_by_ref.keys())
-        if new_employee_codes:
+        if len(new_employee_codes):
             employee_infos = []
             for emp in swipeclock_employees:
                 if emp["EmployeeCode"] in new_employee_codes:
@@ -270,7 +273,7 @@ class SwipeclockAccount(models.Model):
             final_begin_date = date.today().replace(day=1)
         elif datetime.today().day > self.audit_buffer_days:
             # the 16th of last month
-            final_begin_date = date.today().replace(day=15) - relativedelta(months=1)
+            final_begin_date = date.today().replace(day=16) - relativedelta(months=1)
         else:
             # first day of last month
             final_begin_date = date.today().replace(day=1) - relativedelta(months=1)
@@ -383,6 +386,11 @@ class SwipeclockAccount(models.Model):
                         else:
                             punched_employees[employee.id] = 1
 
+            _logger.info(_(
+                "Imported period beginning %s",
+                current_begin_date.strftime("%Y-%m-%d")
+            ))
+
             # increment to the beginning date of the next pay period
             if current_begin_date.day < 16:
                 period_dates_log.append(
@@ -431,3 +439,8 @@ class SwipeclockAccount(models.Model):
             "message": "Timecard import completed successfully",
             "details": "Imported timecards for periods:\n%s" % "\n".join(period_dates_log)
         })
+
+    def _cron_run_import(self):
+        account = self.search([])[:1]
+        if account:
+            account.action_import()

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="mrp_attendance_compare_tree_view" model="ir.ui.view">
+        <field name="name">mrp.attendance.compare.tree.view</field>
+        <field name="model">mrp.attendance.compare</field>
+        <field name="priority" eval="6"/>
+        <field name="arch" type="xml">
+            <tree string="MRP Attendance Comparison">
+                <field name="user_id" optional="hide"/>
+                <field name="employee_id"/>
+                <field name="department_id" optional="hide"/>
+                <field name="job_id" optional="hide"/>
+                <field name="workcenter_id"/>
+                <field name="entry_date"/>
+                <field name="punch_hours"/>
+                <field name="work_hours"/>
+                <field name="effectiveness"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="mrp_attendance_compare_search_view" model="ir.ui.view">
+        <field name="name">mrp.attendance.compare.search.view</field>
+        <field name="model">mrp.attendance.compare</field>
+        <field name="arch" type="xml">
+            <search string="MRP Attendance Comparison">
+                <field name="employee_id"/>
+                <field name="workcenter_id"/>
+                <field name="department_id"/>
+                <field name="job_id"/>
+                <group expand="0" string="Group By">
+                    <filter name="employee" string="Employee" domain="[]" context="{'group_by':'employee_id'}"/>
+                    <filter name="workcenter" string="Workcenter" domain="[]" context="{'group_by':'workcenter_id'}"/>
+                    <filter name="entry_date" string="Date" domain="[]" context="{'group_by':'entry_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_mrp_attendance_compare_tree" model="ir.actions.act_window">
+        <field name="name">MRP Attendance Comparison</field>
+        <field name="res_model">mrp.attendance.compare</field>
+        <field name="view_mode">tree</field>
+        <field name="search_view_id" ref="mrp_attendance_compare_search_view"/>
+        <field name="context">{
+                'search_default_employee': 1,
+                'search_default_workcenter': 1,
+        }</field>
+        <field name="help" type="html">
+          <p>
+            Workorder time and attendance punches supply the data for this view.
+          </p>
+        </field>
+    </record>
+
+    <menuitem
+        id="menu_mrp_attendance_compare"
+        name="MRP Attendance Comparison"
+        parent="mrp.menu_mrp_reporting"
+        action="action_mrp_attendance_compare_tree"
+        sequence="77"
+    />
+
+</odoo>

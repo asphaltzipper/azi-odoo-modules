@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_employee_mrp_attendance_form" model="ir.ui.view">
+        <field name="name">hr.employee.form</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <page name="hr_settings" position="after">
+                <page name="workcenter_distribution" string="Workcenters">
+                    <field
+                        name="workcenter_distribution_ids"
+                        context="{'default_employee_id': context.get('employee_id', active_id)}"
+                    >
+                        <tree>
+                            <field name="employee_id" invisible="1"/>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                            <field name="total_distribution"/>
+                            <field name="line_ids" widget="many2many_tags"/>
+                        </tree>
+                        <form string="Workcenter Time Distribution">
+                            <group>
+                                <field name="employee_id" invisible="1"/>
+                                <field name="start_date"/>
+                                <field name="end_date"/>
+                                <field name="total_distribution"/>
+                            </group>
+                            <field name="line_ids">
+                                <tree editable="bottom">
+                                    <field name="ewd_id" invisible="1"/>
+                                    <field name="workcenter_id"/>
+                                    <field name="distribution"/>
+                                </tree>
+                            </field>
+                        </form>
+                    </field>
+                </page>
+            </page>
+        </field>
+    </record>
+
+    <record id="view_mrp_attendance_employee_tree" model="ir.ui.view">
+        <field name="name">hr.mrp.attendance.employee.tree</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_tree"/>
+        <field name="arch" type="xml">
+            <field name="job_id" position="after">
+                <field name="current_attendance_workcenter_dist" optional="hide"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>

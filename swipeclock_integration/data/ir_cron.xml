@@ -8,10 +8,10 @@
         <field name="numbercall">-1</field>
         <field name="priority">5</field>
         <field name="state">code</field>
-        <field name="code">model.action_import()</field>
+        <field name="code">model._cron_run_import()</field>
         <field name="doall" eval="False"/>
         <field name="active" eval="True"/>
-        <field name="nextcall" eval="(DateTime.now().replace(day=5) + relativedelta(months=1)).strftime('%Y-%m-%d 04:00:00')" />
+        <field name="nextcall" eval="(DateTime.now().day&lt;5 and DateTime.now().replace(day=5) or DateTime.now().replace(day=5) + relativedelta(months=1)).strftime('%Y-%m-%d 04:00:00')" />
     </record>
     <record id="cron_swipeclock_import_p2" model="ir.cron">
         <field name="name">SwipeClock Period 2 Timecard Import</field>
@@ -21,9 +21,9 @@
         <field name="numbercall">-1</field>
         <field name="priority">5</field>
         <field name="state">code</field>
-        <field name="code">model.action_import()</field>
+        <field name="code">model._cron_run_import()</field>
         <field name="doall" eval="False"/>
         <field name="active" eval="True"/>
-        <field name="nextcall" eval="(DateTime.now().replace(day=20) + relativedelta(months=1)).strftime('%Y-%m-%d 04:00:00')" />
+        <field name="nextcall" eval="(DateTime.now().day&lt;20 and DateTime.now().replace(day=20) or DateTime.now().replace(day=20) + relativedelta(months=1)).strftime('%Y-%m-%d 04:00:00')" />
     </record>
 </odoo>

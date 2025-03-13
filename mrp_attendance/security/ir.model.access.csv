@@ -1,0 +1,4 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_employee_workcenter_distribution,access.employee.workcenter.distribution,model_employee_workcenter_distribution,hr_attendance.group_hr_attendance_manager,1,1,1,1
+access_employee_workcenter_distribution_line,access.employee.workcenter.distribution.line,model_employee_workcenter_distribution_line,hr_attendance.group_hr_attendance_manager,1,1,1,1
+access_mrp_attendance_compare,access.mrp.attendance.compare,model_mrp_attendance_compare,hr_attendance.group_hr_attendance_manager,1,0,0,0
