@@ -10,6 +10,7 @@
                        context="{'default_retail_tax':True}"/>
                 <field name="tax_totals_report" invisible="1"/>
             </xpath>
+            <xpath expr="//div[hasclass('o_attachment_preview')]" position="replace"/>
         </field>
     </record>
 
