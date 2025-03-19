@@ -117,12 +117,12 @@
                             <div class="row">
                                 <div class="col-8">
                                     <span t-if="record.sold.raw_value == true">
-                                        <span t-attf-class="badge badge-primary">Sold</span>
+                                        <span t-attf-class="badge text-bg-primary">Sold</span>
                                     </span>
                                     <span t-else="">
-                                        <span t-attf-class="badge badge-info">Stock</span>
+                                        <span t-attf-class="badge text-bg-info">Stock</span>
                                     </span>
-                                    <span t-attf-class="badge #{['draft'].indexOf(record.state.raw_value) > -1 ? 'badge-danger' : ['submitted'].indexOf(record.state.raw_value) > -1 ? 'badge-warning' : ['open'].indexOf(record.state.raw_value) > -1 ? 'badge-success' : 'badge-secondary'}">
+                                    <span t-attf-class="badge #{['draft'].indexOf(record.state.raw_value) > -1 ? 'text-bg-danger' : ['submitted'].indexOf(record.state.raw_value) > -1 ? 'text-bg-warning' : ['open'].indexOf(record.state.raw_value) > -1 ? 'text-bg-success' : 'text-bg-secondary'}">
                                         <t t-esc="record.state.value"/>
                                     </span>
                                 </div>

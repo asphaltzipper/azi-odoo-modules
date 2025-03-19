@@ -74,14 +74,17 @@ class MrpPlannedPickKit(models.TransientModel):
             else:
                 rec.no_batch = rec.product_id.mrp_area_ids[0].mrp_nbr_days == 0
 
-    @api.constrains('product_qty', 'no_batch')
-    def _check_no_batch_quantity(self):
-        if self.no_batch and self.product_qty > 1.0:
-            raise ValidationError(_("Attempting to create a kit for quantity %s:\n"
-                                    "This product cannot be produced in "
-                                    "batches. Set the kit quantity to 1.0, "
-                                    "or change MRP Area demand grouping (Nbr. Days)." % self.product_qty))
-        return True
+    # We decided to allow kits to be made for batches, even if the planning doesn't do
+    # demand grouping.
+    # TODO: eliminate the no-batch constraint, or find some purpose for it
+    # @api.constrains('product_qty', 'no_batch')
+    # def _check_no_batch_quantity(self):
+    #     if self.no_batch and self.product_qty > 1.0:
+    #         raise ValidationError(_("Attempting to create a kit for quantity %s:\n"
+    #                                 "This product cannot be produced in "
+    #                                 "batches. Set the kit quantity to 1.0, "
+    #                                 "or change MRP Area demand grouping (Nbr. Days)." % self.product_qty))
+    #     return True
 
     def action_toggle_images(self):
         self.ensure_one()

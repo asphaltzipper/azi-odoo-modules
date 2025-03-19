@@ -20,3 +20,7 @@ class ProductMrpArea(models.Model):
     mrp_qty_multiple = fields.Integer(
         tracking=True,
     )
+    mrp_planner_id = fields.Many2one(
+        related="product_id.responsible_id",
+        store=True,
+    )

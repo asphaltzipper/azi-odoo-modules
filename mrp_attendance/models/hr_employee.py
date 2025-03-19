@@ -19,7 +19,7 @@ class Employee(models.Model):
     def _compute_current_attendance_workcenter_dist(self):
         for rec in self:
             rec.current_attendance_workcenter_dist = (
-                rec.workcenter_distribution_ids
-                and rec.workcenter_distribution_ids[-1].total_distribution
+                rec.sudo().workcenter_distribution_ids
+                and rec.sudo().workcenter_distribution_ids[-1].total_distribution
                 or 0
             )
