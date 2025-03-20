@@ -56,7 +56,7 @@ class SaleOrder(models.Model):
         for order in self:
             if order.order_line.filtered(lambda x: x.qty_delivered):
                 raise UserError("Can't cancel orders with lines that have been delivered")
-        return super(SaleOrder, self).action_cancel()
+        return super(SaleOrder, self.with_context(disable_cancel_warning=True)).action_cancel()
 
     @api.returns('self', lambda value: value.id)
     def copy(self, default=None):
