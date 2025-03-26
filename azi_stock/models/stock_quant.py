@@ -8,7 +8,7 @@ from odoo.exceptions import ValidationError
 class StockQuant(models.Model):
     _inherit = "stock.quant"
 
-    inventory_value = fields.Float('Inventory Value')
+    inventory_value = fields.Float('Unit Value')
     category_id = fields.Many2one(
         comodel_name='product.category',
         related='product_id.categ_id',
