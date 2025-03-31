@@ -14,7 +14,8 @@ class MrpBom(models.Model):
     # I thought integer fields could not be null?
     # okay, make the default one
     sequence = fields.Integer(default=1)
-    type = fields.Selection(tracking=True,)
+    type = fields.Selection(tracking=True)
+    consumption = fields.Selection(default='flexible')
 
     def ext_explode(self, product_id, quantity, deep=False):
         """
