@@ -200,7 +200,7 @@
                                     <td>
                                         <div t-field="line.product_id"/>
                                         <br/>
-                                        <div style="font-size:68%" t-esc="' | '.join(line.product_id.shelf_ids.sorted(key=lambda x: name).mapped('name'))"/>
+                                        <div style="font-size:68%" t-esc="' | '.join(line.product_id.shelf_ids.sorted(key=lambda x: x.name).mapped('name'))"/>
                                     </td>
                                     <td class="text-right">
                                         <span t-field="line.product_uom_qty"/>
