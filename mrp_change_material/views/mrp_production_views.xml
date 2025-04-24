@@ -16,9 +16,11 @@
             </xpath>
             <xpath expr="//page/field[@name='move_raw_ids']/tree/field[@name='product_uom'][2]" position="attributes">
                 <attribute name="readonly">1</attribute>
+                <attribute name="force_save">1</attribute>
             </xpath>
             <xpath expr="//page/field[@name='move_raw_ids']/tree/field[@name='product_uom_qty']" position="attributes">
                 <attribute name="readonly">1</attribute>
+                <attribute name="force_save">1</attribute>
             </xpath>
             <xpath expr="//page/field[@name='move_raw_ids']/tree/field[@name='quantity_done']" position="after">
                 <field name="added_rm" readonly="1" string="Added"/>
