@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_mrp_inventory_history_form" model="ir.ui.view">
+        <field name="name">view.mrp.inventory.history.tree</field>
+        <field name="model">mrp.inventory.history</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false">
+                <field name="product_mrp_area_id"/>
+                <field name="date"/>
+                <field name="bucket"/>
+                <field name="supply_method"/>
+                <field name="to_expedite"/>
+                <field name="on_blanket"/>
+                <field name="e_kanban"/>
+                <field name="kit_qty"/>
+                <field name="routing_name"/>
+                <field name="deprecated"/>
+                <field name="to_procure"/>
+                <field name="order_count"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_mrp_inventory_history_graph" model="ir.ui.view">
+            <field name="name">view.mrp.inventory.history.graph</field>
+            <field name="model">mrp.inventory.history</field>
+            <field name="arch" type="xml">
+                <graph string="Inventory History" sample="1">
+                    <field name="date"/>
+                    <field name="bucket"/>
+                    <field name="routing_name"/>
+                </graph>
+            </field>
+        </record>
+    <record id="mrp_inventory_history_action" model="ir.actions.act_window">
+        <field name="name">MRP Inventory History</field>
+        <field name="res_model">mrp.inventory.history</field>
+        <field name="view_mode">tree,graph</field>
+    </record>
+    <menuitem id="mrp_inventory_history_menu" action="mrp_inventory_history_action" parent="mrp.menu_mrp_reporting"/>
+</odoo>

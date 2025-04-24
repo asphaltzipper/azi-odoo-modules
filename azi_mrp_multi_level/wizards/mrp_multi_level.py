@@ -285,12 +285,64 @@ class MultiLevelMrp(models.TransientModel):
         self.env['material.plan.log'].create({'type': 'info', 'message': message})
         self.env.cr.commit()
 
+    def _create_mrp_inventory_history(self):
+        message = "Start MRP Inventory History"
+        self.env['material.plan.log'].create({'type': 'info', 'message': message})
+        self.env.cr.commit()
+        mrp_area_ids = self.mrp_area_ids.ids
+        self.env.cr.execute("""
+            DELETE FROM mrp_inventory_history WHERE date = CURRENT_DATE
+        """)
+        self.env.cr.commit()
+        self.env.cr.execute("""
+            INSERT INTO mrp_inventory_history
+                (product_mrp_area_id, date, bucket, supply_method, to_expedite, on_blanket,
+                kit_qty, routing_name, deprecated, to_procure)
+                   
+            SELECT 
+                i.product_mrp_area_id as product_mrp_area_id,
+                CURRENT_DATE as date,
+                CASE
+                WHEN m.order_release_date <= CURRENT_DATE + INTERVAL '7 days' THEN 'week1'
+                WHEN m.order_release_date > CURRENT_DATE + INTERVAL '7 days'
+                     AND m.order_release_date <= CURRENT_DATE + INTERVAL '14 days' THEN 'week2'
+                WHEN m.order_release_date > CURRENT_DATE + INTERVAL '14 days' THEN 'week3'
+                END AS bucket,
+                i.supply_method as supply_method,
+                i.to_expedite as to_expedite,
+                i.on_blanket as on_blanket,
+                pp.mfg_kit_qty as kit_qty,
+                i.routing_name as routing_name,
+                i.deprecated,
+                m.mrp_qty as to_procure
+            FROM mrp_inventory as i
+            LEFT JOIN product_mrp_area as p
+                ON i.product_mrp_area_id = p.id
+            LEFT JOIN product_product as pp
+                ON i.product_id = pp.id
+            LEFT JOIN mrp_planned_order as m 
+                ON m.product_mrp_area_id = p.id
+            WHERE i.mrp_area_id in %s and to_procure > 0
+            GROUP BY i.product_mrp_area_id, i.supply_method, i.to_expedite,
+                i.on_blanket, pp.mfg_kit_qty, i.routing_name, i.deprecated, m.mrp_qty,
+                CASE
+                    WHEN m.order_release_date <= CURRENT_DATE + INTERVAL '7 days' THEN 'week1'
+                    WHEN m.order_release_date > CURRENT_DATE + INTERVAL '7 days'
+                         AND m.order_release_date <= CURRENT_DATE + INTERVAL '14 days' THEN 'week2'
+                    WHEN m.order_release_date > CURRENT_DATE + INTERVAL '14 days' THEN 'week3'
+                END
+        """, (tuple(mrp_area_ids),))
+        self.env.cr.commit()
+        message = "End MRP Inventory History"
+        self.env['material.plan.log'].create({'type': 'info', 'message': message})
+        self.env.cr.commit()
+
     def run_mrp_multi_level(self):
         exec_start = time.time()
         message = "MRP run started by user %s" % self.env.user.display_name
         self.env['material.plan.log'].create({'type': 'info', 'message': message})
         self.env.cr.commit()
-
+        self._create_mrp_inventory_history()
         # report products with no product_mrp_area record
         no_pma_products = self._get_products_missing_pma()
         if no_pma_products:

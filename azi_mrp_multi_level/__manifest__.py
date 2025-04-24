@@ -26,6 +26,7 @@ AZI MRP Multi Level
         'views/material_plan_log_views.xml',
         'views/product_mrp_area_views.xml',
         'views/mrp_planned_order_views.xml',
+        'views/mrp_inventory_history_views.xml',
         'wizards/mrp_multi_level_views.xml',
     ],
     "installable": True,
