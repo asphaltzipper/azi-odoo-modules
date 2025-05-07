@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools import float_round
@@ -44,7 +42,11 @@ class MrpBom(models.Model):
                 bom.one_comp_product_qty = 0
                 bom.one_comp_product_uom_id = None
 
-    @api.depends('operation_ids')
+    @api.depends(
+        'operation_ids',
+        'operation_ids.active',
+        'operation_ids.workcenter_id.code'
+    )
     def _compute_routing_name(self):
         for bom in self:
             # don't use .mapped() because it returns unique codes only, and routings
