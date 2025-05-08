@@ -289,7 +289,11 @@ class MultiLevelMrp(models.TransientModel):
         message = "Start MRP Inventory History"
         self.env['material.plan.log'].create({'type': 'info', 'message': message})
         self.env.cr.commit()
+
         mrp_area_ids = self.mrp_area_ids.ids
+        if not mrp_area_ids:
+            mrp_area_ids = self.env['mrp.area'].search([]).ids
+
         self.env.cr.execute("""
             DELETE FROM mrp_inventory_history WHERE date = CURRENT_DATE
         """)
