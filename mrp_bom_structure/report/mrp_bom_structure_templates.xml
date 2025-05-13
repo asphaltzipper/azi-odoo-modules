@@ -19,8 +19,8 @@
                     <thead>
                         <tr>
                             <th>Product</th>
-                            <th>Quantity</th>
-                            <th>Unit of Measure</th>
+                            <th width="10%">Quantity</th>
+                            <th width="10%">Unit of Measure</th>
 
                         </tr>
                     </thead>
