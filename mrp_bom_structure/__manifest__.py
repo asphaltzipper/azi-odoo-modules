@@ -8,15 +8,16 @@
     "author": "Matt Taylor",
     "license": "AGPL-3",
     "website": "http://www.asphaltzipper.com",
-    'description': """
+    "description": """
 Bom Structure Viewer
 ====================
 
 * Show Bom Structure with links
     """,
-    "depends": ['mrp'],
-    'data': [
-        'report/mrp_bom_structure_templates.xml',
+    "depends": ["mrp", "stock"],
+    "data": [
+        "views/stock_lot_views.xml",
+        "report/mrp_bom_structure_templates.xml",
     ],
     "installable": True,
     "auto_install": False,

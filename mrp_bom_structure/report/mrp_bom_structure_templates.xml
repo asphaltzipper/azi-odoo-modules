@@ -31,7 +31,8 @@
                                     <t t-set="space_td" t-value="'margin-left: '+ str(line['level'] * 20) + 'px;'"/>
                                     <span t-att-style="space_td"/>
                                     <t t-set="product_url" t-value="env['ir.config_parameter'].sudo().get_param('web.base.url')+'/web#model=product.product&amp;id={}&amp;view_type=form'.format(line['product_id'])"/>
-                                    <a target='_blank' t-att-href="product_url">
+                                    <t t-set="name_path" t-value="line['name_path']"/>
+                                    <a target='_blank' t-att-href="product_url" t-att-title="name_path">
                                         <span t-esc="line['display_name']"/>
                                     </a>
                                 </td>
