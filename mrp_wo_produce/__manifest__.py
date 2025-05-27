@@ -2,29 +2,23 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 {
-    "name": "Work Order Produce Wizard",
+    "name": "Work Order Produce",
     "version": "16.0.1.0.0",
     "license": "AGPL-3",
-    "summary": "Wizard for producing/completing Manufacturing Orders with Work Orders",
+    "summary": "MRP, Labor",
     "category": "Manufacturing",
     "author": "Matt Taylor",
     "website": "http://www.github.com/asphaltzipper",
     'description': """
-Work Order Produce Wizard
-=========================
+Work Order Produce
+==================
 
-Wizard for completing Manufacturing Orders with Work Orders
+Add labor information in MO:
 
-Steps for processing manufacturing order:
-
-#. Create Manufacturing Order (with a routing)
-#. Check Availability
-#. Plan
-#. Start WO Completion Wizard
-#. Enter produced serial number
-#. Enter consumed serial numbers
-#. Enter labor time per work order
-#. Click Done to complete all work orders and the manufacturing order
+#. Create Manufacturing Order
+#. Confirm MO, which generates labor information
+#. Set employee and hours
+#. Mark MO as done, which will add labor information in WO timeline
 """,
     "depends": [
         "stock_account",
@@ -32,7 +26,6 @@ Steps for processing manufacturing order:
     ],
     "data": [
         'security/ir.model.access.csv',
-        'wizard/mrp_wo_produce_views.xml',
         'views/mrp_production_views.xml',
     ],
     "installable": True,
