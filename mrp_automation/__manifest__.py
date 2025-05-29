@@ -25,10 +25,8 @@ MRP Automation
     ],
     "data": [
         "security/ir.model.access.csv",
-        "wizard/mrp_wo_hour_views.xml",
         "views/hr_employee_views.xml",
         "wizard/mrp_automation_views.xml",
-        "wizard/mrp_wo_produce_views.xml",
     ],
     "assets": {
         'web.assets_backend': [

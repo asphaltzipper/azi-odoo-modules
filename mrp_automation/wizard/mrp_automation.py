@@ -10,11 +10,6 @@ class MrpAutomation(models.TransientModel):
     scan_error = fields.Boolean('Barcode Error')
     scan_name = fields.Char('Barcode Value')
 
-    def get_produce_wizard(self, production):
-        mrp_wo = self.env['mrp.wo.produce'].with_context({'default_production_id': production.id}).create({})
-        mrp_wo.load_lines()
-        return mrp_wo
-
     def convert_kit(self, product, kit_count):
         production = self.env['mrp.production']
         product_qty = float(kit_count)
@@ -89,19 +84,10 @@ class MrpAutomation(models.TransientModel):
 
         # return an appropriate action
         if scan_mo:
-            produce_wiz = self.get_produce_wizard(scan_mo)
-            view_id = self.env.ref('mrp_wo_produce.view_mrp_wo_produce_wizard').id
-            return {
-                'type': 'ir.actions.act_window',
-                'name': _('Wo Produce'),
-                'res_model': 'mrp.wo.produce',
-                'target': 'new',
-                'view_mode': 'form',
-                'view_type': 'form',
-                'res_id': produce_wiz.id,
-                'context': {'form_view_initial_mode': 'edit', 'barcode_scan': True},
-                'views': [[view_id, 'form']],
-            }
+            action = self.env["ir.actions.actions"]._for_xml_id(
+                'mrp.mrp_production_action')
+            action['res_id'] = scan_mo.id
+            return action
         elif product:
             if product.deprecated:
                 raise UserError(_("This kit is obsolete. If you really want to produce an obsolete part, create the "

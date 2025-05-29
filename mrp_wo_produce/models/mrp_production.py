@@ -9,17 +9,31 @@ from odoo.exceptions import ValidationError
 class MrpProduction(models.Model):
     _inherit = "mrp.production"
 
-    labor_ids = fields.One2many('mrp.production.labor', 'production_id', 'Labor Details')
+    labor_ids = fields.One2many(
+        comodel_name='mrp.production.labor',
+        inverse_name='production_id',
+        string='Labor Details',
+    )
 
-    def action_confirm(self):
-        res = super(MrpProduction, self).action_confirm()
+    def reset_labor_ids(self):
         for production in self:
+            if production.state in ['done', 'cancel']:
+                continue
             labor_list = [Command.delete(labor.id) for labor in production.labor_ids]
-            labor_lines = [Command.create({'workorder_id': wo.id, 'production_id': production.id,
-                                           'labor_date': fields.Datetime.now()}) for wo in production.workorder_ids]
+            labor_lines = [
+                Command.create({
+                    'workorder_id': wo.id,
+                    'production_id': production.id,
+                    'labor_date': fields.Datetime.now(),
+                }) for wo in production.workorder_ids
+            ]
             if labor_lines:
                 labor_list += labor_lines
             production.labor_ids = labor_list
+
+    def action_confirm(self):
+        res = super(MrpProduction, self).action_confirm()
+        self.reset_labor_ids()
         return res
 
     @staticmethod
@@ -87,13 +101,36 @@ class MrpProductionLabor(models.Model):
     _name = "mrp.production.labor"
     _description = 'MO Labor Details'
 
-    production_id = fields.Many2one('mrp.production', 'Manufacturing Order')
-    workorder_id = fields.Many2one('mrp.workorder', 'Work Order')
-    employee_id = fields.Many2one('hr.employee', 'Employee')
-    user_id = fields.Many2one('res.users', 'User', compute='_compute_user')
-    labor_date = fields.Datetime('Date', default=fields.Datetime.now())
-    labor_time = fields.Float('Hours')
-    hours_expected = fields.Float('Standard', compute='_compute_hours_expected',)
+    production_id = fields.Many2one(
+        comodel_name='mrp.production',
+        string='Manufacturing Order',
+    )
+    workorder_id = fields.Many2one(
+        comodel_name='mrp.workorder',
+        string='Work Order',
+        required=True,
+        # domain=[('production_id', '=', production_id)],
+    )
+    employee_id = fields.Many2one(
+        comodel_name='hr.employee',
+        string='Employee',
+    )
+    user_id = fields.Many2one(
+        comodel_name='res.users',
+        string='User',
+        compute='_compute_user',
+    )
+    labor_date = fields.Datetime(
+        string='Date',
+        default=fields.Datetime.now(),
+    )
+    labor_time = fields.Float(
+        string='Hours',
+    )
+    hours_expected = fields.Float(
+        string='Standard',
+        compute='_compute_hours_expected',
+    )
 
     @api.depends('workorder_id')
     def _compute_hours_expected(self):

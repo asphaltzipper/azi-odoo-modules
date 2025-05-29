@@ -9,11 +9,23 @@
         <field name="arch" type="xml">
             <page name="operations" position="after">
                 <page name="labor" string="Labor Details">
-                    <field name="labor_ids">
-                        <tree create="0" edit="1" editable="top">
-                            <field name="workorder_id" readonly="1"/>
+                    <button
+                        type="object"
+                        name="reset_labor_ids"
+                        string="Reset Labor"
+                        confirm="Do you want to DELETE labor entries and reset to the default?"
+                        attrs="{'invisible': [('state', 'in', ['done','cancel'])]}"
+                    />
+                    <field
+                        name="labor_ids"
+                        context="{'default_production_id': active_id}"
+                        attrs="{'readonly': [('state', 'in', ['done','cancel'])]}"
+                    >
+                        <tree create="1" edit="1" editable="bottom">
+                            <field name="production_id" invisible="1"/>
+                            <field name="workorder_id" domain="[('production_id', '=', production_id)]"/>
                             <field name="employee_id" domain="[('user_id', '!=', False)]"/>
-                            <field name="user_id" invisible="1"/>
+                            <field name="user_id"/>
                             <field name="hours_expected"/>
                             <field name="labor_date"/>
                             <field name="labor_time"/>

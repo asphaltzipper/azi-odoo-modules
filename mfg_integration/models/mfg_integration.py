@@ -216,6 +216,12 @@ class MfgWorkHeader(models.Model):
     def button_apply_work(self):
         self.ensure_one()
 
+        employee_id = self.env['hr.employee'].search([('user_id', '=', self.work_user_id.id)])
+        if not employee_id:
+            raise UserError(_(
+                "User %s doesn't have an associated employee",
+                self.work_user_id.name,
+            ))
         detail_time = sum(self.detail_ids.mapped('minutes_assigned')) / 60 or 0.0
         rounded_detail_time = float_round(detail_time, precision_digits=2)
         rounded_total_time = float_round(self.total_hours, precision_digits=2)
@@ -247,29 +253,30 @@ class MfgWorkHeader(models.Model):
                         detail.product_id.default_code,
                         mo.name,
                         mo.product_id.default_code))
-            if mo.state == 'confirmed':
-                mo.button_plan()
+            mo.action_confirm()
+            mo.button_plan()
+            mo.qty_producing = mo.product_qty
+            mo._set_qty_producing()
             if detail.actual_quantity != mo.product_qty:
                 change_wiz = self.env['change.production.qty'].create(
                     {'mo_id': mo.id, 'product_qty': detail.actual_quantity})
                 change_wiz.change_prod_qty()
             ctx = dict(self.env.context)
             ctx['default_production_id'] = mo.id
-            produce_wiz = self.env['mrp.wo.produce'].with_context(ctx).create({'production_id': mo.id})
-            produce_wiz.load_lines()
 
             # divide time evenly across workorders
-            wo_count = len(produce_wiz.production_id.workorder_ids)
-            for work in produce_wiz.work_line_ids:
+            wo_count = len(mo.workorder_ids)
+            for work in mo.labor_ids:
                 if detail.minutes_assigned <= 1.0:
                     raise UserError("Work time cannot be less than 1 minute per manufacturing order")
                 labor_time = (detail.minutes_assigned/60)/wo_count
                 work.update({
-                    'user_id': self.work_user_id.id,
+                    'employee_id': employee_id.id,
                     'labor_date': datetime.datetime.combine(self.work_date, datetime.datetime.min.time()),
                     'labor_time': labor_time,
                 })
-            produce_wiz.do_produce()
+            mo.create_workorder_labor()
+            mo.button_mark_done()
         self.work_date = fields.Date.today()
         self.state = 'closed'
 
