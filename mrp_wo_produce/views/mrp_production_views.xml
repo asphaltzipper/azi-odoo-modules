@@ -7,6 +7,11 @@
         <field name="model">mrp.production</field>
         <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
         <field name="arch" type="xml">
+            <button name="button_plan" position="after">
+                <button name="%(mrp_wo_produce.view_mrp_component_serial_action)d" string="Assign Serial/Lot"
+                        type="action" class="oe_highlight"
+                        attrs="{'invisible': [ ('state', 'not in', ('confirmed', 'progress', 'to_close'))]}"/>
+            </button>
             <page name="operations" position="after">
                 <page name="labor" string="Labor Details">
                     <button

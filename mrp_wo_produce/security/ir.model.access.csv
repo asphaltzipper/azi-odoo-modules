@@ -1,2 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_mrp_production_labor_user,access.mrp.production.labor.user,mrp_wo_produce.model_mrp_production_labor,mrp.group_mrp_user,1,1,1,1
+access_mrp_component_serial_user,access.mrp.component.serial.user,mrp_wo_produce.model_mrp_component_serial,mrp.group_mrp_user,1,1,1,1
+access_mrp_component_serial_line_user,access.mrp.component.serial.line.user,mrp_wo_produce.model_mrp_component_serial_line,mrp.group_mrp_user,1,1,1,1

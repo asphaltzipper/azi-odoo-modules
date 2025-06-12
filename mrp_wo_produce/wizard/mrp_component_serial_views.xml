@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_mrp_component_serial_form" model="ir.ui.view">
+        <field name="name">view.mrp.component.serial.form</field>
+        <field name="model">mrp.component.serial</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="production_id" readonly="1"/>
+                    </group>
+                </group>
+
+                <notebook>
+                    <page string="Tracked Components" attrs="{'invisible': [('component_serial_line_ids', '=', [])]}">
+                        <field name="component_serial_line_ids"
+                               attrs="{'invisible': [('component_serial_line_ids', '=', [])]}"
+                               context="{'default_produce_id': active_id}">
+                            <tree editable="top" create="0" delete="0" decoration-danger="(qty_to_consume &lt; qty_done) or (qty_done &gt; qty_reserved)">
+                                <field name="product_id"/>
+                                <field name="tracking"/>
+                                <field name="lot_id" domain="[('product_id', '=', product_id), ('product_qty', '>', 0)]"
+                                       context="{'default_product_id': product_id}" required="1"/>
+                                <field name="qty_to_consume"/>
+                                <field name="qty_reserved"/>
+                                <field name="qty_done"/>
+                                <field name="product_uom_id" groups="uom.group_uom"/>
+                                <field name="move_id" invisible="1"/>
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+                <footer>
+                    <button name="assign_serial" type="object" string="Assign Serial" class="btn-primary"/>
+                    <button string="Cancel" class="btn-default" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_mrp_component_serial_action" model="ir.actions.act_window">
+        <field name="name">Assign Lot/Serial Numbers</field>
+        <field name="res_model">mrp.component.serial</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

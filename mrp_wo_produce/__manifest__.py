@@ -26,6 +26,7 @@ Add labor information in MO:
     ],
     "data": [
         'security/ir.model.access.csv',
+        'wizard/mrp_component_serial_views.xml',
         'views/mrp_production_views.xml',
     ],
     "installable": True,
