@@ -33,6 +33,9 @@
         <xpath expr="//table/tbody/t/tr/t/td[5]" position="replace">
             <th class="text-right"></th>
         </xpath>
+        <xpath expr="//td[@name='td_quantity']" position="attributes">
+            <attribute name="style">white-space: nowrap;</attribute>
+        </xpath>
     </template>
 
     <record id="sale.action_report_saleorder" model="ir.actions.report">

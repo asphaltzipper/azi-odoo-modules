@@ -58,11 +58,12 @@ class SaleOrder(models.Model):
                 raise UserError("Can't cancel orders with lines that have been delivered")
         return super(SaleOrder, self.with_context(disable_cancel_warning=True)).action_cancel()
 
-    @api.returns('self', lambda value: value.id)
-    def copy(self, default=None):
-        res = super(SaleOrder, self).copy(default=default)
-        res._recompute_prices()
-        return res
+    # We don't want this currently, but may change our minds ;)
+    # @api.returns('self', lambda value: value.id)
+    # def copy(self, default=None):
+    #     res = super(SaleOrder, self).copy(default=default)
+    #     res._recompute_prices()
+    #     return res
 
 
 class SaleOrderLine(models.Model):

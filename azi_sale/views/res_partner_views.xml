@@ -77,4 +77,20 @@
             </xpath>
         </field>
     </record>
+
+    <!-- Partner Kanban View -->
+    <record id="res_partner_azi_kanban_view" model="ir.ui.view">
+        <field name="name">res.partner.kanban</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.res_partner_kanban_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//ul/li[@t-if='record.city.raw_value or record.country_id.raw_value']" position="replace">
+                <li t-if="record.city.raw_value or record.state_id.raw_value">
+                    <t t-if="record.city.raw_value"><field name="city"/><t t-if="record.country_id.raw_value">, </t></t>
+                    <t t-if="record.state_id.raw_value"><field name="state_id"/></t>
+                </li>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>
