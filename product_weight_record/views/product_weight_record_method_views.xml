@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_product_weight_record_method_tree" model="ir.ui.view">
+        <field name="name">product.weight.record.method.tree</field>
+        <field name="model">product.weight.record.method</field>
+        <field name="arch" type="xml">
+            <tree string="Preparation" editable="bottom">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_product_weight_record_method" model="ir.actions.act_window">
+        <field name="name">Weighing Method</field>
+        <field name="res_model">product.weight.record.method</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem
+        id="menu_product_weight_method"
+        parent="stock.menu_product_in_config_stock"
+        name="Weighing Methods"
+        sequence="70"
+        action="action_product_weight_record_method"
+    />
+</odoo>

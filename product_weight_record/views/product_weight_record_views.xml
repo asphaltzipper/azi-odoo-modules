@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_product_weight_record_form" model="ir.ui.view">
+        <field name="name">product.weight.record.form</field>
+        <field name="model">product.weight.record</field>
+        <field name="arch" type="xml">
+            <form string="Weight Record">
+                <sheet>
+                    <group>
+                        <field name="lot_id"/>
+                        <field name="product_id" required="True"/>
+                        <field name="method_id" required="True"/>
+                        <field name="weight"/>
+                        <field name="note"/>
+                        <field name="accy_ids" widget="many2many_tags"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_product_weight_record_tree" model="ir.ui.view">
+        <field name="name">product.weight.record.tree</field>
+        <field name="model">product.weight.record</field>
+        <field name="arch" type="xml">
+            <tree string="Weight Records">
+                <field name="lot_id"/>
+                <field name="product_id" optional="hide"/>
+                <field name="weight"/>
+                <field name="create_uid"/>
+                <field name="create_date" widget="date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_product_weight_record" model="ir.actions.act_window">
+        <field name="name">Weight Records</field>
+        <field name="res_model">product.weight.record</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem
+        id="menu_product_weight_record"
+        parent="stock.menu_stock_inventory_control"
+        name="Weight Records"
+        sequence="1001"
+        action="action_product_weight_record"
+    />
+
+</odoo>
