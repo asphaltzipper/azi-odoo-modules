@@ -20,6 +20,17 @@ class ProductWeightRecord(models.Model):
         string='Weight (lbs)',
         required=True,
     )
+    record_date = fields.Date(
+        string="Date",
+        required=True,
+        default=fields.Date.today(),
+    )
+    user_id = fields.Many2one(
+        comodel_name="res.users",
+        required=True,
+        domain=['|', ('active', '=', True), ('active', '=', False)],
+        default=lambda self: self.env.context.get('user_id', self.env.user.id),
+    )
     accy_ids = fields.Many2many(
         comodel_name='product.weight.record.accy',
         string='Included Accessories',
