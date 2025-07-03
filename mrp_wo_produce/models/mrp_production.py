@@ -94,6 +94,10 @@ class MrpProduction(models.Model):
     def button_mark_done(self):
         if self.env.context.get('skip_immediate', False):
             self.create_workorder_labor()
+        else:
+            res = self._pre_button_mark_done()
+            if res and type(res) == bool:
+                self.create_workorder_labor()
         return super(MrpProduction, self).button_mark_done()
 
 
