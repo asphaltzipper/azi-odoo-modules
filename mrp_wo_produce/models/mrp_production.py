@@ -100,6 +100,18 @@ class MrpProduction(models.Model):
                 self.create_workorder_labor()
         return super(MrpProduction, self).button_mark_done()
 
+    def ext_produce(self):
+        """
+            Complete the MO
+            Callable from OdooRPC
+            The calling app must handle labor and serial numbers
+        """
+        self.ensure_one()
+        self.qty_producing = self.product_qty
+        self._set_qty_producing()
+        self.create_workorder_labor()
+        self.button_mark_done()
+
 
 class MrpProductionLabor(models.Model):
     _name = "mrp.production.labor"
