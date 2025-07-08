@@ -23,27 +23,21 @@ class report_account_bbc_aged_partner(models.AbstractModel):
             LEFT JOIN "account_account" AS "account_move_line__account_id" 
             ON ("account_move_line"."account_id" = "account_move_line__account_id"."id")
             JOIN {currency_table} ON currency_table.company_id = account_move_line.company_id
-            JOIN account_move move on move.id = account_move_line.move_id
-             JOIN period_table ON
-                (
-                    period_table.date_start IS NULL
-                    OR COALESCE(move.invoice_date, account_move_line.date, account_move_line.date_maturity) <= DATE(period_table.date_start)
+            
+            WHERE (
+                (account_move_line.display_type NOT IN ('line_section', 'line_note') 
+                OR account_move_line.display_type IS NULL)
+                AND account_move_line.parent_state = 'posted'
+                AND account_move_line.company_id = %s
+                AND account_move_line.date <= %s
+                AND account_move_line__account_id.account_type = 'asset_receivable'
+                AND (
+                    account_move_line.company_id IS NULL 
+                    OR account_move_line.company_id = %s
                 )
-                AND
-                (
-                    period_table.date_stop IS NULL
-                    OR COALESCE(move.invoice_date, account_move_line.date, account_move_line.date_maturity) >= DATE(period_table.date_stop)
-                )
-
-            WHERE (((((((("account_move_line"."display_type" not in ('line_section', 'line_note')) 
-            OR "account_move_line"."display_type" IS NULL) AND (("account_move_line"."parent_state" != 'cancel') 
-            OR "account_move_line"."parent_state" IS NULL)) AND ("account_move_line"."company_id" = %s )) 
-            AND ("account_move_line"."date" <= %s)) AND ("account_move_line"."date" >= %s)) 
-            AND ("account_move_line"."parent_state" = 'posted')) 
-            AND ("account_move_line__account_id"."account_type" = 'asset_receivable')) 
-            AND ("account_move_line"."company_id" IS NULL  OR ("account_move_line"."company_id" = %s))
-            """
-        params = [self.env.company.id, date_end, date_start, self.env.company.id]
+            )
+        """
+        params = [self.env.company.id, date_end, self.env.company.id]
         self._cr.execute(query, params)
         all_total_line = self._cr.dictfetchall()
         return all_total_line
@@ -64,14 +58,15 @@ class report_account_bbc_aged_partner(models.AbstractModel):
             (minus_days(date_to, 120), False),
         ]
 
-        def build_result_dict(report, query_res_lines, all_total, folded_line=None):
+        def build_result_dict(report, query_res_lines, folded_line=None):
             query_res_lines = sorted(query_res_lines, key=lambda a: a['aml_count'])
             rslt = {f'period{i}': 0 for i in range(len(periods))}
             # Delinquent Accounts 60+ days (90+ days past invoice date)
-            over_60_days = 0.0
+            over_90_days = 0.0
             # 20% Rule Cross-aging: If more than 20% of an account is greater than
             # 90 days delinquent, the entire non-delinquent portion of the account
             # must be deducted
+            less_than_90_days = 0.0
             cross_age_20_pct = 0.0
             # Concentration: If a single account represents 20% or more of
             # borrower's A/R, the eligible balance over 20% of all borrower's A/R
@@ -83,37 +78,41 @@ class report_account_bbc_aged_partner(models.AbstractModel):
             # foreign should be calculated without removing portions over 60 days
             foreign = 0.0
             eligible = 0.0
-            query_length = len(query_res_lines) - 1
-            line_total = sum(map(lambda q: q.get('amount_currency', 0), query_res_lines))
+            conc = 0.0
             for index, query_res in enumerate(query_res_lines):
                 for i in range(len(periods)):
                     period_key = f'period{i}'
                     rslt[period_key] += query_res[period_key]
-                    # Calculate the over 60
-                    if i >= 2 and query_res[period_key] > 0:
-                        over_60_days += query_res[period_key]
-                    # if i >= 2 and query_res[period_key] < 0:
-                    #     delinquent_cr += query_res[period_key]
-                    if i == 4:
-                    #     if index != query_length or (index == query_length and not is_total):
-                        cross_amount = rslt['period0'] + rslt['period1']
-                        if over_60_days and cross_amount > 0 and over_60_days > 0.2 * line_total and not folded_line:
-                            cross_age_20_pct += cross_amount
-                    #             totals['cross_age_20_pct'] += cross_amount
-                        if query_res['amount_currency'] > 0.2 * all_total[0]['amount_currency'] and folded_line:
-                    #             # 20% concentration rule
-                            over_20_pct += query_res['amount_currency'] - (0.2 * all_total[0]['amount_currency'])
-                    #             line_totals[2] = line['amount'] - 0.2 * all_total
-                    #         if over_60_days <= 0.2 * all_total < cross_amount:
-                    #             over_20_pct += cross_amount - (0.2 * total)
-                    #     if index == query_length and is_total:
-                    #         cross_age_20_pct = totals['cross_age_20_pct']
-
+                    if current_groupby == 'partner_id':
+                        # Calculate the over 90
+                        if i > 2 and query_res[period_key] > 0:
+                            over_90_days += query_res[period_key]
+                        if i <= 2 and query_res[period_key] > 0:
+                            less_than_90_days += query_res[period_key]
                 if query_res['partner_id'] and self.env['res.partner'].browse(query_res['partner_id']).country_id not in \
                         [self.env.ref('base.us'), self.env.ref('base.ca'), self.env.ref('base.mx')]:
-                    over_60_days = 0
+                    over_90_days = 0
                     delinquent_cr = 0
                     cross_age_20_pct = 0
+
+            total = sum(rslt[f'period{i}'] for i in range(len(periods)))
+            if less_than_90_days > total * 0.2:
+                cross_age_20_pct = less_than_90_days
+            else:
+                eligible = less_than_90_days
+            if current_groupby == 'partner_id':
+                all_total = self.get_total_for_bbc(period_table, currency_table, options['date']['date_to'],
+                                                   options['date']['date_from'])
+                amount_currency = all_total[0].get('amount_currency', 0)
+                """
+                    20 % Conc: check total amount of the whole Aged AR 
+                    if less than 90 is greater than 20 % of total amount: 
+                    BBC eligible = total amount * 0.2
+                    20 % conc = less than 90 - BBC
+                """
+                if less_than_90_days > 0.2 * amount_currency:
+                    eligible = amount_currency * 0.2
+                    conc = less_than_90_days - eligible
 
             if current_groupby == 'id':
                 query_res = query_res_lines[0] # We're grouping by id, so there is only 1 element in query_res_lines anyway
@@ -129,23 +128,23 @@ class report_account_bbc_aged_partner(models.AbstractModel):
                     # Updated
                     'invoice_date': query_res['invoice_date'][0] if len(query_res['invoice_date']) == 1 else None,
                     # 'total': None,
-                    'over': over_60_days,
-                    'cross_aged': cross_age_20_pct,
-                    'conc': over_20_pct,
-                    'delinquent': delinquent_cr,
+                    'over': None,
+                    'cross_aged': None,
+                    'conc': None,
+                    'delinquent': None,
                     'foreign': 0,
-                    'eligible': 0,
+                    'eligible': None,
                 })
             else:
                 rslt.update({
                     'invoice_date': None,
-                    'total': sum(rslt[f'period{i}'] for i in range(len(periods))),
-                    'over': over_60_days,
+                    'total': total,
+                    'over': over_90_days,
                     'cross_aged': cross_age_20_pct,
-                    'conc': over_20_pct,
+                    'conc': conc,
                     'delinquent': delinquent_cr,
                     'foreign': 0,
-                    'eligible': 0,
+                    'eligible': eligible,
                     'has_sublines': False,
                     'test':0,
                 })
@@ -257,10 +256,9 @@ class report_account_bbc_aged_partner(models.AbstractModel):
         ]
         self._cr.execute(query, params)
         query_res_lines = self._cr.dictfetchall()
-        all_total = self.get_total_for_bbc(period_table, currency_table, options['date']['date_to'], options['date']['date_from'])
         folded_line = options.get('unfolded_lines', []) and True or False
         if not current_groupby:
-            return build_result_dict(report, query_res_lines, all_total, folded_line)
+            return build_result_dict(report, query_res_lines, folded_line)
         else:
             rslt = []
 
@@ -270,7 +268,7 @@ class report_account_bbc_aged_partner(models.AbstractModel):
                 all_res_per_grouping_key.setdefault(grouping_key, []).append(query_res)
 
             for grouping_key, query_res_lines in all_res_per_grouping_key.items():
-                rslt.append((grouping_key, build_result_dict(report, query_res_lines, all_total, folded_line)))
+                rslt.append((grouping_key, build_result_dict(report, query_res_lines, folded_line)))
 
             return rslt
 
