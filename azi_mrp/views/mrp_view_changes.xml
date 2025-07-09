@@ -51,6 +51,9 @@
                 <attribute name="string">Start Date</attribute>
                 <attribute name="widget">date</attribute>
             </field>
+            <field name="lot_producing_id" position="attributes">
+                <attribute name="options">{'create': True}</attribute>
+            </field>
         </field>
     </record>
 
