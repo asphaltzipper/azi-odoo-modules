@@ -24,34 +24,6 @@ class PurchaseOrder(models.Model):
         return res
 
 
-class ProductProduct(models.Model):
-    _inherit = 'product.product'
-
-    purchase_count = fields.Integer(compute='_purchase_count', string='# Purchases')
-
-    def _purchase_count(self):
-        """Include draft purchases in the count"""
-        domain = [
-            ('state', 'in', ['draft', 'purchase', 'done']),
-            ('product_id', 'in', self.mapped('id')),
-        ]
-        PurchaseOrderLines = self.env['purchase.order.line'].search(domain)
-        for product in self:
-            product.purchase_count = len(
-                PurchaseOrderLines.filtered(lambda r: r.product_id == product).mapped('order_id'))
-
-
-class ProductTemplate(models.Model):
-    _inherit = 'product.template'
-
-    purchase_count = fields.Integer(compute='_purchase_count', string='# Purchases')
-
-    def _purchase_count(self):
-        for template in self:
-            template.purchase_count = sum([p.purchase_count for p in template.product_variant_ids])
-        return True
-
-
 class MailComposeMessage(models.TransientModel):
     _inherit = 'mail.compose.message'
 
@@ -62,11 +34,17 @@ class MailComposeMessage(models.TransientModel):
                 order.send_date = fields.datetime.now()
         return super(MailComposeMessage, self.with_context(mail_post_autofollow=True))._action_send_mail(auto_commit=auto_commit)
 
-
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
 
-    vendor_product_code = fields.Char('Vendor Product Code')
+    vendor_product_code = fields.Char(
+        string="Vendor Product Code",
+    )
+    product_virtual_available = fields.Float(
+        string='Product Forecasted Quantity',
+        related='product_id.virtual_available',
+        depends=['product_id'],
+    )
 
     def _product_id_change(self):
         super(PurchaseOrderLine, self)._product_id_change()
