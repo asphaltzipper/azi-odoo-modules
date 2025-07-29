@@ -15,33 +15,6 @@ class report_account_bbc_aged_partner(models.AbstractModel):
     def _report_custom_engine_bbc_aged_receivable(self, expressions, options, date_scope, current_groupby, next_groupby, offset=0, limit=None):
         return self._aged_partner_report_custom_engine_common_bbc(options, 'asset_receivable', current_groupby, next_groupby, offset=offset, limit=limit)
 
-    def get_total_for_bbc(self, period_table, currency_table, date_end, date_start):
-        query = f"""
-            WITH period_table(date_start, date_stop, period_index) AS ({period_table})
-            SELECT SUM(account_move_line.amount_currency) AS amount_currency            
-            FROM "account_move_line" 
-            LEFT JOIN "account_account" AS "account_move_line__account_id" 
-            ON ("account_move_line"."account_id" = "account_move_line__account_id"."id")
-            JOIN {currency_table} ON currency_table.company_id = account_move_line.company_id
-            
-            WHERE (
-                (account_move_line.display_type NOT IN ('line_section', 'line_note') 
-                OR account_move_line.display_type IS NULL)
-                AND account_move_line.parent_state = 'posted'
-                AND account_move_line.company_id = %s
-                AND account_move_line.date <= %s
-                AND account_move_line__account_id.account_type = 'asset_receivable'
-                AND (
-                    account_move_line.company_id IS NULL 
-                    OR account_move_line.company_id = %s
-                )
-            )
-        """
-        params = [self.env.company.id, date_end, self.env.company.id]
-        self._cr.execute(query, params)
-        all_total_line = self._cr.dictfetchall()
-        return all_total_line
-
     def _aged_partner_report_custom_engine_common_bbc(self, options, internal_type, current_groupby, next_groupby, offset=0, limit=None):
         report = self.env['account.report'].browse(options['report_id'])
         report._check_groupby_fields((next_groupby.split(',') if next_groupby else []) + ([current_groupby] if current_groupby else []))
@@ -87,32 +60,67 @@ class report_account_bbc_aged_partner(models.AbstractModel):
                         # Calculate the over 90
                         if i > 2 and query_res[period_key] > 0:
                             over_90_days += query_res[period_key]
-                        if i <= 2 and query_res[period_key] > 0:
+                        if i <= 2:
                             less_than_90_days += query_res[period_key]
-                if query_res['partner_id'] and self.env['res.partner'].browse(query_res['partner_id']).country_id not in \
-                        [self.env.ref('base.us'), self.env.ref('base.ca'), self.env.ref('base.mx')]:
-                    over_90_days = 0
-                    delinquent_cr = 0
-                    cross_age_20_pct = 0
+                        if i > 2 and query_res[period_key] < 0:
+                            delinquent_cr += query_res[period_key]
 
             total = sum(rslt[f'period{i}'] for i in range(len(periods)))
-            if less_than_90_days > total * 0.2:
+            if total > over_90_days > total * 0.2:
                 cross_age_20_pct = less_than_90_days
             else:
                 eligible = less_than_90_days
             if current_groupby == 'partner_id':
-                all_total = self.get_total_for_bbc(period_table, currency_table, options['date']['date_to'],
-                                                   options['date']['date_from'])
-                amount_currency = all_total[0].get('amount_currency', 0)
-                """
-                    20 % Conc: check total amount of the whole Aged AR 
-                    if less than 90 is greater than 20 % of total amount: 
-                    BBC eligible = total amount * 0.2
-                    20 % conc = less than 90 - BBC
-                """
-                if less_than_90_days > 0.2 * amount_currency:
-                    eligible = amount_currency * 0.2
-                    conc = less_than_90_days - eligible
+                if query_res['partner_id'] and self.env['res.partner'].browse(query_res['partner_id']).country_id not in \
+                        [self.env.ref('base.us'), self.env.ref('base.ca')]:
+                    over_90_days = 0
+                    delinquent_cr = 0
+                    cross_age_20_pct = 0
+                    conc = 0
+                    eligible = 0
+                    foreign = total
+
+                else:
+                    bbc_report = self.env['account.report'].search([('name', 'ilike', 'BBC')], limit=1)
+                    all_total = self.env.cache.get(bbc_report, 'TotalReport')
+
+                    """
+                        20 % Conc: check total amount of the whole Aged AR 
+                        if less than 90 is greater than 20 % of total amount: 
+                        BBC eligible = total amount * 0.2
+                        20 % conc = less than 90 - BBC
+                    """
+                    if all_total and less_than_90_days > 0.2 * all_total:
+                        eligible = all_total * 0.2
+                        conc = less_than_90_days - eligible
+
+            if not current_groupby:
+                bbc_report = self.env['account.report'].search([('name', 'ilike', 'BBC')], limit=1)
+                self.env.cache.set(bbc_report, 'TotalReport', total)
+
+                options_cp = options.copy()
+                grouped_by_partner = self._aged_partner_report_custom_engine_common_bbc(
+                    options_cp, internal_type, 'partner_id', None
+                )
+
+                partner_vals = {
+                    'over': 0.0,
+                    'cross_aged': 0.0,
+                    'conc': 0.0,
+                    'delinquent': 0.0,
+                    'foreign': 0.0,
+                    'eligible': 0.0,
+                }
+
+                for _, partner_dict in grouped_by_partner:
+                    for key in partner_vals:
+                        partner_vals[key] += partner_dict.get(key, 0.0)
+
+                over_90_days = partner_vals['over']
+                cross_age_20_pct = partner_vals['cross_aged']
+                eligible = partner_vals['eligible']
+                conc = partner_vals['conc']
+                delinquent_cr = partner_vals['delinquent']
 
             if current_groupby == 'id':
                 query_res = query_res_lines[0] # We're grouping by id, so there is only 1 element in query_res_lines anyway
@@ -132,7 +140,7 @@ class report_account_bbc_aged_partner(models.AbstractModel):
                     'cross_aged': None,
                     'conc': None,
                     'delinquent': None,
-                    'foreign': 0,
+                    'foreign': None,
                     'eligible': None,
                 })
             else:
@@ -143,7 +151,7 @@ class report_account_bbc_aged_partner(models.AbstractModel):
                     'cross_aged': cross_age_20_pct,
                     'conc': conc,
                     'delinquent': delinquent_cr,
-                    'foreign': 0,
+                    'foreign': foreign,
                     'eligible': eligible,
                     'has_sublines': False,
                     'test':0,
