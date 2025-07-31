@@ -25,10 +25,10 @@ class report_account_bbc_aged_partner(models.AbstractModel):
         date_to = fields.Date.from_string(options['date']['date_to'])
         periods = [
             (minus_days(date_to, 0), minus_days(date_to, 30)),
-            (minus_days(date_to, 30), minus_days(date_to, 60)),
-            (minus_days(date_to, 60), minus_days(date_to, 90)),
-            (minus_days(date_to, 90), minus_days(date_to, 120)),
-            (minus_days(date_to, 120), False),
+            (minus_days(date_to, 31), minus_days(date_to, 60)),
+            (minus_days(date_to, 61), minus_days(date_to, 90)),
+            (minus_days(date_to, 91), minus_days(date_to, 120)),
+            (minus_days(date_to, 121), False),
         ]
 
         def build_result_dict(report, query_res_lines, folded_line=None):
