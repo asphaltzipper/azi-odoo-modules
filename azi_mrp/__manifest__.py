@@ -20,7 +20,7 @@ AZI Specialized Customizations to MRP
     """,
     "depends": [
         'stock',
-        'mrp',
+        'azi_mrp_bom_history',
         'shelf_location',
         'attachment_priority',
         'electronic_kanban',
@@ -30,8 +30,6 @@ AZI Specialized Customizations to MRP
     'data': [
         'views/mrp_view_changes.xml',
         'views/mrp_bom_views.xml',
-        'views/mrp_bom_history_views.xml',
-        'report/mrp_bom_history_report.xml',
         'report/mrp_report.xml',
         'report/mrp_production_templates.xml',
         'views/production_move_analysis.xml',

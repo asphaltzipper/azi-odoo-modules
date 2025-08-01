@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_mrp_bom_history_report" model="ir.actions.report">
+        <field name="name">BOM History</field>
+        <field name="model">mrp.bom.history</field>
+        <field name="report_type">qweb-html</field>
+        <field name="report_name">azi_mrp_bom_history.report_bom_history</field>
+        <field name="report_file">azi_mrp_bom_history.mrp_bom_history_report</field>
+        <field name="paperformat_id" ref="base.paperformat_us"/>
+        <field name="binding_model_id" ref="model_mrp_bom_history"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>
