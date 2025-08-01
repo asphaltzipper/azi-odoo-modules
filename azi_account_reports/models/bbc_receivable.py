@@ -121,6 +121,7 @@ class report_account_bbc_aged_partner(models.AbstractModel):
                 eligible = partner_vals['eligible']
                 conc = partner_vals['conc']
                 delinquent_cr = partner_vals['delinquent']
+                foreign = partner_vals['foreign']
 
             if current_groupby == 'id':
                 query_res = query_res_lines[0] # We're grouping by id, so there is only 1 element in query_res_lines anyway
