@@ -2,7 +2,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 {
     "name": "azi_mrp",
-    "version": "16.0.1.1.0",
+    "version": "16.0.2.0.0",
     "summary": "AZI MRP Customizations",
     "category": "Manufacturing",
     "author": "Matt Taylor",
@@ -20,7 +20,7 @@ AZI Specialized Customizations to MRP
     """,
     "depends": [
         'stock',
-        'azi_mrp_bom_history',
+        'mrp_bom_history',
         'shelf_location',
         'attachment_priority',
         'electronic_kanban',

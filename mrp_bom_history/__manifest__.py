@@ -17,9 +17,9 @@ AZI MRP BOM History
     ],
     "data": [
         'security/ir.model.access.csv',
-        'views/mrp_bom_history_views.xml',
-        'reports/mrp_bom_history_report.xml',
-        'reports/mrp_report.xml',
+        # 'views/mrp_bom_history_views.xml',
+        # 'reports/mrp_bom_history_report.xml',
+        # 'reports/mrp_report.xml',
     ],
     "installable": True,
     "auto_install": False,
