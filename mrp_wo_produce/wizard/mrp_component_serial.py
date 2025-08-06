@@ -14,12 +14,15 @@ class MRPComponentSerial(models.TransientModel):
     @api.model
     def default_get(self, fields):
         res = super(MRPComponentSerial, self).default_get(fields)
-        if self._context and self._context.get('active_model', '') == 'mrp.production' and self._context.get(
-                'active_id'):
+        if (
+            self._context
+            and self._context.get('active_model', '') == 'mrp.production'
+            and self._context.get('active_id')
+        ):
             production = self.env['mrp.production'].browse(self._context['active_id'])
-        res.update({
-            'production_id': production.id,
-        })
+            res.update({
+                'production_id': production.id,
+            })
         return res
 
     @api.onchange('production_id')
