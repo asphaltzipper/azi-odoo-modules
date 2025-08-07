@@ -39,7 +39,7 @@
     </record>
     <record id="mrp_bom_history_action" model="ir.actions.act_window">
         <field name="name">BOM History</field>
-        <field name="res_model">mrp.bom.history</field>
+        <field name="res_model">mrp.bom.history.line</field>
         <field name="view_mode">tree,form</field>
     </record>
     <menuitem id="mrp_bom_history_menu" action="mrp_bom_history_action" parent="mrp.menu_mrp_reporting"/>

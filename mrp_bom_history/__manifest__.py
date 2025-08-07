@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "AZI MRP BOM History",
+    "name": "MRP BOM History",
     "version": "16.0.1.1.0",
     "summary": "BOM History",
     "category": "Manufacturing",
@@ -8,8 +8,8 @@
     "license": "AGPL-3",
     "website": "http://www.github.com/asphaltzipper",
     "description": """
-AZI MRP BOM History
-===================
+MRP BOM History
+===============
 * Create a new model for BOM History
     """,
     "depends": [
@@ -17,9 +17,11 @@ AZI MRP BOM History
     ],
     "data": [
         'security/ir.model.access.csv',
-        # 'views/mrp_bom_history_views.xml',
-        # 'reports/mrp_bom_history_report.xml',
-        # 'reports/mrp_report.xml',
+        'views/mrp_bom_history_views.xml',
+        'views/mrp_production_views.xml',
+        'views/stock_lot_views.xml',
+        'reports/mrp_bom_history_report.xml',
+        'reports/mrp_report.xml',
     ],
     "installable": True,
     "auto_install": False,

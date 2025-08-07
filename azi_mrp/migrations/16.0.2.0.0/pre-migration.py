@@ -11,15 +11,9 @@ def migrate(env, version):
         """)
 
     env.execute("""
-        SELECT id, mrp_production_id
-        FROM mrp_bom_history
+        UPDATE mrp_bom_history_line l
+        SET production_id = b.mrp_production_id,
+            bom_history_id = NULL
+        FROM mrp_bom_history b
+        WHERE l.bom_history_id = b.id
     """)
-    history_records = env.fetchall()
-
-    for history_id, production_id in history_records:
-        env.execute("""
-            UPDATE mrp_bom_history_line
-            SET production_id = %s,
-                bom_history_id = NULL
-            WHERE bom_history_id = %s
-        """, (production_id, history_id))

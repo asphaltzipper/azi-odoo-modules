@@ -5,7 +5,11 @@ class MrpProduction(models.Model):
     _inherit = 'mrp.production'
 
     bom_history_line_ids = fields.One2many('mrp.bom.history.line', 'production_id', 'BOM History')
-    bom_history_count = fields.Integer('BOM History Count')
+    bom_history_count = fields.Integer('BOM History Count', compute='_compute_bom_history_count')
+
+    def _compute_bom_history_count(self):
+        for record in self:
+            record.bom_history_count = len(record.bom_history_line_ids.ids)
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -81,7 +85,7 @@ class MrpProduction(models.Model):
         return {
             'type': 'ir.actions.act_window',
             'name': 'BOM History',
-            'res_model': 'mrp.production',
+            'res_model': 'mrp.bom.history.line',
             'target': 'current',
             'view_mode': 'tree',
             'domain': [('production_id', '=', self.id)]

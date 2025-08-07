@@ -12,7 +12,6 @@
                         </div>
                         <div class="col-lg-12">
                             <div class="mt16">
-                                <h2>Manufacturing Order: <t t-esc="o.mrp_production_id.name"/></h2>
                                 <table class="table table-bordered" width="100%">
                                     <thead>
                                         <tr>
@@ -26,8 +25,6 @@
                                         <t t-foreach="o.bom_history_line_ids" t-as="line">
                                             <tr>
                                                 <td>
-                                                    <t t-set="space_td" t-value="'margin-left: '+ str(line.sequence * 20) + 'px;'"/>
-                                                    <span t-att-style="space_td"/>
                                                     <t t-set="product_url" t-value="env['ir.config_parameter'].sudo().get_param('web.base.url')+'/web#model=product.product&amp;id={}&amp;view_type=form'.format(line.product_id.id)"/>
                                                     <a target='_blank' t-att-href="product_url">
                                                         <span t-esc="line.product_id.display_name"/>
