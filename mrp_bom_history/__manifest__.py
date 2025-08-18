@@ -23,6 +23,7 @@ MRP BOM History
         'reports/mrp_bom_history_report.xml',
         'reports/mrp_report.xml',
     ],
+    "pre_init_hook": "pre_init_hook",
     "installable": True,
     "auto_install": False,
 }
