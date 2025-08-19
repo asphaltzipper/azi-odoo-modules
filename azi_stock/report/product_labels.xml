@@ -139,12 +139,12 @@
                         <t t-if="o._name == 'product.template'">
                             <img
                                 style="max-width:120px; max-height:120px; width:auto; height:auto;"
-                                t-attf-src="/web/image/product.template/#{o.id}/image"/>
+                                t-attf-src="/web/image/product.template/#{o.id}/image_512"/>
                         </t>
                         <t t-else="">
                             <img
                                 style="max-width:120px; max-height:120px; width:auto; height:auto;"
-                                t-attf-src="/web/image/product.product/#{o.id}/image"/>
+                                t-attf-src="/web/image/product.product/#{o.id}/image_512"/>
                         </t>
                     </div>
                     <div name="name"
@@ -187,11 +187,11 @@
                             <div name="image" style="clear:left; float:left; width:1.5in; height:1.5in;">
                                 <t t-if="o._name == 'product.template'">
                                     <img style="max-width:1.5in; max-height:1.5in; width:auto; height:auto;"
-                                         t-attf-src="/web/image/product.template/#{o.id}/image"/>
+                                         t-attf-src="/web/image/product.template/#{o.id}/image_512"/>
                                 </t>
                                 <t t-else="">
                                     <img style="max-width:1.5in; max-height:1.5in; width:auto; height:auto;"
-                                        t-attf-src="/web/image/product.product/#{o.id}/image"/>
+                                        t-attf-src="/web/image/product.product/#{o.id}/image_512"/>
                                 </t>
                             </div>
                             <div name="lower_right" style="float:left; width:2.5in; height:1.5:">
@@ -220,11 +220,11 @@
                         <div name="image" style="clear:left; float:left; width:2.0in; height:2.0in;">
                             <t t-if="o._name == 'product.template'">
                                 <img style="max-width:2.0in; max-height:2.0in; width:auto; height:auto;"
-                                     t-attf-src="/web/image/product.template/#{o.id}/image"/>
+                                     t-attf-src="/web/image/product.template/#{o.id}/image_512"/>
                             </t>
                             <t t-else="">
                                 <img style="max-width:2.0in; max-height:2.0in; width:auto; height:auto;"
-                                    t-attf-src="/web/image/product.product/#{o.id}/image"/>
+                                    t-attf-src="/web/image/product.product/#{o.id}/image_512"/>
                             </t>
                         </div>
                         <div name="right" style="display:block; clear:none; float:left; width:2.0in; height:2.0in">
@@ -268,11 +268,11 @@
                             <div name="image" style="clear:left; float:left; width:1.5in; height:1.5in;">
                                 <t t-if="o._name == 'product.template'">
                                     <img style="max-width:1.5in; max-height:1.5in; width:auto; height:auto;"
-                                         t-attf-src="/web/image/product.template/#{o.id}/image"/>
+                                         t-attf-src="/web/image/product.template/#{o.id}/image_512"/>
                                 </t>
                                 <t t-else="">
                                     <img style="max-width:1.5in; max-height:1.5in; width:auto; height:auto;"
-                                        t-attf-src="/web/image/product.product/#{o.id}/image"/>
+                                        t-attf-src="/web/image/product.product/#{o.id}/image_512"/>
                                 </t>
                             </div>
                             <div name="lower_right" style="float:left; width:2.5in; height:1.5:">
@@ -301,11 +301,11 @@
                         <div name="image" style="clear:left; float:left; width:2.0in; height:2.0in;">
                             <t t-if="o._name == 'product.template'">
                                 <img style="max-width:2.0in; max-height:2.0in; width:auto; height:auto;"
-                                     t-attf-src="/web/image/product.template/#{o.id}/image"/>
+                                     t-attf-src="/web/image/product.template/#{o.id}/image_512"/>
                             </t>
                             <t t-else="">
                                 <img style="max-width:2.0in; max-height:2.0in; width:auto; height:auto;"
-                                    t-attf-src="/web/image/product.product/#{o.id}/image"/>
+                                    t-attf-src="/web/image/product.product/#{o.id}/image_512"/>
                             </t>
                         </div>
                         <div name="right" style="display:block; clear:none; float:left; width:2.0in; height:2.0in">
@@ -351,12 +351,12 @@
                         <div name="image" style="clear:left; float:left; width:1.75in; height:1.75in;">
                             <t t-if="o._name == 'product.template'">
                                 <img style="max-width:1.75in; max-height:1.75in; width:auto; height:auto;"
-                                     t-attf-src="/web/image/product.template/#{o.id}/image"/>
+                                     t-attf-src="/web/image/product.template/#{o.id}/image_512"/>
                             </t>
                             <t t-else="">
                                 <img
                                     style="max-width:120px; max-height:120px; width:auto; height:auto;"
-                                    t-attf-src="/web/image/product.product/#{o.id}/image"/>
+                                    t-attf-src="/web/image/product.product/#{o.id}/image_512"/>
                             </t>
                         </div>
                         <div name="name"
@@ -393,12 +393,12 @@
                         <div name="image" style="clear:left; float:left; width:1.75in; height:1.75in;">
                             <t t-if="o._name == 'product.template'">
                                 <img style="max-width:1.75in; max-height:1.75in; width:auto; height:auto;"
-                                     t-attf-src="/web/image/product.template/#{o.id}/image"/>
+                                     t-attf-src="/web/image/product.template/#{o.id}/image_512"/>
                             </t>
                             <t t-else="">
                                 <img
                                     style="max-width:120px; max-height:120px; width:auto; height:auto;"
-                                    t-attf-src="/web/image/product.product/#{o.id}/image"/>
+                                    t-attf-src="/web/image/product.product/#{o.id}/image_512"/>
                             </t>
                         </div>
                         <div name="name"
