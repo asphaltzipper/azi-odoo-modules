@@ -14,12 +14,15 @@ class MRPComponentSerial(models.TransientModel):
     @api.model
     def default_get(self, fields):
         res = super(MRPComponentSerial, self).default_get(fields)
-        if self._context and self._context.get('active_model', '') == 'mrp.production' and self._context.get(
-                'active_id'):
+        if (
+            self._context
+            and self._context.get('active_model', '') == 'mrp.production'
+            and self._context.get('active_id')
+        ):
             production = self.env['mrp.production'].browse(self._context['active_id'])
-        res.update({
-            'production_id': production.id,
-        })
+            res.update({
+                'production_id': production.id,
+            })
         return res
 
     @api.onchange('production_id')
@@ -60,12 +63,13 @@ class MRPComponentSerial(models.TransientModel):
         last_workorder = self.production_id.workorder_ids and self.production_id.workorder_ids[-1]
         move_line_ids = self.component_serial_line_ids.mapped('move_id.move_line_ids')
         move_line_ids.unlink()
+        move_line_vals = []
         for line in self.component_serial_line_ids:
             if not line.lot_id:
                 raise UserError(_('Please enter a lot or serial number for component %s !' % line.product_id.display_name))
             if float_compare(line.qty_to_consume, line.qty_done, precision_rounding=line.product_id.uom_id.rounding) != 0:
                 raise UserError(_('Please correct Consumed quantity for lot %s !' % line.lot_id.display_name))
-            line.move_id.move_line_ids.create({
+            move_line_vals.append({
                 'move_id': line.move_id.id,
                 'lot_id': line.lot_id.id,
                 'reserved_uom_qty': 0,
@@ -77,6 +81,7 @@ class MRPComponentSerial(models.TransientModel):
                 'location_id': line.move_id.location_id.id,
                 'location_dest_id': line.move_id.location_dest_id.id,
             })
+        self.env['stock.move.line'].create(move_line_vals)
 
 
 class MRPComponentSerialLine(models.TransientModel):

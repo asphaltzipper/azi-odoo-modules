@@ -38,12 +38,14 @@
         <field name="name">FG Stock Valuation</field>
         <field name="res_model">stock.quant</field>
         <field name="view_mode">tree,form,pivot</field>
+        <field name="search_view_id" ref="azi_stock.fg_quant_search_view"/>
         <field name="context">
             {
                 'search_default_internal_loc': 1,
                 'search_default_stockable': 1,
                 'search_default_fg': 1,
                 'search_default_positive': 1,
+                'search_default_negative': 1,
                 'search_default_locationgroup': 1
             }
         </field>
