@@ -130,7 +130,7 @@ def migrate(env, version):
     # add bom_id and bom_type
 
     # clean up old tables
-    env.cr.execute("DROP TABLE mrp_bom_history_line_upgrade")
+    env.execute("DROP TABLE mrp_bom_history_line_upgrade")
     # don't drop the mrp_bom_history table
     # instead, we will purge the model using the database_cleanup module
     # env.cr.execute("DROP TABLE mrp_bom_history")
