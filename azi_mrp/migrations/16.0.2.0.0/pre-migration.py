@@ -37,7 +37,7 @@ def migrate(env, version):
             mbhl.product_id,
             mbhl.product_qty,
             coalesce(mbhl.product_uom_id, pt.uom_id) as product_uom_id,
-            mbhl.sequence as level,
+            mbhl.sequence+1 as level,
             mbhl.id as sequence
         from mrp_bom_history_line_upgrade mbhl
         left join product_product pp on pp.id=mbhl.product_id
@@ -91,24 +91,27 @@ def migrate(env, version):
             'product_id': mo['product_id'],
             'level': 0,
         }]
-        line_vals_list = []
+        adjacencies = {}
         vals_string = ""
         for line in lines:
-            line_vals_list.append((
-                mo['production_id'],
-                parent_stack[-1]['product_id'],
-                line['product_id'],
-                line['product_qty'],
-                line['product_uom_id'],
-                mo['create_date'],
-                mo['create_uid'],
-                mo['write_date'],
-                mo['write_uid'],
-            ))
-            if vals_string:
-                vals_string = vals_string + ","
-            vals_string = vals_string + values_sql % line_vals_list[-1]
             parent_stack = parent_stack[0:line['level']]
+            if not adjacencies.get(
+                    (parent_stack[-1]['product_id'], line['product_id'])):
+                adjacencies[(parent_stack[-1]['product_id'], line['product_id'])] = 1
+                vals = (
+                    mo['production_id'],
+                    parent_stack[-1]['product_id'],
+                    line['product_id'],
+                    line['product_qty'],
+                    line['product_uom_id'],
+                    mo['create_date'],
+                    mo['create_uid'],
+                    mo['write_date'],
+                    mo['write_uid'],
+                )
+                if vals_string:
+                    vals_string = vals_string + ","
+                vals_string = vals_string + values_sql % vals
             parent_stack.append({
                 'product_id': line['product_id'],
                 'level': line['level'],
