@@ -5,7 +5,6 @@
         <t t-call="web.basic_layout">
             <t t-set="body_classname" t-value="''"/>
             <div class="page">
-                <t t-foreach="docs" t-as="o">
                     <div class="row">
                         <div class="col-lg-12">
                             <h1>BOM History</h1>
@@ -22,17 +21,23 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <t t-foreach="o.bom_history_line_ids" t-as="line">
+                                        <t t-foreach="docs.get('lines')" t-as="line">
                                             <tr>
                                                 <td>
-                                                    <t t-set="product_url" t-value="env['ir.config_parameter'].sudo().get_param('web.base.url')+'/web#model=product.product&amp;id={}&amp;view_type=form'.format(line.product_id.id)"/>
-                                                    <a target='_blank' t-att-href="product_url">
-                                                        <span t-esc="line.product_id.display_name"/>
+                                                    <t t-set="space_td"
+                                                       t-value="'margin-left: '+ str(line['level'] * 20) + 'px;'"/>
+                                                    <span t-att-style="space_td"/>
+                                                    <t t-set="product_url"
+                                                       t-value="env['ir.config_parameter'].sudo().get_param('web.base.url')+'/web#model=product.product&amp;id={}&amp;view_type=form'.format(line['product_id'][0])"/>
+                                                    <a target='_blank' t-att-href="product_url" t-att-title="line['parent_product_id']">
+                                                        <span t-esc="line['product_id'][1]"/>
                                                     </a>
                                                 </td>
-                                                <td><t t-esc="line.product_qty"/></td>
                                                 <td>
-                                                    <t t-esc="line.product_uom_id.name"/>
+                                                    <t t-esc="line['product_qty']"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="line['product_uom_id'][1]"/>
                                                 </td>
                                             </tr>
                                         </t>
@@ -41,7 +46,6 @@
                             </div>
                         </div>
                     </div>
-                </t>
             </div>
         </t>
     </template>
