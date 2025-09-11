@@ -9,6 +9,10 @@
             <field name="client_order_ref" position="after">
                 <field name="credit_app_date"/>
             </field>
+            <xpath expr="//group[@name='partner_details']" position="inside">
+                <field name="credit_warn"/>
+                <field name="bypass_credit_warn" attrs="{'invisible': [('credit_warn', '=', False)]}"/>
+            </xpath>
         </field>
     </record>
 

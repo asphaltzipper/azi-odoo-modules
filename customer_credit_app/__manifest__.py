@@ -19,6 +19,7 @@ Customer Credit Application
     """,
     "depends": ['account', 'sale'],
     'data': [
+        'security/ir.model.access.csv',
         'views/res_partner_views.xml',
         'views/sale_order_views.xml',
     ],
