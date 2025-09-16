@@ -16,6 +16,7 @@ class SaleOrder(models.Model):
     credit_warn_action = fields.Selection(
         selection=[('bypass', 'Bypass'), ('request', 'Request')],
         string='Credit App Action',
+        copy=False,
     )
 
     @api.onchange('credit_warn')
