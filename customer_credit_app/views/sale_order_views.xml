@@ -6,12 +6,12 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-            <field name="client_order_ref" position="after">
-                <field name="credit_app_date"/>
-            </field>
-            <xpath expr="//group[@name='partner_details']" position="inside">
-                <field name="credit_warn"/>
-                <field name="bypass_credit_warn" attrs="{'invisible': [('credit_warn', '=', False)]}"/>
+            <xpath expr="//sheet/group" position="after">
+                <group name="credit_warning" style="background-color:#99ddff;" attrs="{'invisible': [('credit_warn_msg', '=', False)]}">
+                    <field name="credit_app_date"/>
+                    <field name="credit_warn_msg"/>
+                    <field name="credit_warn_action"/>
+                </group>
             </xpath>
         </field>
     </record>

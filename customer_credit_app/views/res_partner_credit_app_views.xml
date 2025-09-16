@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="view_res_partner_credit_tree" model="ir.ui.view">
+        <field name="name">view.res.partner.credit.tree</field>
+        <field name="model">res.partner.credit.app</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="partner_id"/>
+                <field name="order_id"/>
+                <field name="requested_date"/>
+                <field name="received_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_res_partner_credit_form" model="ir.ui.view">
+        <field name="name">view.res.partner.credit.form</field>
+        <field name="model">res.partner.credit.app</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="partner_id" attrs="{'readonly': [('received_date', '!=', False)]}" required="1"/>
+                            <field name="order_id" attrs="{'readonly': [('received_date', '!=', False)]}" />
+                        </group>
+                        <group>
+                            <field name="requested_date" attrs="{'readonly': [('received_date', '!=', False)]}"  required="1"/>
+                            <field name="received_date"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_res_partner_credit_search" model="ir.ui.view">
+        <field name="name">view.res.partner.credit.search</field>
+        <field name="model">res.partner.credit.app</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id" string="Partner"/>
+                <field name="order_id" string="Order"/>
+                <filter
+                    name="month_oldel_requests"
+                    string="Month &amp; Older Requests"
+                    domain="['&amp;', ('received_date', '=', False), ('requested_date', '&lt;=', (context_today() - relativedelta(days=30)).strftime('%Y-%m-%d'))]"
+                />
+                <filter
+                    name="two_year_older_apps"
+                    string="Two-Years &amp; Older Apps"
+                    domain="[('received_date', '&lt;=', (context_today() - relativedelta(years=2)).strftime('%Y-%m-%d'))]"
+                />
+            </search>
+        </field>
+    </record>
+
+    <record id="res_partner_credit_action_one" model="ir.actions.act_window">
+        <field name="name">One Credit App</field>
+        <field name="res_model">res.partner.credit.app</field>
+        <field name="view_mode">form,kanban,tree</field>
+    </record>
+
+    <record id="res_partner_credit_action" model="ir.actions.act_window">
+        <field name="name">Credit Application</field>
+        <field name="res_model">res.partner.credit.app</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="res_partner_credit_menu"  parent="sale.sale_order_menu" action="res_partner_credit_action"/>
+
+</odoo>

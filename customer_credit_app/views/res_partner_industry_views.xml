@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="res_partner_industry_credit_app_view_tree" model="ir.ui.view">
+        <field name="name">Industry</field>
+        <field name="model">res.partner.industry</field>
+        <field name="inherit_id" ref="base.res_partner_industry_view_tree"/>
+        <field name="arch" type="xml">
+            <field name="full_name" position="after">
+                <field name="credit_app"/>
+            </field>
+        </field>
+    </record>
+</odoo>

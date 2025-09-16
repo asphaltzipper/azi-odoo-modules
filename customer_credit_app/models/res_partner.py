@@ -1,33 +1,59 @@
-# -*- coding: utf-8 -*-
-
-from odoo import fields, models
+from odoo import fields, models, api
+from dateutil.relativedelta import relativedelta
 
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
+    credit_app_ids = fields.One2many(
+        comodel_name='res.partner.credit.app',
+        inverse_name='partner_id',
+        string='Credit App',
+    )
     credit_app_date = fields.Date(
-        string='Credit App Date')
-    credit_warn = fields.Boolean('Credit Application Warning')
-    credit_warn_msg = fields.Text('Credit Application Warning Message')
+        string='Credit App Date',
+        compute='_compute_credit_app',
+        compute_sudo=True,
+        store=True,
+    )
+    credit_warn = fields.Boolean(
+        string='Credit App Warn',
+        compute='_compute_credit_app',
+        compute_sudo=True,
+    )
+    credit_warn_msg = fields.Text(
+        string='Credit App Warn Msg',
+        compute='_compute_credit_app',
+        compute_sudo=True,
+    )
 
-
-class PartnerCredit(models.Model):
-    _name = 'res.partner.credit'
-    _rec_name = 'partner_id'
-    _description = 'Credit Application'
-
-    requested_date = fields.Date('Requested Date', default=fields.Date.today)
-    partner_id = fields.Many2one('res.partner', 'Customer')
-    order_id = fields.Many2one('sale.order', 'Sales Order')
-    state = fields.Selection([('draft', 'Draft'), ('confirm', 'Confirmed'), ('cancel', 'Cancelled')],
-                             'Status', default='draft')
-
-    def action_confirm(self):
-        for record in self:
-            record.partner_id.credit_warn = False
-            record.state = 'confirm'
-
-    def action_cancel(self):
-        for record in self:
-            record.state = 'cancel'
+    @api.depends('credit_app_ids')
+    def _compute_credit_app(self):
+        validity_months = self.env['ir.config_parameter'].sudo().get_param(
+            'customer_credit_app.validity_months')
+        expiry_date = fields.Date.today() - relativedelta(months=int(validity_months))
+        for rec in self:
+            if not rec.industry_id.credit_app:
+                rec.credit_app_date = False
+                rec.credit_warn = False
+                rec.credit_warn_msg = False
+                continue
+            latest_credit_app = rec.credit_app_ids and rec.credit_app_ids[0] or False
+            if not latest_credit_app:
+                rec.credit_app_date = False
+                rec.credit_warn = True
+                rec.credit_warn_msg = "No credit app on file"
+            elif not latest_credit_app.received_date:
+                latest_complete_app = rec.credit_app_ids.filtered(
+                    lambda x: x.received_date)
+                rec.credit_app_date = latest_complete_app.received_date
+                rec.credit_warn = True
+                rec.credit_warn_msg = "Credit app request pending"
+            elif latest_credit_app.received_date < expiry_date:
+                rec.credit_app_date = latest_credit_app.received_date
+                rec.credit_warn = True
+                rec.credit_warn_msg = "Credit app expired"
+            else:
+                rec.credit_app_date = latest_credit_app.received_date
+                rec.credit_warn = False
+                rec.credit_warn_msg = False

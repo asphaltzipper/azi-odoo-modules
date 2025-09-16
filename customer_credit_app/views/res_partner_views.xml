@@ -1,76 +1,32 @@
 <?xml version="1.0"?>
 <odoo>
 
-<!-- add credit_app_date field -->
+    <!-- add credit_app_date field -->
     <record id="res_partner_view_credit_app" model="ir.ui.view">
         <field name="name">res.partner.view.credit_app</field>
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="account.view_partner_property_form" />
         <field name="priority" eval="20"/>
         <field name="arch" type="xml">
-            <field name="property_payment_term_id" position="after">
-                <field name="credit_app_date"/>
-                <field name="credit_warn"/>
-                <field name="credit_warn_msg" attrs="{'required': [('credit_warn', '=', True)]}"/>
-            </field>
-        </field>
-    </record>
-
-    <record id="view_res_partner_credit_tree" model="ir.ui.view">
-        <field name="name">view.res.partner.credit.tree</field>
-        <field name="model">res.partner.credit</field>
-        <field name="arch" type="xml">
-            <tree>
-                <field name="partner_id"/>
-                <field name="order_id"/>
-                <field name="requested_date"/>
-                <field name="state"/>
-            </tree>
-        </field>
-    </record>
-
-    <record id="view_res_partner_credit_form" model="ir.ui.view">
-        <field name="name">view.res.partner.credit.form</field>
-        <field name="model">res.partner.credit</field>
-        <field name="arch" type="xml">
-            <form>
-                <header>
-                    <button name="action_confirm" type="object" string="Confirm" states="draft" class="btn btn-primary"/>
-                    <button name="action_cancel" type="object" string="Cancel" states="draft"/>
-                    <field name="state" widget="statusbar"/>
-                </header>
-                <sheet>
+            <page name="sales_purchases" position="after">
+                <page name="credit" string="Credit">
                     <group>
-                        <group>
-                            <field name="partner_id" attrs="{'readonly': [('state', '!=', 'draft')]}" required="1"/>
-                            <field name="order_id" attrs="{'readonly': [('state', '!=', 'draft')]}" />
-                        </group>
-                        <group>
-                            <field name="requested_date" attrs="{'readonly': [('state', '!=', 'draft')]}"  required="1"/>
-                        </group>
+                        <field name="credit_app_date"/>
+                        <field name="credit_warn"/>
+                        <field name="credit_warn_msg"/>
                     </group>
-                </sheet>
-            </form>
+                    <field name="credit_app_ids" nolabel="1" context="{'default_partner_id': active_id}">
+                        <tree>
+                            <field name="partner_id"/>
+                            <field name="requested_date"/>
+                            <field name="order_id"/>
+                            <field name="received_date"/>
+                            <button type="object" name="action_open_credit_app" title="Go" icon="fa-arrow-right" help="Go to this credit app"/>
+                        </tree>
+                    </field>
+                </page>
+            </page>
         </field>
     </record>
-
-    <record id="view_res_partner_credit_search" model="ir.ui.view">
-        <field name="name">view.res.partner.credit.search</field>
-        <field name="model">res.partner.credit</field>
-        <field name="arch" type="xml">
-            <search>
-                <field name="partner_id" string="Partner"/>
-                <field name="order_id" string="Order"/>
-            </search>
-        </field>
-    </record>
-
-    <record id="res_partner_credit_action" model="ir.actions.act_window">
-        <field name="name">Credit Application</field>
-        <field name="res_model">res.partner.credit</field>
-        <field name="view_mode">tree,form</field>
-    </record>
-
-    <menuitem id="res_partner_credit_menu"  parent="sale.sale_order_menu" action="res_partner_credit_action"/>
 
 </odoo>
