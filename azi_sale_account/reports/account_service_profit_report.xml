@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+    <record id="view_account_service_profit_report_pivot" model="ir.ui.view">
+         <field name="name">account.service.profit.report.pivot</field>
+         <field name="model">account.service.profit.report</field>
+         <field name="arch" type="xml">
+             <pivot string="Service Profit" sample="1">
+                 <field name="cost" type="measure"/>
+                 <field name="product_categ_id" type="col"/>
+                 <field name="invoice_date" type="row"/>
+             </pivot>
+         </field>
+    </record>
+
+    <record id="filter_account_service_profit_report_salespersons" model="ir.filters">
+        <field name="name">By Salespersons</field>
+        <field name="model_id">account.service.profit.report</field>
+        <field name="domain">[]</field>
+        <field name="user_id" eval="False"/>
+        <field name="context">{'group_by': ['invoice_date:month', 'salesperson_id']}</field>
+    </record>
+    <record id="filter_account_service_profit_report_product" model="ir.filters">
+        <field name="name">By Product</field>
+        <field name="model_id">account.service.profit.report</field>
+        <field name="domain">[]</field>
+        <field name="user_id" eval="False"/>
+        <field name="context">{'group_by': ['invoice_date:month', 'product_id']}</field>
+    </record>
+    <record id="filter_account_service_profit_report_product_category" model="ir.filters">
+        <field name="name">By Product Category</field>
+        <field name="model_id">account.service.profit.report</field>
+        <field name="domain">[]</field>
+        <field name="user_id" eval="False"/>
+        <field name="context">{'group_by': ['invoice_date:month', 'product_categ_id']}</field>
+    </record>
+    <record id="filter_account_service_profit_report_sales_team" model="ir.filters">
+        <field name="name">By Sales Team</field>
+        <field name="model_id">account.service.profit.report</field>
+        <field name="domain">[]</field>
+        <field name="user_id" eval="False"/>
+        <field name="context">{'group_by': ['invoice_date:month', 'sales_team_id']}</field>
+    </record>
+    <record id="filter_account_service_profit_report_sales_team" model="ir.filters">
+        <field name="name">By Discount Reason</field>
+        <field name="model_id">account.service.profit.report</field>
+        <field name="domain">[]</field>
+        <field name="user_id" eval="False"/>
+        <field name="context">{'group_by': ['invoice_date:month', 'discount_reason_id']}</field>
+    </record>
+
+    <record id="view_account_service_profit_report_search" model="ir.ui.view">
+        <field name="name">account.service.profit.report.search</field>
+        <field name="model">account.service.profit.report</field>
+        <field name="arch" type="xml">
+            <search>
+                <filter string="Last Month"  name="month" domain="[('invoice_date','&gt;', ((context_today()-relativedelta(months=1)).strftime('%Y-%m-%d')))]"/>
+                <filter string="Last Year"  name="year" domain="[('invoice_date','&gt;', ((context_today()-relativedelta(years=1)).strftime('%Y-%m-%d')))]"/>
+                <field name="salesperson_id" />
+                <field name="discount_reason_id" />
+                <field name="sales_team_id" />
+                <field name="product_id" />
+                <field name="product_categ_id" filter_domain="[('product_categ_id', 'child_of', self)]"/>
+                <group expand="1" string="Group By">
+                    <filter string="Salesperson" name='user' context="{'group_by':'salesperson_id'}"/>
+                    <filter string="Sales Team" name='sales_team' context="{'group_by':'sales_team_id'}"/>
+                    <filter string="Product" name="product" context="{'group_by':'product_id'}"/>
+                    <filter string="Product Category" name="category_product" context="{'group_by':'product_categ_id'}"/>
+                    <filter string="Discount Reason" name="discount_reason" context="{'group_by':'discount_reason_id'}"/>
+                    <filter string="Date" name="invoice_date" context="{'group_by':'invoice_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_account_service_profit_report" model="ir.actions.act_window">
+        <field name="name">Customer Service Profit</field>
+        <field name="res_model">account.service.profit.report</field>
+        <field name="view_mode">pivot</field>
+    </record>
+
+    <menuitem id="account_service_profit_report_menu" parent="account.account_reports_management_menu"
+              action="action_account_service_profit_report"/>
+
+</data>
+</odoo>
