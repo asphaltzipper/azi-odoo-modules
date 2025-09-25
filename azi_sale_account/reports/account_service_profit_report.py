@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from odoo import models, fields, api
 
 
@@ -19,12 +17,11 @@ class AccountServiceProfitReport(models.Model):
     product_id = fields.Many2one('product.product', 'Product', readonly=True)
     product_categ_id = fields.Many2one('product.category', 'Product Category', readonly=True)
     cost = fields.Float('Cost')
-    list_price = fields.Float('List Price')
     discount_reason_id = fields.Many2one('sale.discount.reason', 'Discount Reason')
     move_line_id = fields.Many2one('account.move.line', 'Invoice Line')
     sales_amount = fields.Float()
     margin = fields.Float()
-    margin_percent = fields.Float()
+    sale_order_id = fields.Many2one('sale.order', 'Sale Order')
 
     _depends = {
         'account.move': [
@@ -45,40 +42,66 @@ class AccountServiceProfitReport(models.Model):
     @api.model
     def _select_customer_service(self):
         return '''
-            SELECT
-                line.id,
-                line.id AS move_line_id,
-                line.move_id,
-                line.product_id,                  
-                line.company_id,
-                sol.purchase_price * line.quantity AS cost,
-                template.list_price,
-                (line.price_subtotal - (sol.purchase_price * line.quantity)) AS margin,
-                CASE WHEN line.price_subtotal != 0
-                     THEN ((line.price_subtotal - (sol.purchase_price * line.quantity)) / line.price_subtotal) * 100
-                     ELSE 0 END AS margin_percent,
-            
-                move.state,             
-                move.move_type,              
-                move.partner_id,              
-                move.invoice_user_id AS salesperson_id,   
-                line.discount_reason_id,          
-                move.invoice_date,             
-                template.categ_id AS product_categ_id,
-                line.quantity AS quantity,                  
-                line.price_total AS sales_amount,              
-                line.currency_id  AS currency_id, 
-                move.team_id AS sales_team_id          
-            FROM account_move_line line               
-                LEFT JOIN res_partner partner ON partner.id = line.partner_id              
-                LEFT JOIN product_product product ON product.id = line.product_id               
-                LEFT JOIN account_account account ON account.id = line.account_id             
-                LEFT JOIN product_template template ON template.id = product.product_tmpl_id                       
-                INNER JOIN account_move move ON move.id = line.move_id
-                LEFT JOIN sale_order_line_invoice_rel sol_rel ON sol_rel.invoice_line_id = line.id
-                LEFT JOIN sale_order_line sol ON sol.id = sol_rel.order_line_id
-            WHERE move.move_type IN ('out_invoice', 'out_refund')        
-                AND line.display_type = 'product'
-
+            select
+                inc.move_line_id as id,
+                am.id as move_id,
+                coalesce(rp.parent_id, rp.id) as partner_id,
+                am.invoice_user_id as salesperson_id,
+                am.team_id as sales_team_id,
+                am.company_id,
+                am.invoice_date,
+                inc.quantity,
+                inc.product_id,
+                pt.categ_id as product_categ_id,
+                -- multiply income quantity by unit cost because there may be multiple
+                -- income lines for the same product, and we don't know which cost line
+                -- to match
+                inc.quantity * coalesce(cst.balance, 0.0) / (case when cst.quantity is null or cst.quantity = 0 then 1.0 else cst.quantity end) as cost,
+                inc.discount_reason_id,
+                inc.move_line_id,
+                inc.balance as sales_amount,
+                inc.balance + inc.quantity * coalesce(cst.balance, 0.0) / (case when cst.quantity is null or cst.quantity = 0 then 1.0 else cst.quantity end) as margin,
+                sol.order_id as sale_order_id
+            from (
+                -- income
+                select
+                    aml.id as move_line_id,
+                    aml.move_id,
+                    aml.product_id,
+                    aml.discount_reason_id,
+                    aml.quantity,
+                    -1 * aml.balance as balance
+                from account_move_line aml
+                left join account_move am on am.id=aml.move_id
+                left join account_account aa on aa.id=aml.account_id
+                where am.move_type in ('out_invoice', 'out_refund')
+                and aml.product_id is not null
+                and aa.account_type='income'
+                and am.state='posted'
+                group by aml.id, aml.move_id, aml.product_id, aml.discount_reason_id, aml.quantity
+            ) as inc
+            left join (
+                -- costs
+                select
+                    aml.move_id,
+                    aml.product_id,
+                    case when aml.product_id is not null then null else aml.name end as line_name,
+                    sum(aml.quantity) as quantity,
+                    sum(-1 * aml.balance) as balance
+                from account_move_line aml
+                left join account_move am on am.id=aml.move_id
+                left join account_account aa on aa.id=aml.account_id
+                where am.move_type in ('out_invoice', 'out_refund')
+                and aa.account_type='expense_cogs_material'
+                and am.state='posted'
+                group by aml.move_id, aml.product_id, case when aml.product_id is not null then null else aml.name end
+            ) as cst on cst.move_id=inc.move_id and cst.product_id=inc.product_id
+            left join account_move am on am.id=inc.move_id
+            left join product_product pp on pp.id=inc.product_id
+            left join product_template pt on pt.id=pp.product_tmpl_id
+            left join res_partner rp on rp.id=am.partner_id
+            -- sale order lines can have multiple invoices, but so far...
+            -- invoice lines are never associated with multiple sale order lines
+            left join sale_order_line_invoice_rel sol_rel on sol_rel.invoice_line_id=inc.move_line_id
+            left join sale_order_line sol on sol.id=sol_rel.order_line_id
         '''
-
