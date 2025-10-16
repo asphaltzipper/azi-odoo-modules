@@ -19,3 +19,9 @@ class StockQuant(models.Model):
             for vals in vals_list:
                 vals['current_inventory_id'] = self.env.context.get("active_id")
         return super().create(vals_list)
+
+    @api.model
+    def _quant_tasks(self):
+        self._merge_quants()
+        if not self.env.context.get('inventory_adjustment', False):
+            self._unlink_zero_quants()
