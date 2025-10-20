@@ -5,6 +5,12 @@ from odoo.exceptions import ValidationError
 class MrpBom(models.Model):
     _inherit = "mrp.bom"
 
+    reconfigure = fields.Boolean(
+        string="Reconfigure",
+        default=False,
+        required=True,
+    )
+
     @api.constrains('product_id', 'product_tmpl_id', 'bom_line_ids')
     def _check_product_recursion(self):
         for bom in self:
@@ -20,7 +26,7 @@ class MrpBom(models.Model):
     def _check_product_required(self):
         # require product variant, unless this is a configurator bom
         for bom in self:
-            if not bom.product_id and bom.active:
+            if bom.active and not bom.product_id and not bom.config_ok:
                 raise ValidationError(_("Product Variant is required"))
 
 
