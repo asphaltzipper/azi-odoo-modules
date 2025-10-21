@@ -34,4 +34,7 @@ class InventoryAdjustmentsGroup(models.Model):
 
     def action_state_to_done(self):
         self.stock_quant_ids.action_apply_inventory()
-        return super(InventoryAdjustmentsGroup, self).action_state_to_done()
+        res = super(InventoryAdjustmentsGroup, self).action_state_to_done()
+        zero_quants = self.stock_quant_ids.filtered(lambda q: q.quantity == q.inventory_quantity == 0)
+        zero_quants.sudo().unlink()
+        return res
