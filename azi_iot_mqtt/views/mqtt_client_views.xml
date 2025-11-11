@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_mqtt_client_form" model="ir.ui.view">
+        <field name="name">view.mqtt.client.form</field>
+        <field name="model">mqtt.client</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name" required="1"/>
+                    </group>
+                    <notebook>
+                        <page string="Serial/Lot">
+                            <field name="lot_ids"/>
+                        </page>
+                        <page string="Hour Logs">
+                            <field name="hour_log_ids" readonly="1">
+                                <tree>
+                                    <field name="date"/>
+                                    <field name="hour"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="view_mqtt_client_tree" model="ir.ui.view">
+        <field name="name">view.mqtt.client.tree</field>
+        <field name="model">mqtt.client</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="lot_ids"/>
+            </tree>
+        </field>
+    </record>
+    <record id="mqtt_client_action" model="ir.actions.act_window">
+        <field name="name">Client</field>
+        <field name="res_model">mqtt.client</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="mqtt_client_menu" parent="mqtt_integration.menu_mqtt_configuration"
+        action="mqtt_client_action"
+        sequence="3"/>
+
+    <record id="view_mqtt_topic_form" model="ir.ui.view">
+        <field name="name">mqtt.topic.form</field>
+        <field name="model">mqtt.topic</field>
+        <field name="inherit_id" ref="mqtt_integration.view_mqtt_topic_form"/>
+        <field name="arch" type="xml">
+            <field name="broker_id" position="after">
+                <field name="mqtt_client_id" required="1"/>
+            </field>
+        </field>
+    </record>
+
+
+</odoo>
