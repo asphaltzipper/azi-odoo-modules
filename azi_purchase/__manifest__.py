@@ -19,6 +19,7 @@ AZI Purchase
     "depends": ['purchase'],
     'data': [
         'views/purchase_views.xml',
+        'reports/purchase_order_report.xml',
     ],
     "installable": True,
     "auto_install": False,
