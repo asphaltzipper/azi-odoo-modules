@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from dateutil.relativedelta import relativedelta
 
 from odoo import models, fields, api, Command, _
@@ -35,6 +33,11 @@ class MrpProduction(models.Model):
         res = super(MrpProduction, self).action_confirm()
         self.reset_labor_ids()
         return res
+
+    def check_raw_comp_serials(self):
+        for move in self.move_raw_ids:
+            if move.has_tracking and not move.quantity_done:
+                raise ValidationError(_("You must assign serial/lot numbers to one or more components"))
 
     @staticmethod
     def check_labor_information(labor):
@@ -98,6 +101,7 @@ class MrpProduction(models.Model):
             res = self._pre_button_mark_done()
             if res and type(res) == bool:
                 self.create_workorder_labor()
+        self.check_raw_comp_serials()
         return super(MrpProduction, self).button_mark_done()
 
     def ext_produce(self):
