@@ -38,7 +38,11 @@ class SaleOrder(models.Model):
     def onchange_partner_id_warning(self):
         if not self.partner_id:
             return
+        delivery_partner = self.partner_id.child_ids.filtered(lambda p: p.type == 'delivery')
+        if delivery_partner and delivery_partner[0].id != self.partner_id.id:
+            self.partner_id = delivery_partner[0]
         partner = self.partner_id
+
         # If partner has no warning, check its company
         if partner.sale_warn == 'no-message' and partner.parent_id:
             partner = partner.parent_id
