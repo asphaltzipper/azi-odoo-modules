@@ -35,9 +35,12 @@ class MrpProduction(models.Model):
         return res
 
     def check_raw_comp_serials(self):
-        for move in self.move_raw_ids:
-            if move.has_tracking and not move.quantity_done:
-                raise ValidationError(_("You must assign serial/lot numbers to one or more components"))
+        if self.move_raw_ids.filtered(
+            lambda x: x.state not in ['done','cancel']
+                      and x.has_tracking!='none'
+                      and not x.quantity_done
+        ):
+            raise ValidationError(_("You must assign serial/lot numbers to one or more components"))
 
     @staticmethod
     def check_labor_information(labor):

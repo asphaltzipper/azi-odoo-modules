@@ -24,7 +24,25 @@
             </xpath>
             <xpath expr="//page/field[@name='move_raw_ids']/tree/field[@name='quantity_done']" position="after">
                 <field name="added_rm" readonly="1" string="Added"/>
-                <button name="action_cancel" type="object" icon="fa-minus-circle" help="Cancel Consumption" confirm="Cancel this Raw Material?" title="cancel"/>
+                <button
+                    name="action_cancel"
+                    type="object"
+                    icon="fa-minus-circle"
+                    help="Cancel Consumption"
+                    confirm="Cancel this Raw Material?"
+                    title="cancel"
+                    attrs="{'invisible':[('state','in',['cancel','done'])]}"
+                />
+                <button
+                    class="o_optional_button btn btn-light"
+                    name="action_cancel"
+                    type="object"
+                    icon="fa-minus-circle"
+                    help="Canceled"
+                    confirm="This Raw Material consumption has been canceled"
+                    title="cancel"
+                    attrs="{'invisible':[('state','not in',['cancel','done'])]}"
+                />
             </xpath>
         </field>
     </record>
