@@ -90,8 +90,8 @@ class report_account_bbc_aged_partner(models.AbstractModel):
                         BBC eligible = total amount * 0.2
                         20 % conc = less than 90 - BBC
                     """
-                    if all_total and less_than_90_days > 0.2 * all_total:
-                        eligible = all_total * 0.2
+                    if all_total and less_than_90_days > 0.25 * all_total:
+                        eligible = all_total * 0.25
                         conc = less_than_90_days - eligible
 
             if not current_groupby:

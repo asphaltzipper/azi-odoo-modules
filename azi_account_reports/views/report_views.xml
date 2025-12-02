@@ -71,7 +71,7 @@
                     <field name="figure_type">monetary</field>
                 </record>
                 <record id="bbc_receivable_report_conc" model="account.report.column">
-                    <field name="name">20% Conc</field>
+                    <field name="name">25% Conc</field>
                     <field name="sequence">9</field>
                     <field name="expression_label">conc</field>
                     <field name="figure_type">monetary</field>
