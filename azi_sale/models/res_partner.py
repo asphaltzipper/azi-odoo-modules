@@ -51,6 +51,8 @@ class ResPartner(models.Model):
                         partner.commercial_company_name or partner.parent_id.name,
                         name,
                         flat_address)
+            if not partner.parent_id:
+                name = "%s, %s" % (partner.name, partner._flat_address())
             name = name.replace('\n', ', ')
             res.append((partner.id, name))
         return res

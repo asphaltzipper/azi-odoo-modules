@@ -10,6 +10,7 @@
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
             <xpath expr="//form/sheet/group/group/field[@name='partner_id']" position="attributes">
+                <attribute name="context">{'res_partner_search_mode': 'customer', 'show_address': 1, 'show_vat': True, 'override_display_name': 1}</attribute>
                 <attribute name="options"/>
             </xpath>
             <xpath expr="//form/sheet/group/group/field[@name='partner_invoice_id']" position="attributes">
