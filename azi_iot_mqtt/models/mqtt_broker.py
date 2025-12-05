@@ -1,7 +1,10 @@
 import logging
 import time
 import json
+import math
+import re
 from odoo import models, api, fields, registry, SUPERUSER_ID
+from odoo.exceptions import UserError
 from odoo.addons.mqtt_integration.utils import broker_client, get_first_or_zero
 
 _logger = logging.getLogger(__name__)
@@ -52,9 +55,10 @@ class MqttBroker(models.Model):
 
         def on_message(client, userdata, msg):
             _logger.info(f"Message received on {msg.topic}: {msg.payload}")
-            with registry(dbname).cursor() as cr:
+            with (registry(dbname).cursor() as cr):
                 env = api.Environment(cr, SUPERUSER_ID, {})
                 topic_env = env['mqtt.topic']
+                client_env = env['mqtt.client']
                 metadata_model = env['mqtt.metadata']
                 metadata_value_model = env['mqtt.metadata.value']
                 history_env = env['mqtt.message.history']
@@ -121,13 +125,34 @@ class MqttBroker(models.Model):
                         'retain': msg.retain,
                         'timestamp': fields.Datetime.now(),
                     }
+
+                    # ##################################################################
+                    # this stuff is different from the original _run_listener_thread_safe()
+                    if topic and topic.client_regex:
+                        code_match = re.match(topic.client_regex, msg.topic)
+                        iccid = code_match and code_match.group(1)
+                        if iccid:
+                            client_device = client_env.search([('name', '=', iccid)])
+                            if client_device:
+                                message_data['client_id'] = client_device.id
+                    # ##################################################################
+
                     history = history_env.create(message_data)
                     _logger.info(f"Message history created for topic {msg.topic}: {history.name or ''}.")
-                    payload_json = json.loads(history.payload)
-                    if topic.mqtt_client_id:
-                        topic.mqtt_client_id.write({'hour_log_ids': [(0, 0,
-                                                                      {'date': fields.Date.today(),
-                                                                       'hour': float(payload_json['hrs']['hrs'])})]})
+
+                    # ##################################################################
+                    # this stuff is different from the original _run_listener_thread_safe()
+                    if client_device and topic.dest_model_name:
+                        serial = client_device.serial_ids[0]
+                        if serial:
+                            payload_json = json.loads(history.payload)
+                            payload_json['lot_id'] = serial.id
+                            # TODO: Verify that the dict keys, coming from the payload json, match the fields defined on
+                            #       the model. We are inside of a try statement, so it won't break, but we could log a
+                            #       more useful error message than that defined below.
+                            env[topic.dest_model_name].write(payload_json)
+                    # ##################################################################
+
                     # Update metadata with history and values
                     if metadata:
                         metadata.update({

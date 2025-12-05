@@ -18,6 +18,7 @@
     "data": [
         'security/ir.model.access.csv',
         'views/mqtt_client_views.xml',
+        'views/mqtt_topic_views.xml',
     ],
     "installable": True,
     "auto_install": False,

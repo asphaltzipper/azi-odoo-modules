@@ -6,4 +6,6 @@ from . import stock_lot_partner
 from . import mrp_repair
 from . import sale_order
 from . import stock_lot_hour_log
+from . import stock_lot_dtc_log
+from . import stock_lot_gps_log
 from . import stock_valuation_layer

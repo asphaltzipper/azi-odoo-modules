@@ -6,18 +6,48 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_review_incoming_history" type="object"
+                                class="oe_stat_button"
+                                icon="fa-file-text-o"
+                                context="{'signal_id': id}">
+                            <div class="o_stat_info">
+                                <field name="incoming_message_count" class="o_stat_value"/>
+                                <span class="o_stat_text">In-Msgs</span>
+                            </div>
+                        </button>
+                        <button name="action_review_outgoing_history" type="object"
+                                class="oe_stat_button"
+                                icon="fa-file-text-o"
+                                context="{'signal_id': id}">
+                            <div class="o_stat_info">
+                                <field name="outgoing_message_count" class="o_stat_value"/>
+                                <span class="o_stat_text">Out-Megs</span>
+                            </div>
+                        </button>
+                    </div>
                     <group>
                         <field name="name" required="1"/>
+                        <field name="current_lot_id"/>
+                        <field name="hologram_state"/>
                     </group>
                     <notebook>
-                        <page string="Serial/Lot">
-                            <field name="lot_ids"/>
+                        <page string="Serial/Lot" context="{'default_client_id': active_id}">
+                            <field name="serial_ids">
+                                <tree create="1" edit="1" editable="top">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="client_id" invisible="1"/>
+                                    <field name="lot_id"/>
+                                    <field name="install_date"/>
+                                </tree>
+                            </field>
                         </page>
-                        <page string="Hour Logs">
-                            <field name="hour_log_ids" readonly="1">
+                        <page string="Outbound Messages">
+                            <field name="history_ids" readonly="1" domain="[('client_id', '=', id)]">
                                 <tree>
-                                    <field name="date"/>
-                                    <field name="hour"/>
+                                    <field name="topic"/>
+                                    <field name="qos"/>
+                                    <field name="timestamp"/>
                                 </tree>
                             </field>
                         </page>
@@ -32,7 +62,8 @@
         <field name="arch" type="xml">
             <tree>
                 <field name="name"/>
-                <field name="lot_ids"/>
+                <field name="hologram_state"/>
+                <field name="current_lot_id"/>
             </tree>
         </field>
     </record>
@@ -45,17 +76,5 @@
     <menuitem id="mqtt_client_menu" parent="mqtt_integration.menu_mqtt_configuration"
         action="mqtt_client_action"
         sequence="3"/>
-
-    <record id="view_mqtt_topic_form" model="ir.ui.view">
-        <field name="name">mqtt.topic.form</field>
-        <field name="model">mqtt.topic</field>
-        <field name="inherit_id" ref="mqtt_integration.view_mqtt_topic_form"/>
-        <field name="arch" type="xml">
-            <field name="broker_id" position="after">
-                <field name="mqtt_client_id" required="1"/>
-            </field>
-        </field>
-    </record>
-
 
 </odoo>

@@ -1,5 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_mqtt_client_user,access.mqtt.client.user,model_mqtt_client,base.group_user,1,1,1,0
 access_mqtt_client_admin,access.mqtt.client.admin,model_mqtt_client,base.group_system,1,1,1,1
-access_mqtt_hour_log_user,access.mqtt.hour.log.user,model_mqtt_hour_log,base.group_user,1,1,1,0
-access_mqtt_hour_log_admin,access.mqtt.hour.log.admin,model_mqtt_hour_log,base.group_system,1,1,1,1
+access_mqtt_client_serial_user,access.mqtt.client.serial.user,model_mqtt_client_serial,base.group_user,1,1,1,0
+access_mqtt_client_serial_admin,access.mqtt.client.serial.admin,model_mqtt_client_serial,base.group_system,1,1,1,1
