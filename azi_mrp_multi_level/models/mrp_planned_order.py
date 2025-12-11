@@ -43,8 +43,18 @@ class MrpPlannedOrder(models.Model):
         d_min = min(self.mapped('order_release_date'))
         d_max = max(self.mapped('order_release_date'))
         span_days = (d_max - d_min).days
-        factor = 8.0 / span_days
-        for rec in self:
-            day = (rec.order_release_date - d_min).days
-            priority = int(math.ceil(day*factor)+1)
-            rec.priority_code = min(max(priority, 2), 9)
+        # span_days can be zero when we are processing more than 1000 records:
+        # Odoo is performing this compute in batches of 1000. After the first batch,
+        # subsequent small batches of records have the possibility of being all on the
+        # same day.  This causes span_days to equal zero.
+        if span_days == 0:
+            for rec in self:
+                # set to the lowest priority
+                # assumes that orders are sorted by ascending date
+                rec.priority_code = 9
+        else:
+            factor = 8.0 / span_days
+            for rec in self:
+                day = (rec.order_release_date - d_min).days
+                priority = int(math.ceil(day*factor)+1)
+                rec.priority_code = min(max(priority, 2), 9)
