@@ -63,9 +63,10 @@ class MqttBroker(models.Model):
                 metadata_value_model = env['mqtt.metadata.value']
                 history_env = env['mqtt.message.history']
 
-                topic = topic_env.search([('name', '=', msg.topic)], limit=1) or False
+                topic = topic_env.search([], limit=None)
+                topic = next((t for t in topic if t.client_regex and re.match(t.client_regex, msg.topic)), False)
                 sub_exist = env['mqtt.subscription'].search([
-                    ('topic_id', '=', topic.id if topic else False),('status', '=', 'subscribe')
+                    ('topic_id', '=', topic.id if topic else False), ('status', '=', 'subscribe')
                 ], limit=1)
                 if not sub_exist:
                     _logger.warning(f"Topic {msg.topic} is not subscribed.")
@@ -146,11 +147,13 @@ class MqttBroker(models.Model):
                         serial = client_device.serial_ids[0]
                         if serial:
                             payload_json = json.loads(history.payload)
-                            payload_json['lot_id'] = serial.id
-                            # TODO: Verify that the dict keys, coming from the payload json, match the fields defined on
-                            #       the model. We are inside of a try statement, so it won't break, but we could log a
-                            #       more useful error message than that defined below.
-                            env[topic.dest_model_name].write(payload_json)
+                            payload_json['lot_id'] = serial.lot_id.id
+                            payload_json['date'] = fields.Date.today()
+                            dest_model_fields = env[topic.dest_model_name]._fields.keys()
+                            invalid_payload_fields = [key for key in payload_json.keys() if key not in dest_model_fields]
+                            if invalid_payload_fields:
+                                _logger.warning(f'{topic.dest_model_name} model doesn\'t have the following fields: {invalid_payload_fields}')
+                            env[topic.dest_model_name].create(payload_json)
                     # ##################################################################
 
                     # Update metadata with history and values
