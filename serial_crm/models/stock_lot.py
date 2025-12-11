@@ -93,6 +93,9 @@ class StockLot(models.Model):
          inverse_name='lot_id',
          string='Hour Log')
 
+    dtc_ids = fields.One2many('stock.lot.dtc.log', 'lot_id', 'DTC Log')
+    gps_ids = fields.One2many('stock.lot.gps.log', 'lot_id', 'GPS Log')
+
     mfg_date = fields.Date(
         string="Mfg Date",
         required=True,

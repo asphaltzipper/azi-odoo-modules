@@ -16,21 +16,21 @@ class StockLotHourLog(models.Model):
         required=True,
     )
     hours = fields.Float(string='Hours')
-    hrs = fields.Char(
-        compute='_compute_hrs',
-        inverse='_inverse_hrs',
-        readonly=True,
-    )
+    hrs = fields.Char()
     note = fields.Char(string="Note")
 
-    def _inverse_hrs(self):
-        for rec in self:
-            try:
-                rec.hours = int(rec.hrs)
-            except:
-                pass
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if 'hours' in vals:
+                vals['hrs'] = str(vals['hours'])
+            elif 'hrs' in vals:
+                vals['hours'] = float(vals['hrs'])
+        super(StockLotHourLog, self).create(vals_list)
 
-
-    def _compute_hrs(self):
-        for rec in self:
-            rec.hrs = str(rec.hours)
+    def write(self, vals):
+        if 'hours' in vals and 'hrs' not in vals:
+            vals['hrs'] = str(vals['hours'])
+        elif 'hrs' in vals and 'hours' not in vals:
+            vals['hours'] = float(vals['hrs'])
+        super(StockLotHourLog, self).write(vals)
