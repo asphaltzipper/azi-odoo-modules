@@ -153,7 +153,9 @@ class MqttBroker(models.Model):
                             invalid_payload_fields = [key for key in payload_json.keys() if key not in dest_model_fields]
                             if invalid_payload_fields:
                                 _logger.warning(f'{topic.dest_model_name} model doesn\'t have the following fields: {invalid_payload_fields}')
-                            env[topic.dest_model_name].create(payload_json)
+                            else:
+                                env[topic.dest_model_name].create(payload_json)
+                                history.processed = True
                     # ##################################################################
 
                     # Update metadata with history and values

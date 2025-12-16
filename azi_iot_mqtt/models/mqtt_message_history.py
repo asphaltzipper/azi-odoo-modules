@@ -8,3 +8,4 @@ class MQTTMessageHistory(models.Model):
         comodel_name='mqtt.client',
         string="Client",
     )
+    processed = fields.Boolean('Processed')

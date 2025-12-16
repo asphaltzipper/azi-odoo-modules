@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_mqtt_incoming_message_history_tree" model="ir.ui.view">
+        <field name="name">mqtt.incoming.message.history.tree</field>
+        <field name="model">mqtt.message.history</field>
+        <field name="inherit_id" ref="mqtt_integration.view_mqtt_incoming_message_history_tree"/>
+        <field name="arch" type="xml">
+            <field name="topic" position="after">
+                <field name="processed"/>
+            </field>
+        </field>
+    </record>
+    <record id="view_mqtt_message_history_form" model="ir.ui.view">
+        <field name="name">mqtt.message.history.form</field>
+        <field name="model">mqtt.message.history</field>
+        <field name="inherit_id" ref="mqtt_integration.view_mqtt_message_history_form"/>
+        <field name="arch" type="xml">
+            <sheet position="before">
+                <header>
+                    <button name="%(azi_iot_mqtt.action_mqtt_process_message)d" string="Process" type="action"
+                            class="btn btn-primary"
+                            attrs="{'invisible': ['|', ('direction', '!=', 'incoming'), ('processed', '=', True)]}"/>
+                </header>
+            </sheet>
+            <field name="topic" position="after">
+                <field name="processed" readonly="1" attrs="{'invisible': [('direction', '!=', 'incoming')]}"/>
+            </field>
+        </field>
+    </record>
+</odoo>

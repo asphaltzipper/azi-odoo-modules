@@ -1,4 +1,6 @@
+import re
 from odoo import models, api, fields
+from odoo.exceptions import ValidationError
 
 
 class MqttTopic(models.Model):
@@ -18,3 +20,10 @@ class MqttTopic(models.Model):
         string='Dest Model',
         help="The Odoo model in which to store the parsed payload data",
     )
+
+    @api.constrains('name')
+    def _check_topic_name(self):
+        pattern = re.compile(r'^(?!/)[^#]*(?:#)?$')
+        for record in self:
+            if not bool(pattern.fullmatch(record.name)):
+                raise ValidationError("Topic name should not start with '/' or contain '#' in the middle")

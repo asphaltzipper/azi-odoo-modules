@@ -19,6 +19,8 @@
         'security/ir.model.access.csv',
         'views/mqtt_client_views.xml',
         'views/mqtt_topic_views.xml',
+        'views/mqtt_message_history_views.xml',
+        'wizards/mqtt_process_message_views.xml',
     ],
     "installable": True,
     "auto_install": False,

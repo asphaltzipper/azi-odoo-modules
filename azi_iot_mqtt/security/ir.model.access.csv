@@ -3,3 +3,5 @@ access_mqtt_client_user,access.mqtt.client.user,model_mqtt_client,base.group_use
 access_mqtt_client_admin,access.mqtt.client.admin,model_mqtt_client,base.group_system,1,1,1,1
 access_mqtt_client_serial_user,access.mqtt.client.serial.user,model_mqtt_client_serial,base.group_user,1,1,1,0
 access_mqtt_client_serial_admin,access.mqtt.client.serial.admin,model_mqtt_client_serial,base.group_system,1,1,1,1
+access_mqtt_process_message_user,access.mqtt.process.message.user,model_mqtt_process_message,base.group_user,1,1,1,0
+
