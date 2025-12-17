@@ -24,7 +24,12 @@ AZI Stock Inventory Adjustment
         ],
 
     },
-    "data": [],
+    "data": [
+        'security/ir.model.access.csv',
+        'views/stock_inventory_views.xml',
+        'views/stock_quant_views.xml',
+        'wizards/inventory_import_views.xml',
+    ],
     "installable": True,
     "auto_install": False,
 }

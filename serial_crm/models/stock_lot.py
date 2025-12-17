@@ -134,7 +134,7 @@ class StockLot(models.Model):
                 serial.state = 'lot'
                 continue
             moves_in_out = serial.move_line_ids.filtered(
-                lambda x: x.state == 'done' and (
+                lambda x: x.state == 'done' and x.qty_done and (
                               x.move_id._is_in()
                               or x.move_id._is_out()
                               or x.move_id._is_dropshipped()

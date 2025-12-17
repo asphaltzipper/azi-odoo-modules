@@ -11,6 +11,7 @@
                 </div>
                 <group>
                     <group>
+                        <field name="name"/>
                         <field name="location_id" required="1"/>
                         <field name="filename" invisible="1"/>
                         <field name="data_file" filename="filename" required="1"/>

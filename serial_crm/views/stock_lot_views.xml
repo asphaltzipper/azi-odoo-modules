@@ -50,6 +50,7 @@
                             <field name="reference"/>
                             <field name="location_id"/>
                             <field name="location_dest_id"/>
+                            <field name="qty_done"/>
                         </tree>
                     </field>
                 </page>
