@@ -18,7 +18,7 @@ class StockQuant(models.Model):
     @api.model
     def _get_inventory_fields_create(self):
         allowed_fields = super(StockQuant, self)._get_inventory_fields_create()
-        allowed_fields.append('inventory_value')
+        allowed_fields.extend(['current_inventory_id', 'inventory_value'])
         return allowed_fields
 
     def _apply_inventory(self):
@@ -28,12 +28,6 @@ class StockQuant(models.Model):
             quant = quant.with_context(is_quant=is_quant, inventory_value=quant.inventory_value)
             super(StockQuant, quant)._apply_inventory()
             quant.write({'inventory_value': 0})
-
-    @api.model
-    def _get_inventory_fields_create(self):
-        allowed_fields = super(StockQuant, self)._get_inventory_fields_create()
-        allowed_fields.append('current_inventory_id')
-        return allowed_fields
 
     @api.model_create_multi
     def create(self, vals_list):
