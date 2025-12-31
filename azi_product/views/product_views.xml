@@ -51,6 +51,9 @@
             <xpath expr="//search/field[@name='categ_id']" position="after">
                 <field name="seller_ids" string="Supplier Code" filter_domain="[('seller_ids.product_code','ilike',self)]"/>
             </xpath>
+            <xpath expr="//search/field[@name='categ_id']" position="after">
+                <field name="seller_ids" string="Supplier" filter_domain="[('seller_ids','ilike',self)]"/>
+            </xpath>
         </field>
     </record>
     <record id="view_template_property_form" model="ir.ui.view">
