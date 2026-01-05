@@ -63,13 +63,14 @@ class StockQuant(models.Model):
         return super().create(vals_list)
 
     def write(self, vals):
-        if (
-            vals.get('inventory_quantity_set', self.inventory_quantity_set)
-            and vals.get('quantity', self.quantity) >= vals.get('inventory_quantity', self.inventory_quantity)
-            and vals.get('inventory_value_set', self.inventory_value_set)
-        ):
-            vals['inventory_value_set'] = False
-            vals['inventory_value'] = 0
+        for rec in self:
+            if (
+                vals.get('inventory_quantity_set', rec.inventory_quantity_set)
+                and vals.get('quantity', rec.quantity) >= vals.get('inventory_quantity', rec.inventory_quantity)
+                and vals.get('inventory_value_set', rec.inventory_value_set)
+            ):
+                vals['inventory_value_set'] = False
+                vals['inventory_value'] = 0
         return super().write(vals)
 
     @api.model
