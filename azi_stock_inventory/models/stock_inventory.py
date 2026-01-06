@@ -50,7 +50,9 @@ class InventoryAdjustmentsGroup(models.Model):
         return super(InventoryAdjustmentsGroup, self.with_context(inventory_adjustment=True)).action_view_inventory_adjustment()
 
     def action_state_to_done(self):
-        unset_lines = self.stock_quant_ids.filtered(lambda x: not x.inventory_quantity_set)
+        unset_lines = self.stock_quant_ids.filtered(
+            lambda x: x.current_inventory_id and not x.inventory_quantity_set
+        )
         if unset_lines:
             raise ValidationError(_(
                 "Counted quantity must be set on all lines before completing the"
