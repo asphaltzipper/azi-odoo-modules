@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <function name="write" model="ir.model.data">
+        <function name="search" model="ir.model.data">
+            <value
+                eval=
+                "[('module', '=', 'sales_team'),
+                  ('name', '=', 'salesteam_website_sales')]"
+                 />
+        </function>
+        <value eval="{'noupdate': False}" />
+    </function>
+
+    <record id="sales_team.salesteam_website_sales" model="crm.team">
+        <field name="all_industries" eval="True"/>
+    </record>
+
+    <function name="write" model="ir.model.data">
+        <function name="search" model="ir.model.data">
+            <value
+                eval=
+                "[('module', '=', 'sales_team'),
+                  ('name', '=', 'salesteam_website_sales')]"
+                 />
+        </function>
+        <value eval="{'noupdate': True}" />
+    </function>
+
+</odoo>

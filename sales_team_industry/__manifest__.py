@@ -19,6 +19,7 @@
         'views/res_partner_industry_view.xml',
         'views/res_partner_view.xml',
         'views/sale_config_settings_views.xml',
+        'data/data.xml',
     ],
     "demo": [
         'demo/res_partner_industry_demo.xml',
