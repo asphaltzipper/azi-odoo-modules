@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="portal_my_home_knowledge" name="Show Knowledge Articles" customize_show="True" inherit_id="portal.portal_my_home">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Knowledge Articles</t>
+                <t t-set="url" t-value="'/my/knowledge'"/>
+                <t t-set="placeholder_count" t-value="'knowledge_count'"/>
+            </t>
+        </xpath>
+    </template>
+    
+    <template id="portal_knowledge" name="Knowledge Articles">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Knowledge</t>
+            </t>
+            <t t-if="documents" t-call="portal.portal_table">
+                <thead>
+                    <tr class="active">
+                        <th>Name</th>
+                        <th class="text-center">Category</th>
+                        <th class="text-center">Approved Date</th>
+                    </tr>
+                </thead>
+                <t t-foreach="documents" t-as="document">
+                    <tr>
+                        <td><a t-att-href="document.get_portal_url()"><t t-out="document.name"/></a></td>
+                        <td class="text-center"><span t-field="document.parent_id.display_name"/></td>
+                        <td class="text-center"><span t-field="document.approved_date"/></td>
+                    </tr>
+                </t>
+            </t>
+            <p t-else="">There are no knowledge articles.</p>
+        </t>
+    </template>
+
+    <template id="knowledge_content_portal_template" name="Knowledge Content Template" inherit_id="portal.portal_sidebar" primary="True">
+        <xpath expr="//div[hasclass('o_portal_sidebar')]" position="inside">
+            <div class="row mt16">
+                <t t-call="portal.portal_record_sidebar">
+                    <t t-set="classes" t-value="'col-lg-auto d-print-none'"/>
+                </t>
+
+                <div id="sale_content" class="col-12 col-lg justify-content-end">
+                     <div id="introduction" class="pb-2 pt-3 card-header bg-white">
+                        <h2 class="my-0">
+                            Document Name: <em t-out="document.name"/>
+                        </h2>
+                    </div>
+
+                    <div class="card-body">
+                        <div id="informations">
+                            <div class="row">
+                                <span t-field="document.content"/>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+</odoo>

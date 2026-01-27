@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="portal_my_home_menu_customer" name="Customer Portal" inherit_id="portal.portal_breadcrumbs">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'knowledge' or document" t-attf-class="breadcrumb-item #{'active ' if not document else ''}">
+                <a t-attf-href="/my/knowledge?{{ keep_query()}}">Knowledge Articles</a>
+            </li>
+            <li t-if="document" class="breadcrumb-item active">
+                <t t-out="document.name"/>
+            </li>
+        </xpath>
+    </template>
+</odoo>

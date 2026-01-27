@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_my_home_menu_customer" name="Customer Portal" inherit_id="portal.portal_breadcrumbs">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'serial' or serial" t-attf-class="breadcrumb-item #{'active ' if not serial else ''}">
+                <a t-attf-href="/my/serials?{{ keep_query() }}">Serial Numbers</a>
+            </li>
+            <li t-if="serial" class="breadcrumb-item active">
+                <t t-out="serial.name"/>
+            </li>
+        </xpath>
+    </template>
+</odoo>

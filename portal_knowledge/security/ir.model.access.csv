@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_portal_knowledge,access.document.page.portal,document_page.model_document_page,base.group_portal,1,0,0,0

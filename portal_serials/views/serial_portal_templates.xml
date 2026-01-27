@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="portal_my_home_serial" name="Show Serial/Lots" customize_show="True" inherit_id="portal.portal_my_home">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Serial/Lot</t>
+                <t t-set="url" t-value="'/my/serials'"/>
+                <t t-set="placeholder_count" t-value="'serial_count'"/>
+            </t>
+        </xpath>
+    </template>
+    <template id="portal_my_serials" name="My Serial Numbers">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Serial/Lot</t>
+            </t>
+            <t t-if="serials" t-call="portal.portal_table">
+                <thead>
+                    <tr class="active">
+                        <th>Lot/Serial Number</th>
+                        <th class="text-center">Product</th>
+                        <th class="text-center">Status</th>
+                    </tr>
+                </thead>
+                <t t-foreach="serials" t-as="serial">
+                    <tr>
+                        <td><a t-att-href="serial.get_portal_url()"><t t-out="serial.name"/></a></td>
+                        <td class="text-center"><span t-field="serial.product_id"/></td>
+                        <td class="text-end"><span t-field="serial.state"/></td>
+                    </tr>
+                </t>
+            </t>
+            <p t-else="">There are no serial numbers for your account.</p>
+        </t>
+    </template>
+
+    <template id="serial_portal_content" name="Serial Portal Content">
+        <div id="introduction" class="pb-2 pt-3 card-header bg-white">
+            <h2 class="my-0">
+                Serial/Lot: <em t-out="serial.name"/>
+            </h2>
+        </div>
+
+        <div class="card-body">
+            <div id="informations">
+                <div class="row">
+                    <div class="mb-3 col-6">
+                        <strong>Product:</strong>
+                        <span t-field="serial.product_id"/>
+                    </div>
+                    <div class="mb-3 col-6">
+                        <strong>Quantity:</strong>
+                        <span t-field="serial.product_qty"/>
+                    </div>
+                </div>
+            </div>
+            <t t-set="sale_orders" t-value="serial.related_sale_ids.filtered(lambda order: order.partner_id.id == serial.partner_id.id)"/>
+            <t t-set="documents" t-value="serial.document_ids"/>
+            <t t-set="hours" t-value="serial.hour_ids"/>
+            <t t-set="dtcs" t-value="serial.dtc_ids"/>
+
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#sales">Sales</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#documents">Documents</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#hour">Hour Log</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#dtc">DTC Log</a>
+                </li>
+            </ul>
+
+            <div class="tab-content mt-3">
+                <div class="tab-pane fade show active" id="sales">
+                    <t t-if="sale_orders">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead class="bg-100">
+                                    <tr>
+                                        <th class="text-start">SO</th>
+                                        <th class="text-end">Date</th>
+                                        <th class="text-end">Shipping Address</th>
+                                        <th class="text-end">Status</th>
+                                        <th class="text-end">Invoice Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="sale_orders" t-as="order">
+                                        <tr>
+                                            <td><t t-esc="order.display_name"/></td>
+                                            <td class="text-end"><t t-esc="order.date_order"/></td>
+                                            <td class="text-end"><t t-esc="order.partner_shipping_id.display_name"/></td>
+                                            <td class="text-end"><t t-esc="order.state"/></td>
+                                            <td class="text-end"><t t-esc="order.invoice_status"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <div class="alert alert-info" role="alert">
+                            There are no sales orders available.
+                        </div>
+                    </t>
+                </div>
+
+                <div class="tab-pane fade" id="documents">
+                    <t t-if="documents">
+                        <ul class="list-group">
+
+                            <t t-foreach="documents" t-as="document">
+                                <li class="list-group-item">
+                                    <a t-att-href="'/my/serials/download/%d' % document.id"
+                                       t-att-title="document.name" target="_blank">
+                                        <i class="fa fa-download me-1"></i>
+                                        <t t-esc="document.name"/>
+                                    </a>
+                                </li>
+
+                            </t>
+                        </ul>
+                    </t>
+                    <t t-else="">
+                        <div class="alert alert-info" role="alert">
+                            There are no available documents.
+                        </div>
+                    </t>
+                </div>
+                <div class="tab-pane fade" id="hour">
+                    <t t-if="hours">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead class="bg-100">
+                                    <tr>
+                                        <th class="text-start">Date</th>
+                                        <th class="text-end">Hour</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="hours" t-as="hour">
+                                        <tr>
+                                            <td><t t-esc="hour.date"/></td>
+                                            <td class="text-end"><t t-esc="hour.hrs"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <div class="alert alert-info" role="alert">
+                            There are no hour logs available.
+                        </div>
+                    </t>
+                </div>
+                <div class="tab-pane fade" id="dtc">
+                    <t t-if="dtcs">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead class="bg-100">
+                                    <tr>
+                                        <th class="text-start">Date</th>
+                                        <th class="text-end">SPN</th>
+                                        <th class="text-end">FMI</th>
+                                        <th class="text-end">ADDRESS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="dtcs" t-as="dtc">
+                                        <tr>
+                                            <td><t t-esc="dtc.date"/></td>
+                                            <td class="text-end"><t t-esc="dtc.spn"/></td>
+                                            <td class="text-end"><t t-esc="dtc.fmi"/></td>
+                                            <td class="text-end"><t t-esc="dtc.addr"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <div class="alert alert-info" role="alert">
+                            There are no DTC logs available.
+                        </div>
+                    </t>
+                </div>
+            </div>
+
+        </div>
+    </template>
+
+
+    <template id="serial_portal_template" name="Serial Portal Template" inherit_id="portal.portal_sidebar" primary="True">
+        <xpath expr="//div[hasclass('o_portal_sidebar')]" position="inside">
+            <div class="row mt16">
+                <t t-call="portal.portal_record_sidebar">
+                    <t t-set="classes" t-value="'col-lg-auto d-print-none'"/>
+                </t>
+
+                <div id="sale_content" class="col-12 col-lg justify-content-end">
+                    <t t-call="portal_serials.serial_portal_content"/>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+</odoo>
