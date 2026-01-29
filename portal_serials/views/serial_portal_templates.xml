@@ -49,7 +49,12 @@
                 <div class="row">
                     <div class="mb-3 col-6">
                         <strong>Product:</strong>
-                        <span t-field="serial.product_id"/>
+                        <t t-if="serial.product_id.description_sale">
+                            <span t-field="serial.product_id.description_sale"/>
+                        </t>
+                        <t t-else="">
+                            <span t-field="serial.product_id"/>
+                        </t>
                     </div>
                     <div class="mb-3 col-6">
                         <strong>Quantity:</strong>

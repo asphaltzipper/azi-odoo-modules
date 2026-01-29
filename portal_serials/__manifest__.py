@@ -18,6 +18,7 @@
         'security/ir.model.access.csv',
         'views/breadcrumbs_templates.xml',
         'views/serial_portal_templates.xml',
+        'views/sale_portal_templates.xml',
     ],
     "assets": {
         'web.assets_frontend': [

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="sale_order_portal_content" name="Sales Order Portal Content" inherit_id="sale.sale_order_portal_content">
+        <xpath expr="//h3[@id='details']" position="before">
+            <h3 id="serials">Related Serial</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Serial</th>
+                        <th>Product</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="sale_order.related_lot_ids" t-as="related_lot">
+                        <tr>
+                            <td><a t-attf-href="/my/serials/#{related_lot.id}"><t t-esc="related_lot.name"/></a></td>
+                            <td><t t-esc="related_lot.product_id.display_name"/></td>
+                        </tr>
+                    </t>
+                </tbody>
+            </table>
+
+        </xpath>
+    </template>
+</odoo>
