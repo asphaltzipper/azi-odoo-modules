@@ -94,7 +94,7 @@
                 </page>
                 <page name="sales" string="Sales">
                     <field name="related_sale_ids" readonly="0">
-                        <tree editable="bottom">
+                        <tree readonly="1">
                             <field name="name"/>
                             <field name="date_order"/>
                             <field name="partner_id"/>
