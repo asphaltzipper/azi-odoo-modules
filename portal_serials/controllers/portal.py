@@ -45,6 +45,21 @@ class CustomerPortal(portal.CustomerPortal):
 
         return values
 
+    def _prepare_quotations_domain(self, partner):
+        res = super()._prepare_quotations_domain(partner)
+        res.append(('portal_publish', '=', True))
+        return res
+
+    def _prepare_orders_domain(self, partner):
+        res = super()._prepare_orders_domain(partner)
+        res.append(('portal_publish', '=', True))
+        return res
+
+    def _get_invoices_domain(self):
+        res = super()._get_invoices_domain()
+        res.append(('portal_publish', '=', True))
+        return res
+
     @http.route(['/my/serials', '/my/serials/page/<int:page>'], type='http', auth="user", website=True)
     def portal_my_serial_numbers(self, **kwargs):
         values = self._prepare_serial_values(**kwargs)

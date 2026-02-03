@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_move_form" model="ir.ui.view">
+        <field name="name">account.move.form</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button name="action_toggle_portal_publish"
+                        attrs="{'invisible': [('portal_publish', '=', False)]}"
+                        class="oe_stat_button"
+                        type="object"
+                        icon="fa-globe">
+                    <div class="o_stat_info o_field_widget">
+                        <span class="text-success">Published to Portal</span>
+                    </div>
+                </button>
+                <button name="action_toggle_portal_publish"
+                        attrs="{'invisible': [('portal_publish', '=', True)]}"
+                        class="oe_stat_button"
+                        type="object"
+                        icon="fa-eye-slash">
+                    <div class="o_stat_info o_field_widget">
+                        <span class="text-danger">Unpublished to Portal</span>
+                    </div>
+                </button>
+                <field name="portal_publish" invisible="1"/>
+            </div>
+        </field>
+    </record>
+</odoo>
