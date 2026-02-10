@@ -62,7 +62,8 @@
                     </div>
                 </div>
             </div>
-            <t t-set="sale_orders" t-value="serial.related_sale_ids.filtered(lambda order: order.partner_id.id == serial.partner_id.id)"/>
+            <t t-set="partner_company" t-value="request.env.user.partner_id.parent_id"/>
+            <t t-set="sale_orders" t-value="serial.related_sale_ids.filtered(lambda order: order.partner_id.id == partner_company.id)"/>
             <t t-set="documents" t-value="serial.document_ids"/>
             <t t-set="hours" t-value="serial.hour_ids"/>
             <t t-set="dtcs" t-value="serial.dtc_ids"/>
