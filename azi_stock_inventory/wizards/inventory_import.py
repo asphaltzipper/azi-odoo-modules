@@ -30,7 +30,7 @@ class InventoryImport(models.TransientModel):
         column_pos = dict([(sheet.cell(0, i).value, i) for i in range(sheet.ncols)
                           if sheet.cell(0, i).value in column_names])
         if 'product_id' not in column_pos or 'counted_qty' not in column_pos:
-            raise ValidationError('Sorry, make sure to have `product_id` and `counted_qty` in xlsx header')
+            raise ValidationError('Missing one or more required headers: `product_id`, `counted_qty`')
 
         # parse the file data
         product_col = column_pos['product_id']
@@ -50,7 +50,7 @@ class InventoryImport(models.TransientModel):
             if qty in (None, ''):
                 raise ValidationError(_("No quantity specified for product %s", prod_ref))
             lot_ref = lot_col and sheet.cell(row, lot_col).value
-            if not isinstance(lot_ref, str):
+            if lot_ref and not isinstance(lot_ref, str):
                 try:
                     lot_ref = str(int(lot_ref))
                 except:
