@@ -4,11 +4,12 @@ from odoo import models, fields
 class StockLotDtcLog(models.Model):
     _name = 'stock.lot.dtc.log'
     _description = 'Serialized Unit DTC Logs'
+    _order = 'date desc'
 
-    date = fields.Date(
+    date = fields.Datetime(
         string='Date',
         required=True,
-        default=fields.Date.today(),
+        default=fields.Datetime.now(),
     )
     lot_id = fields.Many2one(
         comodel_name='stock.lot',

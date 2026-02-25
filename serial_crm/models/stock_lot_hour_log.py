@@ -4,11 +4,12 @@ from odoo import models, fields, api
 class StockLotHourLog(models.Model):
     _name = 'stock.lot.hour.log'
     _description = 'Serialized Unit Hour Logs'
+    _order = 'date desc'
 
-    date = fields.Date(
+    date = fields.Datetime(
         string='Date',
         required=True,
-        default=fields.Date.today(),
+        default=fields.Datetime.now(),
     )
     lot_id = fields.Many2one(
         comodel_name='stock.lot',

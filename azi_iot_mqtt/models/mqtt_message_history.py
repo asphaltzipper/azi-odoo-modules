@@ -9,3 +9,4 @@ class MQTTMessageHistory(models.Model):
         string="Client",
     )
     processed = fields.Boolean('Processed')
+    topic_name = fields.Char(string='Topic Name')

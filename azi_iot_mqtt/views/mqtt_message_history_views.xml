@@ -23,6 +23,7 @@
                 </header>
             </sheet>
             <field name="topic" position="after">
+                <field name="topic_name" readonly="1"/>
                 <field name="processed" readonly="1" attrs="{'invisible': [('direction', '!=', 'incoming')]}"/>
             </field>
         </field>

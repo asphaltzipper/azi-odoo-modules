@@ -26,7 +26,7 @@ class MQTTProcessMessage(models.TransientModel):
             if serial:
                 payload_json = json.loads(self.payload)
                 payload_json['lot_id'] = serial.lot_id.id
-                payload_json['date'] = fields.Date.today()
+                payload_json['date'] = fields.Datetime.now()
                 dest_model_fields = self.env[topic.dest_model_name]._fields.keys()
                 invalid_payload_fields = [key for key in payload_json.keys() if key not in dest_model_fields]
                 if invalid_payload_fields:
