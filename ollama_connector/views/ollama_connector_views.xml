@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ollama_connector_form" model="ir.ui.view">
+        <field name="name">view.ollama.connector.form</field>
+        <field name="model">ollama.connector</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_connect" type="object" string="Connect" states="draft" class="btn btn-primary"/>
+                    <button name="action_to_draft" type="object" string="Reset to Draft" states="failed" class="btn"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,pulling,connected"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="ai_model" attrs="{'readonly': [('state', '!=', 'draft')]}" required="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="System Prompt">
+                            <field name="system_prompt" attrs="{'readonly': [('state', '!=', 'draft')]}" required="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+    <record id="view_ollama_connector_tree" model="ir.ui.view">
+        <field name="name">view.ollama.connector.tree</field>
+        <field name="model">ollama.connector</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="ai_model"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_ollama_connector" model="ir.actions.act_window">
+        <field name="name">Ollama Connector</field>
+        <field name="res_model">ollama.connector</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_ollama" name="Ollama" parent="base.menu_administration" sequence="2"/>
+    <menuitem id="menu_ollama_connector" parent="menu_ollama" action="action_ollama_connector"/>
+</odoo>

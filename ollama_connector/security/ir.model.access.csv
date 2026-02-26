@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ollama_connector_user,access.ollama.connector.user,model_ollama_connector,base.group_user,1,1,1,1
+access_ollama_connector_portal,access.ollama.connector.portal,model_ollama_connector,base.group_portal,1,0,0,0
