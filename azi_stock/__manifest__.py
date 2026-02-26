@@ -38,6 +38,7 @@ AZI Specialized Customizations to Stock
         'report/product_labels.xml',
         'report/product_report.xml',
         'report/stock_quant_views.xml',
+        'views/stock_quant_views.xml',
         'report/picking_report.xml',
         # 'report/location_labels.xml',
         # 'report/location_report.xml',
