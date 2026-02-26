@@ -120,5 +120,6 @@ class MRPComponentSerialLine(models.TransientModel):
                 ])
                 if serial_lines:
                     raise ValidationError(
-                        f"The serial number {record.lot_id.name} used for component {record.product_id.display_name} "
-                        f"has already been consumed")
+                        f"The serial number {record.lot_id.name} used for component "
+                        f"{record.product_id.display_name} has already been used here"
+                    )

@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 import datetime
 import base64
+from collections import defaultdict
 from io import BytesIO
 from PyPDF2 import PdfFileReader, PdfFileWriter
 
 
-from odoo import fields, models, api, Command
+from odoo import fields, models, api, Command, _
+from odoo.tools import UserError, float_is_zero, float_compare
 
 
 class MrpProduction(models.Model):
@@ -256,3 +258,79 @@ class MrpProduction(models.Model):
             'company_id': self.company_id.id,
             'name': name,
         }
+
+    def _check_sn_uniqueness(self):
+        """Replace the original in order to fix a bug resulting in a false
+        already-consumed error for serialized products that were consumed, then moved
+        back to stock e.g. on an unbuild order"""
+
+        def _check_sn_uniqueness(self):
+            """ Alert the user if the serial number as already been consumed/produced """
+            if self.product_tracking == 'serial' and self.lot_producing_id:
+                if self._is_finished_sn_already_produced(self.lot_producing_id):
+                    raise UserError(
+                        _('This serial number for product %s has already been produced',
+                          self.product_id.name))
+
+            for move in self.move_finished_ids:
+                if move.has_tracking != 'serial' or move.product_id == self.product_id:
+                    continue
+                for move_line in move.move_line_ids:
+                    if self._is_finished_sn_already_produced(move_line.lot_id,
+                                                             excluded_sml=move_line):
+                        raise UserError(
+                            _('The serial number %(number)s used for byproduct %(product_name)s has already been produced',
+                              number=move_line.lot_id.name,
+                              product_name=move_line.product_id.name))
+
+            consumed_sn_ids = []
+            sn_error_msg = {}
+            for move in self.move_raw_ids:
+                if move.has_tracking != 'serial':
+                    continue
+                for move_line in move.move_line_ids:
+                    if float_is_zero(move_line.qty_done,
+                                     precision_rounding=move_line.product_uom_id.rounding):
+                        continue
+                    sml_sn = move_line.lot_id
+                    message = _(
+                        'The serial number %(number)s used for component %(component)s has already been consumed',
+                        number=sml_sn.name,
+                        component=move_line.product_id.name)
+                    consumed_sn_ids.append(sml_sn.id)
+                    sn_error_msg[sml_sn.id] = message
+                    co_prod_move_lines = self.move_raw_ids.move_line_ids
+                    duplicates = co_prod_move_lines.filtered(
+                        lambda ml: ml.qty_done and ml.lot_id == sml_sn) - move_line
+                    if duplicates:
+                        raise UserError(message)
+
+            if not consumed_sn_ids:
+                return
+
+            consumed_sml_groups = self.env['stock.move.line']._read_group([
+                ('lot_id', 'in', consumed_sn_ids),
+                ('qty_done', '=', 1),
+                ('state', '=', 'done'),
+                ('location_dest_id.usage', '=', 'production'),
+                ('production_id', '!=', False),
+            ], ['qty_done'], ['lot_id'])
+            consumed_qties = {group['lot_id'][0]: group['qty_done'] for group in
+                              consumed_sml_groups}
+            problematic_sn_ids = list(consumed_qties.keys())
+            if not problematic_sn_ids:
+                return
+
+            available_sml_groups = self.env['stock.move.line']._read_group([
+                ('lot_id', 'in', consumed_sn_ids),
+                ('qty_done', '=', 1),
+                ('state', '=', 'done'),
+                ('location_dest_id.usage', '=', 'internal'),
+            ], ['qty_done'], ['lot_id'])
+            avail_qties = {group['lot_id'][0]: group['qty_done'] for group in
+                              available_sml_groups}
+
+            for sn_id in problematic_sn_ids:
+                avail_qty = avail_qties[sn_id]
+                if float_compare(avail_qty, 0.0, precision_digits=3) <= 0:
+                    raise UserError(sn_error_msg[sn_id])
