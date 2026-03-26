@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_vector_knowledge_form" model="ir.ui.view">
+        <field name="name">view.vector.knowledge.form</field>
+        <field name="model">vector.knowledge</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_publish" type="object" string="Publish to Vector" states="draft"
+                            class="btn btn-primary"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,publish"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" attrs="{'readonly': [('state', '!=', 'draft')]}" required="1"/>
+                            <field name="connector_id" attrs="{'readonly': [('state', '!=', 'draft')]}" required="1"
+                                   domain="[('state', '=', 'connected')]"/>
+                        </group>
+                        <group>
+                            <field name="data_type" attrs="{'readonly': [('state', '!=', 'draft')]}" required="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Data">
+                            <div>
+                                <label for="knowledge_text" attrs="{'invisible':[('data_type', '!=', 'text')]}"/>
+                                <field name="knowledge_text"
+                                       attrs="{'readonly': [('state', '!=', 'draft')],
+                                       'invisible':[('data_type', '!=', 'text')],
+                                       'required': [('data_type', '=', 'text')]}"
+                                />
+                            </div>
+                            <div>
+                                <label for="attachment" attrs="{'invisible':[('data_type', '!=', 'pdf')]}"/>
+                                <field name="attachment" filename="attachment_name" attrs="{'readonly': [('state', '!=', 'draft')],
+                                       'invisible':[('data_type', '!=', 'pdf')],
+                                       'required': [('data_type', '=', 'pdf')]}"/>
+                                <field name="attachment_name" invisible="1"/>
+                            </div>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+    <record id="view_vector_knowledge_tree" model="ir.ui.view">
+        <field name="name">view.vector.knowledge.tree</field>
+        <field name="model">vector.knowledge</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_vector_knowledge" model="ir.actions.act_window">
+        <field name="name">Vector Knowledge</field>
+        <field name="res_model">vector.knowledge</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_vector_knowledge" parent="menu_openai" action="action_vector_knowledge"/>
+</odoo>

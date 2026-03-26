@@ -19,7 +19,9 @@
     "data": [
         'security/ir.model.access.csv',
         'views/openai_connector_views.xml',
+        'views/vector_knowledge_views.xml',
     ],
+    'pre_init_hook': '_pre_init_vector',
     "installable": True,
     "auto_install": False,
 }

@@ -1,3 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_openai_connector_user,access.openai.connector.user,model_openai_connector,base.group_user,1,1,1,1
 access_openai_connector_portal,access.openai.connector.portal,model_openai_connector,base.group_portal,1,0,0,0
+access_vector_knowledge_user,access.vector.knowledge.user,model_vector_knowledge,base.group_user,1,1,1,1
+access_vector_knowledge_chunk_user,access.vector.knowledge.chunk.user,model_vector_knowledge_chunk,base.group_user,1,1,1,1

@@ -14,6 +14,7 @@
                     <group>
                         <group>
                             <field name="ai_model" attrs="{'readonly': [('state', '!=', 'draft')]}" required="1"/>
+                            <field name="vector_model" attrs="{'readonly': [('state', '!=', 'draft')]}" required="1"/>
                             <field name="api_key_name" attrs="{'readonly': [('state', '!=', 'draft')]}" required="1"/>
 
                         </group>
@@ -42,6 +43,7 @@
         <field name="arch" type="xml">
             <tree>
                 <field name="ai_model"/>
+                <field name="vector_model"/>
                 <field name="state"/>
             </tree>
         </field>
