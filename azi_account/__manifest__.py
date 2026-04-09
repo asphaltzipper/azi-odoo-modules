@@ -36,6 +36,7 @@ AZI Specialized Customizations to account
         'web.assets_backend': [
             'azi_account/static/src/js/azi_account_assets.js',
             'azi_account/static/src/xml/account_reconciliation_template.xml',
+            'azi_account/static/src/js/attachment_preview.js',
         ],
     },
     "installable": True,
