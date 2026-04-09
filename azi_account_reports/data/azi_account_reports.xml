@@ -9,7 +9,7 @@
         <record id="azi_account_reports.account_financial_report_less" model="ir.asset">
             <field name="name">Account Financial Report</field>
             <field name="bundle">web.assets_backend</field>
-            <field name="path">azi_account_reports/static/src/less/azi_account_financial_report.less</field>
+            <field name="path">azi_account_reports/static/src/scss/azi_account_financial_report.scss</field>
         </record>
 
         <!-- This template is only used when printing a financial report to a PDF output -->
