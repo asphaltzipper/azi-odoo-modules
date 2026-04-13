@@ -14,6 +14,7 @@ AZI Sale Account
     """,
     'depends': [
         'sale_margin',
+        'sale_discount_reason',
     ],
     "data": [
         'security/ir.model.access.csv',
