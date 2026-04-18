@@ -1,7 +1,7 @@
 # (c) 2025 John Welch
 
 {
-    "name": "AZI IOT MQTT",
+    "name": "Unit Telemetry",
     "version": "16.0.1.0.0",
     "summary": "IOT, Lot",
     "category": "Inventory",
