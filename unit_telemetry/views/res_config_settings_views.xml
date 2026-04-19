@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_hologram" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.hologram</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('settings')]" position="inside">
+                <div class="app_settings_block" data-string="Hologram" string="Hologram" data-key="hologram">
+                    <h2>API Configuration</h2>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box" title="API Configuration for Hologram">
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">Hologram API Key</span>
+                                <div class="text-muted">Key to access Hologram REST API</div>
+                                <field name="hologram_api_key"/>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">Hologram Organization ID</span>
+                                <div class="text-muted">Organization ID on Hologram</div>
+                                <field name="hologram_org_id"/>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">Default Plan</span>
+                                <div class="text-muted">Default plan for Hologram SIMs</div>
+                                <field name="hologram_plan"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_hologram_config_settings" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_id" ref="base.res_config_settings_view_form"/>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module': 'hologram', 'bin_size': False}</field>
+    </record>
+
+    <menuitem id="menu_hologram_config_settings" name="Hologram API Settings" parent="stock.menu_stock_config_settings" sequence="100" action="action_hologram_config_settings"/>
+</odoo>

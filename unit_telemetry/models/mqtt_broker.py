@@ -54,8 +54,8 @@ class MqttBroker(models.Model):
             client._subscribed = True
 
         def on_message(client, userdata, msg):
-            _logger.info(f"Message received on {msg.topic}: {msg.payload}")
-            with (registry(dbname).cursor() as cr):
+            #_logger.info(f"Message received on {msg.topic}: {msg.payload}")
+            with registry(dbname).cursor() as cr:
                 env = api.Environment(cr, SUPERUSER_ID, {})
                 topic_env = env['mqtt.topic']
                 client_env = env['mqtt.client']
@@ -63,11 +63,16 @@ class MqttBroker(models.Model):
                 metadata_value_model = env['mqtt.metadata.value']
                 history_env = env['mqtt.message.history']
 
+                # ##################################################################
+                # this stuff is different from the original _run_listener_thread_safe()
                 topic = topic_env.search([], limit=None)
                 topic = next((t for t in topic if t.client_regex and re.match(t.client_regex, msg.topic)), False)
                 sub_exist = env['mqtt.subscription'].search([
-                    ('topic_id', '=', topic.id if topic else False), ('status', '=', 'subscribe')
+                    ('topic_id', '=', topic.id if topic else False),
+                    ('state', '=', 'subscribe'),
                 ], limit=1)
+                # ##################################################################
+
                 if not sub_exist:
                     _logger.warning(f"Topic {msg.topic} is not subscribed.")
                     return
@@ -79,7 +84,7 @@ class MqttBroker(models.Model):
 
                     if hasattr(msg.properties, 'UserProperty'):
                         user_props = msg.properties.UserProperty or {}
-                        _logger.info(f"UserProperty received on {msg.topic}: {msg.properties}")
+                        #_logger.info(f"UserProperty received on {msg.topic}: {msg.properties}")
 
                         # Properties MQTT
                         content_type = getattr(msg.properties, 'ContentType', None)
@@ -103,7 +108,7 @@ class MqttBroker(models.Model):
                             'metadata_value_ids': metadata_value,
                         }
                         metadata = metadata_model.create(metadata_data)
-                        _logger.info(f"Metadata received on {msg.topic} created: {metadata.name or ''}.")
+                        #_logger.info(f"Metadata received on {msg.topic} created: {metadata.name or ''}.")
 
                         for key, value in user_props:
                             metadata_value_data = {
@@ -140,24 +145,7 @@ class MqttBroker(models.Model):
                     # ##################################################################
 
                     history = history_env.create(message_data)
-                    _logger.info(f"Message history created for topic {msg.topic}: {history.name or ''}.")
-
-                    # ##################################################################
-                    # this stuff is different from the original _run_listener_thread_safe()
-                    if client_device and topic.dest_model_name:
-                        serial = client_device.serial_ids[0]
-                        if serial:
-                            payload_json = json.loads(history.payload)
-                            payload_json['lot_id'] = serial.lot_id.id
-                            payload_json['date'] = fields.Date.today()
-                            dest_model_fields = env[topic.dest_model_name]._fields.keys()
-                            invalid_payload_fields = [key for key in payload_json.keys() if key not in dest_model_fields]
-                            if invalid_payload_fields:
-                                _logger.warning(f'{topic.dest_model_name} model doesn\'t have the following fields: {invalid_payload_fields}')
-                            else:
-                                env[topic.dest_model_name].create(payload_json)
-                                history.processed = True
-                    # ##################################################################
+                    #_logger.info(f"Message history created for topic {msg.topic}: {history.name or ''}.")
 
                     # Update metadata with history and values
                     if metadata:
@@ -165,7 +153,7 @@ class MqttBroker(models.Model):
                             'history_id': history.id if history else False,
                             'metadata_value_ids': [(6, 0, [mv.id for mv in metadata_value])] if metadata_value else False
                         })
-                    _logger.info(f"Metadata updated with history and values for topic {msg.topic}.")
+                    #_logger.info(f"Metadata updated with history and values for topic {msg.topic}.")
 
                 except Exception as e:
                     _logger.error(f"Error processing message for topic {msg.topic}: {e}")
@@ -182,7 +170,7 @@ class MqttBroker(models.Model):
                     }
                 )
 
-                _logger.info(f"Saved MQTT messages to database: {topic.broker_id.name if topic else 'Unknow'} - {msg.topic}.")
+                #_logger.info(f"Saved MQTT messages to database: {topic.broker_id.name if topic else 'Unknow'} - {msg.topic}.")
                 cr.commit()
 
         def on_disconnect(client, userdata, rc, properties=None, reason_codes=None):

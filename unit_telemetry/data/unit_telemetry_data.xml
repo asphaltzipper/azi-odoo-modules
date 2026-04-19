@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="unit_telemetry_topic_sys" model="unit.telemetry.topic">
+            <field name="description">Client System Health</field>
+            <field name="name">sys</field>
+        </record>
+        <record id="unit_telemetry_topic_hrs" model="unit.telemetry.topic">
+            <field name="description">Hours</field>
+            <field name="name">hrs</field>
+        </record>
+        <record id="unit_telemetry_topic_gps" model="unit.telemetry.topic">
+            <field name="description">GPS</field>
+            <field name="name">gps</field>
+        </record>
+        <record id="unit_telemetry_topic_dtc" model="unit.telemetry.topic">
+            <field name="description">Diagnostic Trouble Code (DTC)</field>
+            <field name="name">dtc</field>
+        </record>
+        <record id="unit_telemetry_topic_ops" model="unit.telemetry.topic">
+            <field name="description">Operational Data</field>
+            <field name="name">ops</field>
+        </record>
+
+        <!-- Client System Health Types -->
+        <record id="unit_telemetry_type_batt" model="unit.telemetry.type">
+            <field name="description">Battery Charge</field>
+            <field name="data_type">float</field>
+            <field name="name">batt</field>
+            <field name="topic_id" ref="unit_telemetry.unit_telemetry_topic_sys"/>
+        </record>
+        <record id="unit_telemetry_type_fast_send" model="unit.telemetry.type">
+            <field name="description">Transmissions Remaining in Fast-Send Mode</field>
+            <field name="data_type">integer</field>
+            <field name="name">fast_send</field>
+            <field name="topic_id" ref="unit_telemetry.unit_telemetry_topic_sys"/>
+        </record>
+        <record id="unit_telemetry_type_mode" model="unit.telemetry.type">
+            <field name="description">Network System Mode</field>
+            <field name="data_type">char</field>
+            <field name="name">mode</field>
+            <field name="help">- GSM
+- LTE CAT-M1
+- LTE NB-IOT</field>
+            <field name="topic_id" ref="unit_telemetry.unit_telemetry_topic_sys"/>
+        </record>
+        <record id="unit_telemetry_type_rsrp" model="unit.telemetry.type">
+            <field name="description">Reference Signal Received Power</field>
+            <field name="data_type">integer</field>
+            <field name="name">rsrp</field>
+            <field name="topic_id" ref="unit_telemetry.unit_telemetry_topic_sys"/>
+        </record>
+        <record id="unit_telemetry_type_rsrq" model="unit.telemetry.type">
+            <field name="description">Reference Signal Received Quality</field>
+            <field name="data_type">integer</field>
+            <field name="name">rsrq</field>
+            <field name="topic_id" ref="unit_telemetry.unit_telemetry_topic_sys"/>
+        </record>
+        <record id="unit_telemetry_type_rssnr" model="unit.telemetry.type">
+            <field name="description">Reference Signal Signal-to-Noise Ratio</field>
+            <field name="data_type">integer</field>
+            <field name="name">rssnr</field>
+            <field name="help">Average reference signal signal-to-noise ratio of the serving cell.
+The value of SINR can be calculated from &lt;RSSNR&gt;, according to the formula:
+SINR=2 * &lt;RSSNR&gt; - 20
+The range of SINR is from -20 to 30</field>
+            <field name="topic_id" ref="unit_telemetry.unit_telemetry_topic_sys"/>
+        </record>
+        <record id="unit_telemetry_type_zpwr" model="unit.telemetry.type">
+            <field name="description">Zipper Battery Voltage</field>
+            <field name="data_type">float</field>
+            <field name="name">zpwr</field>
+            <field name="topic_id" ref="unit_telemetry.unit_telemetry_topic_sys"/>
+        </record>
+
+        <!-- Hour Log Types -->
+        <record id="unit_telemetry_type_hrs" model="unit.telemetry.type">
+            <field name="description">Hours</field>
+            <field name="data_type">float</field>
+            <field name="name">hrs</field>
+            <field name="topic_id" ref="unit_telemetry.unit_telemetry_topic_hrs"/>
+        </record>
+
+        <!-- DTC Types -->
+        <record id="unit_telemetry_type_spn" model="unit.telemetry.type">
+            <field name="description">SPN</field>
+            <field name="data_type">integer</field>
+            <field name="name">spn</field>
+            <field name="topic_id" ref="unit_telemetry.unit_telemetry_topic_dtc"/>
+        </record>
+        <record id="unit_telemetry_type_fmi" model="unit.telemetry.type">
+            <field name="description">FMI</field>
+            <field name="data_type">integer</field>
+            <field name="name">fmi</field>
+            <field name="topic_id" ref="unit_telemetry.unit_telemetry_topic_dtc"/>
+        </record>
+        <record id="unit_telemetry_type_addr" model="unit.telemetry.type">
+            <field name="description">Src Addr</field>
+            <field name="data_type">integer</field>
+            <field name="name">addr</field>
+            <field name="topic_id" ref="unit_telemetry.unit_telemetry_topic_dtc"/>
+        </record>
+        <record id="unit_telemetry_type_oc" model="unit.telemetry.type">
+            <field name="description">Occurrences</field>
+            <field name="data_type">integer</field>
+            <field name="name">oc</field>
+            <field name="topic_id" ref="unit_telemetry.unit_telemetry_topic_dtc"/>
+        </record>
+
+        <!-- GPS Types -->
+        <record id="unit_telemetry_type_lat" model="unit.telemetry.type">
+            <field name="description">Latitude</field>
+            <field name="data_type">float</field>
+            <field name="name">lat</field>
+            <field name="topic_id" ref="unit_telemetry.unit_telemetry_topic_gps"/>
+        </record>
+        <record id="unit_telemetry_type_long" model="unit.telemetry.type">
+            <field name="description">Longitude</field>
+            <field name="data_type">float</field>
+            <field name="name">long</field>
+            <field name="topic_id" ref="unit_telemetry.unit_telemetry_topic_gps"/>
+        </record>
+        <record id="unit_telemetry_type_sats" model="unit.telemetry.type">
+            <field name="description">Satelites</field>
+            <field name="data_type">integer</field>
+            <field name="name">sats</field>
+            <field name="topic_id" ref="unit_telemetry.unit_telemetry_topic_gps"/>
+        </record>
+        <record id="unit_telemetry_type_hpa" model="unit.telemetry.type">
+            <field name="description">Horizontal Position Accuracy</field>
+            <field name="data_type">float</field>
+            <field name="name">hpa</field>
+            <field name="topic_id" ref="unit_telemetry.unit_telemetry_topic_gps"/>
+        </record>
+
+        <!-- Operational Data Types -->
+        <record id="unit_telemetry_type_b_pres" model="unit.telemetry.type">
+            <field name="description">Belt Tension Pressure</field>
+            <field name="data_type">float</field>
+            <field name="name">b_pres</field>
+            <field name="topic_id" ref="unit_telemetry.unit_telemetry_topic_ops"/>
+        </record>
+        <record id="unit_telemetry_type_c_hrs" model="unit.telemetry.type">
+            <field name="description">Bit Check Clutch Engine Hours</field>
+            <field name="data_type">float</field>
+            <field name="name">c_hrs</field>
+            <field name="help">Sum of Clutch Engaged Engine Hours Since Last Bit Check</field>
+            <field name="topic_id" ref="unit_telemetry.unit_telemetry_topic_ops"/>
+        </record>
+        <record id="unit_telemetry_type_c_pres" model="unit.telemetry.type">
+            <field name="description">Clutch Pressure</field>
+            <field name="data_type">float</field>
+            <field name="name">c_pres</field>
+            <field name="topic_id" ref="unit_telemetry.unit_telemetry_topic_ops"/>
+        </record>
+        <record id="unit_telemetry_type_c_state" model="unit.telemetry.type">
+            <field name="description">Clutch Engaged</field>
+            <field name="data_type">boolean</field>
+            <field name="name">c_state</field>
+            <field name="topic_id" ref="unit_telemetry.unit_telemetry_topic_ops"/>
+        </record>
+        <record id="unit_telemetry_type_c_tmp" model="unit.telemetry.type">
+            <field name="description">Coolant Temperature</field>
+            <field name="data_type">float</field>
+            <field name="name">c_tmp</field>
+            <field name="topic_id" ref="unit_telemetry.unit_telemetry_topic_ops"/>
+        </record>
+        <record id="unit_telemetry_type_estp" model="unit.telemetry.type">
+            <field name="description">E-Stop Bits (panel, handheld, host</field>
+            <field name="data_type">integer</field>
+            <field name="name">estp</field>
+            <field name="help"> Bit Assignment (0 = stop, 1 = okay):
+- bit 0 (LSB): operator panel on the zipper
+- bit 1: handheld remote
+- bit 2: host vehicle / control box
+- bit 3 (MSB): estop message not received
+</field>
+            <field name="topic_id" ref="unit_telemetry.unit_telemetry_topic_ops"/>
+        </record>
+        <record id="unit_telemetry_type_g_tmp" model="unit.telemetry.type">
+            <field name="description">Gear Oil Temperature</field>
+            <field name="data_type">float</field>
+            <field name="name">g_tmp</field>
+            <field name="topic_id" ref="unit_telemetry.unit_telemetry_topic_ops"/>
+        </record>
+        <record id="unit_telemetry_type_h_state" model="unit.telemetry.type">
+            <field name="description">Hatch Open</field>
+            <field name="data_type">boolean</field>
+            <field name="name">h_state</field>
+            <field name="topic_id" ref="unit_telemetry.unit_telemetry_topic_ops"/>
+        </record>
+        <record id="unit_telemetry_type_h_tmp" model="unit.telemetry.type">
+            <field name="description">Hydraulic Oil Temperature</field>
+            <field name="data_type">float</field>
+            <field name="name">h_tmp</field>
+            <field name="topic_id" ref="unit_telemetry.unit_telemetry_topic_ops"/>
+        </record>
+        <record id="unit_telemetry_type_load" model="unit.telemetry.type">
+            <field name="description">Engine load</field>
+            <field name="data_type">float</field>
+            <field name="name">load</field>
+            <field name="topic_id" ref="unit_telemetry.unit_telemetry_topic_ops"/>
+        </record>
+        <record id="unit_telemetry_type_m_pres" model="unit.telemetry.type">
+            <field name="description">Manifold Pressure</field>
+            <field name="data_type">float</field>
+            <field name="name">m_pres</field>
+            <field name="topic_id" ref="unit_telemetry.unit_telemetry_topic_ops"/>
+        </record>
+        <record id="unit_telemetry_type_rpm" model="unit.telemetry.type">
+            <field name="description">Engine RPM</field>
+            <field name="data_type">float</field>
+            <field name="name">rpm</field>
+            <field name="topic_id" ref="unit_telemetry.unit_telemetry_topic_ops"/>
+        </record>
+        <record id="unit_telemetry_type_spd" model="unit.telemetry.type">
+            <field name="description">Wheel Speed</field>
+            <field name="data_type">float</field>
+            <field name="name">spd</field>
+            <field name="topic_id" ref="unit_telemetry.unit_telemetry_topic_ops"/>
+        </record>
+        <record id="unit_telemetry_type_v_chg" model="unit.telemetry.type">
+            <field name="description">Charging Voltage</field>
+            <field name="data_type">float</field>
+            <field name="name">v_chg</field>
+            <field name="topic_id" ref="unit_telemetry.unit_telemetry_topic_ops"/>
+        </record>
+        <record id="unit_telemetry_type_v_crk" model="unit.telemetry.type">
+            <field name="description">Cranking Voltage</field>
+            <field name="data_type">float</field>
+            <field name="name">v_crk</field>
+            <field name="topic_id" ref="unit_telemetry.unit_telemetry_topic_ops"/>
+        </record>
+        <record id="unit_telemetry_type_v_rst" model="unit.telemetry.type">
+            <field name="description">Resting Voltage</field>
+            <field name="data_type">float</field>
+            <field name="name">v_rst</field>
+            <field name="topic_id" ref="unit_telemetry.unit_telemetry_topic_ops"/>
+        </record>
+    </data>
+</odoo>

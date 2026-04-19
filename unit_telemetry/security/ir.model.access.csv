@@ -4,4 +4,6 @@ access_mqtt_client_admin,access.mqtt.client.admin,model_mqtt_client,base.group_s
 access_mqtt_client_serial_user,access.mqtt.client.serial.user,model_mqtt_client_serial,base.group_user,1,1,1,0
 access_mqtt_client_serial_admin,access.mqtt.client.serial.admin,model_mqtt_client_serial,base.group_system,1,1,1,1
 access_mqtt_process_message_user,access.mqtt.process.message.user,model_mqtt_process_message,base.group_user,1,1,1,0
-
+access_unit_telemetry_reading,access_unit_telemetry_reading,model_unit_telemetry_reading,stock.group_stock_user,1,1,1,1
+access_unit_telemetry_topic,access_unit_telemetry_topic,model_unit_telemetry_topic,stock.group_stock_user,1,1,1,1
+access_unit_telemetry_type,access_unit_telemetry_type,model_unit_telemetry_type,stock.group_stock_user,1,1,1,1

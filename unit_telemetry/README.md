@@ -1,6 +1,13 @@
 This module adds special handling for MQTT messages received from telematics client
 devices on an Asphalt Zipper.
 
+**TODO: combine the topic and subscription models**
+- Why create multiple subscriptions for the same broker and topic?
+- If creating one for inbound, and one for outbound, why call it a subscription?
+- Maybe we should add a publication model?
+
+**TODO: try out the metadata models from mqtt_integration module
+
 ## Clients
 
 The mqtt.client model identifies each telematics device with Odoo.  The Name field has a

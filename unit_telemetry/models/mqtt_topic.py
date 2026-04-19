@@ -10,16 +10,7 @@ class MqttTopic(models.Model):
         string='Client RegEx',
         help="Regular Expression for extracting client ICCID from topic",
     )
-
-    dest_model_name = fields.Selection(
-        selection=[
-            ('stock.lot.hour.log', 'Hours Log'),
-            ('stock.lot.dtc.log', 'DTC Log'),
-            ('stock.lot.gps.log', 'GPS Log'),
-        ],
-        string='Dest Model',
-        help="The Odoo model in which to store the parsed payload data",
-    )
+    state = fields.Selection(copy=False)
 
     @api.constrains('name')
     def _check_topic_name(self):

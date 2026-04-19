@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="ir_cron_process_mqtt_hist" model="ir.cron">
+            <field name="name">MQTT: Process message history</field>
+            <field name="model_id" ref="mqtt_integration.model_mqtt_message_history"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_process_telemetry()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="ir_cron_sync_hologram_sims" model="ir.cron">
+            <field name="name">Hologram: Sync SIM Cards Status</field>
+            <field name="model_id" ref="model_mqtt_client"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_sync_sims()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="active" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

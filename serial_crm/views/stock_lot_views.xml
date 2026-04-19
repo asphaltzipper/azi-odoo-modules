@@ -132,28 +132,6 @@
                         </tree>
                     </field>
                 </page>
-                <page name="dtc_log" string="DTC Log">
-                    <field name="dtc_ids" context="{'default_lot_id': active_id}">
-                        <tree editable="bottom">
-                            <field name="date"/>
-                            <field name="spn"/>
-                            <field name="fmi"/>
-                            <field name="addr"/>
-                            <field name="ocr"/>
-                            <field name="note"/>
-                        </tree>
-                    </field>
-                </page>
-                <page name="gps_log" string="GPS Log">
-                    <field name="gps_ids" context="{'default_lot_id': active_id}">
-                        <tree editable="bottom">
-                            <field name="date"/>
-                            <field name="lat"/>
-                            <field name="long"/>
-                            <field name="note"/>
-                        </tree>
-                    </field>
-                </page>
                 <page name="documents" string="Documents">
                     <!--<button type="object" name="action_see_attachments" string="All Documents"/>-->
                     <field name="document_ids" mode="kanban" options="{'no_create_edit': True}"

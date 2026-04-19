@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- unit.telemetry.topic -->
+    <record id="view_unit_telemetry_topic_tree" model="ir.ui.view">
+        <field name="name">unit.telemetry.topic.tree</field>
+        <field name="model">unit.telemetry.topic</field>
+        <field name="arch" type="xml">
+            <tree string="Telemetry Topics">
+                <field name="name"/>
+                <field name="description"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_unit_telemetry_topic_form" model="ir.ui.view">
+        <field name="name">unit.telemetry.topic.form</field>
+        <field name="model">unit.telemetry.topic</field>
+        <field name="arch" type="xml">
+            <form string="Telemetry Topic">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" default_focus="1" placeholder="Topic Key"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <field name="description"/>
+                    </group>
+                    <notebook>
+                        <page string="Data Types" name="data_types">
+                            <field name="type_ids">
+                                <tree editable="bottom">
+                                    <field name="name"/>
+                                    <field name="data_type"/>
+                                    <field name="description"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_unit_telemetry_topic" model="ir.actions.act_window">
+        <field name="name">Telemetry Topics</field>
+        <field name="res_model">unit.telemetry.topic</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new Telemetry Topic
+            </p>
+        </field>
+    </record>
+
+    <!-- unit.telemetry.type -->
+    <record id="view_unit_telemetry_type_tree" model="ir.ui.view">
+        <field name="name">unit.telemetry.type.tree</field>
+        <field name="model">unit.telemetry.type</field>
+        <field name="arch" type="xml">
+            <tree string="Telemetry Types">
+                <field name="name"/>
+                <field name="topic_id"/>
+                <field name="data_type"/>
+                <field name="description"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_unit_telemetry_type_form" model="ir.ui.view">
+        <field name="name">unit.telemetry.type.form</field>
+        <field name="model">unit.telemetry.type</field>
+        <field name="arch" type="xml">
+            <form string="Telemetry Type">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="topic_id"/>
+                        </group>
+                        <group>
+                            <field name="data_type"/>
+                            <field name="description"/>
+                        </group>
+                    </group>
+                    <field name="help"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_unit_telemetry_type" model="ir.actions.act_window">
+        <field name="name">Telemetry Types</field>
+        <field name="res_model">unit.telemetry.type</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new Telemetry Type
+            </p>
+        </field>
+    </record>
+
+    <!-- unit.telemetry.reading -->
+    <record id="view_unit_telemetry_reading_tree" model="ir.ui.view">
+        <field name="name">unit.telemetry.reading.tree</field>
+        <field name="model">unit.telemetry.reading</field>
+        <field name="arch" type="xml">
+            <tree string="Telemetry Readings" create="false" edit="false">
+                <field name="msg_id"/>
+                <field name="read_time"/>
+                <field name="lot_id"/>
+                <field name="type_id"/>
+                <field name="data_type"/>
+                <field name="topic_id"/>
+                <field name="value"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_unit_telemetry_reading_form" model="ir.ui.view">
+        <field name="name">unit.telemetry.reading.form</field>
+        <field name="model">unit.telemetry.reading</field>
+        <field name="arch" type="xml">
+            <form string="Telemetry Reading" create="false" edit="false">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="msg_id"/>
+                            <field name="lot_id"/>
+                            <field name="topic_id"/>
+                            <field name="read_time"/>
+                        </group>
+                        <group>
+                            <field name="type_id"/>
+                            <field name="data_type"/>
+                            <field name="value" string="Computed"/>
+                            <field name="char_value" attrs="{'invisible': [('data_type', '!=', 'char')]}"/>
+                            <field name="float_value" attrs="{'invisible': [('data_type', '!=', 'float')]}"/>
+                            <field name="integer_value" attrs="{'invisible': [('data_type', '!=', 'integer')]}"/>
+                            <field name="date_value" attrs="{'invisible': [('data_type', '!=', 'date')]}"/>
+                            <field name="datetime_value" attrs="{'invisible': [('data_type', '!=', 'datetime')]}"/>
+                            <field name="bool_value" attrs="{'invisible': [('data_type', '!=', 'boolean')]}"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_unit_telemetry_reading_search" model="ir.ui.view">
+        <field name="name">stock.fg.quant.search</field>
+        <field name="name">unit.telemetry.reading.search</field>
+        <field name="model">unit.telemetry.reading</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="lot_id"/>
+                <field name="topic_id"/>
+                <field name="type_id"/>
+                <group expand="0" string="Group by...">
+                    <filter string='Serial Number' name="lot_group" context="{'group_by': 'lot_id'}"/>
+                    <filter string='Topic' name="topic_group" context="{'group_by': 'topic_id'}"/>
+                    <filter string='Type' name="type_group" context="{'group_by': 'type_id'}"/>
+                    <filter string='Message' name="msg_group" context="{'group_by': 'msg_id'}"/>
+               </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_unit_telemetry_reading" model="ir.actions.act_window">
+        <field name="name">Telemetry Readings</field>
+        <field name="res_model">unit.telemetry.reading</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_unit_telemetry_reading_search"/>
+    </record>
+
+    <!-- Menus -->
+    <!-- Place under Inventory -> Configuration -> Unit Telemetry -->
+    <menuitem id="menu_unit_telemetry_config_root"
+              name="Unit Telemetry"
+              parent="stock.menu_stock_config_settings"
+              sequence="100"/>
+
+    <menuitem id="menu_unit_telemetry_topic"
+              name="Topics"
+              parent="menu_unit_telemetry_config_root"
+              action="action_unit_telemetry_topic"
+              sequence="10"/>
+
+    <menuitem id="menu_unit_telemetry_type"
+              name="Types"
+              parent="menu_unit_telemetry_config_root"
+              action="action_unit_telemetry_type"
+              sequence="20"/>
+
+    <menuitem id="menu_unit_telemetry_reading"
+              name="Telemetry Readings"
+              parent="stock.menu_stock_inventory_control"
+              action="action_unit_telemetry_reading"
+              sequence="30"/>
+
+</odoo>
