@@ -10,7 +10,10 @@ class MqttTopic(models.Model):
         string='Client RegEx',
         help="Regular Expression for extracting client ICCID from topic",
     )
-    state = fields.Selection(copy=False)
+    state = fields.Selection([
+        ('draft', 'Draft'),
+        ('confirm', 'Confirmed')
+    ],copy=False)
 
     @api.constrains('name')
     def _check_topic_name(self):

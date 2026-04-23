@@ -54,7 +54,7 @@ class MqttBroker(models.Model):
             client._subscribed = True
 
         def on_message(client, userdata, msg):
-            #_logger.info(f"Message received on {msg.topic}: {msg.payload}")
+            _logger.info(f"Message received on {msg.topic}: {msg.payload}")
             with registry(dbname).cursor() as cr:
                 env = api.Environment(cr, SUPERUSER_ID, {})
                 topic_env = env['mqtt.topic']
@@ -199,6 +199,13 @@ class MqttBroker(models.Model):
         while not stop_event.is_set():
             try:
                 time.sleep(min_delay)
+                # Poll database for other worker to stop signal
+                with registry(dbname).cursor() as cr:
+                    cr.execute("SELECT listener_status FROM mqtt_broker WHERE id = %s", (broker_id,))
+                    row = cr.fetchone()
+                    if row and row[0] != 'run':
+                        stop_event.set()
+                        break
                 if not client.is_connected():
                     reconnect_fail_count += 1
                     # Exponential backoff
