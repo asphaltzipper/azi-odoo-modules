@@ -18,6 +18,7 @@ AZI Purchase
     """,
     "depends": ['purchase'],
     'data': [
+        'data/mail_template_data.xml',
         'views/purchase_views.xml',
         'reports/purchase_order_report.xml',
     ],

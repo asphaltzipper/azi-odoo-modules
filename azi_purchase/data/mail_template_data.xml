@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <function name="write" model="ir.model.data">
+        <function name="search" model="ir.model.data">
+            <value eval="[('module', '=', 'purchase'), ('name', '=', 'email_template_edi_purchase_done')]"/>
+        </function>
+        <value eval="{'noupdate': False}"/>
+    </function>
+
+    <record id="purchase.email_template_edi_purchase_done" model="mail.template">
+        <field name="subject"> Asphalt Zipper - {{ object.name }}</field>
+        <field name="body_html" type="html">
+<div style="margin: 0px; padding: 0px;">
+    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+        Dear <t t-out="object.partner_id.name or ''">Brandon Freeman</t>,
+        <br/><br/>
+        Please find below our purchase order for the items listed. Kindly review and confirm receipt of this order at your earliest convenience.
+        <br/>
+        If you have any questions or concerns regarding this order, please don't hesitate to reach out. We appreciate your prompt attention to this matter.
+        <br/>
+        <br/>
+        Best regards,
+    </p>
+</div></field>
+    </record>
+
+    <function name="write" model="ir.model.data">
+        <function name="search" model="ir.model.data">
+            <value eval="[('module', '=', 'purchase'), ('name', '=', 'email_template_edi_purchase_done')]"/>
+        </function>
+        <value eval="{'noupdate': True}"/>
+    </function>
+
+    <function name="write" model="ir.model.data">
+        <function name="search" model="ir.model.data">
+            <value eval="[('module', '=', 'purchase'), ('name', '=', 'email_template_edi_purchase')]"/>
+        </function>
+        <value eval="{'noupdate': False}"/>
+    </function>
+
+    <record id="purchase.email_template_edi_purchase" model="mail.template">
+        <field name="subject"> Asphalt Zipper - {{ object.name }}</field>
+        <field name="body_html" type="html">
+<div style="margin: 0px; padding: 0px;">
+    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+        Dear <t t-out="object.partner_id.name or ''">Brandon Freeman</t>,
+        <br/><br/>
+        We are requesting a quote for the items listed below. Please provide your best pricing, availability, and lead times at your earliest convenience.
+        <br/>
+        If you have any questions, feel free to reach out. We look forward to your response.
+        <br/>
+        <br/>
+        Best regards,
+    </p>
+</div></field>
+    </record>
+    <function name="write" model="ir.model.data">
+        <function name="search" model="ir.model.data">
+            <value eval="[('module', '=', 'purchase'), ('name', '=', 'email_template_edi_purchase')]"/>
+        </function>
+        <value eval="{'noupdate': True}"/>
+    </function>
+</odoo>
