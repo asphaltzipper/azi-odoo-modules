@@ -26,6 +26,7 @@
                                 <tree>
                                     <field name="lot_id"/>
                                     <field name="done_date"/>
+                                    <field name="partner_id"/>
                                 </tree>
                             </field>
                         </page>
@@ -39,7 +40,7 @@
         <field name="name">tsb.bulletin.tree</field>
         <field name="model">tsb.bulletin</field>
         <field name="arch" type="xml">
-            <tree string="ECO">
+            <tree string="Technical Service Bulletins">
                 <field name="name"/>
                 <field name="start_date"/>
                 <field name="done_date"/>
@@ -53,10 +54,54 @@
         <field name="view_mode">tree,form</field>
     </record>
 
+    <record id="view_tsb_serial_tree" model="ir.ui.view">
+        <field name="name">tsb.serial.tree</field>
+        <field name="model">tsb.serial</field>
+        <field name="arch" type="xml">
+            <tree string="TSB Serials">
+                <field name="name"/>
+                <field name="start_date"/>
+                <field name="done_date"/>
+                <field name="partner_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_tsb_serial_search" model="ir.ui.view">
+        <field name="name">tsb.serial.search</field>
+        <field name="model">tsb.serial</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" string="Name"/>
+                <field name="bulletin_id" string="Bulletin"/>
+                <field name="partner_id" string="Customer"/>
+                <separator/>
+                <filter string='Done' name="done" domain="[('is_done', '=', True)]" />
+                <filter string='Waiting' name="waiting" domain="[('is_done', '=', False)]" />
+                <group expand='0' string='Group by...'>
+                    <filter string='Customer' name="group_customer" domain="[]" context="{'group_by' : 'partner_id'}"/>
+                    <filter string='Bulletin' name="group_bulletin" domain="[]" context="{'group_by' : 'bulletin_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_tsb_serial_tree" model="ir.actions.act_window">
+        <field name="name">TSB Serials</field>
+        <field name="res_model">tsb.serial</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
     <menuitem id="menu_technical_service_bulletin"
               name="Technical Service Bulletin"
               parent="stock.menu_stock_inventory_control"
               action="action_tsb_bulletin_tree"
               sequence="1002"/>
+
+    <menuitem id="menu_tsb_serial"
+              name="TSB Serials"
+              parent="stock.menu_stock_inventory_control"
+              action="action_tsb_serial_tree"
+              sequence="1003"/>
 
 </odoo>

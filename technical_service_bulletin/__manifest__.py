@@ -13,6 +13,7 @@
     """,
     "depends": [
         "stock",
+        "serial_crm",
     ],
     "data": [
         'security/ir.model.access.csv',

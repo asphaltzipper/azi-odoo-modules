@@ -33,6 +33,12 @@ class TsbSerial(models.Model):
         compute='_compute_is_done',
         store=True,
     )
+    partner_id = fields.Many2one(
+        comodel_name='res.partner',
+        related='lot_id.partner_id',
+        string='Customer',
+        store=True,
+    )
 
     @api.depends('lot_id', 'bulletin_id')
     def _compute_name(self):
