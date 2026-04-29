@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_tsb_bulletin_form" model="ir.ui.view">
+        <field name="name">tsb.bulletin.form</field>
+        <field name="model">tsb.bulletin</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="start_date"/>
+                        </group>
+                        <group>
+                            <field name="done_date"/>
+                            <field name="is_done"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="desc" string="Description">
+                            <field name="description"/>
+                        </page>
+                        <page name="serials" string="Serials">
+                            <field name="serial_ids" context="{'default_bulletin_id': active_id}">
+                                <tree>
+                                    <field name="lot_id"/>
+                                    <field name="done_date"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_tsb_bulletin_tree" model="ir.ui.view">
+        <field name="name">tsb.bulletin.tree</field>
+        <field name="model">tsb.bulletin</field>
+        <field name="arch" type="xml">
+            <tree string="ECO">
+                <field name="name"/>
+                <field name="start_date"/>
+                <field name="done_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_tsb_bulletin_tree" model="ir.actions.act_window">
+        <field name="name">Technical Service Bulletins</field>
+        <field name="res_model">tsb.bulletin</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_technical_service_bulletin"
+              name="Technical Service Bulletin"
+              parent="stock.menu_stock_inventory_control"
+              action="action_tsb_bulletin_tree"
+              sequence="1002"/>
+
+</odoo>

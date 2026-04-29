@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="production_lot_tsb_form" model="ir.ui.view">
+        <field name="name">lot.production.tsb.form</field>
+        <field name="model">stock.lot</field>
+        <field name="inherit_id" ref="stock.view_production_lot_form"/>
+        <field name="arch" type="xml">
+            <page name="description" position="before">
+                <page name="tsbs" string="TSBs">
+                    <field name="tsb_bulletin_ids">
+                        <tree default_order="start_date">
+                            <field name="name"/>
+                            <field name="start_date"/>
+                            <field name="done_date"/>
+                        </tree>
+                    </field>
+                </page>
+            </page>
+        </field>
+    </record>
+
+</odoo>
