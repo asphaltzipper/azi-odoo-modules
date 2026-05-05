@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_order_form" model="ir.ui.view">
+        <field name="name">sale.order.form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <field name="payment_term_id" position="after">
+                <field name="tsb_serial_ids" widget="many2many_tags"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="action_set_tsb_done" model="ir.actions.server">
+        <field name="name">Set TSB to Done</field>
+        <field name="model_id" ref="technical_service_bulletin.model_sale_order"/>
+        <field name="binding_model_id" ref="technical_service_bulletin.model_sale_order" />
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">action = records.action_set_tsb_done()</field>
+    </record>
+
+    <record id="view_sales_order_filter" model="ir.ui.view">
+        <field name="name">view.sale.order.filter</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="tsb_serial_ids" string="TSB Serial"/>
+            </field>
+        </field>
+    </record>
+</odoo>

@@ -54,6 +54,29 @@
         <field name="view_mode">tree,form</field>
     </record>
 
+    <record id="view_tsb_serial_form" model="ir.ui.view">
+        <field name="name">tsb.serial.form</field>
+        <field name="model">tsb.serial</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="lot_id"/>
+                            <field name="order_ids" widget="many2many_tags"/>
+                        </group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="start_date"/>
+                            <field name="done_date"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
     <record id="view_tsb_serial_tree" model="ir.ui.view">
         <field name="name">tsb.serial.tree</field>
         <field name="model">tsb.serial</field>

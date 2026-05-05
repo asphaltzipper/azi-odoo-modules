@@ -39,6 +39,13 @@ class TsbSerial(models.Model):
         string='Customer',
         store=True,
     )
+    order_ids = fields.Many2many(
+        comodel_name='sale.order',
+        relation='tsb_serial_sale_order_rel',
+        column1='tsb_serial_id',
+        column2='sale_order_id',
+        string='Sales Orders',
+    )
 
     @api.depends('lot_id', 'bulletin_id')
     def _compute_name(self):
