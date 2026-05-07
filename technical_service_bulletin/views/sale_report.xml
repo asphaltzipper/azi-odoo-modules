@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_delivery_label_4X2" model="ir.actions.report">
+        <field name="name">Delivery Label</field>
+        <field name="model">sale.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">technical_service_bulletin.report_delivery_label_4X2</field>
+        <field name="report_file">technical_service_bulletin.delivery_label_report</field>
+        <field name="print_report_name">'Delivery Label - %s' % (object.name)</field>
+        <field name="paperformat_id" ref="azi_stock.paperformat_label_4x2"/>
+        <field name="binding_model_id" ref="technical_service_bulletin.model_sale_order"/>
+    </record>
+</odoo>

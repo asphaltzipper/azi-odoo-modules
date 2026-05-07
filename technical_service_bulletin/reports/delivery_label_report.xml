@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_delivery_label_4X2">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <div class="page">
+                    <div style="font-size: 16px; font-weight: bold; margin-bottom: 4px;">
+                        <span t-field="o.partner_id.name"/>
+                    </div>
+                    <div style="font-size: 14px; line-height: 1.2;">
+                        <t t-if="o.partner_id.street">
+                            <span t-field="o.partner_id.street"/><br/>
+                        </t>
+                        <t t-if="o.partner_id.street2">
+                            <span t-field="o.partner_id.street2"/><br/>
+                        </t>
+                        <span>
+                            <t t-if="o.partner_id.city"><span t-field="o.partner_id.city"/>, </t>
+                            <t t-if="o.partner_id.state_id"><span t-field="o.partner_id.state_id.code"/>, </t>
+                            <t t-if="o.partner_id.zip"><span t-field="o.partner_id.zip"/></t>
+                        </span>
+                    </div>
+                </div>
+                <div t-if="not o_last" style="page-break-after: always;"/>
+            </t>
+        </t>
+    </template>
+</odoo>

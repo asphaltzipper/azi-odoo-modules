@@ -12,12 +12,13 @@
         Define Technical Service Bulletins (TSBs) and associate them with serialized units
     """,
     "depends": [
-        "stock",
+        "azi_stock",
         "sale",
-        "serial_crm",
     ],
     "data": [
         'security/ir.model.access.csv',
+        'reports/delivery_label_report.xml',
+        'views/sale_report.xml',
         'views/tsb_views.xml',
         'views/stock_lot_views.xml',
         'views/sale_order_views.xml',
