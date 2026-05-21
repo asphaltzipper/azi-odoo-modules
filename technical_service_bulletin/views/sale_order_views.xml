@@ -5,16 +5,16 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-            <field name="payment_term_id" position="after">
-                <field name="tsb_serial_ids" widget="many2many_tags"/>
+            <field name="payment_term_id" position="before">
+                <field name="tsb_bulletin_ids" widget="many2many_tags"/>
             </field>
         </field>
     </record>
 
-    <record id="action_set_tsb_done" model="ir.actions.server">
+    <record id="action_so_set_tsb_done" model="ir.actions.server">
         <field name="name">Set TSB to Done</field>
-        <field name="model_id" ref="technical_service_bulletin.model_sale_order"/>
-        <field name="binding_model_id" ref="technical_service_bulletin.model_sale_order" />
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="binding_model_id" ref="sale.model_sale_order" />
         <field name="binding_view_types">list</field>
         <field name="state">code</field>
         <field name="code">action = records.action_set_tsb_done()</field>
@@ -29,6 +29,9 @@
                 <field name="tsb_serial_ids" string="TSB Serial"/>
                 <field name="tsb_bulletin_ids" string="Technical Service Bulletin"/>
             </field>
+            <filter name="order_month" position="after">
+                <filter string="Technical Service Bulletin" name="tsb_bulletin" domain="[]" context="{'group_by': 'tsb_bulletin_ids'}"/>
+            </filter>
         </field>
     </record>
 </odoo>

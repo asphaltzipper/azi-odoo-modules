@@ -23,15 +23,24 @@
                         </page>
                         <page name="serials" string="Serials">
                             <field name="serial_ids" context="{'default_bulletin_id': active_id}">
-                                <tree>
+                                <tree editable="bottom">
+                                    <field name="bulletin_id" invisible="1"/>
+                                    <field name="name" invisible="1"/>
                                     <field name="lot_id"/>
-                                    <field name="done_date"/>
                                     <field name="partner_id"/>
+                                    <field name="order_ids" widget="many2many_tags"/>
+                                    <field name="repair_ids" widget="many2many_tags"/>
+                                    <field name="start_date" invisible="1"/>
+                                    <field name="done_date"/>
                                 </tree>
                             </field>
                         </page>
                     </notebook>
                 </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
             </form>
         </field>
     </record>
@@ -62,14 +71,15 @@
                 <sheet>
                     <group>
                         <group>
-                            <field name="name"/>
+                            <field name="bulletin_id"/>
                             <field name="lot_id"/>
-                            <field name="order_ids" widget="many2many_tags"/>
+                            <field name="done_date"/>
+                            <field name="start_date"/>
                         </group>
                         <group>
                             <field name="partner_id"/>
-                            <field name="start_date"/>
-                            <field name="done_date"/>
+                            <field name="order_ids" widget="many2many_tags"/>
+                            <field name="repair_ids" widget="many2many_tags"/>
                         </group>
                     </group>
                 </sheet>
@@ -86,6 +96,8 @@
                 <field name="start_date"/>
                 <field name="done_date"/>
                 <field name="partner_id"/>
+                <field name="order_ids" widget="many2many_tags"/>
+                <field name="repair_ids" widget="many2many_tags"/>
             </tree>
         </field>
     </record>

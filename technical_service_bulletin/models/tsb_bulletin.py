@@ -4,6 +4,7 @@ from odoo import models, fields, api
 class TsbBulletin(models.Model):
     _name = 'tsb.bulletin'
     _description = 'Technical Service Bulletin'
+    _inherit = ['mail.thread']
 
     name = fields.Char(
         string='Name',
@@ -25,19 +26,18 @@ class TsbBulletin(models.Model):
     done_date = fields.Date(
         string='Done Date',
         compute='_compute_done_date',
+        compute_sudo = True,
     )
     is_done = fields.Boolean(
         string='Is Done',
-        compute='_compute_is_done',
+        compute='_compute_done_date',
+        compute_sudo = True,
         store=True,
     )
 
     @api.depends('serial_ids')
-    def _compute_is_done(self):
-        for rec in self:
-            rec.is_done = rec.serial_ids and all(rec.serial_ids.mapped('done_date')) or False
-
-    @api.depends('serial_ids')
     def _compute_done_date(self):
         for rec in self:
-            rec.done_date = rec.serial_ids and max(rec.serial_ids.mapped('done_date')) or False
+            done_dates = rec.serial_ids and rec.serial_ids.mapped('done_date') or []
+            rec.is_done = done_dates and all(done_dates) or False
+            rec.done_date = rec.is_done and max(done_dates) or False

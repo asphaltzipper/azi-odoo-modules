@@ -10,7 +10,8 @@
                 <div colspan="2">
                     <field name="related_lot_ids" context="{'search_default_partner_id': partner_id}" nolabel="1">
                         <tree>
-                            <field name="name" string="Related Serials"/>
+                            <field name="name" string="SN"/>
+                            <field name="state" string="Status"/>
                             <field name="product_id"/>
                         </tree>
                     </field>

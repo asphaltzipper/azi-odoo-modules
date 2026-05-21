@@ -12,7 +12,7 @@
                 <field name="lot_id" string="Serial"/>
             </field>
             <field name="address_id" position="attributes">
-                <attribute name="invisible">1</attribute>
+                <attribute name="optional">hide</attribute>
             </field>
         </field>
     </record>

@@ -4,6 +4,7 @@ from odoo import models, fields, _, api
 class TsbSerial(models.Model):
     _name = 'tsb.serial'
     _description = 'Technical Service Bulletin Serialized Unit'
+    _sql_constraints = [('bulletin_lot_unique', 'unique(bulletin_id,lot_id)', "Serial number must be unique per TSB")]
 
     name = fields.Char(
         string='Name',
@@ -44,7 +45,16 @@ class TsbSerial(models.Model):
         relation='tsb_serial_sale_order_rel',
         column1='tsb_serial_id',
         column2='sale_order_id',
+        readonly=True,
         string='Sales Orders',
+    )
+    repair_ids = fields.Many2many(
+        comodel_name='repair.order',
+        relation='tsb_serial_repair_order_rel',
+        column1='tsb_serial_id',
+        column2='repair_order_id',
+        readonly=True,
+        string='Repair Orders',
     )
 
     @api.depends('lot_id', 'bulletin_id')

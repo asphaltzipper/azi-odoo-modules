@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_repair_order_tree_tsb" model="ir.ui.view">
+        <field name="name">mrp.repair.tree.tsb</field>
+        <field name="model">repair.order</field>
+        <field name="inherit_id" ref="repair.view_repair_order_tree"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="before">
+                <field name="tsb_bulletin_ids" widget="many2many_tags"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="action_ro_set_tsb_done" model="ir.actions.server">
+        <field name="name">Set TSB to Done</field>
+        <field name="model_id" ref="technical_service_bulletin.model_repair_order"/>
+        <field name="binding_model_id" ref="technical_service_bulletin.model_repair_order" />
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">action = records.action_set_tsb_done()</field>
+    </record>
+
+    <record id="view_repair_order_form_tsb" model="ir.ui.view">
+        <field name="name">repair.order.form.tsb</field>
+        <field name="model">repair.order</field>
+        <field name="inherit_id" ref="repair.view_repair_order_form"/>
+        <field name="arch" type="xml">
+            <field name="invoice_method" position="after">
+                <field name="tsb_bulletin_ids" widget="many2many_tags"/>
+            </field>
+        </field>
+    </record>
+</odoo>
