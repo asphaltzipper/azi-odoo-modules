@@ -19,7 +19,7 @@ class SaleOrder(models.Model):
         copy=False,
     )
 
-    @api.onchange('credit_warn')
+    @api.onchange('partner_id')
     def _onchange_credit_warn(self):
         if self.credit_warn_msg:
             return {'warning': {
