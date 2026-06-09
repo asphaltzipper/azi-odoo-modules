@@ -7,7 +7,7 @@
             <form>
                 <header>
                     <button name="action_connect" type="object" string="Connect" states="draft" class="btn btn-primary"/>
-                    <button name="action_to_draft" type="object" string="Reset to Draft" states="failed" class="btn"/>
+                    <button name="action_to_draft" type="object" string="Reset to Draft" states="failed,cancelled,connected" class="btn"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,connected"/>
                 </header>
                 <sheet>
