@@ -52,4 +52,15 @@
         </field>
     </record>
 
+    <record id="view_sales_order_dr_search" model="ir.ui.view">
+        <field name="name">sale.order.dr.search</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+        <field name="arch" type="xml">
+            <field name="order_line" positior="after">
+                <field name="order_line" string="Discount Reason" filter_domain="[('order_line.discount_reason_id', 'ilike', self)]"/>
+            </field>
+        </field>
+    </record>
+
 </odoo>
