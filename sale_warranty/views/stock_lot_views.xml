@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+
+<odoo>
+    <record id="action_report_bom_combined" model="ir.actions.client">
+        <field name="name">CS Combined BOM Report</field>
+        <field name="tag">combined_bom_report</field>
+        <field name="context" eval="{'model': 'report.serial_crm.report_combined_bom'}"/>
+        <field name="binding_model_id" ref="stock.model_stock_lot"/>
+    </record>
+    <record id="production_lot_crm_search_view" model="ir.ui.view">
+        <field name="name">lot.production.search.view</field>
+        <field name="model">stock.lot</field>
+        <field name="inherit_id" ref="stock.search_product_lot_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="/search/field[@name='product_id']" position="after">
+                <field name="partner_id" operator="child_of"/>
+            </xpath>
+        </field>
+    </record>
+
+<!--    <record id="stock.view_production_lot_form" model="ir.ui.view">-->
+<!--        <field name="priority" eval="1"/>-->
+<!--    </record>-->
+<!--    <record id="stock.view_production_lot_form_simple" model="ir.ui.view">-->
+<!--        <field name="priority" eval="10"/>-->
+<!--    </record>-->
+
+    <record id="stock_lot_warranty_form" model="ir.ui.view">
+        <field name="name">stock.lot.warranty.form</field>
+        <field name="model">stock.lot</field>
+        <field name="inherit_id" ref="stock.view_production_lot_form"/>
+        <field name="arch" type="xml">
+            <page name="description" position="before">
+                <page name="warranties" string="Warranty">
+                    <field name="warranty_ids">
+                        <tree default_order="date">
+                            <field name="product_id"/>
+                            <field name="partner_id"/>
+                            <field name="reference"/>
+                            <field name="location_id"/>
+                            <field name="location_dest_id"/>
+                            <field name="qty_done"/>
+                        </tree>
+                    </field>
+                </page>
+            </page>
+        </field>
+    </record>
+
+    <record id="view_production_lot_serial_tree" model="ir.ui.view">
+        <field name="name">stock.lot.serial.tree</field>
+        <field name="model">stock.lot</field>
+        <field name="inherit_id" ref="stock.view_production_lot_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='product_id']" position="before">
+                <field name="state"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_production_lot_hour_tree" model="ir.ui.view">
+        <field name="name">stock.lot.hour.tree</field>
+        <field name="model">stock.lot</field>
+        <field name="inherit_id" ref="stock.view_production_lot_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='product_id']" position="before">
+                <field name="mfg_date"/>
+                <field name="current_hours"/>
+                <field name="partner_id"/>
+            </xpath>
+            <field name="create_date" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+            <field name="ref" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+        </field>
+    </record>
+
+</odoo>

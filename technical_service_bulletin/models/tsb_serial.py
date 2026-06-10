@@ -56,6 +56,15 @@ class TsbSerial(models.Model):
         readonly=True,
         string='Repair Orders',
     )
+    warranty_id = fields.Many2one(
+        comodel_name='sale.warranty',
+        string='Warranty',
+        store=True,
+    )
+    warranty_expire_date = fields.Date(
+        related='warranty_id.expire_date',
+        store=True,
+    )
 
     @api.depends('lot_id', 'bulletin_id')
     def _compute_name(self):
@@ -66,3 +75,8 @@ class TsbSerial(models.Model):
     def _compute_is_done(self):
         for rec in self:
             rec.is_done = rec.done_date or False
+
+    def action_latest_warranty(self):
+        # the sale.warranty model is ordered by descending start_date
+        for rec in self:
+            rec.warranty_id = rec.lot_id.warranty_ids[:1]

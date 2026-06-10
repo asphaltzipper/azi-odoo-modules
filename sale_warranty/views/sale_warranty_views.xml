@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_sale_warranty_form" model="ir.ui.view">
+        <field name="name">sale.warranty.form</field>
+        <field name="model">sale.warranty</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="product_id"/>
+                            <field name="lot_tracking" invisible="1"/>
+                            <field name="lot_id"
+                                   domain="[('product_id','=',product_id)]"
+                                   attrs="{'required':[('lot_tracking', 'in', ['serial', 'lot'])], 'invisible': [('lot_tracking', 'not in', ['serial', 'lot'])]}"/>
+                            <field name="move_line_id" domain="[('product_id','=',product_id)]"/>
+                            <field name="move_id"/>
+                            <field name="picking_id"/>
+                            <field name="sale_id"/>
+                        </group>
+                        <group>
+                            <field name="warranty_product_id"/>
+                            <field name="description_sale"/>
+                            <field name="units"/>
+                            <field name="duration"/>
+                            <field name="start_date"/>
+                            <field name="expire_date"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_sale_warranty_tree" model="ir.ui.view">
+        <field name="name">sale.warranty.tree</field>
+        <field name="model">sale.warranty</field>
+        <field name="arch" type="xml">
+            <tree string="Warranty">
+                <field name="partner_id"/>
+                <field name="lot_id"/>
+                <field name="start_date"/>
+                <field name="expire_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_sale_warranty_search" model="ir.ui.view">
+        <field name="name">sale.warranty.search</field>
+        <field name="model">sale.warranty</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" string="Name"/>
+                <field name="lot_id" string="Serial"/>
+                <field name="partner_id" string="Customer"/>
+                <separator/>
+                <filter string='Expired' name="expired" domain="[('expire_date', '&lt;', context_today())]" />
+                <filter string='Pending' name="pending" domain="[('expire_date', '&gt;=', context_today())]" />
+                <group expand='0' string='Group by...'>
+                    <filter string='Customer' name="group_customer" domain="[]" context="{'group_by' : 'partner_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_sale_warranty_tree" model="ir.actions.act_window">
+        <field name="name">Warranty</field>
+        <field name="res_model">sale.warranty</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_sale_warranty"
+              name="Warranty"
+              parent="stock.menu_stock_inventory_control"
+              action="action_sale_warranty_tree"
+              sequence="1004"/>
+
+</odoo>

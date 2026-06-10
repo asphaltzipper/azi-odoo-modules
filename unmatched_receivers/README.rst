@@ -15,4 +15,4 @@ Configuration
 Usage
 =====
 * Purchase > Orders > Unmatched Receivers
-* Purchase > Purchase > Product Variants > "Select a Product" > Unmatched Receivers
+* Purchase > Products > Products > "Select a Product" > Unmatched Receivers

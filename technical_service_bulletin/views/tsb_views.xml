@@ -78,6 +78,8 @@
                         </group>
                         <group>
                             <field name="partner_id"/>
+                            <field name="warranty_id"/>
+                            <field name="warranty_expire_date"/>
                             <field name="order_ids" widget="many2many_tags"/>
                             <field name="repair_ids" widget="many2many_tags"/>
                         </group>
@@ -96,6 +98,8 @@
                 <field name="start_date"/>
                 <field name="done_date"/>
                 <field name="partner_id"/>
+                <field name="warranty_id"/>
+                <field name="warranty_expire_date"/>
                 <field name="order_ids" widget="many2many_tags"/>
                 <field name="repair_ids" widget="many2many_tags"/>
             </tree>
@@ -113,6 +117,9 @@
                 <separator/>
                 <filter string='Done' name="done" domain="[('is_done', '=', True)]" />
                 <filter string='Waiting' name="waiting" domain="[('is_done', '=', False)]" />
+                <separator/>
+                <filter string='Warrantied' name="warrantied" domain="[('warranty_expire_date', '&gt;=', context_today())]" />
+                <filter string='Not Warrantied' name="not_warrantied" domain="[('warranty_expire_date', '&lt;', context_today())]" />
                 <group expand='0' string='Group by...'>
                     <filter string='Customer' name="group_customer" domain="[]" context="{'group_by' : 'partner_id'}"/>
                     <filter string='Bulletin' name="group_bulletin" domain="[]" context="{'group_by' : 'bulletin_id'}"/>
@@ -125,6 +132,14 @@
         <field name="name">TSB Serials</field>
         <field name="res_model">tsb.serial</field>
         <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="action_tsb_serial_latest_warranty" model="ir.actions.server">
+        <field name="name">Get Latest Warranty</field>
+        <field name="model_id" ref="model_tsb_serial"/>
+        <field name="state">code</field>
+        <field name="code">records.action_latest_warranty()</field>
+        <field name="binding_model_id" ref="model_tsb_serial"/>
     </record>
 
     <menuitem id="menu_technical_service_bulletin"

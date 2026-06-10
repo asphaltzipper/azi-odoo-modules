@@ -14,6 +14,7 @@
     "depends": [
         "azi_stock",
         "sale",
+        "sale_warranty",
     ],
     "data": [
         'security/ir.model.access.csv',
