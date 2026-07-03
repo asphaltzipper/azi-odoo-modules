@@ -92,10 +92,10 @@ class MQTTMessageHistory(models.Model):
 
     @api.model
     def cron_process_telemetry(self):
-        clients = self.env['mqtt.client'].search([('current_lot_id', '!=', False)])
-        if not clients:
+        client_ids = self.env['mqtt.client.serial'].search([]).mapped("client_id").ids
+        if not client_ids:
             return
-        msg_domain = [('client_id', 'in', clients.ids), ('processed', '=', False)]
+        msg_domain = [('client_id', 'in', client_ids), ('processed', '=', False)]
         msgs = self.search(msg_domain)
         if msgs:
             msgs.process_telemetry(silent=True)
