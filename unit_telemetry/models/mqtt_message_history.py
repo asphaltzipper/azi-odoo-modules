@@ -36,7 +36,7 @@ class MQTTMessageHistory(models.Model):
         tel_types = {x.name: x for x in self.env['unit.telemetry.type'].search([])}
         for msg in self:
             if not msg.client_id.current_lot_id:
-                error_message = _("Not serial number assigned to client %s", msg.client_id.name)
+                error_message = _("No serial number assigned to client %s", msg.client_id.name)
                 if silent:
                     _logger.error(error_message)
                     continue
@@ -92,7 +92,10 @@ class MQTTMessageHistory(models.Model):
 
     @api.model
     def cron_process_telemetry(self):
-        msg_domain = [('client_id', '!=', False), ('processed', '=', False)]
+        clients = self.env['mqtt.client'].search([('current_lot_id', '!=', False)])
+        if not clients:
+            return
+        msg_domain = [('client_id', 'in', clients.ids), ('processed', '=', False)]
         msgs = self.search(msg_domain)
         if msgs:
             msgs.process_telemetry(silent=True)
