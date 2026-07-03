@@ -16,11 +16,12 @@
                 <field name="product_deprecated"/>
                 <field name="product_responsible_id"/>
             </xpath>
-            <page name="items" position="after">
-                <page string="Ordered">
-                    <field name="request_ids" widget="one2many_list"/>
-                </page>
-            </page>
+            <xpath expr="//field[@name='stock_request_ids']/tree/field[@name='name']" position="before">
+                <field name="kanban_id"/>
+            </xpath>
+            <field name="product_uom_id" position="attributes">
+                <attribute name="string">UOM</attribute>
+            </field>
         </field>
     </record>
 

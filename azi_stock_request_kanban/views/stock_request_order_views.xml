@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <!-- enable the scan button -->
+    <record id="stock_request_order_form" model="ir.ui.view" >
+        <field name="name">stock.request.order.form</field>
+        <field name="model">stock.request.order</field>
+        <field name="inherit_id" ref="stock_request_kanban.stock_request_order_form"/>
+        <field name="arch" type="xml">
+            <button name="%(stock_request_kanban.wizard_stock_request_order_kanban_action)d" position="attributes">
+                <attribute name="class"></attribute>
+            </button>
+        </field>
+    </record>
+</odoo>

@@ -175,6 +175,10 @@
         </field>
     </record>
 
+    <record id="stock_request.action_stock_request_form" model="ir.actions.act_window">
+        <field name="domain">[('scheduled', '=', False)]</field>
+    </record>
+
     <menuitem
         id="menu_stock_request_schedule"
         action="action_stock_request_schedule_form"

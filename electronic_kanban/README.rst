@@ -18,6 +18,11 @@ E-Kanban
 * Add Product Active field to Kanban objects
 * Add Manager field (product responsible user) to Kanban objects
 
+Stock Requests
+--------------
+* Show the name of the kanban that was scanned
+* Compute and show other open purchase/manufacture orders
+
 Shelf Location
 --------------
 * Provide the ability to scan kanban cards to add product to a shelf location

@@ -17,6 +17,7 @@
     ],
     "data": [
         'report/stock_request_kanban_template.xml',
+        'views/stock_request_order_views.xml',
     ],
     "auto_install": False,
     "application": False,

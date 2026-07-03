@@ -33,9 +33,13 @@ Shelf Location
         'stock',
         'shelf_location',
         'stock_request',
+        'stock_request_kanban',
         'azi_stock_request_kanban',
         'engineering_product',
         'stock_inventory',
+        'stock_request_submit',
+        'stock_request_purchase',
+        'stock_request_mrp',
     ],
     'data': [
         'security/ir.model.access.csv',

@@ -30,6 +30,35 @@ class StockRequestAbstract(models.AbstractModel):
 class StockRequest(models.Model):
     _inherit = 'stock.request'
 
+    other_purchase_ids = fields.One2many(
+        comodel_name="purchase.order",
+        compute="_compute_other_purchase_ids",
+        compute_sudo=False,
+        string="Other POs",
+        readonly=True,
+        help="These are open purchase orders, not created by this stock request",
+    )
+    has_other_pos = fields.Boolean(
+        string="Has Other POs",
+        compute="_compute_other_purchase_ids",
+        compute_sudo=False,
+        store=True,
+    )
+    other_production_ids = fields.One2many(
+        comodel_name="mrp.production",
+        compute="_compute_other_production_ids",
+        compute_sudo=False,
+        string="Other MOs",
+        readonly=True,
+        help="These are open manufacturing orders, not created by this stock request",
+    )
+    has_other_mos = fields.Boolean(
+        string="Has Other MOs",
+        compute="_compute_other_production_ids",
+        compute_sudo=False,
+        store=True,
+    )
+
     def action_confirm(self):
         res = super(StockRequest, self).action_confirm()
         for record in self:
@@ -56,8 +85,35 @@ class StockRequest(models.Model):
                     stock_inventory.action_state_to_done()
         return res
 
+    def _action_submit(self):
+        for rec in self:
+            if len(rec.route_ids) == 1:
+                rec.route_id = rec.route_ids[0]
+        super(StockRequest, self)._action_submit()
 
-class StockRequestOrder(models.Model):
-    _inherit = 'stock.request.order'
+    @api.depends('product_id', 'purchase_line_ids', 'purchase_line_ids.state')
+    def _compute_other_purchase_ids(self):
+        for rec in self:
+            rec.other_purchase_ids = self.env['stock.move'].search([
+                ('state', 'not in', ['done', 'cancel']),
+                ('product_id', '=', rec.product_id.id),
+                ('purchase_line_id', 'not in', rec.purchase_line_ids.ids),
+                ('purchase_line_id', '!=', False),
+            ]).mapped('purchase_line_id.order_id')
+            if rec.other_purchase_ids:
+                rec.has_other_pos = True
+            else:
+                rec.has_other_pos = False
 
-    request_ids = fields.Many2many('stock.request', string='Stock Requests')
+    @api.depends('product_id', 'production_ids', 'production_ids.state')
+    def _compute_other_production_ids(self):
+        for rec in self:
+            rec.other_production_ids = self.env['mrp.production'].search([
+                ('state', 'not in', ['done', 'cancel']),
+                ('product_id', '=', rec.product_id.id),
+                ('id', 'not in', rec.production_ids.ids),
+            ])
+            if rec.other_production_ids:
+                rec.has_other_mos = True
+            else:
+                rec.has_other_mos = False
