@@ -204,6 +204,7 @@ class MqttBroker(models.Model):
                     cr.execute("SELECT listener_status FROM mqtt_broker WHERE id = %s", (broker_id,))
                     row = cr.fetchone()
                     if row and row[0] != 'run':
+                        _logger.info(f"mqtt_broker.listener_status = {row and row[0] or 'NULL'}")
                         stop_event.set()
                         break
                 if not client.is_connected():

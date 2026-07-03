@@ -35,6 +35,14 @@ class MQTTMessageHistory(models.Model):
     def process_telemetry(self, silent=False):
         tel_types = {x.name: x for x in self.env['unit.telemetry.type'].search([])}
         for msg in self:
+            if not msg.client_id.current_lot_id:
+                error_message = _("Not serial number assigned to client %s", msg.client_id.name)
+                if silent:
+                    _logger.error(error_message)
+                    continue
+                else:
+                    raise ValidationError(error_message)
+
             payload = {}
             try:
                 payload = json.loads(msg.payload)
