@@ -67,7 +67,7 @@ class StockLot(models.Model):
         readonly=True,
         string='Status',
         compute='_compute_state',
-        # store=True,
+        store=True,
         help="Assigned: product assigned, no stock moves\n"
              "Inventory: SERIAL moved to stock location\n"
              "WIP: SERIAL consumed in production location\n"
@@ -86,7 +86,9 @@ class StockLot(models.Model):
 
     current_hours = fields.Float(
         compute='_compute_current_hours',
-        string='Hours')
+        string='Hours',
+        store=True,
+    )
 
     hour_ids = fields.One2many(
          comodel_name='stock.lot.hour.log',
@@ -121,7 +123,7 @@ class StockLot(models.Model):
             raise UserError(_("Product is required"))
         self.name = self.env['ir.sequence'].next_by_code('azi.fg.serial')
 
-    @api.depends('move_line_ids')
+    @api.depends('move_line_ids', 'product_id')
     def _compute_state(self):
         # The state field uses the same keys as the location usage field, but
         # assigns new names.  We also add the assigned value, which is not a

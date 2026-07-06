@@ -268,6 +268,7 @@
                 <field name="current_hours"/>
                 <field name="partner_id"/>
             </xpath>
+            <field name="last_delivery_partner_id" position="replace"/>
             <field name="create_date" position="attributes">
                 <attribute name="invisible">1</attribute>
             </field>
