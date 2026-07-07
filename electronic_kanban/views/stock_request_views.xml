@@ -29,13 +29,27 @@
         <field name="inherit_id" ref="stock_request.stock_request_search"/>
         <field name="arch" type="xml">
             <filter name="current_requests" position="after">
+                <separator />
                 <filter string="Obsolete" name="deprecated" domain="[('product_deprecated','=',True)]"/>
                 <filter string="Current" name="non_deprecated" domain="[('product_deprecated','=',False)]"/>
+            </filter>
+            <filter name="open" position="after">
+                <filter string="Submitted" name="submitted" domain="[('state','=','submitted')]" />
             </filter>
             <filter name="location" position="after">
                 <filter name="responsible" string="Manager" domain="[]" context="{'group_by':'product_responsible_id'}"/>
             </filter>
         </field>
+    </record>
+
+    <record id="stock_request.action_stock_request_form" model="ir.actions.act_window">
+        <!--<field name="context" eval="context.update({'default_search_current_requests': 0, 'default_search_submit': 1})"/>-->
+        <field name="context">{
+            'search_default_current_requests': 0,
+            'pivot_column_groupby': ['location_id'], 'pivot_row_groupby': ['product_id'], 'pivot_measures': ['product_uom_qty', 'qty_done'],
+            'search_default_draft': 1, 'search_default_open': 1,
+            'search_default_submitted': 1
+        }</field>
     </record>
 
     <record id="view_stock_request_form" model="ir.ui.view">

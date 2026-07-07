@@ -25,4 +25,23 @@
         </field>
     </record>
 
+    <record model="ir.ui.view" id="stock_request_order_search">
+        <field name="name">stock.request.order.search</field>
+        <field name="model">stock.request.order</field>
+        <field name="inherit_id" ref="stock_request.stock_request_order_search"/>
+        <field name="arch" type="xml">
+            <filter name="draft" position="after">
+                <filter string="Submitted" name="submitted" domain="[('state','=','submitted')]"/>
+            </filter>
+        </field>
+    </record>
+
+    <record id="stock_request.stock_request_order_action" model="ir.actions.act_window">
+        <field name="context">{
+            'search_default_draft': 1,
+            'search_default_submitted': 1,
+            'search_default_open': 1
+        }</field>
+    </record>
+
 </odoo>
