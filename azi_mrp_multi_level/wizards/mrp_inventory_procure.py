@@ -11,6 +11,8 @@ class MrpInventoryProcure(models.TransientModel):
         pg = self.env["procurement.group"]
         procurements = []
         for item in self.item_ids:
+            if item.supply_method == 'buy' and item.product_id.purchase_line_warn in ('warning', 'block'):
+                raise ValidationError(_(f'{item.product_id.purchase_line_warn_msg}'))
             if not item.qty:
                 raise ValidationError(_("Quantity must be positive."))
             values = item._prepare_procurement_values()
