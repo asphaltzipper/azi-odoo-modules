@@ -100,7 +100,7 @@ class MqttClient(models.Model):
 
     def action_review_incoming_history(self):
         self.ensure_one()
-        action = self.env.ref('mqtt_integration.action_mqtt_incoming_message').read()[0]
+        action = self.sudo().env.ref('mqtt_integration.action_mqtt_incoming_message').read()[0]
         action.update({
             'domain': [
                 ('client_id', '=', self.id),
@@ -115,7 +115,7 @@ class MqttClient(models.Model):
 
     def action_review_outgoing_history(self):
         self.ensure_one()
-        action = self.env.ref('mqtt_integration.action_mqtt_outgoing_message').read()[0]
+        action = self.sudo().env.ref('mqtt_integration.action_mqtt_outgoing_message').read()[0]
         action.update({
             'domain': [
                 ('client_id', '=', self.id),
