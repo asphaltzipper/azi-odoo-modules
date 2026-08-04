@@ -246,7 +246,7 @@ class MqttBroker(models.Model):
                 env = api.Environment(cr, SUPERUSER_ID, {})
                 topic_names = self.get_subscribed_topics_for_broker(env, broker_id)
 
-            if topic_names:
+            if topic_names and broker_data.get('clean_session', True):
                 client.unsubscribe(topic_names)
                 _logger.info(f"Batch unsubscribed from {len(topic_names)} topics: {', '.join(topic_names)}")
 
