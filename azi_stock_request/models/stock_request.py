@@ -61,7 +61,7 @@ class StockRequest(models.Model):
                     )
                 )
                 # Modified the context
-                self.env["procurement.group"].with_context(active_model='stock.request', stock_request_id=self.id).run(procurements)
+                self.env["procurement.group"].with_context(active_model='stock.request', stock_request_id=request.id).run(procurements)
             except UserError as error:
                 errors.append(error.name)
         if errors:
