@@ -14,6 +14,6 @@
         <xpath expr="//t[@t-foreach='o.order_line']/tr/t[1]" position="before">
             <td><span t-esc="line_index + 1"/></td>
         </xpath>
-        <xpath expr="//t[@t-foreach='o.order_line']/tr/t[1]/td[3]" position="replace"/>
+        <xpath expr="//t[@t-foreach='o.order_line']/tr/t[1]/td[4]" position="replace"/>
     </template>
 </odoo>
