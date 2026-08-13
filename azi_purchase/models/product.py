@@ -40,3 +40,15 @@ class ProductTemplate(models.Model):
         for template in self:
             template.purchase_count = sum([p.purchase_count for p in template.product_variant_ids])
         return True
+
+
+class ProductSupplierinfo(models.Model):
+    _inherit = 'product.supplierinfo'
+
+    def name_get(self):
+        result = []
+        for seller in self:
+            label = seller.product_code
+            name = seller.product_name or seller.product_id.name
+            result.append((seller.id, "[%s] %s" % (label, name)))
+        return result
