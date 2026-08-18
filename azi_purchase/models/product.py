@@ -30,6 +30,19 @@ class ProductProduct(models.Model):
                         self.message_post(body=message)
         return super(ProductProduct, self).write(vals)
 
+    def _select_seller(self, partner_id=False, quantity=0.0, date=None, uom_id=False, params=False, product_code= False):
+        sellers = self._get_filtered_sellers(partner_id=partner_id, quantity=quantity, date=date, uom_id=uom_id, params=params)
+        res = self.env['product.supplierinfo']
+        for seller in sellers:
+            if not res or res.partner_id == seller.partner_id:
+                res |= seller
+        product_code = product_code or self.env.context.get('seller_code', False)
+        if product_code and res:
+            matched_per_code = res.filtered(lambda p: p.product_code == product_code)
+            if matched_per_code:
+                return matched_per_code.sorted('price')[:1]
+        return res and res.sorted('price')[:1]
+
 
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
@@ -42,13 +55,3 @@ class ProductTemplate(models.Model):
         return True
 
 
-class ProductSupplierinfo(models.Model):
-    _inherit = 'product.supplierinfo'
-
-    def name_get(self):
-        result = []
-        for seller in self:
-            label = seller.product_code
-            name = seller.product_name or seller.product_id.name
-            result.append((seller.id, "[%s] %s" % (label, name)))
-        return result

@@ -22,6 +22,11 @@ AZI Purchase
         'views/purchase_views.xml',
         'reports/purchase_order_report.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'azi_purchase/static/src/js/purchase_line_product_field.js',
+        ],
+    },
     "installable": True,
     "auto_install": False,
 }

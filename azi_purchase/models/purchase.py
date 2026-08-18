@@ -45,37 +45,37 @@ class PurchaseOrderLine(models.Model):
         related='product_id.virtual_available',
         depends=['product_id'],
     )
-    product_tmpl_id = fields.Many2one('product.template', related='product_id.product_tmpl_id')
-    supplierinfo_id = fields.Many2one('product.supplierinfo', 'Vendor Pricelist')
 
     def _apply_supplierinfo(self, seller):
         if not seller:
             return
-        self.vendor_product_code = seller.product_code
-        self.price_unit = seller.price
-        name = seller.product_name or self.product_id.name
-        if seller.product_code:
-            name = f"[{seller.product_code}] {name}"
-        if self.product_id.description_purchase:
-            name += '\n' + self.product_id.description_purchase
-        self.name = name
 
     def _product_id_change(self):
         super(PurchaseOrderLine, self)._product_id_change()
         if not self.product_id:
-            self.supplierinfo_id = False
             return
+
         params = {'order_id': self.order_id}
+        vendor_product_code = self.vendor_product_code
         seller = self.product_id._select_seller(
             partner_id=self.partner_id,
             quantity=self.product_qty,
             date=self.order_id.date_order and self.order_id.date_order.date(),
             uom_id=self.product_uom,
-            params=params)
-        self.supplierinfo_id = seller
-        self._apply_supplierinfo(seller)
+            params=params,
+            product_code = vendor_product_code,
+        )
+        self.vendor_product_code = seller.product_code
+        if seller:
+            self.price_unit = seller.price
+            name = seller.product_name or self.product_id.name
+            if seller.product_code:
+                name = f"[{seller.product_code}] {name}"
+            if self.product_id.description_purchase:
+                name += '\n' + self.product_id.description_purchase
+            self.name = name
 
-    @api.onchange('supplierinfo_id')
-    def _onchange_supplierinfo_id(self):
-        if self.supplierinfo_id:
-            self._apply_supplierinfo(self.supplierinfo_id)
+    @api.depends('product_qty', 'product_uom', 'company_id')
+    def _compute_price_unit_and_date_planned_and_name(self):
+        self = self.with_context(seller_code=self.vendor_product_code)
+        super(PurchaseOrderLine, self)._compute_price_unit_and_date_planned_and_name()
