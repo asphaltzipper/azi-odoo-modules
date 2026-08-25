@@ -26,7 +26,7 @@ class UnitTelemetryType(models.Model):
             ('integer', 'Integer'),
             ('datetime', 'Datetime'),
             ('date', 'Date'),
-            ('boolean', 'Boolean'),
+            ('bool', 'Boolean'),
         ],
         required=True,
         default='char',

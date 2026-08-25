@@ -92,7 +92,7 @@ class UnitTelemetryReading(models.Model):
             'integer': 'integer_value',
             'date': 'date_value',
             'datetime': 'datetime_value',
-            'boolean': 'bool_value',
+            'bool': 'bool_value',
         }
         for rec in self:
             rec.value = str(rec[field_map.get(rec['data_type'])])
@@ -107,7 +107,7 @@ class UnitTelemetryReading(models.Model):
             'integer': 'integer_value',
             'date': 'date_value',
             'datetime': 'datetime_value',
-            'boolean': 'bool_value',
+            'bool': 'bool_value',
         }
 
         for record in self:
@@ -123,7 +123,7 @@ class UnitTelemetryReading(models.Model):
             # Note: For Boolean, we accept 'False' as a valid value if
             # the intention is to allow an unchecked state.
             is_invalid = False
-            if selected_type == 'boolean':
+            if selected_type == 'bool':
                 # Booleans are inherently set, so they are rarely 'empty'
                 is_invalid = False
             elif selected_type in ['float', 'integer']:
