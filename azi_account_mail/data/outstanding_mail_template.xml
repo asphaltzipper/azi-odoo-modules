@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data>
+        <record id="email_template_outstanding_statement" model="mail.template">
+            <field name="name">Outstanding Statement: Send by email.</field>
+            <field name="model_id" ref="base.model_res_partner" />
+            <field name="email_from">{{ user.email_formatted }}</field>
+            <field name="partner_to">{{ object.id }}</field>
+            <field name="subject">Outstanding Statement</field>
+            <field name="body_html" type="html">
+<div style="margin: 0px; padding: 0px;">
+    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+        Dear <t t-out="object.name or ''">Customer Name</t>,
+        <br /><br />
+        Please check the attached report.
+        <br/>
+        Thank you!
+    </p>
+</div>
+            </field>
+            <field name="auto_delete" eval="True" />
+            <field name="report_template" ref="partner_statement.action_print_outstanding_statement"/>
+<!--            <field name="report_name">{{ (object.name or '').replace('/','_') }}</field>-->
+        </record>
+    </data>
+</odoo>

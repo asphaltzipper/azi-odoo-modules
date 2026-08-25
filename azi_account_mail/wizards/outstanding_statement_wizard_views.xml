@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="outstanding_statement_wizard_view" model="ir.ui.view">
+        <field name="name">outstanding.statement.wizard.view</field>
+        <field name="model">outstanding.statement.wizard</field>
+        <field name="inherit_id" ref="partner_statement.outstanding_statement_wizard_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@special='cancel']" position="before">
+                or
+                <button name="send_statement_by_email" string="Send Statement by Email" type="object"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

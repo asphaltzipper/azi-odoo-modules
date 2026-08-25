@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_account_mail_log_tree" model="ir.ui.view">
+        <field name="name">view.account.mail.log.tree</field>
+        <field name="model">account.mail.log</field>
+        <field name="arch" type="xml">
+            <tree create="0" edit="0">
+                <field name="create_date"/>
+                <field name="log_type"/>
+                <field name="message"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="account_mail_log_action" model="ir.actions.act_window">
+        <field name="name">Account Mail Log</field>
+        <field name="res_model">account.mail.log</field>
+        <field name="view_mode">tree</field>
+    </record>
+
+    <menuitem id="account_mail_log" action="account_mail_log_action" parent="account.menu_finance_receivables"/>
+
+</odoo>
