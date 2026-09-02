@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="send_invoice_separately" model="ir.actions.server">
+            <field name="name">Send Invoice Separately</field>
+            <field name="state">code</field>
+            <field name="model_id" ref="model_account_move"/>
+            <field name="binding_model_id" ref="model_account_move"/>
+            <field name="binding_view_types">list</field>
+            <field name="code">
+                if records:
+                    action = records.send_separate_invoice()
+            </field>
+        </record>
+    </data>
+</odoo>
