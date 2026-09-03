@@ -19,7 +19,7 @@
         'data/outstanding_mail_template.xml',
         'wizards/outstanding_statement_wizard_views.xml',
         'views/account_mail_log_views.xml',
-        'views/account_move_views.xml',
+        # 'views/account_move_views.xml',
     ],
     "installable": True,
     "auto_install": False,
