@@ -10,6 +10,9 @@
             <xpath expr="//field[@name='bom_line_ids']/tree" position="attributes">
                 <attribute name="limit">500</attribute>
             </xpath>
+            <xpath expr="//field[@name='bom_line_ids']/tree/field[@name='manual_consumption']" position="after">
+                <field name="deprecated" optional="hide"/>
+            </xpath>
         </field>
     </record>
     <record id="mrp_bom_line_tree_view" model="ir.ui.view">
