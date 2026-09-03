@@ -17,6 +17,7 @@ class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
     sales_order_count = fields.Integer(compute='_sales_order_count', string='Sales')
+    list_price = fields.Float(tracking=True)
 
     def _sales_order_count(self):
         for template in self:
