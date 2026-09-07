@@ -22,7 +22,7 @@ class StockRule(models.Model):
         po_values = super(StockRule, self)._prepare_purchase_order(company_id, origins, values)
         if self.env.context.get('active_model', False) == 'stock.request':
             date_order = datetime.datetime.now()
-            po_values.update({'date_order': date_order,})
+            po_values.update({'date_order': date_order, 'user_id': self.env.user.id})
         return po_values
 
     @api.model
@@ -92,7 +92,7 @@ class StockRule(models.Model):
                     # _make_po_get_domain add the company in the domain.
                     # We use SUPERUSER_ID since we don't want the current user to be follower of the PO.
                     # Indeed, the current user may be a user without access to Purchase, or even be a portal user.
-                    po = self.env['purchase.order'].with_company(company_id).with_user(SUPERUSER_ID).create(vals)
+                    po = self.env['purchase.order'].sudo().with_company(company_id).create(vals)
             else:
                 # If a purchase order is found, adapt its `origin` field.
                 if po.origin:
