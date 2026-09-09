@@ -36,8 +36,7 @@ class MrpBom(models.Model):
                     if bom:
                         comp_boms.append((bom, prod, line[1]['qty']))
             while comp_boms:
-                current_bom, current_prod, current_qty = comp_boms[0]
-                comp_boms = comp_boms[1:]
+                current_bom, current_prod, current_qty = comp_boms.pop(0)
                 _logger.info("Exploding component BOM for %s" % current_prod.display_name)
                 new_boms, new_lines = current_bom.explode(current_prod, current_qty)
                 boms += new_boms
@@ -61,7 +60,7 @@ class MrpBom(models.Model):
         lines_done = []
         for line in lines:
             line_row = (line[0].id, {
-                'product_id': line[1]['product'].id,
+                'product_id': line[0].product_id.id,
                 'parent_line_id': line[1]['parent_line'] and line[1]['parent_line'].id or False,
                 'qty': line[1]['qty'],
                 'original_qty': line[1]['original_qty'],
