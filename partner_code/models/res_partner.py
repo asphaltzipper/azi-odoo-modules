@@ -38,5 +38,5 @@ class ResPartner(models.Model):
         if not default:
             default = {}
         default = default.copy()
-        default['code'] = self.code + _('(COPY)')
+        default['code'] = self.code and self.code + _('(COPY)')
         return super(ResPartner, self).copy(default)

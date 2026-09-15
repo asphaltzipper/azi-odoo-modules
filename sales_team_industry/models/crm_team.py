@@ -22,6 +22,13 @@ class CrmTeam(models.Model):
         " associated with this team. Disables manual assignment on teams.",
         default=False)
 
+    member_ids = fields.Many2many(
+        context={'active_test': False},
+    )
+    user_id = fields.Many2one(
+        context={'active_test': False},
+    )
+
     def write(self, vals):
         if int(self.env['ir.config_parameter'].sudo().get_param('sales_team_industry.require_industry')):
             if (not ((vals.get('partner_industries') or

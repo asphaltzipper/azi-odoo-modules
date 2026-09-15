@@ -34,6 +34,9 @@ class CrmTeamRegion(models.Model):
         relation='crm_team_region_country_group_rel',
         column1='region_id',
         column2='country_group_id')
+    active = fields.Boolean(
+        default=True,
+    )
 
     s_dom = fields.Many2many('res.country.state', compute='_compute_dom')
     c_dom = fields.Many2many('res.country', compute='_compute_dom')

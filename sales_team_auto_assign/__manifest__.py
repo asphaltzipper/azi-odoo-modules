@@ -12,7 +12,7 @@
     "license": "AGPL-3",
     "application": False,
     "installable": True,
-    "depends": ["crm", "sales_team_industry"],
+    "depends": ["crm", "sales_team_industry", 'web_notify'],
     "data": [
         # TODO: Restrict access
         'security/ir.model.access.csv',

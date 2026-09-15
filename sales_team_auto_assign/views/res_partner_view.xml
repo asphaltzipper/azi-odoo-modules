@@ -2,21 +2,26 @@
 <!-- Copyright 2016 Scott Saunders
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 <odoo>
-    <data>
-
-        <record id="res_partner_view_form" model="ir.ui.view">
-            <field name="name">res.partner.form.inherited</field>
-            <field name="model">res.partner</field>
-            <field name="inherit_id" ref="sales_team_region.res_partner_view_form"/>
-            <field name="arch" type="xml">
-                <field name="image_1920" position="after">
-                    <field name="state_trigger" invisible="1"/>
-                </field>
-                <field name="team_ids" position="after">
-                    <field name="auto_assign_team"/>
-                </field>
+    <record id="res_partner_view_form" model="ir.ui.view">
+        <field name="name">res.partner.form.inherited</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="sales_team_region.res_partner_view_form"/>
+        <field name="arch" type="xml">
+            <field name="image_1920" position="after">
+                <field name="state_trigger" invisible="1"/>
             </field>
-        </record>
+            <field name="team_ids" position="after">
+                <field name="auto_assign_team"/>
+            </field>
+        </field>
+    </record>
 
-    </data>
+    <record id="res_partner_assign_teams_action" model="ir.actions.server">
+        <field name="name">Assign teams</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="state">code</field>
+        <field name="code">records.assign_sales_teams()</field>
+        <field name="binding_model_id" ref="base.model_res_partner"/>
+    </record>
+
 </odoo>

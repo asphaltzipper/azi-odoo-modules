@@ -5,16 +5,14 @@
         <field name="model">sales.team.assign</field>
         <field name="arch" type="xml">
             <form>
-                <group>
-                    <div name="desc" class="col-lg-8">
-                        Wizard assigns sales teams to all customers, where the Auto Assign Team(s) field is True.
+                <div>
+                    <div name="desc">
+                        Wizard runs in the background to assign sales teams to all customers, where the Auto Assign Team(s) field is True.
                     </div>
-                </group>
-                <group>
-                    <div name="hint" class="col-lg-8">
+                    <div name="hint">
                         Useful for assigning teams for the first time or reassigning teams after modifying sales regions
                     </div>
-                </group>
+                </div>
                 <footer>
                     <button name="sales_team_assignment" string="Assign Sales Teams" type="object" class="btn-primary"/>
                     <button string="Cancel" class="btn-default" special="cancel"/>
