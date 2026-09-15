@@ -28,6 +28,9 @@
                     name="attrs"
                 >{'readonly': [('config_ok', '=', True), ('reconfigure', '=', False)]}</attribute>
             </xpath>
+            <xpath expr="//field[@name='bom_line_ids']/tree/field[@name='product_uom_id']" position="after">
+                <field name="weight_contribution" sum="Total Weight"/>
+            </xpath>
         </field>
     </record>
 

@@ -79,3 +79,15 @@ class ProductProduct(models.Model):
                     new_res = _name_get(mydict)
                     result[i] = new_res
         return result
+
+    def _compute_product_weight(self):
+        config_products = self.filtered(lambda p:p.config_ok)
+        boms = self.env["mrp.bom"]._bom_find(config_products) if config_products else {}
+        for product in self:
+            # Fixed the calculation of the product component based on the summation of the selected component weights
+            bom = boms.get(product)
+            if bom:
+                lines = bom.bom_line_ids.filtered(lambda line: not line._skip_bom_line(product))
+                product.weight = sum(lines.mapped('weight_contribution'))
+            else:
+                product.weight = product.weight_dummy

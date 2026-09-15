@@ -152,3 +152,18 @@ class MrpBom(models.Model):
             sequence += 1
 
         return True
+
+
+class MrpBomLine(models.Model):
+    _inherit = "mrp.bom.line"
+
+    weight_contribution = fields.Float("Weight Contribution", compute="_compute_weight_contribution")
+
+    @api.depends("product_qty", "product_id.weight", "product_uom_id")
+    def _compute_weight_contribution(self):
+        for line in self:
+            product_qty = line.product_qty
+            if product_qty:
+                product_qty = line.product_uom_id._compute_quantity(line.product_qty,
+                                                                    line.product_id.uom_id, round=False)
+            line.weight_contribution = line.product_id.weight * product_qty
