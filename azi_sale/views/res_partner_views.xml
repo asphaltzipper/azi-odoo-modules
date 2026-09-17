@@ -93,4 +93,19 @@
         </field>
     </record>
 
+    <record id="view_res_partner_filter_azi_sale" model="ir.ui.view">
+        <field name="name">view.res.partner.filter.azi.sale</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter" />
+        <field name="arch" type="xml">
+            <filter name="inactive" position="before">
+                <filter name="is_child" string="Is a Child" domain="[('parent_id', '!=', False)]"/>
+                <filter name="not_child" string="Not a Child" domain="[('parent_id', '=', False)]"/>
+                <separator/>
+                <filter name="is_parent" string="Is a Parent" domain="[('child_ids', '!=', False)]"/>
+                <filter name="not_parent" string="Not a Parent" domain="[('child_ids', '=', False)]"/>
+                <separator/>
+            </filter>
+        </field>
+    </record>
 </odoo>

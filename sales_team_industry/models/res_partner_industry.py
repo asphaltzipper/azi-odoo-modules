@@ -8,5 +8,4 @@ from odoo import fields, models
 class PartnerIndustry(models.Model):
     _inherit = 'res.partner.industry'
 
-    name = fields.Char('Partner Industry', required=True, translate=True)
-    color = fields.Integer('Color Index')
+    name = fields.Char(required=True)

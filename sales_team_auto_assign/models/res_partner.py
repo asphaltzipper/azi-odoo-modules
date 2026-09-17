@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright 2014-2017 Scott Saunders
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
@@ -147,6 +146,8 @@ class Partner(models.Model):
                 vals['team_ids'] = partner._ensure_team(vals)
                 if len(vals['team_ids'][0][2]) == 1:
                     vals['team_id'] = vals['team_ids'][0][2][0]
+                else:
+                    vals['team_id'] = False
         return super(Partner, self).write(vals)
 
     @api.model_create_multi
@@ -156,6 +157,8 @@ class Partner(models.Model):
                 vals['team_ids'] = self._ensure_team(vals)
                 if len(vals['team_ids'][0][2]) == 1:
                     vals['team_id'] = vals['team_ids'][0][2][0]
+                else:
+                    vals['team_id'] = False
         return super(Partner, self).create(vals_list)
 
     def assign_sales_teams(self, company_id=False, background=False):

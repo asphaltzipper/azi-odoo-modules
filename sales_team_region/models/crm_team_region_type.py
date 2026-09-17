@@ -10,4 +10,3 @@ class CrmTeamRegionType(models.Model):
     _description = 'Sales Team Region Type'
 
     name = fields.Char('Region Team Type', required=True, translate=True)
-    color = fields.Integer('Color Index')

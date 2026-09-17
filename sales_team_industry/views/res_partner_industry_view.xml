@@ -3,39 +3,11 @@
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 
 <odoo>
-    <data>
-        <record id="res_partner_industry_view_form" model="ir.ui.view">
-            <field name="name">Industry</field>
-            <field name="model">res.partner.industry</field>
-            <field name="inherit_id" ref="base.res_partner_industry_view_form"/>
-            <field name="arch" type="xml">
-                <field name="active" position="before">
-                    <field name="color"/>
-                </field>
-            </field>
-        </record>
-        <record id="res_partner_industry_view_tree" model="ir.ui.view">
-            <field name="name">Industry</field>
-            <field name="model">res.partner.industry</field>
-            <field name="inherit_id" ref="base.res_partner_industry_view_tree"/>
-            <field name="arch" type="xml">
-                <field name="active" position="before">
-                    <field name="color"/>
-                </field>
-            </field>
-        </record>
 
-        <record id="res_partner_industry_act_window" model="ir.actions.act_window">
-            <field name="name">Partner Industries</field>
-            <field name="res_model">res.partner.industry</field>
-            <field name="view_mode">tree,form</field>
-        </record>
+    <menuitem action="base.res_partner_industry_action"
+              id="menu_res_partner_industry_act"
+              parent="sales_team_region.menu_crm_team_region_config"
+              sequence="3"
+              groups="sales_team.group_sale_manager"/>
 
-        <menuitem action="res_partner_industry_act_window"
-                  id="menu_res_partner_industry_act"
-                  parent="sales_team_region.menu_crm_team_region_config"
-                  sequence="3"
-                  groups="sales_team.group_sale_manager"/>
-
-    </data>
 </odoo>
