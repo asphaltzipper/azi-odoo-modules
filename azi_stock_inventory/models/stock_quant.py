@@ -60,7 +60,34 @@ class StockQuant(models.Model):
             for vals in vals_list:
                 vals['current_inventory_id'] = self.env.context.get("active_id")
 
-        return super().create(vals_list)
+        quant_values = []
+        for vals in vals_list:
+            if 'inventory_value_set' in vals or 'inventory_value' in vals:
+                key = (vals.get('product_id'), vals.get('location_id'), vals.get('lot_id') or False,
+                       vals.get('package_id') or False, vals.get('owner_id') or False,
+                )
+                quant_values.append((key, {
+                    'inventory_value': vals.get('inventory_value', 0.0),
+                    'inventory_value_set': vals.get('inventory_value_set', False),
+                }))
+        quants = super().create(vals_list)
+        for quant in quants:
+            key = (
+                quant.product_id.id,
+                quant.location_id.id,
+                quant.lot_id.id or False,
+                quant.package_id.id or False,
+                quant.owner_id.id or False,
+            )
+            matching_vals = [v for k, v in quant_values if k == key]
+            if matching_vals:
+                v = matching_vals[-1]
+                if quant.inventory_value != v['inventory_value'] or quant.inventory_value_set != v['inventory_value_set']:
+                    quant.write({
+                        'inventory_value': v['inventory_value'],
+                        'inventory_value_set': v['inventory_value_set']
+                    })
+        return quants
 
     def write(self, vals):
         for rec in self:

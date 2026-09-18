@@ -93,7 +93,7 @@
                     </field>
                 </page>
                 <page name="sales" string="Sales">
-                    <field name="related_sale_ids" readonly="0">
+                    <field name="related_sale_ids" readonly="1">
                         <tree readonly="1">
                             <field name="name"/>
                             <field name="date_order"/>
