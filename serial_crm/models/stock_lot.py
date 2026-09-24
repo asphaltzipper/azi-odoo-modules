@@ -12,6 +12,15 @@ class StockLot(models.Model):
         auto_join=True,
         string="Documents")
 
+    doc_product_ids = fields.Many2many(
+        comodel_name='product.product',
+        relation='doc_product_stock_lot_rel',
+        column1='stock_lot_id',
+        column2='product_id',
+        string="Document Products",
+        readonly=False,
+    )
+
     partner_id = fields.Many2one(
         comodel_name='res.partner',
         string='Customer',

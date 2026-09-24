@@ -133,6 +133,12 @@
                     </field>
                 </page>
                 <page name="documents" string="Documents">
+                    <field name="doc_product_ids">
+                        <tree>
+                            <field name="display_name" string="Document Product"/>
+                            <field name="eng_categ_id" string="Category"/>
+                        </tree>
+                    </field>
                     <!--<button type="object" name="action_see_attachments" string="All Documents"/>-->
                     <field name="document_ids" mode="kanban" options="{'no_create_edit': True}"
                            context="{'default_res_model': 'stock.lot', 'default_res_id': active_id}">
