@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+    <record id="group_mrp_hist_admin" model="res.groups">
+        <field name="name">History Admin</field>
+        <field name="category_id" ref="base.module_category_manufacturing_manufacturing"/>
+        <field name="implied_ids" eval="[(4, ref('mrp.group_mrp_user'))]"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+
+</data>
+</openerp>

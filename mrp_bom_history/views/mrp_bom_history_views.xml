@@ -4,7 +4,7 @@
         <field name="name">view.mrp.bom.history.line.form</field>
         <field name="model">mrp.bom.history.line</field>
         <field name="arch" type="xml">
-            <form create="false" edit="false">
+            <form>
                 <sheet>
                     <group>
                         <group>
@@ -27,7 +27,7 @@
         <field name="name">view.mrp.bom.history.line.tree</field>
         <field name="model">mrp.bom.history.line</field>
         <field name="arch" type="xml">
-            <tree create="false">
+            <tree>
                 <field name="product_id"/>
                 <field name="parent_product_id"/>
                 <field name="product_qty"/>

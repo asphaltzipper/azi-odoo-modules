@@ -13,9 +13,11 @@ MRP BOM History
 * Create a new model for BOM History
     """,
     "depends": [
+        'base',
         'mrp',
     ],
     "data": [
+        'security/security_data.xml',
         'security/ir.model.access.csv',
         'views/mrp_bom_history_views.xml',
         'views/mrp_production_views.xml',
