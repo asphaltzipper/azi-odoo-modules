@@ -23,7 +23,7 @@ class MrpProduction(models.Model):
                 bom_history_lines.append((0, 0, {'product_id': line[3], 'parent_product_id': line[2], 'bom_id': line[0],
                                                  'product_qty': line[4], 'product_uom_id': line[5],
                                                  'bom_type': line[1]}))
-            production.write({'bom_history_line_ids': bom_history_lines})
+            production.sudo().write({'bom_history_line_ids': bom_history_lines})
         return productions
 
     def get_bom_lines(self, bom_id):
