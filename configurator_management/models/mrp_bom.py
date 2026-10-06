@@ -162,6 +162,9 @@ class MrpBomLine(models.Model):
     @api.depends("product_qty", "product_id.weight", "product_uom_id")
     def _compute_weight_contribution(self):
         for line in self:
+            if not line.product_id:
+                line.weight_contribution = 0.0
+                continue
             product_qty = line.product_qty
             if product_qty:
                 product_qty = line.product_uom_id._compute_quantity(line.product_qty,
