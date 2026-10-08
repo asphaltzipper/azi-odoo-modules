@@ -7,4 +7,5 @@ from . import res_config_settings
 from . import unit_telemetry_topic
 from . import unit_telemetry_type
 from . import unit_telemetry_reading
+from . import unit_telemetry_report
 from . import stock_lot

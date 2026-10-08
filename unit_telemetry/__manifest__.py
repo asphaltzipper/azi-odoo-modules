@@ -25,6 +25,7 @@
         'views/res_config_settings_views.xml',
         'views/stock_lot_views.xml',
         'views/unit_telemetry_views.xml',
+        'views/unit_telemetry_report_views.xml',
         'data/unit_telemetry_data.xml',
         'data/ir_cron_data.xml',
     ],

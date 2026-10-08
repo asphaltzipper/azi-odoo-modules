@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_unit_telemetry_report_tree" model="ir.ui.view">
+        <field name="name">view.unit.telemetry.report.tree</field>
+        <field name="model">unit.telemetry.report</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="lot_id"/>
+                <field name="msg_id"/>
+                <field name="tx_date"/>
+                <field name="batt"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_unit_telemetry_report_pivot" model="ir.ui.view">
+        <field name="name">view.unit.telemetry.report.pivot</field>
+        <field name="model">unit.telemetry.report</field>
+        <field name="arch" type="xml">
+            <pivot display_quantity="true">
+                <field name="tx_date" type="row" interval="day"/>
+                <field name="lot_id" type="col"/>
+                <field name="batt" type="measure"/>
+                <field name="rsrp" type="measure"/>
+                <field name="rsrq" type="measure"/>
+                <field name="rssnr" type="measure"/>
+                <field name="zpwr" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_unit_telemetry_report_graph" model="ir.ui.view">
+        <field name="name">view.unit.telemetry.report.graph</field>
+        <field name="model">unit.telemetry.report</field>
+        <field name="arch" type="xml">
+            <graph type="line">
+                <field name="tx_date" interval="day"/>
+                <field name="lot_id"/>
+                <field name="batt" type="measure"/>
+            </graph>
+        </field>
+    </record>
+    <record id="view_unit_telemetry_report_search" model="ir.ui.view">
+        <field name="name">view.unit.telemetry.report.search</field>
+        <field name="model">unit.telemetry.report</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="lot_id"/>
+                <field name="tx_date"/>
+                <field name="msg_id"/>
+                <group>
+                    <filter string="Serial" name="groupby_lot" domain="[]" context="{'group_by': 'lot_id'}"/>
+                    <filter string="Date" name="groupby_date" domain="[]" context="{'group_by': 'tx_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="unit_telemetry_report_action" model="ir.actions.act_window">
+        <field name="name">Telemetry Report</field>
+        <field name="res_model">unit.telemetry.report</field>
+        <field name="search_view_id" ref="view_unit_telemetry_report_search"/>
+        <field name="view_mode">pivot,graph,tree</field>
+    </record>
+
+    <menuitem id="unit_telemetry_report_menu" parent="stock.menu_stock_inventory_control"
+              action="unit_telemetry_report_action"/>
+
+</odoo>

@@ -7,3 +7,4 @@ access_mqtt_process_message_user,access.mqtt.process.message.user,model_mqtt_pro
 access_unit_telemetry_reading,access_unit_telemetry_reading,model_unit_telemetry_reading,stock.group_stock_user,1,1,1,1
 access_unit_telemetry_topic,access_unit_telemetry_topic,model_unit_telemetry_topic,stock.group_stock_user,1,1,1,1
 access_unit_telemetry_type,access_unit_telemetry_type,model_unit_telemetry_type,stock.group_stock_user,1,1,1,1
+access_unit_telemetry_report,access_unit_telemetry_report,model_unit_telemetry_report,stock.group_stock_user,1,0,0,0
