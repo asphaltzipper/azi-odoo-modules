@@ -7,12 +7,14 @@
         <field name="model">product.product</field>
         <field name="inherit_id" ref="product.product_normal_form_view"/>
         <field name="arch" type="xml">
-            <field name="product_template_variant_value_ids" position="attributes">
+            <field name="product_template_variant_value_ids" position="replace">
+                <field name="product_template_attribute_value_ids" widget="many2many_tags" readonly="1"/>
+            </field>
+            <field name="product_template_attribute_value_ids" position="attributes">
                 <t groups="base.group_no_one">
                     <attribute name="readonly">0</attribute>
                 </t>
             </field>
         </field>
     </record>
-
 </odoo>
