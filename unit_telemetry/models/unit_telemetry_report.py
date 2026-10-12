@@ -11,13 +11,28 @@ class UnitTelemetryReport(models.Model):
     msg_id = fields.Many2one('mqtt.message.history', 'Message Id')
     tx_date = fields.Datetime('Date')
     topic_name = fields.Char('Topic Name')
-    batt = fields.Float('Batt')
+    batt = fields.Float(
+        string='Batt',
+        group_operator="avg",
+    )
     fast_send = fields.Integer('Fast Send')
     mode = fields.Char('Mode')
-    rsrp = fields.Integer('RSRP')
-    rsrq = fields.Integer('RSRQ')
-    rssnr = fields.Integer('RSSNR')
-    zpwr = fields.Float('ZPWR')
+    rsrp = fields.Integer(
+        string='RSRP',
+        group_operator="avg",
+    )
+    rsrq = fields.Integer(
+        string='RSRQ',
+        group_operator="avg",
+    )
+    rssnr = fields.Integer(
+        string='RSSNR',
+        group_operator="avg",
+    )
+    zpwr = fields.Float(
+        string='ZPWR',
+        group_operator="avg",
+    )
 
     def init(self):
         tools.drop_view_if_exists(self.env.cr, 'unit_telemetry_report')
