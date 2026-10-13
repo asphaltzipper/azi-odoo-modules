@@ -63,7 +63,7 @@
         <field name="view_mode">pivot,graph,tree</field>
     </record>
 
-    <menuitem id="unit_telemetry_report_menu" parent="stock.menu_stock_inventory_control"
+    <menuitem id="unit_telemetry_report_menu" parent="menu_unit_telemetry_report_group"
               action="unit_telemetry_report_action"/>
 
 </odoo>

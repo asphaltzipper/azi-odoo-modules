@@ -192,9 +192,13 @@
               action="action_unit_telemetry_type"
               sequence="20"/>
 
+    <menuitem id="menu_unit_telemetry_report_group"
+              name="Unit Telemetry"
+              parent="stock.menu_warehouse_report"
+              sequence="400"/>
     <menuitem id="menu_unit_telemetry_reading"
               name="Telemetry Readings"
-              parent="stock.menu_stock_inventory_control"
+              parent="menu_unit_telemetry_report_group"
               action="action_unit_telemetry_reading"
               sequence="30"/>
 
