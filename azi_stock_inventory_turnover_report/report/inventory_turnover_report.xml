@@ -7,6 +7,7 @@
             <tree>
                 <field name="category_id"/>
                 <field name="product_id"/>
+                <field name="route_names"/>
                 <field name="current_balance"/>
                 <field name="avg_6_balance"/>
                 <field name="avg_12_balance"/>
@@ -29,6 +30,10 @@
                     <filter string='RM' name="rm_filter" domain="[('category_id.name', 'ilike', 'RM - %s')]" />
                     <filter string='FG' name="fg_filter" domain="[('category_id.name', 'ilike', 'FG - %s')]" />
                 <group>
+                <group>
+                    <filter string='Make' name="make_filter" domain="[('route_names', 'ilike', 'Manufacture')]" />
+                    <filter string='Buy' name="buy_filter" domain="[('route_names', 'ilike', 'Buy')]" />
+                </group>
                 </group>
                     <filter string='6mo Turns &lt; 2' name="6mo_turns_under_2" domain="[('turns_6m', '&lt;', 2)]" />
                 <group>
@@ -37,6 +42,7 @@
                 </group>
                 <group expand="0" string="Group By">
                     <filter name="category" string="Category" domain="[]" context="{'group_by':'category_id'}"/>
+                    <filter name="group_route" string="Route" domain="[]" context="{'group_by':'route_names'}"/>
                 </group>
             </search>
         </field>

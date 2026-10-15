@@ -8,6 +8,7 @@ class InventoryProductTurnover(models.Model):
 
     product_id = fields.Many2one('product.product', 'Product')
     category_id = fields.Many2one('product.category', 'category')
+    route_names = fields.Char('Routes')
     avg_6_balance = fields.Float(
         string="6mo Avg Balance",
         help="Average balance over the last 6 months",
@@ -51,12 +52,21 @@ class InventoryProductTurnover(models.Model):
                     select
                         pp.id as product_id,
                         pc.id as category_id,
-                        aa.id as account_id
+                        aa.id as account_id,
+                        r.route_names
                     from product_product pp
                     left join product_template pt on pt.id=pp.product_tmpl_id
                     left join product_category as pc on pc.id=pt.categ_id
                     left join ir_property as ip on ip.res_id='product.category,'||pt.categ_id and ip.name='property_stock_valuation_account_id'
                     left join account_account as aa on 'account.account,'||aa.id=ip.value_reference
+                    left join (
+                        select
+                            rel.product_id as product_tmpl_id,
+                            string_agg((r.name->>'en_US')::varchar, ' ') as route_names
+                        from stock_route_product as rel
+                        left join stock_route as r on r.id=rel.route_id
+                        group by rel.product_id
+                    ) as r on r.product_tmpl_id=pp.product_tmpl_id
                     where pt.type='product'
                     and pt.active=true
                 ),
@@ -84,6 +94,7 @@ class InventoryProductTurnover(models.Model):
                     a.product_id as id,
                     a.product_id,
                     a.category_id,
+                    a.route_names,
                     round(coalesce(e.balance, 0.0), 0) as current_balance,
                     round((coalesce(b6.balance, 0.0) + coalesce(e.balance, 0.0)) / 2, 0) as avg_6_balance,
                     round((coalesce(b12.balance, 0.0) + coalesce(b6.balance, 0.0) + coalesce(e.balance, 0.0)) / 3, 0) as avg_12_balance,
