@@ -66,4 +66,286 @@
     <menuitem id="unit_telemetry_report_menu" parent="menu_unit_telemetry_report_group"
               action="unit_telemetry_report_action"/>
 
+    <record id="view_unit_telemetry_hr_report_tree" model="ir.ui.view">
+        <field name="name">view.unit.telemetry.hr.report.tree</field>
+        <field name="model">unit.telemetry.hr.report</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="lot_id"/>
+                <field name="msg_id"/>
+                <field name="tx_date"/>
+                <field name="topic_name"/>
+                <field name="hrs"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_unit_telemetry_hr_report_pivot" model="ir.ui.view">
+        <field name="name">view.unit.telemetry.hr.report.pivot</field>
+        <field name="model">unit.telemetry.hr.report</field>
+        <field name="arch" type="xml">
+            <pivot display_quantity="true">
+                <field name="tx_date" type="row" interval="day"/>
+                <field name="lot_id" type="col"/>
+                <field name="hrs" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_unit_telemetry_hr_report_graph" model="ir.ui.view">
+        <field name="name">view.unit.telemetry.hr.report.graph</field>
+        <field name="model">unit.telemetry.hr.report</field>
+        <field name="arch" type="xml">
+            <graph type="line">
+                <field name="tx_date" interval="day"/>
+                <field name="lot_id"/>
+                <field name="hrs" type="measure"/>
+            </graph>
+        </field>
+    </record>
+    <record id="view_unit_telemetry_hr_report_search" model="ir.ui.view">
+        <field name="name">view.unit.telemetry.hr.report.search</field>
+        <field name="model">unit.telemetry.hr.report</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="lot_id"/>
+                <field name="tx_date"/>
+                <field name="topic_name"/>
+                <field name="msg_id"/>
+                <group>
+                    <filter string="Serial" name="groupby_lot" domain="[]" context="{'group_by': 'lot_id'}"/>
+                    <filter string="Date" name="groupby_date" domain="[]" context="{'group_by': 'tx_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="unit_telemetry_hr_report_action" model="ir.actions.act_window">
+        <field name="name">Telemetry Hours Report</field>
+        <field name="res_model">unit.telemetry.hr.report</field>
+        <field name="search_view_id" ref="view_unit_telemetry_hr_report_search"/>
+        <field name="view_mode">pivot,graph,tree</field>
+    </record>
+
+    <menuitem id="unit_telemetry_hr_report_menu" parent="menu_unit_telemetry_report_group"
+              action="unit_telemetry_hr_report_action"/>
+
+    <record id="view_unit_telemetry_gps_report_tree" model="ir.ui.view">
+        <field name="name">view.unit.telemetry.gps.report.tree</field>
+        <field name="model">unit.telemetry.gps.report</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="lot_id"/>
+                <field name="msg_id"/>
+                <field name="tx_date"/>
+                <field name="lat"/>
+                <field name="long"/>
+                <field name="coord_str"/>
+                <field name="map_link"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_unit_telemetry_gps_report_pivot" model="ir.ui.view">
+        <field name="name">view.unit.telemetry.gps.report.pivot</field>
+        <field name="model">unit.telemetry.gps.report</field>
+        <field name="arch" type="xml">
+            <pivot display_quantity="true">
+                <field name="tx_date" type="row" interval="day"/>
+                <field name="lot_id" type="col"/>
+                <field name="hpa" type="measure"/>
+                <field name="sats" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_unit_telemetry_gps_report_graph" model="ir.ui.view">
+        <field name="name">view.unit.telemetry.gps.report.graph</field>
+        <field name="model">unit.telemetry.gps.report</field>
+        <field name="arch" type="xml">
+            <graph type="line">
+                <field name="tx_date" interval="day"/>
+                <field name="lot_id"/>
+                <field name="hpa" type="measure"/>
+            </graph>
+        </field>
+    </record>
+    <record id="view_unit_telemetry_gps_report_search" model="ir.ui.view">
+        <field name="name">view.unit.telemetry.gps.report.search</field>
+        <field name="model">unit.telemetry.gps.report</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="lot_id"/>
+                <field name="tx_date"/>
+                <field name="msg_id"/>
+                <group>
+                    <filter string="Serial" name="groupby_lot" domain="[]" context="{'group_by': 'lot_id'}"/>
+                    <filter string="Date" name="groupby_date" domain="[]" context="{'group_by': 'tx_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="unit_telemetry_gps_report_action" model="ir.actions.act_window">
+        <field name="name">Telemetry GPS Report</field>
+        <field name="res_model">unit.telemetry.gps.report</field>
+        <field name="search_view_id" ref="view_unit_telemetry_gps_report_search"/>
+        <field name="view_mode">pivot,graph,tree</field>
+    </record>
+
+    <menuitem id="unit_telemetry_gps_report_menu" parent="menu_unit_telemetry_report_group"
+              action="unit_telemetry_gps_report_action"/>
+
+    <record id="view_unit_telemetry_dtc_report_tree" model="ir.ui.view">
+        <field name="name">view.unit.telemetry.dtc.report.tree</field>
+        <field name="model">unit.telemetry.dtc.report</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="lot_id"/>
+                <field name="msg_id"/>
+                <field name="tx_date"/>
+                <field name="topic_name"/>
+                <field name="spn"/>
+                <field name="fmi"/>
+                <field name="addr"/>
+                <field name="oc"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_unit_telemetry_dtc_report_pivot" model="ir.ui.view">
+        <field name="name">view.unit.telemetry.dtc.report.pivot</field>
+        <field name="model">unit.telemetry.dtc.report</field>
+        <field name="arch" type="xml">
+            <pivot display_quantity="true">
+                <field name="tx_date" type="row" interval="day"/>
+                <field name="lot_id" type="col"/>
+                <field name="spn" type="measure"/>
+                <field name="fmi" type="measure"/>
+                <field name="addr" type="measure"/>
+                <field name="oc" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_unit_telemetry_dtc_report_graph" model="ir.ui.view">
+        <field name="name">view.unit.telemetry.dtc.report.graph</field>
+        <field name="model">unit.telemetry.dtc.report</field>
+        <field name="arch" type="xml">
+            <graph type="line">
+                <field name="tx_date" interval="day"/>
+                <field name="lot_id"/>
+                <field name="spn" type="measure"/>
+            </graph>
+        </field>
+    </record>
+    <record id="view_unit_telemetry_dtc_report_search" model="ir.ui.view">
+        <field name="name">view.unit.telemetry.dtc.report.search</field>
+        <field name="model">unit.telemetry.dtc.report</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="lot_id"/>
+                <field name="tx_date"/>
+                <field name="msg_id"/>
+                <group>
+                    <filter string="Serial" name="groupby_lot" domain="[]" context="{'group_by': 'lot_id'}"/>
+                    <filter string="Date" name="groupby_date" domain="[]" context="{'group_by': 'tx_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="unit_telemetry_dtc_report_action" model="ir.actions.act_window">
+        <field name="name">Telemetry DTC Report</field>
+        <field name="res_model">unit.telemetry.dtc.report</field>
+        <field name="search_view_id" ref="view_unit_telemetry_dtc_report_search"/>
+        <field name="view_mode">pivot,graph,tree</field>
+    </record>
+
+    <menuitem id="unit_telemetry_dtc_report_menu" parent="menu_unit_telemetry_report_group"
+              action="unit_telemetry_dtc_report_action"/>
+
+    <record id="view_unit_telemetry_ops_report_tree" model="ir.ui.view">
+        <field name="name">view.unit.telemetry.ops.report.tree</field>
+        <field name="model">unit.telemetry.ops.report</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="lot_id"/>
+                <field name="msg_id"/>
+                <field name="tx_date"/>
+                <field name="topic_name"/>
+                <field name="b_pres"/>
+                <field name="c_hrs"/>
+                <field name="c_pres"/>
+                <field name="c_state"/>
+                <field name="c_tmp"/>
+                <field name="estp"/>
+                <field name="g_tmp"/>
+                <field name="h_state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_unit_telemetry_ops_report_pivot" model="ir.ui.view">
+        <field name="name">view.unit.telemetry.ops.report.pivot</field>
+        <field name="model">unit.telemetry.ops.report</field>
+        <field name="arch" type="xml">
+            <pivot display_quantity="true">
+                <field name="tx_date" type="row" interval="day"/>
+                <field name="lot_id" type="col"/>
+                <field name="b_pres" type="measure"/>
+                <field name="c_hrs" type="measure"/>
+                <field name="c_pres" type="measure"/>
+                <field name="c_tmp" type="measure"/>
+                <field name="estp" type="measure"/>
+                <field name="g_tmp" type="measure"/>
+                <field name="h_tmp" type="measure"/>
+                <field name="load" type="measure"/>
+                <field name="m_pres" type="measure"/>
+                <field name="rpm" type="measure"/>
+                <field name="spd" type="measure"/>
+                <field name="v_chg" type="measure"/>
+                <field name="v_crk" type="measure"/>
+                <field name="v_rst" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_unit_telemetry_ops_report_graph" model="ir.ui.view">
+        <field name="name">view.unit.telemetry.ops.report.graph</field>
+        <field name="model">unit.telemetry.ops.report</field>
+        <field name="arch" type="xml">
+            <graph type="line">
+                <field name="tx_date" interval="day"/>
+                <field name="lot_id"/>
+                <field name="b_pres" type="measure"/>
+            </graph>
+        </field>
+    </record>
+    <record id="view_unit_telemetry_ops_report_search" model="ir.ui.view">
+        <field name="name">view.unit.telemetry.ops.report.search</field>
+        <field name="model">unit.telemetry.ops.report</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="lot_id"/>
+                <field name="tx_date"/>
+                <field name="msg_id"/>
+                <group>
+                    <filter string="Serial" name="groupby_lot" domain="[]" context="{'group_by': 'lot_id'}"/>
+                    <filter string="Date" name="groupby_date" domain="[]" context="{'group_by': 'tx_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="unit_telemetry_ops_report_action" model="ir.actions.act_window">
+        <field name="name">Telemetry OPS Report</field>
+        <field name="res_model">unit.telemetry.ops.report</field>
+        <field name="search_view_id" ref="view_unit_telemetry_ops_report_search"/>
+        <field name="view_mode">pivot,graph,tree</field>
+    </record>
+
+    <menuitem id="unit_telemetry_ops_report_menu" parent="menu_unit_telemetry_report_group"
+              action="unit_telemetry_ops_report_action"/>
+
 </odoo>
