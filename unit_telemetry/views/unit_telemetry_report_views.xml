@@ -233,9 +233,9 @@
         <field name="model">unit.telemetry.dtc.report</field>
         <field name="arch" type="xml">
             <graph type="line">
-                <field name="tx_date" interval="day"/>
+                <field name="spn"/>
                 <field name="lot_id"/>
-                <field name="spn" type="measure"/>
+                <field name="id" type="measure"/>
             </graph>
         </field>
     </record>

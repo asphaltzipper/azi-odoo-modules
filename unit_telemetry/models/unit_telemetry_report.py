@@ -130,7 +130,7 @@ class UnitTelemetryGPSReport(models.Model):
     lat = fields.Float('Latitude', group_operator='avg')
     long = fields.Float('Longitude', group_operator='avg')
     hpa = fields.Float('HPA', group_operator='avg')
-    sats = fields.Integer('SATS')
+    sats = fields.Integer('SATS', group_operator='avg')
     coord_str = fields.Char('Coordinates')
     map_link = fields.Char('Map Link')
 
