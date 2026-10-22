@@ -65,6 +65,7 @@ class TsbSerial(models.Model):
         related='warranty_id.expire_date',
         store=True,
     )
+    comment = fields.Char(string='Comment')
 
     @api.depends('lot_id', 'bulletin_id')
     def _compute_name(self):

@@ -32,6 +32,7 @@
                                     <field name="repair_ids" widget="many2many_tags"/>
                                     <field name="start_date" invisible="1"/>
                                     <field name="done_date"/>
+                                    <field name="comment"/>
                                 </tree>
                             </field>
                         </page>
@@ -75,6 +76,7 @@
                             <field name="lot_id"/>
                             <field name="done_date"/>
                             <field name="start_date"/>
+                            <field name="comment"/>
                         </group>
                         <group>
                             <field name="partner_id"/>
@@ -102,6 +104,7 @@
                 <field name="warranty_expire_date"/>
                 <field name="order_ids" widget="many2many_tags"/>
                 <field name="repair_ids" widget="many2many_tags"/>
+                <field name="comment"/>
             </tree>
         </field>
     </record>
