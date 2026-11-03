@@ -97,7 +97,11 @@ class MrpPlannedPickKit(models.TransientModel):
         self.ensure_one()
         if self.state == 'done':
             raise UserError(_("This kit is already done. Start a new one"))
-        self.product_id.mfg_kit_qty += self.product_qty
+        mfg_kit_qty = self.product_id.mfg_kit_qty
+        self.product_id.mfg_kit_qty = mfg_kit_qty + self.product_qty
+        self.env['mrp.product.log'].create({'product_id': self.product_id.id,
+                                            'message': f'Make Kit: {mfg_kit_qty} -> {self.product_id.mfg_kit_qty}',
+                                            'type': 'make'})
         self.write({'state': 'done'})
 
     def write(self, vals):

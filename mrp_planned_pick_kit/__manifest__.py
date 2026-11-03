@@ -35,6 +35,7 @@ We add the following:
         'views/product_views.xml',
         'views/mrp_production_views.xml',
         'views/mrp_inventory_views.xml',
+        'views/mrp_product_log_views.xml',
         'report/report_production_kit_templates.xml',
         'report/report_production_kit.xml',
     ],

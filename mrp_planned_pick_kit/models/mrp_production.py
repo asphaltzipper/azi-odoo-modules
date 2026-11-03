@@ -41,14 +41,23 @@ class MrpProduction(models.Model):
         if 'kit_assigned_qty' in vals:
             kit_change_qty = vals['kit_assigned_qty'] - self.kit_assigned_qty
             new_avail_qty = self.kit_avail_qty - kit_change_qty
-            self.product_id.mfg_kit_qty = max(0, new_avail_qty)
+            mfg_kit_qty = max(0, new_avail_qty)
+            self.env['mrp.product.log'].create({'product_id': self.product_id.id,
+                                                'message': f'MRP Assigned Kit:{self.product_id.mfg_kit_qty} -> {mfg_kit_qty}',
+                                                'type': 'other'})
+            self.product_id.mfg_kit_qty = mfg_kit_qty
         if 'product_qty' in vals and 'kit_assigned_qty' not in vals:
             # assign available kits, trying to match the new production quantity
             local_avail_qty = self.kit_assigned_qty + self.kit_avail_qty
             qty_to_assign = min(local_avail_qty, vals['product_qty'])
             kit_change_qty = qty_to_assign - self.kit_assigned_qty
             new_avail_qty = self.kit_avail_qty - kit_change_qty
-            self.product_id.mfg_kit_qty = max(0, new_avail_qty)
+            mfg_kit_qty = int(max(0, new_avail_qty))
+            if self.product_id.mfg_kit_qty != mfg_kit_qty:
+                self.env['mrp.product.log'].create({'product_id': self.product_id.id,
+                                                    'message': f'MRP Quantity Changed:{self.product_id.mfg_kit_qty} -> {mfg_kit_qty}',
+                                                    'type': 'other'})
+            self.product_id.mfg_kit_qty = mfg_kit_qty
             vals['kit_assigned_qty'] = qty_to_assign
         if vals.get('state') and vals['state'] == 'done':
             # assign available kits, trying to match the final production quantity
@@ -56,12 +65,21 @@ class MrpProduction(models.Model):
             qty_to_assign = min(local_avail_qty, self.product_qty)
             kit_change_qty = qty_to_assign - self.kit_assigned_qty
             new_avail_qty = self.kit_avail_qty - kit_change_qty
-            self.product_id.mfg_kit_qty = max(0, new_avail_qty)
+            mfg_kit_qty = int(max(0, new_avail_qty))
+            if self.product_id.mfg_kit_qty != mfg_kit_qty:
+                self.env['mrp.product.log'].create({'product_id': self.product_id.id,
+                                                    'message': f'MRP Completion:{self.product_id.mfg_kit_qty} -> {mfg_kit_qty}',
+                                                    'type': 'other'})
+            self.product_id.mfg_kit_qty = mfg_kit_qty
             vals['kit_assigned_qty'] = qty_to_assign
         if vals.get('state') and vals['state'] == 'cancel':
             # un-assign kits, return them to available
             new_avail_qty = self.kit_avail_qty + self.kit_assigned_qty
-            self.product_id.mfg_kit_qty = max(0, new_avail_qty)
+            mfg_kit_qty = int(max(0, new_avail_qty))
+            self.env['mrp.product.log'].create({'product_id': self.product_id.id,
+                                                'message': f'MRP Canceled:{self.product_id.mfg_kit_qty} -> {mfg_kit_qty}',
+                                                'type': 'other'})
+            self.product_id.mfg_kit_qty = mfg_kit_qty
             vals['kit_assigned_qty'] = 0
         return super(MrpProduction, self).write(vals)
 
@@ -79,5 +97,9 @@ class MrpProduction(models.Model):
                     to_assign = min(product.mfg_kit_qty, vals['product_qty'])
                     to_assign = int(float_round(to_assign, precision_digits=0))
                     vals['kit_assigned_qty'] = to_assign
-                    product.mfg_kit_qty = max(0, product.mfg_kit_qty - to_assign)
+                    mfg_kit_qty = int(max(0, product.mfg_kit_qty - to_assign))
+                    self.env['mrp.product.log'].create({'product_id': product.id,
+                                                        'message': f'MRP Creation:{product.mfg_kit_qty} -> {mfg_kit_qty}',
+                                                        'type': 'other'})
+                    product.mfg_kit_qty = mfg_kit_qty
         return super(MrpProduction, self).create(vals_list)

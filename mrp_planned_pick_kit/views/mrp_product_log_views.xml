@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_mrp_product_log_tree" model="ir.ui.view">
+        <field name="name">view.mrp.product.log.tree</field>
+        <field name="model">mrp.product.log</field>
+        <field name="arch" type="xml">
+            <tree create="false">
+                <field name="create_date"/>
+                <field name="type"/>
+                <field name="product_id"/>
+                <field name="message"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="mrp_product_log_action" model="ir.actions.act_window">
+        <field name="name">MRP Product Log</field>
+        <field name="res_model">mrp.product.log</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="mrp_product_log_menu" action="mrp_product_log_action" parent="mrp.menu_mrp_reporting" sequence="22"/>
+
+</odoo>

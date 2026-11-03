@@ -12,7 +12,6 @@ class ProductTemplate(models.Model):
         compute='_compute_mfg_kit_qty',
         inverse='_inverse_mfg_kit_qty',
         store=True,
-        tracking=True,
     )
 
     @api.depends('product_variant_ids', 'product_variant_ids.mfg_kit_qty')
@@ -48,7 +47,6 @@ class ProductProduct(models.Model):
         string="Kits",
         required=True,
         default=0,
-        tracking=True,
     )
 
     def action_create_mfg_kit(self):
