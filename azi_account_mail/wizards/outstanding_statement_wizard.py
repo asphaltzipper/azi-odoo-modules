@@ -76,15 +76,8 @@ class OutstandingStatementWizard(models.TransientModel):
                         'res_id': partner.id,
                     })
                     mail_values.pop('attachments')
-                    mail = self.env['mail.mail'].create(mail_values)
-
+                    mail = self.env['mail.mail'].sudo().create(mail_values)
                     mail.send()
-                # template.send_mail(
-                #     self.id,
-                #     force_send=True,
-                #     email_values={'recipient_ids': mail_partner, 'attachment_ids': outstanding_report},
-                #
-                # )
                 self.env['account.mail.log'].create(
                     {'log_type': 'info',
                      'message': f'Outstanding email sent to  {partner.display_name}'})
